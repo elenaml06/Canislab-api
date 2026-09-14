@@ -131,12 +131,23 @@ europeo (BEDCA) usa 6 a 1. El americano (USDA/RAE), 12 a 1.
 
 **Lo medido, sobre los 216 menús precalculados:**
 
+⚠️ **CORREGIDO EL 13 DE SEPTIEMBRE: lo que había aquí estaba mal**, porque el
+método contaba la vitamina A del hígado como si fuera caroteno y es retinol puro.
+
+| De dónde viene la vitamina A de los 216 menús | en `main` | en esta rama |
+|---|---|---|
+| Hígado | **77,9 %** | 78,0 % |
+| Multivitamínico | **12,7 %** | 12,7 % |
+| **Verdura y fruta** | **6,5 %** | 7,1 % |
+| Todo lo demás | 2,9 % | 2,2 % |
+
 ```
-% de la vitamina A que viene de verduras y frutas ..... mediana 83 %
-menús que NO llegarían al mínimo de FEDIAF sin contar
-el caroteno ........................................... 103 de 216
-el peor (Grande_Lactante): declara 11.191 µg,
-        de retinol de verdad ..........................        29
+menús que NO llegarían al mínimo sin el caroteno ...... 0 de 216 (no 103)
+el menú con más vitamina A: Pequeño_Lactante#4, 5.155 µg/1000 kcal
+        lo pone el hígado de vaca en un ..............  80,5 %
+        y la zanahoria en un .........................  12,4 %
+menús por encima del máximo (30.000 µg/1000 kcal) ..... 0 de 216
+el más alto va al ....................................    17 % del techo
 ```
 
 Veintinueve microgramos de retinol en el menú de una perra lactante, y sale
@@ -764,3 +775,250 @@ pienso.
 **Lo que te pregunto, si acaso:** ¿le pasas las tres al nutricionista? Son
 exactamente el tipo de pregunta que él puede cerrar en dos minutos y yo no puedo
 cerrar de ninguna manera, porque la respuesta es un número que la fuente no da.
+
+---
+
+# Sesión del 13 de septiembre de 2026 — el catálogo contra sus fuentes
+
+Salen de barrer las 163 fichas contra BEDCA, Köber, CIQUAL y USDA celda a celda.
+Las que he podido decidir con la fuente en la mano **no están aquí** — están hechas
+(312 celdas cerradas, 418 ceros declarados, 65 huecos declarados, cinco errores de
+dato corregidos y dos emparejamientos malos arreglados).
+
+## A · ¿Metemos Frida, la base danesa? Es la «que empieza por F»
+
+**De dónde sale.** Tú, ese día: «mira a ver cómo tiene que ser la prioridad
+realmente siendo para un motor nutricional español, igual CIQUAL y la otra que
+empieza por F valen más que USDA».
+
+**Tenías razón en empujar.** El orden se confirma —BEDCA 1, Köber 2, CIQUAL 3,
+USDA 4— pero los motivos que estaban escritos eran otros: BEDCA resulta ser **la
+que MENOS nutrientes publica** de las europeas (~40 de 968 alimentos, contra 65 de
+CIQUAL y 105 de Frida), y la comparativa de EuroFIR recomienda literalmente
+«expanding nutrients and foods». No manda por completa: manda por ser la española y
+por ser **la única que distingue un hueco de un cero**.
+
+**Y la «F» es Frida** (Dinamarca, DTU), versión 6.1 de mayo de 2026, CC BY 4.0.
+
+| A favor | En contra |
+|---|---|
+| ~105 componentes: la más completa de EuroFIR, «one of the most complete databases» | Es **danesa**: el pienso del ganado y el suelo no son los españoles — el mismo argumento que pone CIQUAL por detrás de BEDCA |
+| **Mide los aminoácidos de TODO alimento con proteína desde 2018**, que es lo único por lo que USDA es hoy imprescindible (13 de los 43 requisitos) | 1.170 alimentos, menos de la mitad que CIQUAL: faltarán cortes concretos |
+| Es **europea**, que es el criterio por el que CIQUAL ya va por delante de USDA | No se ha podido comprobar qué cubre (yodo, colina, taurina) porque no se abre |
+| Está **viva**: 6.1 es de junio de 2026. USDA SR Legacy está **congelada en 2018** | Meterla significa **reemparejar 163 alimentos** y volver a mirar cada celda que cambie: es un trabajo entero |
+| Trae la **referencia de cada valor**, que es la propiedad por la que BEDCA manda | |
+
+**Lo que lo bloquea hoy es material**: su volcado (12,6 MB) lo sirve figshare
+redirigiendo a un S3 del propio DTU en `s3q.ait.dtu.dk:9000`, y el puerto 9000 no
+sale de este entorno — cinco intentos con reanudación, corte del túnel en los
+cinco. Su web es una aplicación Angular que pide los datos a una API cuya dirección
+se inyecta en tiempo de ejecución. **Desde un navegador normal se baja sin
+problema.**
+
+**Mi propuesta, si dices que sí**: entra como mandato **4, por delante de USDA**
+(europea, viva, con procedencia por valor y con aminoácidos), y USDA baja a 5 para
+los cortes que solo ella tiene. Bájate el xlsx de `data.dtu.dk` y déjalo en
+`.fuentes_cache/`, y lo primero que hay que mirar es si publica yodo, colina y
+taurina.
+
+**Si dices que no**, no se pierde nada: está escrita entera con su medida en
+`candidatas_declaradas` de `fuentes_de_composicion.json`, que existe para que una
+fuente evaluada y descartada no se vuelva a descubrir dentro de seis meses.
+
+## B · La vitamina A: el dato que dábamos por imposible SÍ se puede conseguir
+
+**Qué sabíamos.** La columna `vitA` mezcla tres convenios del β-caroteno y
+**ninguno es el que FEDIAF define para el perro** (4:1, Tabla VII-14). `UNIDADES.md`
+decía que para arreglarlo «hace falta lo que no tenemos: el retinol y el β-caroteno
+por separado».
+
+**Qué hemos encontrado.** **Dos de las tres fuentes los publican en columnas
+separadas**: CIQUAL tiene «Rétinol» y «Beta-Carotène», y USDA tiene «Retinol» y
+«Carotene, beta».
+
+**Así que lo que falta no es el dato: es la decisión.** Y es de calado, porque
+recalcular la columna con el 4:1 de FEDIAF mueve la vitamina A de casi todas las
+fichas vegetales. ⚠️ Y aquí ponía que **el 83 %** de la vitamina A de los menús
+viene de verdura: **era falso**, son el **6,9 %** (remedido el 13 de septiembre; el
+78,3 % viene del hígado). Una ficha con β-caroteno ÷6 declara un **33 % menos** de
+lo que FEDIAF le contaría; una con RAE (÷12), un 67 % menos.
+⚠️ **Y la dirección del riesgo estaba contada al revés**: contar de menos el
+caroteno es seguro contra el MÍNIMO y **peligroso contra el MÁXIMO**, porque la
+vitamina A es de los pocos nutrientes con techo. Lo que permite estar tranquilos
+es la medida y no el argumento: **0 de 216 menús pasan del máximo** y el más alto
+va al **17 %** del techo. Y con el 6,9 %, el arreglo importa **menos** de lo que
+decía esta sección: lo que lo hacía urgente era el «103 de 216 menús dependen del
+caroteno para llegar al mínimo», y en `main` es **0 de 216**.
+
+**Lo que necesito de ti**: si esto lo decide el nutricionista (yo creo que sí) o si
+quieres que lo prepare ya con el 4:1 de FEDIAF y se revise después. No lo he tocado.
+
+## C · La niacina mezcla dos convenios, y el impacto es pequeño
+
+BEDCA publica «equivalentes de niacina totales» (incluyen lo que el animal fabrica
+del triptófano) y USDA y CIQUAL la **preformada**. 84 fichas llevan una y 63 la
+otra, contra el mismo mínimo de FEDIAF.
+
+**Medido: el impacto es pequeño.** Donde las dos fuentes publican, solo tres fichas
+se separan más del 1,5× (pepino ×2,3, manzana ×2,2, lengua de cordero ×1,6).
+
+**La pregunta es para el nutricionista, no para ti**: qué mide el mínimo de la Tabla
+III-3b. No he tocado nada, y lo he dejado declarado en
+`fuentes_de_composicion.json` para que no se descubra otra vez.
+
+## D · Las 253 discrepancias: ¿qué política quieres?
+
+Celdas donde tenemos cifra, la fuente tiene cifra, y se separan más del 25 %. **No
+son errores**: un alimento varía de verdad entre países. Están concentradas en
+vitaminas del grupo B y oligoelementos, que es donde más varía un análisis.
+
+Tres políticas, las tres defendibles:
+
+1. **Mandar siempre la fuente de mandato más alto.** Coherente con todo lo demás, y
+   el catálogo sería reproducible al 100 % desde las fuentes. Pero cambia ~253
+   celdas de golpe y algunas de nuestras cifras pueden ser mejores.
+2. **Quedarse con la más baja de las dos.** Lado seguro contra los máximos, lado
+   peligroso contra los mínimos — y eso es exactamente lo que `valor_plausible`
+   existe para no hacer a ciegas.
+3. **Mirarlas una a una.** Es lo correcto y son 259.
+
+**Hoy el catálogo se queda con lo que ya tenía y la lista está escrita.** Dime por
+dónde.
+
+## E · `Hígado de conejo` no tiene ninguna fuente, y ninguna base lo publica
+
+44 de sus nutrientes se presentan como medidas y no hay forma de saber de dónde
+salió ni uno: la ficha no lleva `fuente` ni `nota_datos`. Y no es que falte
+buscarlo — **ninguna de las cuatro fuentes publica hígado de conejo** (comprobado en
+las tres).
+
+Su hermana `Corazón de conejo` sí se declara PROXY («estimado a partir de corazón de
+cordero y de cerdo»), que es la salida honesta.
+
+**Lo que necesito**: o de dónde salieron esas cifras, o permiso para declararla
+PROXY de hígado de cordero o de pollo con la confianza escrita. **No he tocado
+ninguna cifra**: lo que falta no es un número, es saber de dónde viene, y eso no me
+lo puedo inventar.
+
+## F · La vitamina D: nueve celdas cerradas, y el cero falso que sostenía un verde
+
+**Esto ya está resuelto y no te pide nada. Lo escribo porque el diagnóstico que
+puse aquí antes era MÍO y era EQUIVOCADO**, y conviene que quede el recorrido.
+
+**Lo que dije ayer.** Que el adulto de 20 kg con las 8 especies más comunes
+excluidas se quedaba sin menú por la vitamina D de **seis carnes magras** que pasé
+a hueco. Y era mentira por una razón tonta: **esas seis carnes están excluidas en
+ese mismo caso** (conejo, pavo y ternera son tres de las ocho). No podían ser la
+causa.
+
+**Lo que era.** Una sola celda: la vitamina D de la **pescadilla**, que declaraba
+**0 µg** sin que ninguna fuente lo diga. BEDCA da la celda vacía en sus **tres**
+filas de merluza, y CIQUAL, que sí la mide, da 2,15. Era un cero mudo — y era **lo
+único** que sostenía ese menú. Medido contra el endpoint: sale con 0,0 y **no sale
+con 1,0 · 2,15 · 3 · 4 · 5 · 6 · 8**. Un verde que solo existe si un pescado tiene
+cero exacto de vitamina D no era un verde.
+
+**Y no hay nada que decidir, porque es aritmética.** Con las ocho especies fuera
+quedan 108 alimentos, casi todos pescado, y el tope crónico son 20 µg/1000 kcal.
+**17 de esos 108 pasan el tope ellos solos** — incluida la merluza, que con 2,15 µg
+y 65 kcal por 100 g sale a 33 µg/1000 kcal. Un pescado blanco tiene tan pocas kcal
+que cualquier vitamina D se le convierte en concentración alta. O sea que una
+ración hecha casi solo de pescado **se pasa de verdad**, y no darla es la regla 1.
+El BLOQUE 9 lleva ahora esa medida escrita, ya no exige ese menú, y sigue exigiendo
+lo único que dijo que comprobaba: que si no lo da, **lo diga**.
+
+**Lo que sí se arregló por el camino, y eran dos datos malos de verdad:** el hueco
+de vitamina D del **aceite de girasol** se imputaba a **5 µg** (lo que declara el
+huevo de pato) y el de vitamina A del **aceite de cacahuete** a **591 µg de
+retinol** (lo que declara la yema). Los dos son aceites de semilla refinados. Los
+dos están ahora a 0 con su fila de USDA escrita.
+
+Y **siete pescados** tienen ya su cifra, bajando por la cadena de mandato como
+pediste: merluza 2,15 · bacalao 1,41 · lubina 5,59 (USDA da 5,6 por su cuenta) ·
+lenguado 0,75 · pulpo 0,5 · calamar 0,36 · sepia 0.
+
+### Lo único que sigue abierto aquí, y es pequeño
+
+**Tres fichas se quedan sin cifra porque ninguna fuente publica su especie**:
+`Bacaladilla`, `Gamba roja` y `Pescadilla`. No es una decisión tuya: es un dato que
+hay que conseguir, y está en `DATOS_QUE_FALTAN.md` con el detalle de por qué no
+vale ninguna de las filas candidatas.
+
+**Y una cosa que he visto y NO he tocado, por si quieres mirarla algún día.** El
+tope de vitamina D se aplica **menú a menú** (20 µg/1000 kcal, NRC 2006). El repo
+ya se encontró esto mismo con el EPA+DHA el 26 de agosto y decidió lo contrario:
+sus 2800 mg/1000 kcal son un límite superior de la **dieta crónica**, no de un
+plato, así que lo movió al **promedio de la semana** — porque puesto menú a menú
+borraba el pescado azul entero. La vitamina D es también un SUL crónico del NRC.
+No digo que esté mal: la regla 2 la pone como restricción dura a propósito, y la
+vitamina D se acumula de verdad, que es justo el argumento de Lenox & Bauer. Pero
+son dos cifras de la misma naturaleza aplicadas en dos formas distintas, y eso
+merece que alguien lo diga en voz alta una vez. **No he cambiado nada.**
+
+---
+
+## G · Las vísceras, que me preguntaste si había comprobado — y no, no las había
+
+Tenías razón en preocuparte. Las he barrido y salieron **siete ceros mudos, y los
+siete aflojaban un tope crónico**: la vitamina D del riñón de cordero y del hígado de
+conejo, y el **yodo** del pulmón de vaca, del pulmón de cordero y del bazo de cordero
+(más la vitamina E de los dos pulmones). Ya están en hueco declarado, con su motivo
+escrito. El detalle está en `DATOS_QUE_FALTAN.md`.
+
+**Y primero lo que no es peligroso, que es lo que preguntabas del hueco.** Un hueco
+**no** cuenta como cero. Contra el tope crónico el motor le mete el percentil 90 de su
+familia, que en pescado son 8 µg/100 g — nivel de salmón:
+
+| | imputado | por 1000 kcal | tope |
+|---|---|---|---|
+| Bacaladilla | 8,0 | **103,9** | 20 |
+| Gamba roja | 8,0 | **88,9** | 20 |
+| Pescadilla | 8,0 | **145,5** | 20 |
+
+O sea que a esos tres el motor los trata como si fueran salmón: 4 a 7 veces el tope. Y
+contra el mínimo el hueco aporta 0, así que tampoco da por cubierto lo que no sabe. Es
+conservador en las dos direcciones. **El peligroso es el cero mudo**, que afirma «no lo
+tiene» y afloja el techo — y es exactamente lo que he encontrado en las vísceras.
+
+Y he añadido un campo que no existía, **`hueco_verificado`**, porque `sin_dato` era una
+lista pelada: «hemos mirado las tres fuentes y ninguna lo mide» y «nadie ha mirado
+nunca» se veían igual. Ahora se puede leer cuál es cuál, que es justo lo que hacía
+falta para contestarte.
+
+### Lo que te toca decidir, y son tres cosas
+
+**1. El hígado de vaca declara el DOBLE de vitamina A que USDA.** Nuestra cifra son
+**10250 µg** y es de BEDCA (mandato 1). USDA, en la fila que la ficha declaraba como
+única fuente, da **4968**. Y ojo, porque esto no es el lío de los convenios del
+β-caroteno: un hígado **no tiene caroteno**, su vitamina A es retinol puro, y con
+retinol puro los cuatro convenios dan el mismo número. Es una discrepancia de medida.
+CIQUAL no desempata (6350). Importa porque el hígado de vaca entra en casi todo menú,
+es de donde sale casi toda la vitamina A de la ración, y la vitamina A tiene **máximo
+en FEDIAF**. No he tocado la cifra: manda BEDCA. Lo que he hecho es escribirle el id de
+BEDCA, que no tenía — sin él esos 10250 no se comparaban con ninguna fuente que los
+publique.
+
+**2 y 3. Dos fichas con cifras de otra especie, y renombrar es decisión tuya.** Es la
+cuarta y la quinta de una familia que ya tiene tres casos cerrados (bazo, páncreas y
+pulmón «de ternera», renombrados en agosto y septiembre):
+
+- El **`Riñón de ternera` es un riñón de BUEY**: su identidad cuadra exacta con la fila
+  de buey de CIQUAL (92,3/17,1/2,65) y no con la de ternera, y su vitamina D, 1,05, es
+  la de esa fila de buey clavada. ⚠️ Y su vitamina A, 204, **no sale de ninguna de las
+  cuatro filas candidatas** — esa celda sigue sin explicación.
+- El **`Pulmón de vaca` lleva la vitamina D del pulmón de TERNERA**, y esto cierra una
+  pregunta que la propia ficha llevaba escrita desde el 8 de septiembre. BEDCA 2300
+  «Pulmón, de ternera» da 11 y 14, que son exactamente las nuestras, y USDA —la fila de
+  vacuno que la ficha declara— no publica vitamina D del pulmón. Lo raro: el catálogo
+  tiene aparte un `Pulmón de ternera` cuya vitamina D es un hueco. La cifra de ternera
+  está en la ficha de vaca y falta en la de ternera.
+
+### Y lo de pollo y pavo, contestado: las seis fichas de ave están bien
+
+USDA publica hígado, molleja, corazón y despojos de los dos; CIQUAL añade corazón,
+molleja e hígado de pollo y corazón e hígado de pavo; BEDCA tiene corazón e hígado de
+pollo. **Del pollo la vitamina D solo la mide el hígado**; molleja y corazón no la mide
+nadie con la fila que sembró nuestras fichas. Las seis cuadran: hígado de pollo 0 =
+USDA, hígado de pavo 1,3 = USDA, corazón de pavo 0,4 = USDA y CIQUAL, molleja de pavo
+0,5 = USDA, corazón de pollo 0,2 = BEDCA 970, y molleja de pollo en hueco, que es lo
+correcto.

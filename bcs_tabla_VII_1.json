@@ -1,0 +1,177 @@
+{
+  "_meta": {
+    "que_es": "La Tabla VII-1 de FEDIAF: CÓMO SE RECONOCE cada uno de los nueve puntos de condición corporal, mirando y palpando.",
+    "de_donde": "FEDIAF 2025, Anexo 7.1, «Guide to 9-point and 5-point Body Condition Scores in dogs» (Tabla VII-1). El pie de la tabla dice: «Adapted from Laflamme DP 1997b, Laflamme DP 1993, Laflamme DP 2006, Laflamme DP et al. 1994, Mawby DI et al. 2004.»",
+    "por_que_existe": [
+      "Esto no es lo mismo que la Tabla VII-2, que ya estaba en el motor: aquella dice CUÁNTO se desvía del peso ideal cada punto (el «10 % por punto» con el que se estima el peso objetivo) y esta dice cómo se RECONOCE el punto. Una decide la cuenta; la otra decide qué número escribe quien mira al perro, que es el que entra en la cuenta.",
+      "Vivía en `ESCALA_BCS` de `src/bcs.js`, escrita a mano y SIN FUENTE: era una paráfrasis nuestra de una tabla que FEDIAF publica entera. Es la regla 6 -- nada que la app pinte se decide en la app --, y además la regla de siempre: si lo dice el manual, se aplica lo que dice el manual."
+    ],
+    "dos_idiomas": "Lo que va entre « » en `dice_la_fuente` es la frase LITERAL de FEDIAF, en inglés, y la audita `auditar_citas.py` contra el texto del PDF. `en_castellano` es nuestra traducción para la pantalla, y va marcada como nuestra: no se puede citar como si fuera de la fuente.",
+    "ojo_con_el_4": "FEDIAF llama al 4 «Slightly underweight» en ESTA tabla y, en §7.1.3 y §7.2.4.1, dice que la banda ideal es «between 4/9 and 5/9». Las dos cosas son de FEDIAF y no se contradicen -- el 4 está por debajo del peso en BCS 5 y sigue siendo ideal --, así que aquí se guarda el nombre de la tabla y la etiqueta que el motor enseña la decide `ETIQUETAS_CONDICION`, que ya lo tiene resuelto.",
+    "ojo_con_el_8_y_el_9": "Las filas 8 y 9 no tienen «Abdomen»: FEDIAF cambia esa casilla por «General». No es un hueco de la transcripción -- va declarado aquí para que no se rellene «por simetría»."
+  },
+  "puntos": [
+    {
+      "bcs": 1,
+      "nombre_fediaf": "Emaciated",
+      "nombre": "Emaciado",
+      "en_la_escala_de_cinco": 1,
+      "grasa_corporal_estimada_pct": "<4%",
+      "desvio_de_peso_vs_bcs5_pct": "≥40%",
+      "dice_la_fuente": {
+        "costillas": "«Visible from a distance & easily palpable with no overlaying fat.»",
+        "abdomen": "«Severe abdominal tuck when viewed from the side, exaggerated hourglass shape when viewed from above.»",
+        "base_de_la_cola": "«Prominent, raised bone structures with no tissue between the skin and bone. Obvious loss of muscle mass and no discernible body fat.»"
+      },
+      "en_castellano": {
+        "costillas": "Se ven desde lejos y se palpan sin nada de grasa encima.",
+        "abdomen": "Hundido de perfil, con forma de reloj de arena exagerada visto desde arriba.",
+        "base_de_la_cola": "Los huesos sobresalen sin nada de tejido entre la piel y el hueso. Pérdida evidente de masa muscular y nada de grasa apreciable."
+      }
+    },
+    {
+      "bcs": 2,
+      "nombre_fediaf": "Very Thin",
+      "nombre": "Muy delgado",
+      "en_la_escala_de_cinco": null,
+      "grasa_corporal_estimada_pct": "4 - 10%",
+      "desvio_de_peso_vs_bcs5_pct": "-30 - 40%",
+      "dice_la_fuente": {
+        "costillas": "«Visible & easily palpable with no fat layer under the skin.»",
+        "abdomen": "«Strong abdominal tuck when viewed from the side, accentuated hourglass shape when viewed from above.»",
+        "base_de_la_cola": "«Prominent, raised bone structures with no tissue between the skin and bone. Minimal loss of muscle mass.»"
+      },
+      "en_castellano": {
+        "costillas": "Se ven y se palpan sin capa de grasa bajo la piel.",
+        "abdomen": "Muy hundido de perfil, con el reloj de arena acentuado visto desde arriba.",
+        "base_de_la_cola": "Los huesos sobresalen sin tejido entre la piel y el hueso. Pérdida mínima de masa muscular."
+      }
+    },
+    {
+      "bcs": 3,
+      "nombre_fediaf": "Thin",
+      "nombre": "Delgado",
+      "en_la_escala_de_cinco": 2,
+      "grasa_corporal_estimada_pct": "5 - 15%",
+      "desvio_de_peso_vs_bcs5_pct": "-20 - 30%",
+      "dice_la_fuente": {
+        "costillas": "«Discernible & easily palpable with minimal fat cover.»",
+        "abdomen": "«Pronounced abdominal tuck when viewed from the side, marked hourglass shape when viewed from above.»",
+        "base_de_la_cola": "«Raised bony structures with little tissue between skin and bone.»"
+      },
+      "en_castellano": {
+        "costillas": "Se distinguen y se palpan con una capa mínima de grasa.",
+        "abdomen": "Hundido de forma pronunciada de perfil, con el reloj de arena marcado desde arriba.",
+        "base_de_la_cola": "Los huesos sobresalen con poco tejido entre la piel y el hueso."
+      }
+    },
+    {
+      "bcs": 4,
+      "nombre_fediaf": "Slightly underweight",
+      "nombre": "Ligeramente por debajo de peso",
+      "en_la_escala_de_cinco": null,
+      "grasa_corporal_estimada_pct": "10 - 20%",
+      "desvio_de_peso_vs_bcs5_pct": "-10 - 15%",
+      "dice_la_fuente": {
+        "costillas": "«Easily palpable with minimal fat cover.»",
+        "abdomen": "«Abdominal tuck when viewed from the side, slightly marked hourglass shape when viewed from above.»",
+        "base_de_la_cola": "«Raised bony structures with little subcutaneous tissue.»"
+      },
+      "en_castellano": {
+        "costillas": "Se palpan con facilidad, con una capa mínima de grasa.",
+        "abdomen": "Recogido de perfil, con el reloj de arena ligeramente marcado desde arriba.",
+        "base_de_la_cola": "Los huesos sobresalen con poco tejido bajo la piel."
+      }
+    },
+    {
+      "bcs": 5,
+      "nombre_fediaf": "Ideal",
+      "nombre": "Ideal",
+      "en_la_escala_de_cinco": 3,
+      "grasa_corporal_estimada_pct": "15 - 25%",
+      "desvio_de_peso_vs_bcs5_pct": "0%",
+      "dice_la_fuente": {
+        "costillas": "«Ribs not visible, but easily palpable, with thin layer of fat. Other bony prominences are palpable with slight amount of overlaying fat.»",
+        "abdomen": "«Abdominal tuck when viewed from the side and well proportioned lumbar waist (hourglass shape) when viewed from above.»",
+        "base_de_la_cola": "«Smooth contour or some thickening, bony structures palpable under a thin layer of subcutaneous fat.»"
+      },
+      "en_castellano": {
+        "costillas": "No se ven, pero se palpan con facilidad bajo una capa fina de grasa. Los demás huesos se palpan con algo de grasa encima.",
+        "abdomen": "Recogido de perfil y con la cintura bien proporcionada vista desde arriba.",
+        "base_de_la_cola": "Contorno liso o algo engrosado, con los huesos palpables bajo una capa fina de grasa."
+      }
+    },
+    {
+      "bcs": 6,
+      "nombre_fediaf": "Slightly overweight",
+      "nombre": "Ligeramente por encima del ideal",
+      "en_la_escala_de_cinco": null,
+      "grasa_corporal_estimada_pct": "20 - 30%",
+      "desvio_de_peso_vs_bcs5_pct": "+10 - 15%",
+      "dice_la_fuente": {
+        "costillas": "«Palpable with moderate fat cover.»",
+        "abdomen": "«Less obvious abdominal tuck when viewed from the side, hourglass shape less pronounced when viewed from above.»",
+        "base_de_la_cola": "«Smooth contour or some thickening, bony structures remain palpable under moderate layer of subcutaneous fat.»"
+      },
+      "en_castellano": {
+        "costillas": "Se palpan bajo una capa moderada de grasa.",
+        "abdomen": "Menos recogido de perfil, y el reloj de arena menos marcado desde arriba.",
+        "base_de_la_cola": "Contorno liso o algo engrosado; los huesos se siguen palpando bajo una capa moderada de grasa."
+      }
+    },
+    {
+      "bcs": 7,
+      "nombre_fediaf": "Overweight",
+      "nombre": "Sobrepeso",
+      "en_la_escala_de_cinco": 4,
+      "grasa_corporal_estimada_pct": "25 - 35%",
+      "desvio_de_peso_vs_bcs5_pct": "+20 - 30%",
+      "dice_la_fuente": {
+        "costillas": "«Difficult to palpate, thick fat cover.»",
+        "abdomen": "«Little abdominal tuck when viewed from the side or waist, and back slightly broadened when viewed from above.»",
+        "base_de_la_cola": "«Smooth contour or some thickening, bony structures remain palpable under subcutaneous fat.»"
+      },
+      "en_castellano": {
+        "costillas": "Cuesta palparlas, con una capa gruesa de grasa.",
+        "abdomen": "Apenas recogido de perfil, sin cintura, y la espalda algo más ancha vista desde arriba.",
+        "base_de_la_cola": "Contorno liso o algo engrosado; los huesos se siguen palpando bajo la grasa."
+      }
+    },
+    {
+      "bcs": 8,
+      "nombre_fediaf": "Obese",
+      "nombre": "Obeso",
+      "en_la_escala_de_cinco": null,
+      "grasa_corporal_estimada_pct": "30 - 40%",
+      "desvio_de_peso_vs_bcs5_pct": "+30 - 45%",
+      "dice_la_fuente": {
+        "costillas": "«Ribs are very difficult to palpate, with thick layer of fat. Other bony prominences are distended with extensive fat deposit.»",
+        "base_de_la_cola": "«Appears thickened, difficult to palpate bony structures.»",
+        "general": "«Ventral bulge under abdomen, no waist, and back markedly broadened when viewed from above. Fat deposits over lumbar area and neck.»"
+      },
+      "en_castellano": {
+        "costillas": "Cuesta mucho palparlas, bajo una capa gruesa de grasa. Los demás huesos están cubiertos por un depósito de grasa extenso.",
+        "base_de_la_cola": "Se ve engrosada y cuesta palpar los huesos.",
+        "general": "Abultamiento bajo el abdomen, sin cintura, y la espalda claramente más ancha vista desde arriba. Depósitos de grasa en la zona lumbar y el cuello."
+      }
+    },
+    {
+      "bcs": 9,
+      "nombre_fediaf": "Grossly Obese",
+      "nombre": "Obesidad mórbida",
+      "en_la_escala_de_cinco": 5,
+      "grasa_corporal_estimada_pct": ">40%",
+      "desvio_de_peso_vs_bcs5_pct": ">45%",
+      "dice_la_fuente": {
+        "costillas": "«Ribs are very difficult to palpate, with massive layer of fat; other bony prominences are distended with extensive fat deposit between bone and skin.»",
+        "base_de_la_cola": "«Appears thickened, bony structures almost impossible to palpate.»",
+        "general": "«Pendulous ventral bulge under abdomen, no waist, back markedly broadened when viewed from above. Fat deposits over lumbar area, neck, face, limbs and in the groin. A dip may form on the back when lumbar and thoracic fat bulges dorsally.»"
+      },
+      "en_castellano": {
+        "costillas": "Cuesta muchísimo palparlas, bajo una capa enorme de grasa; los demás huesos están cubiertos por un depósito extenso entre el hueso y la piel.",
+        "base_de_la_cola": "Se ve engrosada y los huesos son casi imposibles de palpar.",
+        "general": "Abultamiento colgante bajo el abdomen, sin cintura, y la espalda claramente más ancha vista desde arriba. Depósitos de grasa en la zona lumbar, el cuello, la cara, las extremidades y la ingle. Puede formarse un hundimiento en el lomo cuando la grasa lumbar y torácica sobresale hacia arriba."
+      }
+    }
+  ]
+}

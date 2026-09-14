@@ -294,6 +294,46 @@ TOPE_EPA_DHA_SEMANAL_KG075 = _por_peso(2.8)  # 0,364 g por kg^0,75, promedio sem
 TOPE_YODO_KCAL = 1275.0    # µg por 1000 kcal -- NRC 2006, Belshaw 1975
 MARGEN_EXTRA_YODO_KELP = 1.5  # +50% de margen si el yodo viene de kelp
 
+# Las palabras con las que se reconoce una fuente de kelp en el catalogo. Vivian
+# escritas a mano dentro de `revisar_seguridad` y de ningun otro sitio, que es
+# justo por lo que el margen no se aplicaba en ninguno de los otros dos.
+PALABRAS_KELP = {"kelp", "seaweed", "algas"}
+
+
+def hay_kelp(menu):
+    """¿Alguno de los alimentos del menú es una fuente de kelp?"""
+    return any(_es(n, PALABRAS_KELP) for n in menu)
+
+
+def tope_de_yodo(menu, der, peso_perro_kg=None):
+    """EL tope de yodo de este menú, en µg. **Uno solo, para los tres.**
+
+    ⚠️ POR QUÉ ESTA FUNCIÓN EXISTE (14 de septiembre de 2026). CASO REAL
+    REPRODUCIDO: un menú ENTREGADO con **2156 µg de yodo y un límite de 2040**,
+    y en la pantalla del dueño el aviso «por encima del límite prudente». Un
+    menú que se entrega diciendo que se pasa de un límite es exactamente lo que
+    Elena señaló: «eso no debería ser un aviso, debería ser un menú en rojo».
+
+    Y la causa es la de siempre -- **el que construye y el que comprueba no
+    medían igual** -- en su cuarta cara: el margen extra del kelp estaba
+    aplicado SOLO en el aviso. Ni `resolver()` ni `_menu_precalculado_es_seguro`
+    lo conocían, así que el solver construía hasta 3060 µg, el filtro final lo
+    dejaba pasar, y el aviso lo medía contra 2040 y decía que se pasaba. Los
+    tres números eran el mismo yodo y ninguno el mismo límite.
+
+    Salió barriendo EDICIONES, que es lo que dijo Elena («ha sido después de
+    cambiar un par de ingredientes en modo usuario en automático»): 29 ediciones
+    encadenadas sobre cinco perros y apareció en una. Medido sobre el catálogo:
+    **35 de los 216 menús llevan kelp y 2 se pasan del tope apretado**, los dos
+    de cachorro gigante -- la población donde menos margen conviene gastar.
+    """
+    tope = TOPE_YODO_KCAL * (der or 0) / 1000.0
+    if peso_perro_kg and peso_perro_kg > 0:
+        tope = min(tope, TOPE_YODO_KG075 * (peso_perro_kg ** 0.75))
+    if hay_kelp(menu):
+        tope /= MARGEN_EXTRA_YODO_KELP
+    return tope
+
 # ---------------------------------------------------------------------------
 # 1e. SELENIO (vísceras, pescado, suplementos)
 # ---------------------------------------------------------------------------
@@ -462,6 +502,33 @@ TOPE_OXALATO_PESO_UROLITOS = 0.0   # con antecedente: fuera
 # via por la que se dispara la vitamina A, y las fuentes SE SUMAN (higado +
 # aceite de higado de bacalao + multivitaminico). El maximo de vitamina A de
 # FEDIAF, que si esta verificado, lo comprueba aparte `verificar()`.
+# ⚠️ LOS CUATRO TOPES «% DEL PLATO» SON CRITERIO NUESTRO, Y EL TEXTO LO DICE
+#    (14 de septiembre de 2026). Elena, viendo uno de ellos en su pantalla:
+#
+#        «me salió un menú con riñón y no sé qué y me salía un aviso de que el
+#         máximo era el 10 y que llevaba un 11... Eso no debería ser un aviso,
+#         debería ser un menú en rojo»
+#
+#    Tiene razón en el principio --un aviso se puede ignorar; un límite no-- y
+#    por eso al buscarlo aparecieron DOS cosas distintas que decían lo mismo en
+#    pantalla, y solo una era un fallo:
+#
+#    · EL YODO DEL KELP era un tope CRÓNICO de verdad aplicado en un solo sitio.
+#      Eso sí es la regla 2 rota, y se arregló: el menú ya no se entrega.
+#    · ESTE, el del hígado/riñón/clara, NO es un límite. Es una proporción de
+#      BARF, o sea FORMA (regla 3), y su número es NUESTRO -- está escrito arriba
+#      en cada uno: «EL 10% ES CRITERIO NUESTRO», «EL 5% ES CRITERIO NUESTRO».
+#      Lo que de verdad tiene techo es la VITAMINA A, y ese lo comprueba
+#      `verificar()` contra FEDIAF en todos los menús.
+#
+#    Así que aquí lo que estaba mal era EL TEXTO: llamar «límite» a un consejo
+#    nuestro le da rango de requisito, y entonces un menú entregado parece que
+#    se ha saltado algo. Es el mismo criterio con el que el filtro final NO
+#    exige el techo del libro que sube (`HOLGURA_DEL_TECHO_QUE_SUBE`): rechazar
+#    un menú por pasarse de algo que nos hemos inventado sería darle ese rango.
+#
+#    Lo vigila el BLOQUE 108: ningún menú ENTREGADO puede traer, en el canal del
+#    dueño, un texto que diga que se pasa de un límite.
 TOPE_HIGADO_PESO = 0.10
 
 # ⚠️ EL RIÑÓN COMPARTE MECANISMO CON EL HÍGADO — investigado 4 agosto.
@@ -704,6 +771,31 @@ TIROIDES_EXCLUIR = {"cuello", "laringe", "traquea", "esofago", "garganta"}
 TOXICOS_FEDIAF_7_7 = {
     "uva", "uvas", "pasa", "pasas", "sultana", "chocolate", "cacao",
     "cebolla", "cebolleta", "ajo", "puerro", "chalota", "cebollino",
+    # ⚠️ AMPLIADA EL 11 DE SEPTIEMBRE DE 2026, LEYENDO LA WSAVA. Su hoja
+    # «Guide to Treats for Dogs» da la lista de «Toxic food ingredients» y
+    # trae CUATRO FAMILIAS que el anexo 7.7 de FEDIAF no nombra:
+    #
+    #   · Macadamia
+    #   · Xilitol, el edulcorante
+    #   · Alcohol y masa de levadura CRUDA
+    #   · Cafeina -- cafe, te y bebidas energeticas
+    #
+    # Ninguna esta hoy en el catalogo, igual que no lo estaba ninguna de las
+    # trece de arriba, y por eso la ausencia no daba error ni cambiaba ningun
+    # menu. Se escriben por lo mismo que se escribieron aquellas: el coste de
+    # tenerlas es cero y el de no tenerlas es una ficha entrando sin que salte
+    # nada. Es el patron del oxido de cobre.
+    #
+    # ⚠️ Y EL XILITOL LO SEÑALAN DOS FUENTES INDEPENDIENTES, lo que lo saca de
+    # la categoria de «por si acaso»: Fascetti & Delaney cap.17 avisa de que
+    # «some fiber sources contain artificial sweeteners such as xylitol and
+    # should be avoided» -- o sea que la puerta por la que entraria no es una
+    # chuche, es un SUPLEMENTO DE FIBRA, que es una categoria que este
+    # catalogo si tiene.
+    "macadamia", "macadamias",
+    "xilitol", "xylitol",
+    "alcohol", "levadura cruda", "masa de levadura",
+    "cafeina", "cafe", "te verde", "te negro", "bebida energetica",
 }
 
 # ⚠️ RESTRICCIONES POR PATOLOGIA — investigadas 4 agosto, mismo patron que
@@ -777,6 +869,14 @@ def revisar_seguridad(menu, alimentos, der, etapa="Adulto", patologias=None,
     """
     patologias = set(patologias or [])
     problemas = []
+    # ⚠️ LA LISTA DEL PROFESIONAL ARRANCA AQUI, NO 240 LINEAS MAS ABAJO (13 de
+    # septiembre de 2026, noche). Se sube para que cada aviso del DUEÑO pueda
+    # dejar su fuente al lado EN EL MOMENTO de escribirse. Antes nacia al final,
+    # asi que los tres avisos de seguridad cronica de aqui arriba no tenian
+    # donde ponerla y la llevaban dentro del texto del dueño -- «el límite del
+    # NRC», «referencias humanas de la EPA», «TVT Merkblatt 181, mayo 2025» --,
+    # que es lo que Elena mando fuera. No se borra: se mueve a este canal.
+    avisos = []
     if not menu:
         return ([], []) if devolver_avisos else []
     total = sum(menu.values()) or 1.0
@@ -812,48 +912,56 @@ def revisar_seguridad(menu, alimentos, der, etapa="Adulto", patologias=None,
                 "En exceso, %s acumula mercurio en el cuerpo del perro con cada "
                 "exposición repetida -- no es un riesgo de una sola vez, es "
                 "acumulativo. Ahora mismo aporta el %.0f%% de las calorías del día "
-                "(el límite prudente es %.0f%%). Este umbral está extrapolado desde "
-                "referencias humanas de la EPA -- no existe un límite validado "
-                "específicamente en perros."
+                "(el límite prudente es %.0f%%). Ese límite es prudente y no "
+                "está medido en perros: sale de lo que se considera seguro en "
+                "personas, porque en perros no hay un número validado."
                 % (", ".join(merc), k / der * 100, TOPE_MERCURIO_KCAL * 100))
+        avisos.append("Mercurio: el umbral aplicado (%.0f%% de las kcal) está "
+                      "extrapolado de las referencias humanas de la EPA. No existe "
+                      "un límite validado específicamente en el perro."
+                      % (TOPE_MERCURIO_KCAL * 100))
 
     # 1c. vitamina D acumulada de todas las fuentes del menú
     vitd_ug = sum(alimentos.get(n, {}).get("nutrientes", {}).get("vitD", 0) * g / 100.0
                  for n, g in menu.items())
     tope_vitd_por_kcal = TOPE_VITD_KCAL * der / 1000.0
     tope_vitd_activo = tope_vitd_por_kcal
-    origen_tope_vitd = "el límite del NRC según sus calorías diarias"
+    origen_tope_vitd = "límite seguro según sus calorías diarias"
     if peso_perro_kg and peso_perro_kg > 0:
         tope_vitd_por_peso = TOPE_VITD_KG075 * (peso_perro_kg ** 0.75)
         if tope_vitd_por_peso < tope_vitd_activo:
             tope_vitd_activo = tope_vitd_por_peso
-            origen_tope_vitd = "el límite según su peso (más estricto que el de calorías en este caso)"
+            origen_tope_vitd = "límite según su peso (más estricto que el de calorías en este caso)"
     if vitd_ug > tope_vitd_activo:
         problemas.append(
             "Sumando TODAS las fuentes de este menú (pescado graso, aceite de "
             "hígado de bacalao, suplementos), la vitamina D llega a %.1f µg, por "
-            "encima de %s (%.1f µg). La vitamina D se acumula en el cuerpo y su "
+            "encima del %s (%.1f µg). La vitamina D se acumula en el cuerpo y su "
             "exceso no se elimina rápido -- revisa si hay más de una fuente "
             "sumando a la vez." % (vitd_ug, origen_tope_vitd, tope_vitd_activo))
+        # ⚠️ Y LA FUENTE, AL OTRO CANAL. «por encima de el límite del NRC» decía
+        #    dos cosas mal a la vez: nombraba la fuente en la pantalla del dueño
+        #    y ademas estaba mal escrito («de el»).
+        avisos.append("Vitamina D: el tope aplicado es el del NRC 2006 por 1000 kcal "
+                      "(TOPE_VITD_KCAL), apretado por el de peso metabólico "
+                      "(TOPE_VITD_KG075) cuando este es menor. En este menú ha "
+                      "mandado «%s»." % origen_tope_vitd)
 
     # 1d. yodo (kelp, suplementos, pescado)
     yodo_ug = sum(alimentos.get(n, {}).get("nutrientes", {}).get("yodo", 0) * g / 100.0
                  for n, g in menu.items())
-    tope_yodo = TOPE_YODO_KCAL * der / 1000.0
-    # ⚠️ EL PERRO DE TRABAJO (11 septiembre): igual que la vitamina D de arriba.
-    # El semáforo tiene que mirar lo mismo que el solver, o construiríamos menús
-    # que el propio semáforo rechaza. Derivación en el bloque 1c-bis.
-    if peso_perro_kg and peso_perro_kg > 0:
-        tope_yodo = min(tope_yodo, TOPE_YODO_KG075 * (peso_perro_kg ** 0.75))
-    hay_kelp = any(_es(n, {"kelp", "seaweed", "algas"}) for n in menu)
-    if hay_kelp:
-        tope_yodo /= MARGEN_EXTRA_YODO_KELP
+    # ⚠️ EL MISMO TOPE QUE EL SOLVER Y QUE EL FILTRO FINAL, y por eso es una
+    # función y no una cuenta repetida aquí: ver `tope_de_yodo`. Hasta el 14 de
+    # septiembre el margen del kelp solo lo conocía este aviso, y esa era la
+    # forma de que un menú se entregara con un texto diciendo que se pasaba.
+    tope_yodo = tope_de_yodo(menu, der, peso_perro_kg)
+    _con_kelp = hay_kelp(menu)
     if yodo_ug > tope_yodo:
         problemas.append(
             "El yodo de este menú llega a %.0f µg, por encima del límite "
             "prudente (%.0f µg%s). Si la fuente es kelp, ten en cuenta que su "
             "contenido real de yodo puede variar mucho de un producto a otro."
-            % (yodo_ug, tope_yodo, " -- con margen extra por incluir kelp" if hay_kelp else ""))
+            % (yodo_ug, tope_yodo, " -- con margen extra por incluir kelp" if _con_kelp else ""))
 
     # 1e. selenio (vísceras, pescado, suplementos)
     selenio_ug = sum(alimentos.get(n, {}).get("nutrientes", {}).get("selenio", 0) * g / 100.0
@@ -876,8 +984,10 @@ def revisar_seguridad(menu, alimentos, der, etapa="Adulto", patologias=None,
         problemas.append(
             "En cantidad, la clara de huevo cruda y SOLA (sin la yema) puede "
             "bloquear la absorción de biotina — el huevo entero no da este "
-            "problema. Ahora mismo son %.0f g, el %.0f%% del plato (el "
-            "límite es %.0f%%)."
+            "problema. Ahora mismo son %.0f g, el %.0f%% del plato, y nosotros "
+            "recomendamos no pasar del %.0f%%. Es un consejo nuestro, no un "
+            "límite: el menú cumple lo que tiene que cumplir. Si puedes, dale "
+            "el huevo entero en vez de la clara sola."
             % (g_clara, g_clara / total * 100, TOPE_CLARA_PESO * 100))
 
     # 3. oxalato
@@ -897,7 +1007,8 @@ def revisar_seguridad(menu, alimentos, der, etapa="Adulto", patologias=None,
         else:
             problemas.append(
                 "En cantidad, %s pueden favorecer los oxalatos. Ahora "
-                "mismo son el %.0f%% del plato (el límite es %.0f%%)."
+                "mismo son el %.0f%% del plato, y nosotros recomendamos no "
+                "pasar del %.0f%%. Es un consejo nuestro, no un límite."
                 % (", ".join(oxal), g_ox / total * 100, tope_ox * 100))
 
     # 4. higado por peso (la via por la que se dispara la vitamina A)
@@ -905,9 +1016,11 @@ def revisar_seguridad(menu, alimentos, der, etapa="Adulto", patologias=None,
     g_hig = sum(menu[n] for n in hig)
     if g_hig > total * TOPE_HIGADO_PESO:
         problemas.append(
-            "En exceso, el hígado puede disparar la vitamina A por encima "
-            "de lo seguro. Ahora mismo son %.0f g, el %.0f%% del plato (el "
-            "límite es %.0f%%)."
+            "El hígado es la vía por la que se dispara la vitamina A. Ahora "
+            "mismo son %.0f g, el %.0f%% del plato, y nosotros recomendamos no "
+            "pasar del %.0f%%. Es un consejo nuestro, no un límite: la vitamina "
+            "A de este menú está comprobada y dentro de su máximo. Si puedes, "
+            "baja el hígado en el próximo."
             % (g_hig, g_hig / total * 100, TOPE_HIGADO_PESO * 100))
 
     # 3b. BORRAJA — se excluye del todo, no se topa por cantidad. A
@@ -931,20 +1044,25 @@ def revisar_seguridad(menu, alimentos, der, etapa="Adulto", patologias=None,
     tox = [n for n in menu if _es(n, TOXICOS_FEDIAF_7_7)]
     if tox:
         problemas.append(
-            "%s está en la lista de alimentos humanos con toxicidad documentada "
-            "en el perro (FEDIAF, anexo 7.7). No hay una cantidad segura: la "
-            "propia fuente dice que en la uva y la pasa la gravedad no depende "
-            "de la dosis, y que en el chocolate dosis pequeñas repetidas "
-            "intoxican igual por acumulación. Fuera de la ración."
+            "%s está en la lista de alimentos de humanos con toxicidad "
+            "documentada en el perro. No hay una cantidad segura: en la uva y "
+            "la pasa la gravedad no depende de la dosis, y en el chocolate "
+            "dosis pequeñas repetidas intoxican igual por acumulación. Fuera "
+            "de la ración."
             % ", ".join(tox))
+        avisos.append("Toxicidad documentada en el perro: FEDIAF 2025, anexo 7.7 "
+                      "(uva y pasa sin relación dosis-gravedad; cacao por "
+                      "acumulación).")
 
     tir = [n for n in menu if _es(n, TIROIDES_EXCLUIR)]
     if tir:
         problemas.append(
             "%s puede llevar la glándula tiroides del animal pegada — con "
-            "uso regular puede causar hipertiroidismo exógeno en el perro. "
-            "No se recomienda en ninguna cantidad habitual (TVT Merkblatt "
-            "181, mayo 2025)." % ", ".join(tir))
+            "uso regular puede subirle la tiroides al perro sin que tenga "
+            "ningún problema de tiroides. No se recomienda en ninguna "
+            "cantidad habitual." % ", ".join(tir))
+        avisos.append("Tejido tiroideo en cuellos de rumiante: hipertiroidismo "
+                      "exógeno. TVT Merkblatt 181 BARF, mayo 2025.")
 
     # 3b-bis. RESTRICCIONES POR PATOLOGÍA GUARDADAS EN EL PROPIO ALIMENTO
     # (grelo/nabo en hipotiroidismo, dátil/mango/plátano en diabetes,
@@ -987,17 +1105,20 @@ def revisar_seguridad(menu, alimentos, der, etapa="Adulto", patologias=None,
     g_vm = sum(menu[n] for n in visc_meta)
     if g_vm > total * TOPE_VISCERAS_METABOLICAS_PESO:
         problemas.append(
-            "En exceso, el riñón acumula cadmio y tiene más purinas que la "
-            "carne muscular. Ahora mismo son %.0f g, el %.0f%% del plato "
-            "(el límite es %.0f%%)."
+            "El riñón acumula cadmio y tiene más purinas que la carne "
+            "muscular. Ahora mismo son %.0f g, el %.0f%% del plato, y nosotros "
+            "recomendamos no pasar del %.0f%%. Es un consejo nuestro, no un "
+            "límite: el menú cumple lo que tiene que cumplir. Si puedes, baja "
+            "el riñón en el próximo."
             % (g_vm, g_vm / total * 100, TOPE_VISCERAS_METABOLICAS_PESO * 100))
     g_meta_junto = g_hig + g_vm
     if g_meta_junto > total * TOPE_VISCERAS_METABOLICAS_PESO * 1.5 and hig and visc_meta:
         problemas.append(
             "El hígado y el riñón comparten el mismo mecanismo de "
-            "acumulación (cobre/cadmio), así que juntos no deberían sumar "
-            "mucho más que el límite de uno solo. Ahora mismo entre los "
-            "dos son el %.0f%% del plato."
+            "acumulación (cobre y cadmio), así que entre los dos no conviene "
+            "que sumen mucho más de lo que recomendamos para uno solo. Ahora "
+            "mismo son el %.0f%% del plato. Es un consejo nuestro, no un "
+            "límite: el menú cumple lo que tiene que cumplir."
             % (g_meta_junto / total * 100))
 
     # 5. fuentes de vitamina A acumuladas — AVISO, no un segundo tope.
@@ -1019,7 +1140,10 @@ def revisar_seguridad(menu, alimentos, der, etapa="Adulto", patologias=None,
     # varias fuentes no es malo en sí: lo malo sería pasarse del máximo, y de
     # eso ya se encarga `verificar()`. Se devuelve aparte para que no bloquee
     # un menú que está bien.
-    avisos = []
+    #
+    # ⚠️ AQUI YA NO SE REINICIA (13 septiembre, noche): la lista nace arriba del
+    # todo y puede traer ya las fuentes de los avisos de seguridad cronica.
+    # Volver a ponerla a [] aqui las borraria en silencio.
 
     # ⚠️ DOS AVISOS DE FEDIAF QUE ESTABAN LEIDOS Y NO SE DECIAN (10 septiembre).
     #
@@ -1101,18 +1225,99 @@ def revisar_seguridad(menu, alimentos, der, etapa="Adulto", patologias=None,
         _fila_ca = requerimientos.get("Calcio")
         if _fila_ca:
             _max_ca = _max_de_ca(_fila_ca, "Calcio", etapa)
-    if _max_ca and der:
+    # ⚠️ EL UMBRAL ERA NUESTRO Y ESTABA DONDE NO PASA NADA (13 septiembre 2026).
+    #
+    # Esto avisaba a partir del 85 % del maximo de FEDIAF, o sea 5312 mg/1000
+    # kcal en adulto. MEDIDO sobre los 216 menus precalculados: el que mas
+    # calcio lleva llega a 4247. ESTE AVISO NO HA SALTADO NUNCA.
+    #
+    # Y mientras tanto, SACN5 cap.6 SI dice donde empieza el problema -- «as
+    # calcium levels increased from 1.0 to 1.5 %, zinc usage (as measured by
+    # changes in plasma zinc) decreased» --, que a 4 kcal/g de materia seca son
+    # 2500 y 3750 mg/1000 kcal. Por encima de 2500 van 152 de los 216 menus, y
+    # por encima de 3750 van 93. O sea: el 70 % de los menus esta en la zona que
+    # la fuente describe y no se le decia a nadie, porque el umbral lo habiamos
+    # puesto NOSOTROS en un sitio al que no se llega.
+    #
+    # DOS BANDAS Y NO UNA, y el motivo es que una sola mentiria por omision: en
+    # una racion BARF el calcio va alto POR CONSTRUCCION -- se cierra con hueso,
+    # no hay otra forma --, asi que con un solo umbral o avisas en el 70 % y se
+    # vuelve ruido que nadie lee, o avisas en el 43 % y das a entender que los
+    # demas estan limpios cuando la fuente dice que no del todo.
+    #
+    # LO QUE NO SE HACE SIGUE SIN HACERSE, y el motivo no ha cambiado: no se
+    # sube el minimo de zinc ni el de cobre. Ninguna fuente dice CUANTO, y subir
+    # un minimo a ojo es inventarse la cifra.
+    CA_EMPIEZA_A_IMPORTAR = 2500.0   # 1,0 % MS · SACN5 cap.6
+    CA_DOCUMENTADO = 3750.0          # 1,5 % MS · SACN5 cap.6
+    _ca_1000 = None
+    if der:
         _ca = sum((alimentos.get(n, {}).get("nutrientes", {}).get("calcio") or 0) * g / 100.0
                   for n, g in menu.items())
         _ca_1000 = _ca / der * 1000.0
-        if _ca_1000 >= _max_ca * 0.85:
+        _de_su_max = ((" (el %.0f %% de su máximo de %.0f)"
+                       % (100.0 * _ca_1000 / _max_ca, _max_ca)) if _max_ca else "")
+        if _ca_1000 >= CA_DOCUMENTADO:
             avisos.append(
-                "El calcio de esta ración va al %.0f %% de su máximo (%.0f de %.0f mg por "
-                "1000 kcal). No se pasa, pero FEDIAF avisa de que con el calcio alto puede "
-                "hacer falta más zinc y más cobre, porque se absorben peor. Es normal en una "
-                "ración con hueso; si el perro es de los que se le nota en la piel o el pelo, "
-                "es algo que comentar con el veterinario."
-                % (100.0 * _ca_1000 / _max_ca, _ca_1000, _max_ca))
+                "El calcio de esta ración está en %.0f mg por 1000 kcal%s. No se pasa del "
+                "máximo, pero SACN5 documenta que a partir de 1,5 %% de materia seca (3750) "
+                "el zinc se aprovecha peor, y FEDIAF avisa de lo mismo para el zinc y el "
+                "cobre. Es normal en una ración con hueso, que es como se cierra el calcio; "
+                "conviene mirarlo si al perro se le nota en la piel o el pelo."
+                % (_ca_1000, _de_su_max))
+        elif _ca_1000 >= CA_EMPIEZA_A_IMPORTAR:
+            avisos.append(
+                "El calcio de esta ración está en %.0f mg por 1000 kcal%s, o sea en la banda "
+                "donde SACN5 empieza a documentar que el zinc se absorbe algo peor (de 1,0 a "
+                "1,5 %% de materia seca, 2500 a 3750). No es un exceso: es lo normal en una "
+                "ración con hueso." % (_ca_1000, _de_su_max))
+
+    # ⚠️ LA SEGUNDA INTERACCION DE LA §3.3, QUE NO DECIAMOS (13 septiembre).
+    #
+    # El parrafo general de oligoelementos de FEDIAF nombra TRES cosas que bajan
+    # la disponibilidad y solo aviabamos de una: «the bioavailability of trace
+    # elements is reduced by a high content of certain minerals (e.g. calcium),
+    # the level of other trace elements (e.g. HIGH ZINC DECREASES COPPER
+    # ABSORPTION) and sources of phytic acid (e.g. cereals and legumes)».
+    #
+    # LO QUE IMPORTA NO ES EL ZINC NI EL COBRE POR SEPARADO: es el cobre pegado
+    # a su suelo mientras algo le baja la absorcion. MEDIDO sobre los 216 menus
+    # regenerados: 94 llevan el cobre por debajo del 120 % de su minimo -- el
+    # solver lo deja ahi porque cumple -- y 15 de ellos ademas con el zinc por
+    # encima del 140 % del suyo Y el calcio por encima de 2500. Ese menu cumple
+    # el minimo escrito, y el minimo esta escrito suponiendo una absorcion
+    # normal.
+    #
+    # La tercera, el acido fitico, se MIDIO y es marginal: 18 de 216 menus
+    # llevan alguna semilla, mediana 2,8 g. Se declara aqui y no se construye
+    # maquinaria para ella.
+    COBRE_SIN_MARGEN = 1.20    # veces su minimo
+    ZINC_ALTO = 1.40           # veces el suyo
+    if der and requerimientos:
+        from verificar import minimo_de as _min_de
+        _f_cu, _f_zn = requerimientos.get("Cobre"), requerimientos.get("Zinc")
+        if _f_cu and _f_zn:
+            _cu_min = _min_de(_f_cu, "Cobre", etapa)
+            _zn_min = _min_de(_f_zn, "Zinc", etapa)
+            _cu = sum((alimentos.get(n, {}).get("nutrientes", {}).get("cobre") or 0) * g / 100.0
+                      for n, g in menu.items()) / der * 1000.0
+            _zn = sum((alimentos.get(n, {}).get("nutrientes", {}).get("zinc") or 0) * g / 100.0
+                      for n, g in menu.items()) / der * 1000.0
+            if _cu_min and _zn_min and _cu < _cu_min * COBRE_SIN_MARGEN:
+                _porques = []
+                if _zn >= _zn_min * ZINC_ALTO:
+                    _porques.append("el zinc va al %.0f %% de su mínimo y FEDIAF dice que el "
+                                    "zinc alto baja la absorción del cobre"
+                                    % (100.0 * _zn / _zn_min))
+                if _ca_1000 and _ca_1000 >= CA_EMPIEZA_A_IMPORTAR:
+                    _porques.append("el calcio está en la banda donde también la baja")
+                if _porques:
+                    avisos.append(
+                        "El cobre de esta ración va justo (%.2f mg por 1000 kcal, el %.0f %% de "
+                        "su mínimo) y a la vez %s. Cumple el mínimo, pero ese mínimo está "
+                        "escrito suponiendo una absorción normal. Ninguna fuente dice cuánto "
+                        "habría que subirlo, así que no se sube: se dice."
+                        % (_cu, 100.0 * _cu / _cu_min, " y ".join(_porques)))
 
     if len(fuentes_a) >= 3:
         avisos.append(
@@ -1125,7 +1330,24 @@ def revisar_seguridad(menu, alimentos, der, etapa="Adulto", patologias=None,
     return problemas
 
 
-def avisos_rotacion(menu, alimentos):
+# ⚠️ LA CITA QUE NO PUEDE IR EN LA PANTALLA DEL DUEÑO (13 septiembre, noche).
+# Elena: «los avisos al usuario son muy técnicos y nombran fuentes. FUERA».
+#
+# Este aviso salia con «(FEDIAF 2025, §7.6.2.4)» pegado al final, y lo lee
+# alguien que solo quiere dar de comer a su perro. No se borra -- se mueve:
+# `avisos_rotacion(..., para_el_profesional=True)` devuelve la MISMA lista con
+# la fuente puesta, y esa es la que `_avisos_para_el_profesional` sirve por
+# `avisos_profesional`, que la app solo enseña en modo profesional.
+#
+# Va como un diccionario de «texto llano -> coletilla» y no como dos textos
+# enteros a proposito: dos copias del mismo parrafo se desincronizan, y quien
+# corrija la frase del dueño no va a acordarse de la otra.
+FUENTE_DEL_AVISO = {
+    "histamina": " (FEDIAF 2025, §7.6.2.4)",
+}
+
+
+def avisos_rotacion(menu, alimentos, para_el_profesional=False):
     """
     Avisos de FRECUENCIA/MANEJO, no bloqueos. No hay dosis publicada para
     estos, asi que no se puede poner un tope en gramos: lo que hay es una
@@ -1158,13 +1380,14 @@ def avisos_rotacion(menu, alimentos):
                     "mejillón). Servir sin cabeza/vísceras y no a diario." % n)
             if _es(n, PESCADO_HISTAMINA):
                 avisos.append(
-                    "%s: es de las especies que acumulan histamina si se rompe "
-                    "la cadena de frío. Compralo bien frío y dalo el mismo día "
-                    "que lo descongeles; si huele fuerte o pica en la lengua, "
-                    "tíralo. La histamina no se va ni congelando ni cocinando "
-                    "una vez formada, y puede dar una reacción parecida a una "
-                    "alergia en cualquier perro, no solo en uno alérgico "
-                    "(FEDIAF 2025, §7.6.2.4)." % n)
+                    ("%s: es de las especies que acumulan histamina si se rompe "
+                     "la cadena de frío. Compralo bien frío y dalo el mismo día "
+                     "que lo descongeles; si huele fuerte o pica en la lengua, "
+                     "tíralo. La histamina no se va ni congelando ni cocinando "
+                     "una vez formada, y puede dar una reacción parecida a una "
+                     "alergia en cualquier perro, no solo en uno alérgico."
+                     % n)
+                    + (FUENTE_DEL_AVISO["histamina"] if para_el_profesional else ""))
             # ⚠️ QUITADO (5 agosto, madrugada) — pedido expreso: este aviso
             # ("congelar antes de dar") era redundante con la instrucción
             # general de la categoría "Pescados y mariscos" en el

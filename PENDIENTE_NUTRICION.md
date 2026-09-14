@@ -727,11 +727,18 @@ Tres piezas de la auditoría del 6 de septiembre necesitan un campo de
 entrada que **hoy no existe en ningún sitio** — ni en el schema de la API
 (los `Peticion*` de `main.py`), ni en la ficha del perro de `canislab-web`:
 
-- **El 10% de calorías para premios/complementos** (Hervera, Clinnutrivet
-  17). No hay ningún concepto de "premio" o "snack" en la API: no hay
-  campo que preguntar cuántas kcal vienen de fuera de la ración. Añadirlo
-  necesita una pantalla nueva en la app y una decisión de producto sobre
-  dónde se pregunta, no solo un parámetro nuevo en el backend.
+- ~~**El 10% de calorías para premios/complementos**~~ → **HECHO EN EL MOTOR
+  el 11 de septiembre de 2026; falta la pantalla.** El motor tiene ya
+  `kcal_de_premios` y `premios_nivel` en los cinco modelos que formulan, y hace
+  lo que pide la fuente: **formula la ración con las kcal que quedan y le sigue
+  exigiendo el día entero de nutrientes**, así que la dilución no puede pasar.
+  Si los premios se pasan del 10 %, lo dice en `problemas_seguridad` y dice a
+  cuánto hay que bajarlos. `GET /vocabulario` sirve **la pregunta y sus cuatro
+  respuestas**, con los dos registros, para que la app no se invente ni las
+  opciones ni las cifras; de las cuatro, **solo el 10 % es de la fuente** y las
+  otras dos van marcadas como nuestras. Lo vigilan los BLOQUES 88, 87 y 95.
+  **Lo que queda es de la app**: hacer la pregunta y mandar la respuesta.
+  Mientras no llegue, el campo vale 0 y el menú sale como hasta hoy.
 
   ⚠️ **Y ya van CUATRO fuentes** (actualizado el 9 de septiembre de 2026, de
   leer capítulos enteros de SACN5): FEDIAF §4.1, SACN5 cap.17, SACN5 cap.1
@@ -789,7 +796,7 @@ con SACN5 para confirmarlo o para documentar un conflicto):
 
 **23 patologías nuevas, con topes numéricos reales donde el número era
 alcanzable con el catálogo** (`hiperlipidemia` grasa≤30, `obesidad`
-grasa≤30 — SACN5 pide 22,5 pero NO es alcanzable con el catálogo real, se
+grasa≤22,5 (⚠️ CORREGIDO 12-sep-2026: estuvo en 30 con el motivo de que 22,5 «no es alcanzable», y remedido con las condiciones escritas SÍ sale menú en los cuatro pesos recorriendo la escalera — y el 30 tampoco salía en el peldaño estricto, así que no costaba ni un menú), se
 probó contra el solver: 27 falla 0/5 intentos, 28 resuelve 5/5, se dejó en
 30 con margen —, `ple_linfangiectasia` grasa≤37,5, `insuficiencia_
 pancreatica_exocrina` grasa≤37,5) o bloqueadas por Razón A cuando el
@@ -1556,3 +1563,260 @@ número, y en el repo no hay ninguno:
   no por lo que yo dije. No es que la Tabla 13-1 diga algo más alto: es que **no
   podemos leer la Tabla 13-1**. Falta ese dato, y ahora se sabe exactamente qué
   falta: las páginas 667-668 del PDF de NRC.
+
+---
+
+## 15. El catálogo, direccionable: las 26 fichas que faltan por identificar (8 de septiembre)
+
+**Por qué existe este apartado.** El catálogo se había revisado seis o siete
+veces y siempre se volvía a abrir. La causa no eran los datos: era que **no
+era direccionable**. 117 de las 163 fichas no tenían ningún identificador de
+fuente, y las otras 45 lo llevaban escrito en prosa dentro de `nota_datos`
+—«FDC 172343»—, donde ninguna herramienta puede leerlo. Sin identificador
+hay que buscar por nombre en cada pasada, y buscar por nombre falla: medido
+el mismo día, «Atún» devuelve *Atún en aceite de oliva*, «Salmón» devuelve
+*Queso para untar con salmón* y «Cardo» devuelve *Anacardo*. Como cada
+búsqueda cuesta y puede salir mal, cada revisión solo se permitía mirar unas
+docenas de celdas por un criterio distinto, y siempre quedaba un ángulo
+nuevo.
+
+Ahora **99 fichas llevan `fuentes_id`**, puesto por
+`fijar_identificadores.py`, que solo lo acepta si la fila candidata cuadra
+con la nuestra en proteína, grasa, agua y energía **y** el nombre es
+compatible en preparación y en especie. Ni un número del catálogo cambió al
+ponerlos: es índice, no dato.
+
+**No hace falta identificador en 38 fichas, y es correcto:** 16 suplementos
+y productos de marca (llevan datos de etiqueta, no están en ninguna base),
+la sal común y el yoduro potásico (productos químicos), y 9 huesos carnosos,
+que según `Bases.md` vienen de **Köber 2017** y no de las tres bases.
+
+### Lo que queda, y es esto y no más
+
+**Ocho aceites y grasas.** El nombre coincide exacto («Aceite de cacahuete»
+contra «Aceite de cacahuete»), pero un alimento que es casi todo grasa **no
+tiene huella**: proteína 0, grasa ~100 y agua 0 describen a todos por igual,
+así que la máquina no puede demostrar cuál es. Hay que aceptarlos a ojo:
+aceite de cacahuete, de coco, de sésamo, de hígado de bacalao, grasa de
+pollo, manteca y los tres aceites de salmón de marca. Ojo con «Aceite de
+oliva» y «Aceite de oliva virgen extra», que reciben el mismo candidato y
+son dos fichas distintas.
+
+**Cinco donde el candidato viene preparado y la ficha es cruda:** col
+lombarda (BEDCA solo la tiene hervida), coliflor y pescadilla (solo
+congeladas), gallina (USDA solo tiene *stewing*). Decidir si esa fila sirve
+o si la ficha se queda sin identificador.
+
+**Seis fruta y verdura** donde solo hay dos magnitudes que comparar porque
+les falta el agua: albaricoque, mandarina, pera, sandía. Se cierran solas en
+cuanto tengan `humedad_g_100g` (ver `UNIDADES.md`).
+
+**Y cuatro de verdad sin resolver:**
+- **Atún** — BEDCA solo devuelve conservas. Falta la fila del atún fresco.
+- **Piña** — no aparece en BEDCA; la búsqueda devuelve espinaca en conserva.
+- **Timo de ternera** — USDA solo publica el de vaca (170194) y la guarda de
+  especie lo rechaza, con razón: son 3 g de grasa contra 20.
+- **Dorada** — sale `NO` con las tres magnitudes comparables, y **eso
+  confirma por otro camino lo que ya sabíamos**: su fila de BEDCA mezcla dos
+  peces. Ya está marcada `dato_no_fiable`.
+
+El informe completo, ficha a ficha y con las cifras de cada comparación,
+está en `identificadores_informe.json`. **Se regenera con
+`python3 fijar_identificadores.py`** (unos 5 minutos, necesita red).
+
+---
+
+## §20 · El ratio omega-6:omega-3 lo elige el veterinario, y cada patología enseña el rango de su fuente
+
+**Decidido el 13 de septiembre de 2026.** Elena, al ver que el ratio aparece en
+tres patologías con `aplicado_por_el_solver: false` y que las fuentes van de
+<1:1 a 7:1 según la enfermedad:
+
+> «pues entonces habrá que poner un ratio para que el veterinario elija no? o
+> sea igual cada veterinario quiere elegir su propio ratio» · «sí, pon el rango
+> de la fuente por patología también»
+
+Y eso **resuelve** la razón por la que llevaba parado: no estaba parado por falta
+de motor, estaba parado porque **elegir entre 1:1 y 7:1 es una decisión clínica**,
+y el sitio donde un clínico decide cifras ya existe — `objetivos_del_profesional`.
+Lo que falta es la puerta, no el mecanismo.
+
+### Lo que hay hecho ya
+
+- El solver sabe de **ratios entre cualquier par de nutrientes** desde el 10 de
+  septiembre (`ratios_de_patologias`, `{(num, den): {min, max}}`), con la
+  disciplina de siempre: suelo con `max()`, techo con `min()`, solo aprieta.
+- `objetivos_del_profesional` ya existe, ya se recorta contra FEDIAF y ya dice
+  todo recorte en `objetivos_ajustados`.
+- El rango de cada patología ya está **escrito con su cita**, en
+  `limites_escritos_que_el_solver_no_aplica` de renal, artrosis y cáncer.
+
+### Lo que falta, y en este orden
+
+1. **La clave `omega6_total`**, que no existe. `omega3_total` es derivada
+   (linolénico + EPA + DHA) y esta es su espejo: linoleico + araquidónico.
+
+   ⚠️ **Y ahí hay una trampa de unidades que metería un error de mil**: el
+   linoleico va en **gramos** y el araquidónico en **miligramos**
+   (`UNIDADES.md`, y es justo la familia de fallo que ese fichero persigue).
+   Sumarlos a pelo da un omega-6 total mil veces el araquidónico. La conversión
+   tiene que poder **rehacerse**, no creerse — la lección de
+   `auditar_conversiones.py`.
+
+   Y hay que decir lo que NO cubre: los omega-6 que el catálogo no tiene
+   columna para ellos (GLA, DGLA). El total es «linoleico + araquidónico» y eso
+   se escribe, no se insinúa.
+
+2. **Que `objetivos_del_profesional` acepte ratios**, con la misma forma que ya
+   tiene el bloque de patologías: `{"ratios": {"omega6_total:omega3_total":
+   {"min": 1, "max": 7}}}`. Recortado contra FEDIAF como todo lo demás y con el
+   recorte dicho en `objetivos_ajustados`, salga o no salga el menú.
+
+3. **Y el rango de la fuente, POR PATOLOGÍA, servido para que se vea.** Las tres
+   que lo tienen escrito (renal, artrosis, cáncer) lo enseñan en la pantalla del
+   profesional — «SACN5 pide 1:1 a 7:1 para esta patología» — **sin aplicarlo
+   solo**. Así el número de la fuente deja de estar escondido en un JSON y el
+   clínico decide con él delante, que es lo contrario de que el motor decida por
+   él o de que nadie decida.
+
+### Por qué NO se aplica solo
+
+Está escrito en las tres fichas y no cambia: **las dos fuentes se contradicen**.
+SACN5 da un ratio de omega-6 totales a omega-3 totales para cuatro patologías, y
+el NRC 2006 dice del ratio de totales, literal, que «is not helpful» — y
+recomienda en su lugar el de **linoleico:linolénico**, que el motor SÍ aplica
+desde `requisitos_condicionales.json` (2,6-26 en adulto). O sea que el motor ya
+tiene un ratio de grasas puesto, de la fuente que lo cuantifica mejor, y lo que
+se añade es la puerta para que un clínico ponga el otro si su caso lo pide.
+
+---
+
+## ~~§21 · Las interacciones entre nutrientes son un AVISO, y un aviso se ignora~~ · **HECHO el 13 de septiembre**
+
+**Y el planteamiento de abajo estaba MAL por mi parte.** Al leer la §3.3 entera
+resulta que el motivo de que sea aviso y no restricción ya estaba escrito y es
+bueno: **ninguna fuente dice CUÁNTO** hay que subir el zinc y el cobre, y subir
+un mínimo a ojo es inventarse la cifra. Lo que estaba mal no era eso, era **dónde
+lo habíamos puesto**:
+
+| | mg/1000 kcal | Menús de 216 por encima |
+|---|---|---|
+| Donde SACN5 dice que el zinc empieza a bajar (1,0 % MS) | 2500 | **152** |
+| Donde lo documenta (1,5 % MS) | 3750 | **93** |
+| **Donde avisábamos** (85 % del máximo de FEDIAF) | 5312 | **0** |
+
+**El aviso no había saltado nunca.** El menú con más calcio llega a 4247.
+
+Y la §3.3 nombra **tres** cosas, no una: «reduced by a high content of certain
+minerals (e.g. calcium), the level of other trace elements (e.g. **high zinc
+decreases copper absorption**) and sources of **phytic acid**».
+
+**Lo aplicado:**
+- **Dos bandas de calcio**, en 2500 y 3750, que son las de la fuente. Dos y no
+  una porque en una ración BARF el calcio va alto **por construcción** —se
+  cierra con hueso— y con un solo umbral o avisas en el 70 % y es ruido, o
+  avisas en el 43 % y das a entender que los demás están limpios.
+- **El cobre pegado a su suelo**, que es donde las tres se juntan y de lo que no
+  se decía nada. Medido: **94 de 216** menús llevan el cobre por debajo del
+  120 % de su mínimo y **15** además con el zinc alto y el calcio en la banda.
+  Ese menú **cumple**, y el mínimo que cumple está escrito suponiendo una
+  absorción normal.
+- **El ácido fítico se declara y no se aplica**: medido, 18 de 216 menús llevan
+  alguna semilla, mediana 2,8 g. Marginal.
+
+Lo vigila el BLOQUE 84 con números fijos —no con un menú del solver, que cambia
+entre ejecuciones— y comprobado con el fallo puesto: devolviendo el umbral viejo,
+salta.
+
+### El planteamiento original, que se conserva porque la corrección se entiende con él
+
+
+**Elena, 13 de septiembre: «todo lo que has dicho que podías hacer tú para subir
+la nota, anótalo para hacerlo».** Esta es la primera de esa lista.
+
+FEDIAF dice que con el calcio alto puede hacer falta **más zinc y más cobre**, y
+hoy el motor lo saca por `avisos_profesional`: una lectura del menú, para que
+quien sepa interpretarla la interprete. Eso está bien para lo que no se puede
+arreglar cambiando el menú — y esto **sí** se puede arreglar cambiando el menú,
+que es justo la diferencia que separa un aviso de una restricción. La regla 2 de
+`CLAUDE.md` lo dice con otras palabras: «un aviso se puede ignorar; esto no».
+
+**Lo que hay que hacer:** leer la sección 3.3 de FEDIAF **entera y seguida**, con
+el método de `LECTURAS.md`, y sacar de ahí **todas** las interacciones que
+enuncia, no solo la del calcio. Las que traigan cifra pasan a
+`requisitos_condicionales.json` —que es donde ya viven los requisitos que
+dependen de la propia dieta, y el solver y el semáforo llaman a las mismas
+funciones— y las que no, se quedan con `tipo: documentado_sin_cifra`, como ya
+están la vitamina E con los PUFA, la B6 con la proteína y la K con el pescado.
+
+**Para darlo por hecho:** cada interacción con su cita literal auditada, un
+bloque de batería con el fallo puesto, y medido cuántos de los 216 menús se
+mueven. Si alguna deja una patología sin menú, se escribe y no se aplica — como
+el omega-3 de la artrosis.
+
+---
+
+## §22 · Cerrar el bucle del BCS: el peso adulto de la TRAYECTORIA, no de la tabla
+
+Con el historial de pesadas hecho (P-38), el ±10 % por condición corporal deja de
+poder ser lo que la fuente describe: SACN5 cap.17 pide reevaluar **cada dos
+semanas** y ajustar, y hoy el ±10 % se aplica una vez y no se acumula, porque el
+DER se recalcula de cero en cada pantalla.
+
+**Lo que hay que hacer, y son dos cosas distintas:**
+
+1. **El peso adulto sale de la trayectoria del propio cachorro** cuando hay dos o
+   más pesadas, que es lo que hacen las curvas de WALTHAM (50.000 perros) y
+   MyVetDiet. Eso mata el último uso serio de la tabla de razas —el tramo de 12 a
+   24 meses, hoy tapado con un suelo que es un parche bueno pero un parche— y deja
+   de importar que 185 de 270 razas no tengan fuente publicada.
+2. **Que el ±10 % se acumule.** Un cachorro en BCS 9 hoy recibe −10 % para
+   siempre; la fuente quiere −10 %, mirar a las dos semanas, y otro −10 % si sigue
+   igual. Con el historial se puede saber si el anterior ya se aplicó.
+
+⚠️ **Lo segundo hay que medirlo antes de aplicarlo**, y con cuidado: un ajuste que
+se acumula puede irse muy abajo si nadie corrige el BCS. Hace falta un tope, y el
+tope no está en la fuente — habrá que escribirlo como criterio nuestro y decirlo.
+
+**Para darlo por hecho:** casos nuevos en `der_casos.json` en los DOS repos, y una
+prueba que siembre un historial y exija que el peso adulto salga de él y no de la
+raza.
+
+---
+
+## §23 · Las tablas de alimentación ANIMAL, que es donde están los huecos que nos faltan
+
+**Elena, 13 de septiembre: «las tablas de alimentación animal, ¿a qué estamos
+esperando? hay un montón, Feedipedia, AFZ, FAO».**
+
+Y tiene razón en el diagnóstico: BEDCA, USDA, CIQUAL y Frida son bases de
+alimentación **HUMANA**, y por eso fallan justo donde nos falla el catálogo —
+vísceras, hueso, subproductos: cosas que la gente no come y que un perro sí.
+
+⚠️ **Y tiene razón también en la objeción que puso ella misma**: «dices que
+describen ingredientes de pienso, si esto es para una dieta cruda». Ese es el
+límite de verdad y hay que escribirlo antes de usar ni una cifra:
+
+**LA REGLA, y es estrecha a propósito.** De Feedipedia / INRA-CIRAD-AFZ se toma
+una cifra **solo si la ficha describe el ingrediente CRUDO Y FRESCO** — nunca una
+harina, un deshidratado, un rendido ni un subproducto procesado. «Harina de
+carne» y «carne» no son el mismo alimento aunque compartan nombre, y una cifra
+traída de la primera a la segunda es exactamente el fallo del catálogo que este
+repo lleva un mes persiguiendo.
+
+Y con dos condiciones más:
+- **Con su humedad declarada**, porque esas tablas dan casi todo en materia seca
+  y nuestro catálogo va sobre alimento tal cual se da. La conversión se rehace,
+  no se cree — la lección de `auditar_conversiones.py`.
+- **Por debajo de las humanas en la cadena de mandato** de `Bases.md`. No las
+  sustituye: entra donde ninguna llega.
+
+**Y hay que reconocer una cosa incómoda**: ya la hemos usado DOS VECES —el cobre
+del polvo de sangre y el del alga— sin que estuviera declarada en ninguna parte.
+O sea que el catálogo lleva cifras de una fuente que no está en la cadena. Eso
+se arregla al escribirla, y es el primer motivo para hacerlo.
+
+**Para darlo por hecho:** Feedipedia en `Bases.md` con su regla y su sitio en el
+orden; las dos celdas que ya la usan, declaradas; un barrido de los 436 huecos
+diciendo cuántos puede cerrar; y cada celda que entre, con su ficha, su humedad
+y su conversión rehecha por el auditor.

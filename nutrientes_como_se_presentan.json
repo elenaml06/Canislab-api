@@ -1,0 +1,57 @@
+{
+  "_meta": {
+    "que_es": "Cómo se AGRUPAN los nutrientes cuando se leen en una ficha, y en qué orden.",
+    "por_que_existe": [
+      "El motor devuelve los nutrientes en tres listas -- los que faltan, los que se pasan y los que están dentro -- y esa es la forma correcta para DECIDIR si un menú sale. No es la forma en que se LEE una ficha: quien la firma no quiere «23 correctos y 4 que faltan», quiere los minerales juntos, las vitaminas juntas y los aminoácidos juntos.",
+      "Ese reordenamiento vivía SOLO en `src/nutrientes.js` de la app, escrito a mano, con 42 nutrientes. El motor sirve 46 y la ficha puede traer además dos relaciones, o sea 48 filas posibles: seis caían en el cajón «Otros» -- Fibra, Taurina, L-carnitina, EPA, Omega-3 totales y la relación linoleico:linolénico -- sin que nadie se enterase, porque «Otros» se ve y no da error. Es la regla 6 de CLAUDE.md: nada que la app pinte se decide en la app."
+    ],
+    "aqui_no_hay_ni_una_cifra": "Los nombres de las filas son los de `requerimientos_v2_final.json` y los de `verificar.MAPA`. Aquí solo se dice en qué grupo va cada uno y en qué orden se leen los grupos. Ningún mínimo, ningún máximo, ninguna unidad.",
+    "un_solo_registro": "Los demás enumerados del motor van en dos registros (`dueno` y `veterinario`). Este no: la única pantalla que agrupa nutrientes es la ficha del formulador, que es del veterinario. Cuando el dueño vea una ficha agrupada, aquí entra el segundo registro; inventarlo hoy sería escribir texto que nadie lee.",
+    "tiene_que_cubrirlo_todo": "Toda fila que `verificar()` pueda devolver -- los nombres de `verificar.MAPA` y las dos relaciones -- tiene que tener grupo declarado aquí. Lo exige el BLOQUE 99: una fila sin grupo cae en «Otros» y eso vuelve a ser una lista que decide la pantalla."
+  },
+  "grupos": [
+    {
+      "clave": "macronutrientes",
+      "titulo": "Macronutrientes",
+      "nutrientes": ["Proteína_total", "Grasa_total", "Fibra"]
+    },
+    {
+      "clave": "minerales",
+      "titulo": "Minerales",
+      "por_que": "La relación Ca:P va aquí y no aparte: no es un nutriente -- es una RELACIÓN, y el motor la comprueba por su cuenta -- pero quien lee la ficha la busca justo al lado del calcio y el fósforo. Sin esta línea caía sola y al final.",
+      "nutrientes": ["Calcio", "Fósforo", "Relación Ca:P", "Potasio", "Sodio", "Cloruro", "Magnesio"]
+    },
+    {
+      "clave": "oligoelementos",
+      "titulo": "Oligoelementos",
+      "nutrientes": ["Cobre", "Yodo", "Hierro", "Manganeso", "Selenio", "Zinc"]
+    },
+    {
+      "clave": "vitaminas_liposolubles",
+      "titulo": "Vitaminas liposolubles",
+      "nutrientes": ["Vitamina_A", "Vitamina_D", "Vitamina_E"]
+    },
+    {
+      "clave": "vitaminas_hidrosolubles",
+      "titulo": "Vitaminas hidrosolubles",
+      "nutrientes": ["Tiamina", "Riboflavina", "Acido_pantotenico", "Vitamina_B6", "Vitamina_B12", "Niacina", "Folato", "Colina"]
+    },
+    {
+      "clave": "acidos_grasos",
+      "titulo": "Ácidos grasos esenciales",
+      "por_que": "EPA suelto, los omega-3 totales y la relación linoleico:linolénico entran aquí y no en «Otros»: son la misma familia y se leen juntos. La relación es la que NRC 2006 cap.5 recomienda EN LUGAR del omega-6:omega-3 totales, y el motor la aplica desde `requisitos_condicionales.json`.",
+      "nutrientes": ["Linoleico", "Linolénico", "Araquidónico", "EPA", "EPA_DHA_total", "Omega3_total", "Omega6_total", "Relación linoleico:linolénico"]
+    },
+    {
+      "clave": "aminoacidos",
+      "titulo": "Aminoácidos esenciales",
+      "nutrientes": ["Arginina", "Histidina", "Isoleucina", "Leucina", "Lisina", "Metionina", "Metionina_cistina", "Fenilalanina", "Fenilalanina_tirosina", "Treonina", "Triptofano", "Valina"]
+    },
+    {
+      "clave": "sin_cifra_de_fediaf",
+      "titulo": "Sin cifra de FEDIAF",
+      "por_que": "Taurina y L-carnitina no son filas de la Tabla III-3b: FEDIAF no le pone cifra al perro. Existen porque una patología o un profesional sí pueden ponérsela -- las dos las pide la cardiopatía -- y el motor las verifica igual. Van en un grupo propio y no con los aminoácidos porque poner la taurina entre los doce esenciales diría, sin decirlo, que FEDIAF le exige un mínimo al perro, y no se lo exige.",
+      "nutrientes": ["Taurina", "L_carnitina"]
+    }
+  ]
+}

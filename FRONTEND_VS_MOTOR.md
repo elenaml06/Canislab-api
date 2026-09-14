@@ -195,3 +195,52 @@ decía **once** patologías y **ocho** formulables. Eran **diez** y **siete**:
 el patrón con el que se leyó `App.jsx` exigía los tres campos en un orden
 concreto. La prueba usa el patrón bueno y lo dijo a la primera. Es la diferencia
 entre contar a ojo y contar con algo que se ejecuta.
+
+---
+
+## 6 · El barrido completo: qué dato escribe la app por su cuenta
+
+**Escrito el 12 de septiembre de 2026.** Elena:
+
+> «COMPRUEBA TODO PARA QUE NINGUN DATO LO MANDE LA APP, TODO TIENE QUE VENIR
+> DEL MOTOR»
+
+Barrido de **todas** las constantes de módulo de `canislab-web/src` (los ocho
+ficheros de lógica y los tres de pantalla), una por una. La regla para
+clasificar es la cadena de siempre: **FUENTE manda → MOTOR la implementa → APP
+la ofrece**. Un respaldo no cuenta como copia si la verdad llega del motor y
+está comprobado que la app la lee; una lista que la app usa **siempre** sí.
+
+### 6.1 · Lo que ya llega del motor
+
+Razas · tamaños y su rango de peso · etiquetas de condición corporal del dueño ·
+niveles de actividad en sus dos registros · la pregunta de premios y sus cuatro
+respuestas · las familias de patología (qué pregunta, qué respuestas y a qué
+clave lleva cada una) · quién puede marcar cada patología · los grupos de
+categorías del catálogo · las seis cifras del BCS que deciden el peso objetivo ·
+los 46 nutrientes a los que un profesional puede ponerle un objetivo · **y desde
+hoy las 47 patologías con sus dos etiquetas y sus nueve aparatos**.
+
+### 6.2 · Lo que sigue escribiéndolo la app, medido
+
+| Dónde | Qué es | Lo que se ha medido hoy |
+|---|---|---|
+| `App.jsx` `CATEGORIAS_ALIMENTO` | El catálogo entero, agrupado por categoría y especie | **163 alimentos en el motor, 162 escritos aquí.** Falta «Pets Purest Aceite de Salmón Escocés». Y no es un respaldo: `categoriasDisponibles` se calcula **siempre** de esta tabla (`filtrarCategoriasPorEspecies(CATEGORIAS_ALIMENTO, …)`), así que la pantalla de Personalizar del dueño **nunca** lee `/alimentos`. El formulador del veterinario sí lo lee |
+| `App.jsx` `MENUS_EJEMPLO` | Los menús de relleno de la vista previa | **Seis de sus quince alimentos no existen en el catálogo** («Pechuga de pavo sin piel», «Costillas de ternera», «Alitas de pollo» y tres pares «X + Y»). Y el motor tiene los suyos: los 36 menús precalculados de `catalogo_menus.json`, que sirve `/catalogo/{tamano}/{etapa}` — uno de los endpoints que **no llama nadie** |
+| `App.jsx` `PESO_ADULTO_POR_TAMANO` | 3 · 6 · 12 · 22 · 32 · 55 kg | De aquí salen las kcal y la etapa de un mestizo. El motor publica el rango real por tamaño en `/vocabulario` (`tamanos.rango_observado_kg`), calculado sobre las 255 razas; estas seis cifras se escribieron a mano. Es la misma forma de fallo que dejó **cuatro de los seis rangos caducados** hasta el 11 de septiembre |
+| `bcs.js` `ESCALA_BCS` y `BCS_DESDE_CONDICION` | Los nueve descriptores y los cinco escalones del dueño | El motor sirve los dos (`condicion_corporal.puntos` y `escalones_del_dueno`), pero **sus descriptores clínicos son más pobres que los de la app** («BCS 1/9 — Emaciado» contra «Caquéctico · Costillas, lumbares y pelvis visibles a distancia…»). Aquí la salida NO es que la app lea lo de hoy: es **subir los descriptores buenos al motor** y que la app los lea. Hacerlo al revés empeoraría la pantalla, que es exactamente lo que la regla no quiere |
+| `nutrientes.js` `GRUPOS` | Cómo se agrupan los 41 nutrientes en la ficha | El motor no lo tiene. Es el mismo caso que los aparatos de patología, que hoy se han subido: la agrupación es presentación, pero decide qué ve quien lee una ficha. Falla al lado seguro (lo que no esté cae en «Otros» y se ve), así que no esconde nada |
+| `topespatologia.jsx` `NOMBRE_NUTRIENTE` | 31 nombres de nutriente para la pantalla de topes | Segunda copia de los nombres que `/vocabulario` ya sirve con los 46 nutrientes del formulador |
+| `App.jsx` `ETAPA_A_SUFIJO_API` y `ETAPA_LABEL` | Las cuatro etapas de la app y su nombre | El motor sirve `etapas.con_tabla_propia` y sus equivalencias. La correspondencia con las claves internas de la app es suya, pero **que las cuatro existan** lo decide el motor |
+| `supabase.js` `ACTIVIDAD_POR_INDICE` | `baja · media · alta · muy_alta · trabajo` | No es dato del motor: es cómo lo **guarda la base**, y los tres primeros no se pueden renombrar sin romper las fichas guardadas. Lo que sí tiene que cuadrar es **cuántos hay**, y eso ya lo compara `tests/vocabulario.spec.js` contra `der.BASE_ACTIVIDAD` |
+| `der.js` entero | La fórmula del DER | **Duplicación puesta a propósito**, con su contrato en `der_casos.json`, el mismo fichero en los dos repos (BLOQUE 23 aquí, `der-contrato.spec.js` allí). No se toca sin regenerar los dos. Ver `CLAUDE.md`, «la duplicación que hay que vigilar» |
+| `cesta.js` `ZONAS`, `instrucciones.js` | Cómo se ordena la compra y cómo se manipula cada alimento | No son datos del motor: son de manejo y de tienda. Se quedan |
+
+### 6.3 · El orden en que hay que arreglarlo
+
+1. **El catálogo de Personalizar**, porque es el único de la lista que ya está
+   desincronizado y que decide qué come el perro.
+2. **`MENUS_EJEMPLO`**, porque enseña alimentos que no existen.
+3. **`PESO_ADULTO_POR_TAMANO`**, porque de ahí salen kcal.
+4. Los descriptores del BCS — **subiéndolos al motor**, no bajando la app.
+5. Los grupos de nutrientes y los nombres de nutriente, que son presentación.

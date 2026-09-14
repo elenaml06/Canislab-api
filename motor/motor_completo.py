@@ -326,15 +326,34 @@ def diagnosticar_choque_de_patologias(patologias, etapa, intentar,
         if intentar({(lim["tipo"], lim["clave"])}):
             culpables.append(lim)
 
-    if len(culpables) < 2:
-        # O no es un choque entre límites de patología (puede ser el
-        # catálogo, las exclusiones o los propios requisitos de FEDIAF), o
-        # solo hay un culpable y soltarlo no es una opción que ofrecer.
-        # En los dos casos se prefiere no decir nada a decir algo falso.
+    if not culpables:
+        # No es un choque entre límites de patología: puede ser el catálogo,
+        # las exclusiones o los propios requisitos de FEDIAF. Aquí se prefiere
+        # no decir nada a decir algo falso.
         return None
 
+    # ⚠️ UN SOLO CULPABLE TAMBIÉN SE DICE (11 septiembre). Hasta hoy esto era
+    # `if len(culpables) < 2: return None`, con el motivo escrito de que «solo
+    # hay un culpable y soltarlo no es una opción que ofrecer». Y es media
+    # verdad: no es una opción que ofrecer, pero SÍ es la respuesta a la
+    # pregunta que trae aquí a quien firma -- ¿qué está bloqueando?
+    #
+    # CASO REAL MEDIDO ESE DÍA: renal + pancreatitis en un adulto de 25 kg
+    # sigue sin dar menú, y de los DIEZ límites activos el único que al
+    # soltarlo desbloquea es la grasa de la pancreatitis (37,5 g/1000 kcal).
+    # El 9 de septiembre eran dos (el potasio renal y esa grasa) y el modelo se
+    # ha ido apretando desde entonces. Con la regla vieja, pasar de dos
+    # culpables a uno convertía un diagnóstico útil en el mensaje genérico
+    # «quita alguna restricción y vuelve a probar» -- que es exactamente lo que
+    # este diagnóstico existe para no decirle a un veterinario.
+    #
+    # Se marca cuál de los dos casos es, porque NO se pueden contar igual: con
+    # dos o más hay un choque entre límites y quien firma elige cuál cede; con
+    # uno solo no hay choque que elegir, hay un límite que no deja margen.
+    # Decir «chocan» de un solo límite sería afirmar algo falso.
     return {"limites_que_chocan": culpables,
-            "todos_los_limites_activos": limites}
+            "todos_los_limites_activos": limites,
+            "es_un_solo_limite": len(culpables) == 1}
 
 
 # ⚠️ EL UMBRAL DE «RAZA GRANDE», EN UN SOLO SITIO (8 septiembre).
@@ -405,7 +424,12 @@ def avisos_de_patologias(patologias, etapa="Adulto", es_profesional=False):
         # avisos de una patología que no son ninguno de los cuatro con nombre
         # propio. Se añaden en TODOS los caminos, incluidos los dos `continue`
         # de abajo, que si no se los saltarían.
-        _extra = info.get("avisos_extra") or []
+        # ⚠️ Y EN DOS REGISTROS, como el aviso principal (13 septiembre,
+        # noche): `avisos_extra_dueno` es la misma lista, en el mismo orden, con
+        # el texto llano donde lo hay. Al profesional se le sigue dando el
+        # tecnico con su cita -- lo que se le quita al dueño no se borra.
+        _extra = ((info.get("avisos_extra") if es_profesional
+                   else info.get("avisos_extra_dueno")) or [])
         if es_profesional:
             if _es_crecimiento(etapa) and info.get("aviso_profesional_crecimiento"):
                 salida.append(info["aviso_profesional_crecimiento"]); salida.extend(_extra); continue
@@ -423,11 +447,26 @@ def avisos_de_patologias(patologias, etapa="Adulto", es_profesional=False):
         # existía. No llegó a verse porque main.py solo llamaba aquí con las
         # patologías que BLOQUEAN -- pero el fallo estaba puesto y esperando
         # a la primera llamada que pasara una que no bloquea.
+        #
+        # ⚠️ DE AQUI PARA ABAJO SE PREFIERE EL REGISTRO DEL DUEÑO, y solo si
+        # quien pregunta NO es profesional (13 septiembre, noche). `aviso_dueno`
+        # es el mismo aviso sin la palabra de la fuente; `aviso` se queda de
+        # respaldo para las patologias cuyo texto ya estaba escrito sin jerga.
+        #
+        # ⚠️ EL `not es_profesional` NO SOBRA, aunque arriba haya dos `continue`
+        # con esa condicion: los dos solo disparan si la patologia TIENE aviso
+        # de profesional, y 30 de las 47 no lo tienen. Sin el, a un veterinario
+        # que formula una de esas 30 se le serviria el texto llano y se quedaria
+        # sin la cifra y sin la fuente -- que es justo lo que este cambio existe
+        # para NO hacer: lo que se le quita al dueño no se borra, se mueve.
+        _llano = not es_profesional
         if (info.get("solo_en_adulto") and _es_crecimiento(etapa)
-                and info.get("aviso_crecimiento")):
-            salida.append(info["aviso_crecimiento"])
-        elif info.get("aviso"):
-            salida.append(info["aviso"])
+                and ((_llano and info.get("aviso_dueno_crecimiento"))
+                     or info.get("aviso_crecimiento"))):
+            salida.append((_llano and info.get("aviso_dueno_crecimiento"))
+                          or info.get("aviso_crecimiento"))
+        elif (_llano and info.get("aviso_dueno")) or info.get("aviso"):
+            salida.append((_llano and info.get("aviso_dueno")) or info.get("aviso"))
         salida.extend(_extra)
 
         # ⚠️ AÑADIDO (7 septiembre) — el aviso que solo sale por la
@@ -464,7 +503,98 @@ MINIMO_POR_CATEGORIA_PORCION = {
 }
 
 
-def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
+def resolver(*args, **kwargs):
+    """El solver, con UN reintento y solo uno: el del techo del libro.
+
+    ⚠️ POR QUÉ EXISTE ESTE ENVOLTORIO (13 de septiembre de 2026, por la noche).
+
+    Cuando el suelo de FEDIAF supera un techo del libro, el techo ya no
+    desaparece: SUBE hasta el suelo y se queda pegado a él, para que el menú no
+    se aleje del consejo más de lo que la aritmética obliga. Ver
+    `recomendaciones.HOLGURA_DEL_TECHO_QUE_SUBE`, donde están las seis medidas.
+
+    Pero esa holgura es un número NUESTRO, no de ninguna fuente, y medido sobre
+    seis casos. **Un número nuestro no puede dejar a un perro sin comer.** Así
+    que si con el techo apretado no sale menú, se suelta del todo y se vuelve a
+    intentar -- que es exactamente lo que hacía el motor antes de esta mejora,
+    o sea que el plan B es el comportamiento probado.
+
+    Es UN reintento, no una escalera: el segundo intento no aprieta nada, así
+    que no puede hacer falta un tercero.
+
+    ⚠️ Y NO SE REINTENTA CUANDO EL PROBLEMA ES OTRO. Si el primer intento
+    devuelve `_imposible` (aritmética demostrada) o si no había ningún techo que
+    subir, reintentar sería pagar el doble de reloj para llegar al mismo sitio
+    -- y el reloj es lo que dejó sin menú al toy de 1,5 kg en el BLOQUE 43.
+    """
+    _subidos = {}
+    kwargs_1 = dict(kwargs)
+    kwargs_1["_techos_subidos_fuera"] = _subidos
+    ok, gramos = _resolver_una_vez(*args, **kwargs_1)
+    if not ok and _subidos.get("se_ha_subido") and not (
+            isinstance(gramos, dict) and gramos.get("_imposible")):
+        kwargs_2 = dict(kwargs)
+        kwargs_2["apretar_el_techo_del_libro"] = False
+        ok, gramos = _resolver_una_vez(*args, **kwargs_2)
+    return _con_el_margen_del_kelp(ok, gramos, args, kwargs)
+
+
+def _con_el_margen_del_kelp(ok, gramos, args, kwargs):
+    """El SEGUNDO reintento, y es de seguridad crónica: el margen del kelp.
+
+    ⚠️ POR QUÉ (14 de septiembre de 2026). CASO REAL REPRODUCIDO, y lo describió
+    Elena: «ha sido después de cambiar (editar) un par de ingredientes en modo
+    usuario en automático». Barriendo 29 ediciones encadenadas sobre cinco
+    perros salió un menú ENTREGADO con **2156 µg de yodo y el aviso diciendo
+    «por encima del límite prudente (2040 µg)»** en la pantalla del dueño.
+
+    La causa: el margen extra del 50 % que se deja cuando el yodo viene de kelp
+    --porque su contenido real puede estar muy lejos del declarado-- vivía SOLO
+    dentro del aviso. El solver construía hasta el tope sin margen y el filtro
+    final lo dejaba pasar. **Los tres miraban el mismo yodo y ninguno el mismo
+    límite**, que es la lección del 8 de septiembre en su cuarta cara.
+
+    ⚠️ Y SE HACE COMO REINTENTO Y NO COMO RESTRICCIÓN DEL MILP a propósito: el
+    tope depende de si el menú ACABA llevando kelp, y eso no se sabe hasta
+    resolverlo. Modelarlo dentro exigiría una binaria por alimento y un
+    big-M; resolver otra vez con el tope apretado cuesta lo mismo que ya cuesta
+    el reintento del techo del libro y no toca la formulación.
+
+    Si con el tope apretado no sale menú, **no se entrega el de antes**: el yodo
+    es uno de los cinco topes crónicos y esos son restricción dura (regla 2), no
+    un número nuestro de los que ceden. El motor se queda sin menú por ese
+    camino y la escalera prueba el siguiente peldaño, que es lo que ya hace.
+    """
+    if not ok or not isinstance(gramos, dict) or gramos.get("_imposible"):
+        return ok, gramos
+    if kwargs.get("_apretar_yodo_por_kelp"):
+        return ok, gramos          # este YA es el intento apretado
+    from seguridad import hay_kelp as _hay_kelp, tope_de_yodo as _tope_yodo
+    der = args[0] if args else kwargs.get("der")
+    alimentos = args[2] if len(args) > 2 else kwargs.get("alimentos")
+    peso = args[4] if len(args) > 4 else kwargs.get("peso_perro_kg")
+    if not der or not alimentos or not _hay_kelp(gramos):
+        return ok, gramos
+    yodo = sum((alimentos.get(n, {}).get("nutrientes", {}).get("yodo") or 0) * g / 100.0
+               for n, g in gramos.items())
+    if yodo <= _tope_yodo(gramos, der, peso):
+        return ok, gramos
+    kwargs_k = dict(kwargs)
+    kwargs_k["_apretar_yodo_por_kelp"] = True
+    ok_k, gramos_k = _resolver_una_vez(*args, **kwargs_k)
+    if ok_k:
+        return ok_k, gramos_k
+    # Sin menú dejando el margen: no se entrega el de antes. Se dice por qué,
+    # que es lo que separa «no hay menú» de «no hay menú y no sabes por qué».
+    return False, {"_imposible": False,
+                   "motivo_yodo_kelp": (
+                       f"Con kelp en el menú el yodo se topa un 50 % más bajo "
+                       f"({_tope_yodo(gramos, der, peso):.0f} µg en vez de "
+                       f"{_tope_yodo({}, der, peso):.0f}), porque su contenido real "
+                       f"puede estar lejos del declarado, y con ese tope no sale menú.")}
+
+
+def _resolver_una_vez(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
             excluidos=None, margenes_categoria=None, cuantos_max=None,
             max_suplementos=2, tolerancia_kcal=0.03,
             forzar=None, preferir=None, patologias=None, semilla_aleatoria=None,
@@ -473,7 +603,14 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
             presupuesto_semanal_restante=None, diagnostico=None,
             peso_objetivo_kg=None, gramos_fijos=None,
             soltar_limites_patologia=None, estado_del_solver=None,
-            objetivos_del_profesional=None):
+            objetivos_del_profesional=None, kcal_de_premios=0.0,
+            ratios_del_profesional=None,
+            apretar_el_techo_del_libro=True, _techos_subidos_fuera=None,
+            # ⚠️ El segundo intento del margen del kelp. Ver
+            # `_con_el_margen_del_kelp`: no se puede saber si el menú llevará
+            # kelp antes de resolverlo, así que el tope apretado entra por aquí
+            # en la segunda pasada.
+            _apretar_yodo_por_kelp=False):
     """
     UNA sola llamada. Decide QUÉ alimentos usar Y cuántos gramos de cada
     uno, de entre TODOS los accesibles, a la vez.
@@ -525,6 +662,56 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
 
     Devuelve (factible: bool, gramos: {nombre: g} o None).
     """
+    # ⚠️ LOS PREMIOS DILUYEN LA RACION, Y HASTA HOY NO SE CONTABAN (11 septiembre).
+    #
+    # CUATRO FUENTES dicen lo mismo, y una de ellas trae el mecanismo:
+    #   · Ettinger cap.192: «Los alimentos y premios desequilibrados no se deben
+    #     proporcionar en mas de un 10 % de la ingesta calorica diaria total.
+    #     Cuando se agregan alimentos desequilibrados a una dieta completa y
+    #     equilibrada, SE PRODUCE UNA DILUCION DE NUTRIENTES, y los nutrientes
+    #     esenciales pueden quedar POR DEBAJO DE LOS REQUERIMIENTOS MINIMOS.»
+    #     Con los dos ejemplos que son los nuestros: la carne suelta desequilibra
+    #     el Ca:P, y el higado puede pasar el maximo de vitamina A.
+    #   · Ettinger cap.175, que ademas los define mejor: «premios, sobras de la
+    #     mesa, suplementos».
+    #   · Fascetti cap.7, como recomendacion propia de los autores.
+    #
+    # QUE SE HACE, Y POR QUE ASI. La racion se formula con las kcal QUE QUEDAN
+    # despues de los premios, pero tiene que seguir llevando EL DIA ENTERO de
+    # nutrientes: los premios aportan calorias y no se sabe que mas, asi que
+    # contar con ellos para cubrir un requisito seria darlo por cubierto sin
+    # saberlo. O sea que los minimos por 1000 kcal de la RACION suben por el
+    # factor DER_total / DER_racion. Es el mismo principio que ya aplica
+    # `minimo_de()` cuando el perro come menos: los minimos suben, nunca bajan.
+    #
+    # Los MAXIMOS no se tocan: son concentracion, no cantidad, y la ventana entre
+    # minimo y maximo se cierra sola segun suben los primeros -- que es
+    # exactamente lo que la fuente describe como «dilucion».
+    #
+    # ⚠️ Y LO QUE MAS CUIDADO PIDE AQUI SON LAS UNIDADES, porque a partir de
+    # esta linea conviven DOS medidas de kcal y confundirlas no da error:
+    #   · `der`         -> las kcal del DIA ENTERO (racion + premios). Es lo
+    #                      que decide CUANTO nutriente hace falta al dia, y lo
+    #                      que ve `verificar()`, que mide el menu contra el DER.
+    #   · `der_racion`  -> las kcal que le quedan a la RACION. Es contra lo que
+    #                      se escribe cada fila del solver, porque los gramos
+    #                      que decide el MILP son los de la racion y de nada mas.
+    # Un suelo de 100 mg/1000 kcal con 10 % de premios son 100 x 1,111 = 111,1
+    # por 1000 kcal de racion, y 111,1 x der_racion/1000 = 100 x der/1000, que
+    # son los miligramos del dia. Escalar el suelo Y usar `der` seria contarlo
+    # dos veces; no escalarlo y usar `der_racion` seria quedarse corto.
+    # Se quedan con el DER ENTERO, a proposito, dos cosas:
+    #   · `_der_ef` (kcal por kg^0,75), porque lo que dispara el escalado de
+    #     los minimos de FEDIAF es lo que el perro come AL DIA, no lo que pesa
+    #     su racion; los premios no hacen que coma menos.
+    #   · `_escala_cond`, la de los requisitos condicionales, porque esos
+    #     suelos ya se escriben en absoluto del dia entero.
+    _premios = max(0.0, float(kcal_de_premios or 0.0))
+    _premios = min(_premios, der * 0.9)      # nunca dejar la racion sin kcal
+    der_racion = der - _premios
+    _factor_premios = (der / der_racion) if der_racion > 0 else 1.0
+
+
     from accesibles import ACCESIBLES
     from exclusiones import filtrar
 
@@ -592,6 +779,23 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
                       if n in alimentos and alimentos[n].get("categoria") == cat]
             if pedidos:
                 disp = pedidos
+            elif not restringir_a_elegidos[cat]:
+                # ⚠️ UNA LISTA VACÍA ES «DE AQUÍ, NADA» -- Y ANTES NO ERA NADA
+                # (13 de septiembre de 2026, por la noche).
+                #
+                # `if pedidos:` trataba la lista vacía como «esta categoría no
+                # está restringida», que es lo contrario de lo que dice. Se notó
+                # al editar un menú: para que cambiar un alimento no metiera
+                # otros, se cierran TODAS las categorías -- las que el menú usa,
+                # con sus nombres; las que no, con lista vacía -- y por esas
+                # segundas se colaba igual un «Aceite de girasol» que nadie
+                # había pedido.
+                #
+                # Se distingue de una lista con nombres que no existen en el
+                # catálogo, que sigue dejando la categoría libre: eso es un
+                # fallo de quien llama, y cerrarle la categoría entera por un
+                # nombre mal escrito sería peor.
+                disp = []
 
         # ⚠️ CORREGIDO (21 agosto) — FALLO GRAVE ENCONTRADO POR UNA PRUEBA
         # NUEVA: LAS ALERGIAS SE PODÍAN SALTAR FORZANDO UN ALIMENTO.
@@ -874,7 +1078,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
             techos.append(t if t else 5.0)
         else:
             kcal100 = a.get("energia", 0) or 1.0
-            techos.append((der * 0.55) / kcal100 * 100.0)  # ningún alimento >55% del día
+            techos.append((der_racion * 0.55) / kcal100 * 100.0)  # ningún alimento >55% del día
 
     # ─── LOS GRAMOS QUE YA HA DECIDIDO EL VETERINARIO ────────────────────
     #
@@ -938,7 +1142,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     fila = fila_vacia()
     for n in nombres:
         fila[idx[n]] = alimentos[n].get("energia", 0) / 100.0
-    _fila("kcal_total", fila, der * (1 - tolerancia_kcal), der * (1 + tolerancia_kcal))
+    _fila("kcal_total", fila, der_racion * (1 - tolerancia_kcal), der_racion * (1 + tolerancia_kcal))
 
     # ⚠️ AÑADIDO (5 agosto): topes mas estrictos por patologia. Si una
     # patologia baja el maximo de un nutriente y ese maximo es MAS
@@ -956,6 +1160,29 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     # el diagnóstico dice que el culpable es otro -- y mandar a mirar la fila
     # equivocada es peor que no decir nada.
     ratios_patologia = ratios_de_patologias(patologias, etapa)
+
+    # ⚠️ Y LOS RATIOS QUE PONE EL PROFESIONAL (13 de septiembre). Entran por el
+    # MISMO cajón que los de patología y con el MISMO `max()`/`min()`, que es lo
+    # que garantiza que SOLO PUEDAN APRETAR: un ratio del profesional nunca
+    # ensancha la ventana de una patología ya puesta, ni la del Ca:P de FEDIAF.
+    #
+    # Llegan ya recortados contra la fuente por `main._ratios_dentro_de_fediaf`
+    # —y con el recorte DICHO en `objetivos_ajustados`—, y este `max()`/`min()`
+    # es la segunda red, igual que con los objetivos escalares de más abajo.
+    #
+    # Se meten AQUÍ ARRIBA, antes de `soltar_limites_patologia`, por lo mismo
+    # que los de patología: el diagnóstico de «¿qué me está bloqueando?» tiene
+    # que poder soltarlos, o mandaría a mirar la fila equivocada.
+    for _par_pr, _cotas_pr in (ratios_del_profesional or {}).items():
+        _hueco_pr = ratios_patologia.setdefault(tuple(_par_pr), {"min": None, "max": None})
+        if _cotas_pr.get("min") is not None:
+            _a = _hueco_pr["min"]
+            _hueco_pr["min"] = (float(_cotas_pr["min"]) if _a is None
+                                else max(_a, float(_cotas_pr["min"])))
+        if _cotas_pr.get("max") is not None:
+            _a = _hueco_pr["max"]
+            _hueco_pr["max"] = (float(_cotas_pr["max"]) if _a is None
+                                else min(_a, float(_cotas_pr["max"])))
 
     # ⚠️ AÑADIDO (8 septiembre) — LOS TECHOS DEL PERRO ADULTO SANO. Ver
     # `motor/recomendaciones.py` y `recomendaciones_libro.json`: son las dos
@@ -985,6 +1212,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     # nada. Si no llega, se usa el real y se escala un poco de mas -- que
     # es el lado seguro.
     _peso_ref = peso_objetivo_kg or peso_perro_kg
+
     _der_ef = der_efectiva_de(der, _peso_ref)
 
     # ⚠️ Y CON EL DER EFECTIVO EN LA MANO, EL TECHO DEL LIBRO PUEDE CEDER.
@@ -1000,8 +1228,23 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     # vez de 2750), que para el es papel mojado -- el mismo olvido que el 7 de
     # septiembre dejo sin efecto el minimo de calcio reforzado en la via rapida.
     from recomendaciones import topes_de_la_etapa as _topes_de_la_etapa
-    for _clave_r, _valor_r in _topes_de_la_etapa(
-            etapa, req, _der_ef, peso_adulto_esperado_kg).items():
+    # ⚠️ Y CON EL FACTOR DE LOS PREMIOS (13 de septiembre). El techo del libro
+    # cede cuando el suelo que de verdad se aplica lo supera, y los premios
+    # suben ese suelo: sin pasarlo, un cachorro de raza grande con premios se
+    # quedaba SIN MENÚ -- el suelo de calcio de la nota b (2500) escalado un
+    # 11 % son 2778 contra el techo de 2750 de SACN5. Es el caso de Cairo, el
+    # perro de Elena, encontrado en producción el 13 de septiembre.
+    # ⚠️ CUÁLES HAN SUBIDO LO DICE LA PROPIA FUNCIÓN, no se deduce comparando:
+    # el envoltorio `resolver` necesita saberlo para decidir si reintenta sin el
+    # techo apretado, y una deducción por comparación de flotantes tiene un caso
+    # en el que miente -- lo cazó el fallo puesto.
+    _subidos_aqui = {}
+    _topes_del_libro = _topes_de_la_etapa(
+        etapa, req, _der_ef, peso_adulto_esperado_kg, _factor_premios,
+        apretar_el_techo_del_libro, _subidos_aqui)
+    if _techos_subidos_fuera is not None and _subidos_aqui:
+        _techos_subidos_fuera["se_ha_subido"] = True
+    for _clave_r, _valor_r in _topes_del_libro.items():
         _actual_r = topes_patologia.get(_clave_r)
         topes_patologia[_clave_r] = (_valor_r if _actual_r is None
                                      else min(_actual_r, _valor_r))
@@ -1171,6 +1414,17 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         minimos_reforzados[_clave_suelo] = (_valor_suelo if _actual is None
                                             else max(_actual, _valor_suelo))
 
+    # Y los premios los suben, igual que suben los minimos de FEDIAF: son
+    # suelos de CONCENTRACION sobre la dieta del dia entera, y la racion es
+    # solo una parte de ese dia. Se escalan aqui, una sola vez, porque este
+    # diccionario se usa en DOS sitios -- la cota absoluta del bucle de MAPA y
+    # la fila relativa contra las kcal reales-- y escalarlo en uno y no en el
+    # otro es exactamente la clase de desalineo que ya costo 2 de cada 20
+    # menus de cachorro de raza grande. Ver `_factor_premios`, arriba.
+    if _factor_premios != 1.0:
+        minimos_reforzados = {k: v * _factor_premios
+                              for k, v in minimos_reforzados.items()}
+
     # 2. mínimos y máximos de FEDIAF
     #
     # ⚠️ AÑADIDO (5 agosto, madrugada) — CAMBIO DE ARQUITECTURA PEDIDO
@@ -1224,7 +1478,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     # que el de peso se convierte a esa misma unidad antes de comparar.
     if peso_perro_kg and peso_perro_kg > 0 and der:
         tope_vitd_por_peso_absoluto = TOPE_VITD_KG075 * (peso_perro_kg ** 0.75)
-        tope_vitd_por_peso_en_kcal = tope_vitd_por_peso_absoluto / der * 1000.0
+        tope_vitd_por_peso_en_kcal = tope_vitd_por_peso_absoluto / der_racion * 1000.0
         tope_vitd_activo = min(tope_vitd_activo, tope_vitd_por_peso_en_kcal)
     # ⚠️ AÑADIDO en el mismo momento -- CASO REAL: probando el arreglo de
     # arriba, el solver se pegaba EXACTO al límite (matemáticamente
@@ -1240,7 +1494,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     MARGEN_REDONDEO_SEGURIDAD = 0.99
     tope_vitd_activo *= MARGEN_REDONDEO_SEGURIDAD
     TOPE_CRONICO_KCAL = {"vitD": tope_vitd_activo,
-                         "yodo": TOPE_YODO_KCAL * MARGEN_REDONDEO_SEGURIDAD,
+                         "yodo": TOPE_YODO_KCAL * MARGEN_REDONDEO_SEGURIDAD,   # se aprieta abajo si toca
                          # ⚠️ CORREGIDO (26 agosto). El selenio se topaba
                          # con los 2 µg/g de Merck aplicados sobre el PESO
                          # FRESCO, y esos 2 mg/kg son en base MATERIA
@@ -1268,10 +1522,16 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         _kg075 = peso_perro_kg ** 0.75
         for _clave_pt, _tope_pt in (("yodo", TOPE_YODO_KG075),
                                     ("selenio", TOPE_SELENIO_KG075)):
-            _por_peso_en_kcal = _tope_pt * _kg075 / der * 1000.0
+            _por_peso_en_kcal = _tope_pt * _kg075 / der_racion * 1000.0
             TOPE_CRONICO_KCAL[_clave_pt] = min(
                 TOPE_CRONICO_KCAL[_clave_pt],
                 _por_peso_en_kcal * MARGEN_REDONDEO_SEGURIDAD)
+    # ⚠️ Y EL MARGEN DEL KELP, AL FINAL: va DESPUÉS del tope por peso a
+    # propósito, para que aprete sobre el que de verdad manda de los dos. Solo
+    # entra en la segunda pasada -- ver `_con_el_margen_del_kelp`.
+    if _apretar_yodo_por_kelp:
+        from seguridad import MARGEN_EXTRA_YODO_KELP as _MEK
+        TOPE_CRONICO_KCAL["yodo"] /= _MEK
     # ⚠️ EPA+DHA SOLO SI VIENE PRESUPUESTO (26 agosto). No se siembra con un
     # valor por defecto a propósito: un menú suelto (/menu/v2) NO lleva techo
     # de EPA+DHA, porque los 2800 mg son el límite de la dieta habitual y no
@@ -1284,7 +1544,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     # días que faltan. El motor equilibra solo.
     if presupuesto_semanal_restante and der and presupuesto_semanal_restante.get("epa_dha"):
         TOPE_CRONICO_KCAL["epa_dha"] = (
-            presupuesto_semanal_restante["epa_dha"] / der * 1000.0)
+            presupuesto_semanal_restante["epa_dha"] / der_racion * 1000.0)
     if presupuesto_semanal_restante and der:
         # presupuesto_semanal_restante llega en valores ABSOLUTOS (µg
         # totales para el día) desde main.py -- se convierte aquí a la
@@ -1293,7 +1553,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         # única vez, más abajo en el bucle de MAPA (hi = mx * der / 1000).
         for clave_nut, tope_efectivo_absoluto in presupuesto_semanal_restante.items():
             if clave_nut in TOPE_CRONICO_KCAL:
-                tope_efectivo_tasa = tope_efectivo_absoluto / der * 1000.0
+                tope_efectivo_tasa = tope_efectivo_absoluto / der_racion * 1000.0
                 # nunca se afloja -- solo se usa si es MÁS estricto que el normal
                 TOPE_CRONICO_KCAL[clave_nut] = min(TOPE_CRONICO_KCAL[clave_nut], tope_efectivo_tasa)
     tabla_max = tabla_imputacion_maximos(alimentos)
@@ -1306,6 +1566,9 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         if not r:
             continue
         mn = minimo_de(r, nombre_req, et, _der_ef)
+        # Y los premios lo suben: ver `_factor_premios`, arriba.
+        if mn is not None and _factor_premios != 1.0:
+            mn = mn * _factor_premios
         # ⚠️ CUANDO EL MINIMO SUPERA AL MAXIMO NO ES «NO HAY COMBINACION»
         # (28 agosto). Los minimos suben al restringir calorias, pero los
         # maximos NO: son limites de CONCENTRACION en el alimento (la tabla
@@ -1454,7 +1717,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         PASO_DE_REDONDEO_G = 0.005          # round(x, 2) -> medio paso
         FUENTES_QUE_PUEDEN_COINCIDIR = 3
         if mn is not None:
-            lo_exacto = mn * der / 1000.0
+            lo_exacto = mn * der_racion / 1000.0
             # el vector del SUELO, que es el mismo que se usa unas líneas
             # más abajo: el valor plausible cuando el dato es dudoso.
             _por_gramo = sorted(fila_min if hay_dudoso else fila, reverse=True)
@@ -1488,7 +1751,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         # semaforo. Medido en el caso rojo: exceso 0,0078 y margen 0,0178, o sea
         # que cabe con casi el doble de sitio.
         if mx is not None:
-            hi_exacto = mx * der / 1000.0
+            hi_exacto = mx * der_racion / 1000.0
             _por_gramo_techo = sorted(fila_max if hay_hueco else fila, reverse=True)
             mas_concentrada_techo = sum(_por_gramo_techo[:FUENTES_QUE_PUEDEN_COINCIDIR])
             hi = hi_exacto - PASO_DE_REDONDEO_G * mas_concentrada_techo
@@ -1703,7 +1966,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
                 fila_set[idx[n]] = alimentos[n].get("energia", 0) / 100.0
                 aporta_set = True
         if aporta_set:
-            _fila("seguridad_cronica_" + clave_presupuesto, fila_set, -np.inf, tope_frac_efectivo * der)
+            _fila("seguridad_cronica_" + clave_presupuesto, fila_set, -np.inf, tope_frac_efectivo * der_racion)
 
     # 2b. RATIO Ca:P — se me olvidó la primera vez. Calcio y fósforo por
     # separado no bastan: la RELACIÓN entre ambos es su propio requisito,
@@ -1995,7 +2258,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         for n in nombres:
             g = (_num(alimentos[n].get("nutrientes", {}).get("grasa")) or 0.0) / 100.0
             fila[idx[n]] = g * 9.0
-        _fila("grasa_patologia_absoluto", fila, -np.inf, pct_grasa_max * der)
+        _fila("grasa_patologia_absoluto", fila, -np.inf, pct_grasa_max * der_racion)
 
         # ⚠️ AÑADIDO (24 agosto) — CASO REAL MEDIDO: en pancreatitis, con
         # el tope de grasa en el 25% de las kcal, el menú salía al 26%. En
@@ -2171,7 +2434,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     # Así que ahora lo sabe, y la regla queda dicha una sola vez: lo que el
     # motor planifica es lo que se entrega.
     SUELO_ENTREGABLE_G = 0.03           # > UMBRAL_DE_ENTREGA_G (0,02)
-    _tope_porcion = 0.15 * 0.6 * der
+    _tope_porcion = 0.15 * 0.6 * der_racion
     for n in nombres:
         cat_n = alimentos[n].get("categoria")
         i = idx[n]
@@ -2318,7 +2581,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     # y etapa), así que se limita a un 15% de esa ración estimada. Para
     # un perro mediano o grande no cambia nada -- el tope queda muy por
     # encima de los 40 g; solo actúa donde estaba el problema.
-    tope_porcion_del_perro = 0.15 * 0.6 * der
+    tope_porcion_del_perro = 0.15 * 0.6 * der_racion
     if forzar:
         for n in forzar:
             if n not in idx:

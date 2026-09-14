@@ -1,0 +1,5001 @@
+{
+ "Cáscara de huevo PAWS & PATCH": {},
+ "NaturGreen Psyllium Bio": {},
+ "AniForte Beef Blood Powder": {},
+ "Aceite de Salmón Natural Greatness": {
+  "usda": {
+   "id": "172343",
+   "veredicto": "REVISAR",
+   "de_donde": "escrito en la ficha",
+   "nombre_en_la_fuente": "Fish oil, salmon",
+   "detalle": {
+    "proteina": {
+     "nuestro": 0,
+     "suyo": "0",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 99.5,
+     "suyo": "100",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 900,
+     "suyo": "902",
+     "cuadra": true
+    },
+    "sin_huella": "casi todo grasa: las tres cifras no distinguen"
+   }
+  }
+ },
+ "Oleum Canis Aceite de Salmón": {
+  "usda": {
+   "id": "172343",
+   "veredicto": "REVISAR",
+   "de_donde": "escrito en la ficha",
+   "nombre_en_la_fuente": "Fish oil, salmon",
+   "detalle": {
+    "proteina": {
+     "nuestro": 0,
+     "suyo": "0",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 99.5,
+     "suyo": "100",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 900,
+     "suyo": "902",
+     "cuadra": true
+    },
+    "sin_huella": "casi todo grasa: las tres cifras no distinguen"
+   }
+  }
+ },
+ "AniForte Aceite de Salmón": {
+  "usda": {
+   "id": "172343",
+   "veredicto": "REVISAR",
+   "de_donde": "escrito en la ficha",
+   "nombre_en_la_fuente": "Fish oil, salmon",
+   "detalle": {
+    "proteina": {
+     "nuestro": 0,
+     "suyo": "0",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 99.5,
+     "suyo": "100",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 900,
+     "suyo": "902",
+     "cuadra": true
+    },
+    "sin_huella": "casi todo grasa: las tres cifras no distinguen"
+   }
+  }
+ },
+ "Pets Purest Aceite de Salmón Escocés": {},
+ "GRAU Levadura de cerveza": {
+  "ciqual": {
+   "id": "11009",
+   "veredicto": "NO",
+   "de_donde": "escrito en la ficha",
+   "nombre_en_la_fuente": "Levure alimentaire",
+   "detalle": {
+    "proteina": {
+     "nuestro": 46,
+     "suyo": "40,4",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0,
+     "suyo": "4,5",
+     "cuadra": false
+    },
+    "energia": {
+     "nuestro": 350,
+     "suyo": 334.6080305927342,
+     "cuadra": true
+    }
+   }
+  },
+  "usda": {
+   "id": "175043",
+   "veredicto": "NO",
+   "de_donde": "escrito en la ficha",
+   "nombre_en_la_fuente": "Leavening agents, yeast, baker's, active dry",
+   "detalle": {
+    "proteina": {
+     "nuestro": 46,
+     "suyo": "40.44",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0,
+     "suyo": "7.61",
+     "cuadra": false
+    },
+    "energia": {
+     "nuestro": 350,
+     "suyo": "325",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "PAWS & PATCH Levadura de cerveza": {
+  "ciqual": {
+   "id": "11009",
+   "veredicto": "NO",
+   "de_donde": "escrito en la ficha",
+   "nombre_en_la_fuente": "Levure alimentaire",
+   "detalle": {
+    "proteina": {
+     "nuestro": 44,
+     "suyo": "40,4",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0,
+     "suyo": "4,5",
+     "cuadra": false
+    },
+    "energia": {
+     "nuestro": 350,
+     "suyo": 334.6080305927342,
+     "cuadra": true
+    }
+   }
+  },
+  "usda": {
+   "id": "175043",
+   "veredicto": "NO",
+   "de_donde": "escrito en la ficha",
+   "nombre_en_la_fuente": "Leavening agents, yeast, baker's, active dry",
+   "detalle": {
+    "proteina": {
+     "nuestro": 44,
+     "suyo": "40.44",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0,
+     "suyo": "7.61",
+     "cuadra": false
+    },
+    "energia": {
+     "nuestro": 350,
+     "suyo": "325",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "AniForte Seaweed Meal": {},
+ "Pavo pechuga con piel": {
+  "usda": {
+   "id": "171093",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Turkey, all classes, breast, meat and skin, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 21.9,
+     "suyo": "21.89",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 7.0,
+     "suyo": "7.02",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 70.0,
+     "suyo": "70.05",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 157,
+     "suyo": "157",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Pollo pechuga con piel": {
+  "usda": {
+   "id": "171474",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Chicken, broilers or fryers, breast, meat and skin, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 20.8,
+     "suyo": "20.85",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 9.25,
+     "suyo": "9.25",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 69.5,
+     "suyo": "69.46",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 172,
+     "suyo": "172",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Conejo": {
+  "bedca": {
+   "id": "1162",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Conejo de granja, carne, cruda",
+   "nombre_en_la_fuente": "Conejo de granja, carne, cruda",
+   "detalle": {
+    "proteina": {
+     "nuestro": 20.7,
+     "suyo": "20.7",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 5.3,
+     "suyo": "5.3",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 72.8,
+     "suyo": "74",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 132,
+     "suyo": 130.97514340344168,
+     "cuadra": true
+    }
+   }
+  },
+  "usda": {
+   "id": "172521",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Game meat, rabbit, domesticated, composite of cuts, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 20.7,
+     "suyo": "20.05",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 5.3,
+     "suyo": "5.55",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 72.8,
+     "suyo": "72.82",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 132,
+     "suyo": "136",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Pollo muslo con piel": {
+  "usda": {
+   "id": "172385",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Chicken, broilers or fryers, thigh, meat and skin, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 16.5,
+     "suyo": "16.52",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 15.5,
+     "suyo": "16.61",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 66.5,
+     "suyo": "66.47",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 211,
+     "suyo": "221",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Pavo": {
+  "bedca": {
+   "id": "2285",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Pavo, crudo",
+   "nombre_en_la_fuente": "Pavo, crudo",
+   "detalle": {
+    "proteina": {
+     "nuestro": 20.18,
+     "suyo": "20.18",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 8.5,
+     "suyo": "8.5",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 72.7,
+     "suyo": "71.3",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 158,
+     "suyo": 157.1606118546845,
+     "cuadra": true
+    }
+   }
+  },
+  "ciqual": {
+   "id": "17325",
+   "veredicto": "NO",
+   "de_donde": "búsqueda: Huile de pavot",
+   "nombre_en_la_fuente": "Huile de pavot",
+   "detalle": {
+    "proteina": {
+     "nuestro": 20.18,
+     "suyo": "0",
+     "cuadra": false
+    },
+    "grasa": {
+     "nuestro": 8.5,
+     "suyo": "100",
+     "cuadra": false
+    },
+    "agua": {
+     "nuestro": 72.7,
+     "suyo": "0",
+     "cuadra": false
+    },
+    "energia": {
+     "nuestro": 158,
+     "suyo": 884.321223709369,
+     "cuadra": false
+    }
+   }
+  },
+  "usda": {
+   "id": "171081",
+   "veredicto": "NO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Turkey, whole, meat and skin, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 20.18,
+     "suyo": "21.64",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 8.5,
+     "suyo": "5.64",
+     "cuadra": false
+    },
+    "agua": {
+     "nuestro": 72.7,
+     "suyo": "72.69",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 158,
+     "suyo": "144",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Pavo muslo con piel": {
+  "usda": {
+   "id": "171493",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Turkey, all classes, leg, meat and skin, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 18.9,
+     "suyo": "19.54",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 8.3598,
+     "suyo": "6.72",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 72.7,
+     "suyo": "72.69",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 151,
+     "suyo": "144",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Ternera solomillo sin grasa": {},
+ "Ternera con grasa": {},
+ "Salmón": {
+  "bedca": {
+   "id": "2626",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Salmón",
+   "nombre_en_la_fuente": "Salmón",
+   "detalle": {
+    "proteina": {
+     "nuestro": 18.4,
+     "suyo": "18.4",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 12,
+     "suyo": "12",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 64.9,
+     "suyo": "69.6",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 182,
+     "suyo": 180.8795411089866,
+     "cuadra": true
+    }
+   }
+  },
+  "usda": {
+   "id": "175167",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Fish, salmon, Atlantic, farmed, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 18.4,
+     "suyo": "20.42",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 12,
+     "suyo": "13.42",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 64.9,
+     "suyo": "64.89",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 182,
+     "suyo": "208",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Sardina": {
+  "bedca": {
+   "id": "2630",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Sardina",
+   "nombre_en_la_fuente": "Sardina",
+   "detalle": {
+    "proteina": {
+     "nuestro": 18.1,
+     "suyo": "18.1",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 7.5,
+     "suyo": "7.5",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 140,
+     "suyo": 139.86615678776292,
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Caballa": {
+  "bedca": {
+   "id": "804",
+   "veredicto": "NO",
+   "de_donde": "búsqueda: Caballa, al horno",
+   "nombre_en_la_fuente": "Caballa, al horno",
+   "detalle": {
+    "proteina": {
+     "nuestro": 18.68,
+     "suyo": "16.7",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 11.9,
+     "suyo": "20.3333",
+     "cuadra": false
+    },
+    "agua": {
+     "nuestro": 63.6,
+     "suyo": "61",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 182,
+     "suyo": 247.664913957935,
+     "cuadra": false
+    }
+   }
+  },
+  "usda": {
+   "id": "175119",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Fish, mackerel, Atlantic, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 18.68,
+     "suyo": "18.6",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 11.9,
+     "suyo": "13.89",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 63.6,
+     "suyo": "63.55",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 182,
+     "suyo": "205",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Atún": {
+  "bedca": {
+   "id": "2130",
+   "veredicto": "NO",
+   "de_donde": "búsqueda: Atún en aceite de oliva isabel",
+   "nombre_en_la_fuente": "Atún en aceite de oliva isabel",
+   "detalle": {
+    "proteina": {
+     "nuestro": 22,
+     "suyo": "26.53",
+     "cuadra": false
+    },
+    "grasa": {
+     "nuestro": 3.3,
+     "suyo": "8.08",
+     "cuadra": false
+    },
+    "energia": {
+     "nuestro": 119,
+     "suyo": 179.24713193116634,
+     "cuadra": false
+    },
+    "preparacion_distinta": "en aceite"
+   }
+  }
+ },
+ "Merluza": {
+  "bedca": {
+   "id": "2347",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Merluza fresca",
+   "nombre_en_la_fuente": "Merluza fresca",
+   "detalle": {
+    "proteina": {
+     "nuestro": 11.93,
+     "suyo": "11.93",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 1.8,
+     "suyo": "1.8",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 65,
+     "suyo": 64.39053537284896,
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Bacalao": {
+  "bedca": {
+   "id": "2302",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Bacalao, crudo",
+   "nombre_en_la_fuente": "Bacalao, crudo",
+   "detalle": {
+    "proteina": {
+     "nuestro": 18.2,
+     "suyo": "18.2",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 1,
+     "suyo": "1",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 81.2,
+     "suyo": "79.9",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 83,
+     "suyo": 82.79158699808795,
+     "cuadra": true
+    }
+   }
+  },
+  "usda": {
+   "id": "171955",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Fish, cod, Atlantic, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 18.2,
+     "suyo": "17.81",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 1,
+     "suyo": "0.67",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 81.2,
+     "suyo": "81.22",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 83,
+     "suyo": "82",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Trucha": {
+  "bedca": {
+   "id": "2636",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Trucha",
+   "nombre_en_la_fuente": "Trucha",
+   "detalle": {
+    "proteina": {
+     "nuestro": 15.7,
+     "suyo": "15.7",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 3,
+     "suyo": "3",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 91,
+     "suyo": 90.32026768642447,
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Huevo clara": {
+  "usda": {
+   "id": "172183",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Egg, white, raw, fresh",
+   "detalle": {
+    "proteina": {
+     "nuestro": 10.5,
+     "suyo": "10.9",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0.1,
+     "suyo": "0.17",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 87.6,
+     "suyo": "87.57",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 45,
+     "suyo": "52",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Huevo yema": {
+  "bedca": {
+   "id": "2125",
+   "veredicto": "SEGURO",
+   "de_donde": "escrito en la ficha",
+   "nombre_en_la_fuente": "Huevo de gallina, yema, cruda",
+   "detalle": {
+    "proteina": {
+     "nuestro": 16.5,
+     "suyo": "16.5",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 31.5,
+     "suyo": "31.5",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 52.3,
+     "suyo": "49.9",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 356,
+     "suyo": 354.9474187380497,
+     "cuadra": true
+    }
+   }
+  },
+  "ciqual": {
+   "id": "22002",
+   "veredicto": "SEGURO",
+   "de_donde": "escrito en la ficha",
+   "nombre_en_la_fuente": "Oeuf, jaune (jaune d'oeuf), cru",
+   "detalle": {
+    "proteina": {
+     "nuestro": 16.5,
+     "suyo": "15,5",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 31.5,
+     "suyo": "26,7",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 52.3,
+     "suyo": "55",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 356,
+     "suyo": 303.53728489483746,
+     "cuadra": true
+    }
+   }
+  },
+  "usda": {
+   "id": "172184",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Egg, yolk, raw, fresh",
+   "detalle": {
+    "proteina": {
+     "nuestro": 16.5,
+     "suyo": "15.86",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 31.5,
+     "suyo": "26.54",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 52.3,
+     "suyo": "52.31",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 356,
+     "suyo": "322",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Aceite de oliva": {
+  "bedca": {
+   "id": "2544",
+   "veredicto": "PROBABLE",
+   "de_donde": "búsqueda: Aceite de oliva virgen extra",
+   "nombre_en_la_fuente": "Aceite de oliva virgen extra",
+   "detalle": {
+    "grasa": {
+     "nuestro": 99.9,
+     "suyo": "100",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 887,
+     "suyo": 884.321223709369,
+     "cuadra": true
+    }
+   }
+  },
+  "usda": {
+   "id": "171413",
+   "veredicto": "REVISAR",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Oil, olive, salad or cooking",
+   "detalle": {
+    "proteina": {
+     "nuestro": 0,
+     "suyo": "0",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 99.9,
+     "suyo": "100",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 0.0,
+     "suyo": "0",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 887,
+     "suyo": "884",
+     "cuadra": true
+    },
+    "preparacion_distinta": "salad"
+   }
+  }
+ },
+ "Aceite de oliva virgen extra": {
+  "bedca": {
+   "id": "2544",
+   "veredicto": "PROBABLE",
+   "de_donde": "búsqueda: Aceite de oliva virgen extra",
+   "nombre_en_la_fuente": "Aceite de oliva virgen extra",
+   "detalle": {
+    "grasa": {
+     "nuestro": 100,
+     "suyo": "100",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 888,
+     "suyo": 884.321223709369,
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Hígado de vaca": {
+  "usda": {
+   "id": "169451",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Beef, variety meats and by-products, liver, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 21.1,
+     "suyo": "20.36",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 4.0216,
+     "suyo": "3.63",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 70.8,
+     "suyo": "70.81",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 136,
+     "suyo": "135",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Corazón de pollo": {
+  "bedca": {
+   "id": "970",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Corazón de pollo, crudo",
+   "nombre_en_la_fuente": "Corazón de pollo, crudo",
+   "detalle": {
+    "proteina": {
+     "nuestro": 15.6,
+     "suyo": "15.6",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 9.3,
+     "suyo": "9.3",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 73.6,
+     "suyo": "74.4",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 148,
+     "suyo": 148.51099426386233,
+     "cuadra": true
+    }
+   }
+  },
+  "usda": {
+   "id": "171458",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Chicken, heart, all classes, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 15.6,
+     "suyo": "15.55",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 9.3,
+     "suyo": "9.33",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 73.6,
+     "suyo": "73.56",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 148,
+     "suyo": "153",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Pulmón de vaca": {},
+ "Riñón de ternera": {
+  "usda": {
+   "id": "174356",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Veal, variety meats and by-products, kidneys, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 17.1,
+     "suyo": "15.76",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 2.65,
+     "suyo": "3.12",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 79.1,
+     "suyo": "79.07",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 92.3,
+     "suyo": "99",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Calabaza": {
+  "bedca": {
+   "id": "2378",
+   "veredicto": "SEGURO",
+   "de_donde": "escrito en la ficha",
+   "nombre_en_la_fuente": "Calabaza, cruda",
+   "detalle": {
+    "proteina": {
+     "nuestro": 1.2,
+     "suyo": "1.2",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0.5,
+     "suyo": "0.5",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 91.6,
+     "suyo": "89.4",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 32,
+     "suyo": 32.05066921606118,
+     "cuadra": true
+    }
+   }
+  },
+  "ciqual": {
+   "id": "20044",
+   "veredicto": "SEGURO",
+   "de_donde": "escrito en la ficha",
+   "nombre_en_la_fuente": "Potiron, cru",
+   "detalle": {
+    "proteina": {
+     "nuestro": 1.2,
+     "suyo": "1",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0.5,
+     "suyo": "0,1",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 91.6,
+     "suyo": "91,6",
+     "cuadra": true
+    }
+   }
+  },
+  "usda": {
+   "id": "168448",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Pumpkin, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 1.2,
+     "suyo": "1",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0.5,
+     "suyo": "0.1",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 91.6,
+     "suyo": "91.6",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 32,
+     "suyo": "26",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Calabacín": {
+  "bedca": {
+   "id": "2376",
+   "veredicto": "SEGURO",
+   "de_donde": "escrito en la ficha",
+   "nombre_en_la_fuente": "Calabacín",
+   "detalle": {
+    "proteina": {
+     "nuestro": 1.8,
+     "suyo": "1.8",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0.2,
+     "suyo": "0.2",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 17,
+     "suyo": 17.208413001912046,
+     "cuadra": true
+    }
+   }
+  },
+  "ciqual": {
+   "id": "20020",
+   "veredicto": "SEGURO",
+   "de_donde": "escrito en la ficha",
+   "nombre_en_la_fuente": "Courgette, pulpe et peau, crue",
+   "detalle": {
+    "proteina": {
+     "nuestro": 1.8,
+     "suyo": "1,23",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0.2,
+     "suyo": "0,26",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 17,
+     "suyo": 16.58699808795411,
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Zanahoria": {
+  "bedca": {
+   "id": "2424",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Zanahoria, cruda",
+   "nombre_en_la_fuente": "Zanahoria, cruda",
+   "detalle": {
+    "proteina": {
+     "nuestro": 0.8,
+     "suyo": "0.8",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0.3,
+     "suyo": "0.3",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 88.3,
+     "suyo": "87.8",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 34,
+     "suyo": 34.34512428298279,
+     "cuadra": true
+    }
+   }
+  },
+  "usda": {
+   "id": "170393",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Carrots, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 0.8,
+     "suyo": "0.93",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0.3,
+     "suyo": "0.24",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 88.3,
+     "suyo": "88.29",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 34,
+     "suyo": "41",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Judía verde": {
+  "bedca": {
+   "id": "2198",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Judía verde, cruda",
+   "nombre_en_la_fuente": "Judía verde, cruda",
+   "detalle": {
+    "proteina": {
+     "nuestro": 2.2,
+     "suyo": "2.2",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0.4,
+     "suyo": "0.4",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 28,
+     "suyo": 27.509560229445505,
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Brócoli": {
+  "ciqual": {
+   "id": "20057",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Brocoli, cru",
+   "nombre_en_la_fuente": "Brocoli, cru",
+   "detalle": {
+    "proteina": {
+     "nuestro": 3.0,
+     "suyo": "3,95",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0.4,
+     "suyo": "0,48",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 89.3,
+     "suyo": "88,9",
+     "cuadra": true
+    }
+   }
+  },
+  "usda": {
+   "id": "170379",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Broccoli, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 3.0,
+     "suyo": "2.82",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0.4,
+     "suyo": "0.37",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 89.3,
+     "suyo": "89.3",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 26.0,
+     "suyo": "34",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Espinaca": {
+  "bedca": {
+   "id": "2394",
+   "veredicto": "REVISAR",
+   "de_donde": "búsqueda: Espinaca, en conserva",
+   "nombre_en_la_fuente": "Espinaca, en conserva",
+   "detalle": {
+    "proteina": {
+     "nuestro": 2.7125,
+     "suyo": "2.2",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0.8,
+     "suyo": "0.4",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 91.4,
+     "suyo": "90.6",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 22,
+     "suyo": 14.588910133843212,
+     "cuadra": true
+    },
+    "preparacion_distinta": "conserva"
+   }
+  },
+  "usda": {
+   "id": "168462",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Spinach, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 2.7125,
+     "suyo": "2.86",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0.8,
+     "suyo": "0.39",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 91.4,
+     "suyo": "91.4",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 22,
+     "suyo": "23",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Pimiento rojo": {
+  "bedca": {
+   "id": "2409",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Pimiento rojo, crudo",
+   "nombre_en_la_fuente": "Pimiento rojo, crudo",
+   "detalle": {
+    "proteina": {
+     "nuestro": 1.3,
+     "suyo": "1.3",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0.6,
+     "suyo": "0.6",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 29,
+     "suyo": 28.87189292543021,
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Acelga": {
+  "bedca": {
+   "id": "2212",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Acelga, cruda",
+   "nombre_en_la_fuente": "Acelga, cruda",
+   "detalle": {
+    "proteina": {
+     "nuestro": 2.1,
+     "suyo": "2.1",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0.2,
+     "suyo": "0.2",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 92.7,
+     "suyo": "94.4",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 21,
+     "suyo": 21.271510516252388,
+     "cuadra": true
+    }
+   }
+  },
+  "usda": {
+   "id": "169991",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Chard, swiss, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 2.1,
+     "suyo": "1.8",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0.2,
+     "suyo": "0.2",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 92.7,
+     "suyo": "92.66",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 21,
+     "suyo": "19",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Manzana": {
+  "bedca": {
+   "id": "2231",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Manzana",
+   "nombre_en_la_fuente": "Manzana",
+   "detalle": {
+    "proteina": {
+     "nuestro": 0.3,
+     "suyo": "0.3",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 85.6,
+     "suyo": "85.7",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 50,
+     "suyo": 49.97609942638623,
+     "cuadra": true
+    }
+   }
+  },
+  "usda": {
+   "id": "171688",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Apples, raw, with skin (Includes foods for USDA's Food Distribution Program)",
+   "detalle": {
+    "proteina": {
+     "nuestro": 0.3,
+     "suyo": "0.26",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0,
+     "suyo": "0.17",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 85.6,
+     "suyo": "85.56",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 50,
+     "suyo": "52",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Pera": {
+  "bedca": {
+   "id": "2241",
+   "veredicto": "PROBABLE",
+   "de_donde": "escrito en la ficha",
+   "nombre_en_la_fuente": "Pera",
+   "detalle": {
+    "proteina": {
+     "nuestro": 0.4,
+     "suyo": "0.4",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 45,
+     "suyo": 44.69407265774378,
+     "cuadra": true
+    }
+   }
+  },
+  "ciqual": {
+   "id": "13037",
+   "veredicto": "PROBABLE",
+   "de_donde": "escrito en la ficha",
+   "nombre_en_la_fuente": "Poire, pulpe et peau, crue",
+   "detalle": {
+    "proteina": {
+     "nuestro": 0.4,
+     "suyo": "0,49",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0,
+     "suyo": "0,27",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Arándano": {
+  "bedca": {
+   "id": "2368",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Arandano",
+   "nombre_en_la_fuente": "Arandano",
+   "detalle": {
+    "proteina": {
+     "nuestro": 0.625,
+     "suyo": "0.625",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0.6,
+     "suyo": "0.6",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 84.21,
+     "suyo": "87.8",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 33,
+     "suyo": 32.42710325047801,
+     "cuadra": true
+    }
+   }
+  },
+  "usda": {
+   "id": "2344769",
+   "veredicto": "SIN_COMPARAR",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "",
+   "detalle": {}
+  }
+ },
+ "Plátano": {
+  "bedca": {
+   "id": "2245",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Plátano",
+   "nombre_en_la_fuente": "Plátano",
+   "detalle": {
+    "proteina": {
+     "nuestro": 1.2,
+     "suyo": "1.2",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0.3,
+     "suyo": "0.3",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 89,
+     "suyo": 88.7906309751434,
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Fresa": {
+  "bedca": {
+   "id": "2225",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Fresa",
+   "nombre_en_la_fuente": "Fresa",
+   "detalle": {
+    "proteina": {
+     "nuestro": 0.7,
+     "suyo": "0.7",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0.5,
+     "suyo": "0.5",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 36,
+     "suyo": 35.70745697896749,
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Naranja": {
+  "bedca": {
+   "id": "2235",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Naranja",
+   "nombre_en_la_fuente": "Naranja",
+   "detalle": {
+    "proteina": {
+     "nuestro": 0.8,
+     "suyo": "0.8",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 86.8,
+     "suyo": "88.6",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 38,
+     "suyo": 38.19311663479924,
+     "cuadra": true
+    }
+   }
+  },
+  "usda": {
+   "id": "169097",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Oranges, raw, all commercial varieties",
+   "detalle": {
+    "proteina": {
+     "nuestro": 0.8,
+     "suyo": "0.94",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0,
+     "suyo": "0.12",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 86.8,
+     "suyo": "86.75",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 38,
+     "suyo": "47",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Sandía": {
+  "bedca": {
+   "id": "2247",
+   "veredicto": "PROBABLE",
+   "de_donde": "búsqueda: Sandía",
+   "nombre_en_la_fuente": "Sandía",
+   "detalle": {
+    "proteina": {
+     "nuestro": 0.4,
+     "suyo": "0.4",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 20,
+     "suyo": 19.909177820267686,
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Melón": {
+  "bedca": {
+   "id": "2234",
+   "veredicto": "PROBABLE",
+   "de_donde": "búsqueda: Melón",
+   "nombre_en_la_fuente": "Melón",
+   "detalle": {
+    "proteina": {
+     "nuestro": 0.6,
+     "suyo": "0.6",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 27,
+     "suyo": 26.81644359464627,
+     "cuadra": true
+    }
+   }
+  },
+  "ciqual": {
+   "id": "20136",
+   "veredicto": "PROBABLE",
+   "de_donde": "búsqueda: Courge melonnette, pulpe, crue",
+   "nombre_en_la_fuente": "Courge melonnette, pulpe, crue",
+   "detalle": {
+    "proteina": {
+     "nuestro": 0.6,
+     "suyo": "0,75",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0,
+     "suyo": "0,13",
+     "cuadra": true
+    }
+   }
+  },
+  "usda": {
+   "id": "167629",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Melon, banana (Navajo)",
+   "nombre_en_la_fuente": "Melon, banana (Navajo)",
+   "detalle": {
+    "proteina": {
+     "nuestro": 0.6,
+     "suyo": "0.84",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0,
+     "suyo": "0.2",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 27,
+     "suyo": "21",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Pulmón de cordero": {
+  "usda": {
+   "id": "174359",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Lamb, variety meats and by-products, lungs, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 16.7,
+     "suyo": "16.7",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 2.6,
+     "suyo": "2.6",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 79.7,
+     "suyo": "79.7",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 91,
+     "suyo": "95",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Riñón de cordero": {
+  "usda": {
+   "id": "174354",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Lamb, variety meats and by-products, kidneys, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 15.7,
+     "suyo": "15.74",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 2.95,
+     "suyo": "2.95",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 79.2,
+     "suyo": "79.23",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 92.8,
+     "suyo": "97",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Corazón de vaca": {
+  "bedca": {
+   "id": "2265",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Corazon de vaca, crudo",
+   "nombre_en_la_fuente": "Corazon de vaca, crudo",
+   "detalle": {
+    "proteina": {
+     "nuestro": 17,
+     "suyo": "17",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 4,
+     "suyo": "4",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 77.1,
+     "suyo": "79",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 104,
+     "suyo": 104.4455066921606,
+     "cuadra": true
+    }
+   }
+  },
+  "usda": {
+   "id": "168625",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Beef, variety meats and by-products, heart, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 17,
+     "suyo": "17.72",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 4,
+     "suyo": "3.94",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 77.1,
+     "suyo": "77.11",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 104,
+     "suyo": "112",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Carcasa de pollo": {},
+ "Cuello de pavo": {},
+ "Cuello de pato": {},
+ "Carcasa de conejo": {},
+ "Costillas de cordero": {},
+ "Aceite de girasol": {
+  "bedca": {
+   "id": "2541",
+   "veredicto": "PROBABLE",
+   "de_donde": "búsqueda: Aceite de girasol",
+   "nombre_en_la_fuente": "Aceite de girasol",
+   "detalle": {
+    "grasa": {
+     "nuestro": 99.9,
+     "suyo": "99.9",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 887,
+     "suyo": 883.4369024856596,
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Aceite de linaza": {},
+ "Pato (carne sin hueso)": {
+  "usda": {
+   "id": "172410",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Duck, domesticated, meat only, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 19.7,
+     "suyo": "18.28",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 6.5,
+     "suyo": "5.95",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 73.8,
+     "suyo": "73.77",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 138,
+     "suyo": "135",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Corazón de cordero": {
+  "bedca": {
+   "id": "966",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Corazón de cordero, crudo",
+   "nombre_en_la_fuente": "Corazón de cordero, crudo",
+   "detalle": {
+    "proteina": {
+     "nuestro": 16.5,
+     "suyo": "16.5",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 5.7,
+     "suyo": "5.7",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 76.7,
+     "suyo": "77.6",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 119,
+     "suyo": 118.30066921606118,
+     "cuadra": true
+    }
+   }
+  },
+  "usda": {
+   "id": "172527",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Lamb, variety meats and by-products, heart, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 16.5,
+     "suyo": "16.47",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 5.7,
+     "suyo": "5.68",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 76.7,
+     "suyo": "76.71",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 119,
+     "suyo": "122",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Gallina (carne sin hueso)": {
+  "usda": {
+   "id": "172400",
+   "veredicto": "REVISAR",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Chicken, stewing, meat and skin, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 17.3,
+     "suyo": "17.55",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 18.1,
+     "suyo": "20.33",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 61.8,
+     "suyo": "61.84",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 231,
+     "suyo": "258",
+     "cuadra": true
+    },
+    "preparacion_distinta": "stewing"
+   }
+  }
+ },
+ "Lengua de cordero": {
+  "bedca": {
+   "id": "2276",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Lengua de cordero, cruda",
+   "nombre_en_la_fuente": "Lengua de cordero, cruda",
+   "detalle": {
+    "proteina": {
+     "nuestro": 15.3,
+     "suyo": "15.3",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 14.6,
+     "suyo": "14.6",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 66.6,
+     "suyo": "70.1",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 192,
+     "suyo": 191.27629063097513,
+     "cuadra": true
+    }
+   }
+  },
+  "usda": {
+   "id": "174366",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Lamb, variety meats and by-products, tongue, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 15.3,
+     "suyo": "15.7",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 14.6,
+     "suyo": "17.17",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 66.6,
+     "suyo": "66.6",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 192,
+     "suyo": "222",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Lengua de buey": {
+  "usda": {
+   "id": "170196",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Beef, variety meats and by-products, tongue, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 14.9,
+     "suyo": "14.9",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 16.1,
+     "suyo": "16.09",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 64.5,
+     "suyo": "64.53",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 219,
+     "suyo": "224",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Lengua de ternera": {
+  "usda": {
+   "id": "174368",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Veal, variety meats and by-products, tongue, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 17.8,
+     "suyo": "17.18",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 7.1,
+     "suyo": "5.48",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 74.5,
+     "suyo": "74.53",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 136,
+     "suyo": "131",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Pavo pechuga sin piel": {
+  "usda": {
+   "id": "174515",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Turkey, retail parts, breast, meat only, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 23.3,
+     "suyo": "23.34",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 2.33,
+     "suyo": "2.33",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 74.7,
+     "suyo": "74.66",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 114,
+     "suyo": "114",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Pollo ala con piel (sin hueso)": {
+  "usda": {
+   "id": "172390",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Chicken, broilers or fryers, wing, meat and skin, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 18.33,
+     "suyo": "17.52",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 15.97,
+     "suyo": "12.85",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 69.2,
+     "suyo": "69.19",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 217,
+     "suyo": "191",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Pollo con piel (sin hueso)": {},
+ "Lomo de ternera con grasa": {},
+ "Yogur griego": {
+  "bedca": {
+   "id": "2520",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Yogur griego",
+   "nombre_en_la_fuente": "Yogur griego",
+   "detalle": {
+    "proteina": {
+     "nuestro": 6.4,
+     "suyo": "6.4",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 10.2,
+     "suyo": "10.2",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 139,
+     "suyo": 138.1453154875717,
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Huevo de codorniz": {
+  "bedca": {
+   "id": "757",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Huevo de codorniz, entero, crudo",
+   "nombre_en_la_fuente": "Huevo de codorniz, entero, crudo",
+   "detalle": {
+    "proteina": {
+     "nuestro": 13.1,
+     "suyo": "13.1",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 11.1,
+     "suyo": "11.1",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 154,
+     "suyo": 153.01147227533463,
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Huevo de gallina entero": {
+  "usda": {
+   "id": "171287",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Egg, whole, raw, fresh",
+   "detalle": {
+    "proteina": {
+     "nuestro": 12.5,
+     "suyo": "12.56",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 11.1,
+     "suyo": "9.51",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 76.2,
+     "suyo": "76.15",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 150,
+     "suyo": "143",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Huevo de pato": {
+  "bedca": {
+   "id": "764",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Huevo de pato, crudo",
+   "nombre_en_la_fuente": "Huevo de pato, crudo",
+   "detalle": {
+    "proteina": {
+     "nuestro": 14.3,
+     "suyo": "14.3",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 11.8,
+     "suyo": "11.8",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 163,
+     "suyo": 162.45219885277248,
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Huevo de pato entero": {
+  "bedca": {
+   "id": "764",
+   "veredicto": "SEGURO",
+   "de_donde": "escrito en la ficha",
+   "nombre_en_la_fuente": "Huevo de pato, crudo",
+   "detalle": {
+    "proteina": {
+     "nuestro": 13.7,
+     "suyo": "14.3",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 11.9,
+     "suyo": "11.8",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 164,
+     "suyo": 162.45219885277248,
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Bacaladilla": {
+  "bedca": {
+   "id": "2136",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Bacaladilla",
+   "nombre_en_la_fuente": "Bacaladilla",
+   "detalle": {
+    "proteina": {
+     "nuestro": 17.4,
+     "suyo": "17.4",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0.7,
+     "suyo": "0.7",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 77,
+     "suyo": 76.88814531548756,
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Besugo": {
+  "bedca": {
+   "id": "2312",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Besugo",
+   "nombre_en_la_fuente": "Besugo",
+   "detalle": {
+    "proteina": {
+     "nuestro": 18.12,
+     "suyo": "18.12",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 1.8,
+     "suyo": "1.8",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 90,
+     "suyo": 89.54110898661567,
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Boquerón": {
+  "bedca": {
+   "id": "2316",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Boquerón",
+   "nombre_en_la_fuente": "Boquerón",
+   "detalle": {
+    "proteina": {
+     "nuestro": 17.6,
+     "suyo": "17.6",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 6.3,
+     "suyo": "6.3",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 73.4,
+     "suyo": "76.1",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 128,
+     "suyo": 127.2227533460803,
+     "cuadra": true
+    }
+   }
+  },
+  "usda": {
+   "id": "174182",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Fish, anchovy, european, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 17.6,
+     "suyo": "20.35",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 6.3,
+     "suyo": "4.84",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 73.4,
+     "suyo": "73.37",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 128,
+     "suyo": "131",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Calamar": {
+  "bedca": {
+   "id": "807",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Calamar, crudo",
+   "nombre_en_la_fuente": "Calamar, crudo",
+   "detalle": {
+    "proteina": {
+     "nuestro": 14,
+     "suyo": "14",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 1.47,
+     "suyo": "1.47",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 78.6,
+     "suyo": "79.75",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 72,
+     "suyo": 71.4854206500956,
+     "cuadra": true
+    }
+   }
+  },
+  "ciqual": {
+   "id": "10001",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Calmar ou calamar ou encornet, cru",
+   "nombre_en_la_fuente": "Calmar ou calamar ou encornet, cru",
+   "detalle": {
+    "proteina": {
+     "nuestro": 14,
+     "suyo": "14,4",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 1.47,
+     "suyo": "1,19",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 78.6,
+     "suyo": "80,9",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 72,
+     "suyo": 77.91586998087953,
+     "cuadra": true
+    }
+   }
+  },
+  "usda": {
+   "id": "174223",
+   "veredicto": "NO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Mollusks, squid, mixed species, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 14,
+     "suyo": "15.58",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 1.47,
+     "suyo": "1.38",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 78.6,
+     "suyo": "78.55",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 72,
+     "suyo": "92",
+     "cuadra": false
+    }
+   }
+  }
+ },
+ "Dorada": {
+  "bedca": {
+   "id": "815",
+   "veredicto": "NO",
+   "de_donde": "búsqueda: Dorada, cruda",
+   "nombre_en_la_fuente": "Dorada, cruda",
+   "detalle": {
+    "proteina": {
+     "nuestro": 17,
+     "suyo": "17",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 1,
+     "suyo": "7.22",
+     "cuadra": false
+    },
+    "energia": {
+     "nuestro": 78,
+     "suyo": 77.91586998087953,
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Gamba roja": {
+  "bedca": {
+   "id": "817",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Gamba roja, cruda",
+   "nombre_en_la_fuente": "Gamba roja, cruda",
+   "detalle": {
+    "proteina": {
+     "nuestro": 18,
+     "suyo": "18",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 1.8143,
+     "suyo": "1.81429",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 90,
+     "suyo": 89.17997131931166,
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Langostino": {
+  "bedca": {
+   "id": "2340",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Langostino",
+   "nombre_en_la_fuente": "Langostino",
+   "detalle": {
+    "proteina": {
+     "nuestro": 24.3,
+     "suyo": "24.3",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0.8,
+     "suyo": "0.8",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 112,
+     "suyo": 111.90248565965582,
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Lenguado": {
+  "bedca": {
+   "id": "2341",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Lenguado",
+   "nombre_en_la_fuente": "Lenguado",
+   "detalle": {
+    "proteina": {
+     "nuestro": 16.5,
+     "suyo": "16.5",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 1.3,
+     "suyo": "1.3",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 79,
+     "suyo": 78.53728489483748,
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Lubina": {
+  "bedca": {
+   "id": "2344",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Lubina",
+   "nombre_en_la_fuente": "Lubina",
+   "detalle": {
+    "proteina": {
+     "nuestro": 18,
+     "suyo": "18",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 1.3,
+     "suyo": "1.3",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 85,
+     "suyo": 84.631931166348,
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Perca": {
+  "bedca": {
+   "id": "831",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Perca, al horno",
+   "nombre_en_la_fuente": "Perca, al horno",
+   "detalle": {
+    "proteina": {
+     "nuestro": 18.6,
+     "suyo": "21.6",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 1.6,
+     "suyo": "1.1",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 79.1,
+     "suyo": "77.4",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 90,
+     "suyo": 97.49043977055449,
+     "cuadra": true
+    }
+   }
+  },
+  "usda": {
+   "id": "173678",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Fish, perch, mixed species, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 18.6,
+     "suyo": "19.39",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 1.6,
+     "suyo": "0.92",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 79.1,
+     "suyo": "79.13",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 90,
+     "suyo": "91",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Pescadilla": {
+  "bedca": {
+   "id": "1174",
+   "veredicto": "REVISAR",
+   "de_donde": "búsqueda: Pescadilla, congelada, cruda",
+   "nombre_en_la_fuente": "Pescadilla, congelada, cruda",
+   "detalle": {
+    "proteina": {
+     "nuestro": 11.75,
+     "suyo": "11.75",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0.836,
+     "suyo": "0.835979",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 55,
+     "suyo": 55.13408221797323,
+     "cuadra": true
+    },
+    "preparacion_distinta": "congelad"
+   }
+  }
+ },
+ "Pulpo": {
+  "bedca": {
+   "id": "2471",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Pulpo",
+   "nombre_en_la_fuente": "Pulpo",
+   "detalle": {
+    "proteina": {
+     "nuestro": 17.9,
+     "suyo": "17.9",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 1.4,
+     "suyo": "1.4",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 80.2,
+     "suyo": "79.3",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 91,
+     "suyo": 90.7982791586998,
+     "cuadra": true
+    }
+   }
+  },
+  "usda": {
+   "id": "174218",
+   "veredicto": "NO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Mollusks, octopus, common, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 17.9,
+     "suyo": "14.91",
+     "cuadra": false
+    },
+    "grasa": {
+     "nuestro": 1.4,
+     "suyo": "1.04",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 80.2,
+     "suyo": "80.25",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 91,
+     "suyo": "82",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Sepia": {
+  "bedca": {
+   "id": "2635",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Sepia",
+   "nombre_en_la_fuente": "Sepia",
+   "detalle": {
+    "proteina": {
+     "nuestro": 17.6,
+     "suyo": "17.6",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 1,
+     "suyo": "1",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 81,
+     "suyo": 80.35372848948374,
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Aceite de cacahuete": {
+  "bedca": {
+   "id": "747",
+   "veredicto": "REVISAR",
+   "de_donde": "búsqueda: Aceite de cacahuete",
+   "nombre_en_la_fuente": "Aceite de cacahuete",
+   "detalle": {
+    "proteina": {
+     "nuestro": 0,
+     "suyo": "0",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 99.9,
+     "suyo": "99.9",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 0.0,
+     "suyo": "0.1",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 887,
+     "suyo": 883.4369024856596,
+     "cuadra": true
+    },
+    "sin_huella": "casi todo grasa: las tres cifras no distinguen"
+   }
+  },
+  "usda": {
+   "id": "171410",
+   "veredicto": "REVISAR",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Oil, peanut, salad or cooking",
+   "detalle": {
+    "proteina": {
+     "nuestro": 0,
+     "suyo": "0",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 99.9,
+     "suyo": "100",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 0.0,
+     "suyo": "0",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 887,
+     "suyo": "884",
+     "cuadra": true
+    },
+    "preparacion_distinta": "salad"
+   }
+  }
+ },
+ "Aceite de coco": {
+  "bedca": {
+   "id": "748",
+   "veredicto": "REVISAR",
+   "de_donde": "búsqueda: Aceite de coco",
+   "nombre_en_la_fuente": "Aceite de coco",
+   "detalle": {
+    "proteina": {
+     "nuestro": 0,
+     "suyo": "0",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 100,
+     "suyo": "100",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 0.03,
+     "suyo": "0",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 888,
+     "suyo": 884.321223709369,
+     "cuadra": true
+    },
+    "sin_huella": "casi todo grasa: las tres cifras no distinguen"
+   }
+  },
+  "usda": {
+   "id": "171412",
+   "veredicto": "REVISAR",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Oil, coconut",
+   "detalle": {
+    "proteina": {
+     "nuestro": 0,
+     "suyo": "0",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 100,
+     "suyo": "99.06",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 0.03,
+     "suyo": "0.03",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 888,
+     "suyo": "892",
+     "cuadra": true
+    },
+    "sin_huella": "casi todo grasa: las tres cifras no distinguen"
+   }
+  }
+ },
+ "Aceite de hígado de bacalao": {
+  "bedca": {
+   "id": "755",
+   "veredicto": "REVISAR",
+   "de_donde": "escrito en la ficha",
+   "nombre_en_la_fuente": "Aceite de hígado de bacalao",
+   "detalle": {
+    "proteina": {
+     "nuestro": 0,
+     "suyo": "0",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 99.9,
+     "suyo": "99.9",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 887,
+     "suyo": 883.4369024856596,
+     "cuadra": true
+    },
+    "sin_huella": "casi todo grasa: las tres cifras no distinguen"
+   }
+  },
+  "ciqual": {
+   "id": "17630",
+   "veredicto": "REVISAR",
+   "de_donde": "escrito en la ficha",
+   "nombre_en_la_fuente": "Huile de foie de morue",
+   "detalle": {
+    "proteina": {
+     "nuestro": 0,
+     "suyo": "0",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 99.9,
+     "suyo": "100",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 887,
+     "suyo": 884.321223709369,
+     "cuadra": true
+    },
+    "sin_huella": "casi todo grasa: las tres cifras no distinguen"
+   }
+  },
+  "usda": {
+   "id": "173577",
+   "veredicto": "REVISAR",
+   "de_donde": "escrito en la ficha",
+   "nombre_en_la_fuente": "Fish oil, cod liver",
+   "detalle": {
+    "proteina": {
+     "nuestro": 0,
+     "suyo": "0",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 99.9,
+     "suyo": "100",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 887,
+     "suyo": "902",
+     "cuadra": true
+    },
+    "sin_huella": "casi todo grasa: las tres cifras no distinguen"
+   }
+  }
+ },
+ "Aceite de sésamo": {
+  "bedca": {
+   "id": "752",
+   "veredicto": "REVISAR",
+   "de_donde": "búsqueda: Aceite de sésamo",
+   "nombre_en_la_fuente": "Aceite de sésamo",
+   "detalle": {
+    "proteina": {
+     "nuestro": 0,
+     "suyo": "0",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 100,
+     "suyo": "100",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 888,
+     "suyo": 884.321223709369,
+     "cuadra": true
+    },
+    "sin_huella": "casi todo grasa: las tres cifras no distinguen"
+   }
+  }
+ },
+ "Grasa de pollo": {
+  "bedca": {
+   "id": "2547",
+   "veredicto": "REVISAR",
+   "de_donde": "búsqueda: Grasa de pollo",
+   "nombre_en_la_fuente": "Grasa de pollo",
+   "detalle": {
+    "proteina": {
+     "nuestro": 0,
+     "suyo": "0",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 99.8,
+     "suyo": "99.8",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 886,
+     "suyo": 882.5525812619502,
+     "cuadra": true
+    },
+    "sin_huella": "casi todo grasa: las tres cifras no distinguen"
+   }
+  },
+  "usda": {
+   "id": "173564",
+   "veredicto": "REVISAR",
+   "de_donde": "escrito en la ficha",
+   "nombre_en_la_fuente": "Fat, chicken",
+   "detalle": {
+    "proteina": {
+     "nuestro": 0,
+     "suyo": "0",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 99.8,
+     "suyo": "99.8",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 886,
+     "suyo": "900",
+     "cuadra": true
+    },
+    "sin_huella": "casi todo grasa: las tres cifras no distinguen"
+   }
+  }
+ },
+ "Manteca": {
+  "bedca": {
+   "id": "2549",
+   "veredicto": "REVISAR",
+   "de_donde": "búsqueda: Manteca",
+   "nombre_en_la_fuente": "Manteca",
+   "detalle": {
+    "proteina": {
+     "nuestro": 0,
+     "suyo": "0",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 99,
+     "suyo": "99",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 879,
+     "suyo": 875.4780114722753,
+     "cuadra": true
+    },
+    "sin_huella": "casi todo grasa: las tres cifras no distinguen"
+   }
+  }
+ },
+ "Semilla de lino": {
+  "bedca": {
+   "id": "2178",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Semilla de lino",
+   "nombre_en_la_fuente": "Semilla de lino",
+   "detalle": {
+    "proteina": {
+     "nuestro": 18.29,
+     "suyo": "18.29",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 42.16,
+     "suyo": "42.16",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 6.96,
+     "suyo": "6.96",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 567,
+     "suyo": 564.486137667304,
+     "cuadra": true
+    }
+   }
+  },
+  "usda": {
+   "id": "169414",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Seeds, flaxseed",
+   "detalle": {
+    "proteina": {
+     "nuestro": 18.29,
+     "suyo": "18.29",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 42.16,
+     "suyo": "42.16",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 6.96,
+     "suyo": "6.96",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 567,
+     "suyo": "534",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Pipa de calabaza": {
+  "bedca": {
+   "id": "2204",
+   "veredicto": "SEGURO",
+   "de_donde": "escrito en la ficha",
+   "nombre_en_la_fuente": "Pipa de calabaza",
+   "detalle": {
+    "proteina": {
+     "nuestro": 30.23,
+     "suyo": "30.23",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 47.33,
+     "suyo": "47.33",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 603,
+     "suyo": 600.1027724665391,
+     "cuadra": true
+    }
+   }
+  },
+  "usda": {
+   "id": "170556",
+   "veredicto": "REVISAR",
+   "de_donde": "escrito en la ficha",
+   "nombre_en_la_fuente": "Seeds, pumpkin and squash seed kernels, dried",
+   "detalle": {
+    "proteina": {
+     "nuestro": 30.23,
+     "suyo": "30.23",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 47.33,
+     "suyo": "49.05",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 603,
+     "suyo": "559",
+     "cuadra": true
+    },
+    "preparacion_distinta": "dried"
+   }
+  }
+ },
+ "Pipa de girasol": {
+  "bedca": {
+   "id": "2205",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Pipa de girasol",
+   "nombre_en_la_fuente": "Pipa de girasol",
+   "detalle": {
+    "proteina": {
+     "nuestro": 27,
+     "suyo": "27",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 43,
+     "suyo": "43",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 574,
+     "suyo": 571.2237093690248,
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Semilla de sésamo": {
+  "bedca": {
+   "id": "1127",
+   "veredicto": "SEGURO",
+   "de_donde": "escrito en la ficha",
+   "nombre_en_la_fuente": "Sésamo, semilla",
+   "detalle": {
+    "proteina": {
+     "nuestro": 17.7,
+     "suyo": "19",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 49.7,
+     "suyo": "50",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 4.69,
+     "suyo": "5",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 573,
+     "suyo": 559.9904397705544,
+     "cuadra": true
+    }
+   }
+  },
+  "usda": {
+   "id": "170150",
+   "veredicto": "REVISAR",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Seeds, sesame seeds, whole, dried",
+   "detalle": {
+    "proteina": {
+     "nuestro": 17.7,
+     "suyo": "17.73",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 49.7,
+     "suyo": "49.67",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 4.69,
+     "suyo": "4.69",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 573,
+     "suyo": "573",
+     "cuadra": true
+    },
+    "preparacion_distinta": "dried"
+   }
+  }
+ },
+ "Albahaca": {
+  "bedca": {
+   "id": "2473",
+   "veredicto": "NO",
+   "de_donde": "búsqueda: Albahaca",
+   "nombre_en_la_fuente": "Albahaca",
+   "detalle": {
+    "proteina": {
+     "nuestro": 3.15,
+     "suyo": "14.4",
+     "cuadra": false
+    },
+    "grasa": {
+     "nuestro": 0.64,
+     "suyo": "3.98",
+     "cuadra": false
+    },
+    "energia": {
+     "nuestro": 23,
+     "suyo": 176.99808795411087,
+     "cuadra": false
+    }
+   }
+  },
+  "usda": {
+   "id": "172232",
+   "veredicto": "SEGURO",
+   "de_donde": "escrito en la ficha",
+   "nombre_en_la_fuente": "Basil, fresh",
+   "detalle": {
+    "proteina": {
+     "nuestro": 3.15,
+     "suyo": "3.15",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0.64,
+     "suyo": "0.64",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 23,
+     "suyo": "23",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Alcachofa": {
+  "bedca": {
+   "id": "1176",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Alcachofa, cruda",
+   "nombre_en_la_fuente": "Alcachofa, cruda",
+   "detalle": {
+    "proteina": {
+     "nuestro": 2.9,
+     "suyo": "2.9",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0.2,
+     "suyo": "0.2",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 23,
+     "suyo": 22.734225621414915,
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Apio": {
+  "bedca": {
+   "id": "2366",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Apio, crudo",
+   "nombre_en_la_fuente": "Apio, crudo",
+   "detalle": {
+    "proteina": {
+     "nuestro": 0.9,
+     "suyo": "0.9",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0.1,
+     "suyo": "0.1",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 95.2,
+     "suyo": "94.4",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 11,
+     "suyo": 10.635755258126194,
+     "cuadra": true
+    }
+   }
+  },
+  "ciqual": {
+   "id": "4000",
+   "veredicto": "NO",
+   "de_donde": "búsqueda: Tapioca ou Perles du Japon, cru",
+   "nombre_en_la_fuente": "Tapioca ou Perles du Japon, cru",
+   "detalle": {
+    "proteina": {
+     "nuestro": 0.9,
+     "suyo": "0,19",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0.1,
+     "suyo": "0,02",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 95.2,
+     "suyo": "11",
+     "cuadra": false
+    },
+    "energia": {
+     "nuestro": 11,
+     "suyo": 358.50860420650093,
+     "cuadra": false
+    }
+   }
+  },
+  "usda": {
+   "id": "2709778",
+   "veredicto": "SIN_COMPARAR",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "",
+   "detalle": {}
+  }
+ },
+ "Berenjena": {
+  "bedca": {
+   "id": "2370",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Berenjena",
+   "nombre_en_la_fuente": "Berenjena",
+   "detalle": {
+    "proteina": {
+     "nuestro": 0.7,
+     "suyo": "0.7",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0.2,
+     "suyo": "0.2",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 92.3,
+     "suyo": "92.2",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 20,
+     "suyo": 20.052581261950287,
+     "cuadra": true
+    }
+   }
+  },
+  "usda": {
+   "id": "169228",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Eggplant, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 0.7,
+     "suyo": "0.98",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0.2,
+     "suyo": "0.18",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 92.3,
+     "suyo": "92.3",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 20,
+     "suyo": "25",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Boniato": {
+  "bedca": {
+   "id": "731",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Boniato, crudo",
+   "nombre_en_la_fuente": "Boniato, crudo",
+   "detalle": {
+    "proteina": {
+     "nuestro": 1.2,
+     "suyo": "1.2",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0.3,
+     "suyo": "0.3",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 101,
+     "suyo": 100.97992351816443,
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Canónigos": {
+  "bedca": {
+   "id": "2379",
+   "veredicto": "SEGURO",
+   "de_donde": "escrito en la ficha",
+   "nombre_en_la_fuente": "Canonigos",
+   "detalle": {
+    "proteina": {
+     "nuestro": 1.8,
+     "suyo": "1.8",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0.4,
+     "suyo": "0.4",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 14,
+     "suyo": 13.695028680688335,
+     "cuadra": true
+    }
+   }
+  },
+  "ciqual": {
+   "id": "20099",
+   "veredicto": "PROBABLE",
+   "de_donde": "escrito en la ficha",
+   "nombre_en_la_fuente": "Mâche, crue",
+   "detalle": {
+    "proteina": {
+     "nuestro": 1.8,
+     "suyo": "2",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 14,
+     "suyo": 16.754302103250478,
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Cardo": {
+  "bedca": {
+   "id": "2380",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Cardo",
+   "nombre_en_la_fuente": "Cardo",
+   "detalle": {
+    "proteina": {
+     "nuestro": 1.4,
+     "suyo": "1.4",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0.2,
+     "suyo": "0.2",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 22,
+     "suyo": 21.677820267686425,
+     "cuadra": true
+    }
+   }
+  },
+  "ciqual": {
+   "id": "20054",
+   "veredicto": "PROBABLE",
+   "de_donde": "escrito en la ficha",
+   "nombre_en_la_fuente": "Cardon, cru",
+   "detalle": {
+    "proteina": {
+     "nuestro": 1.4,
+     "suyo": "0,7",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0.2,
+     "suyo": "0,1",
+     "cuadra": true
+    }
+   }
+  },
+  "usda": {
+   "id": "169981",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Cardoon, raw",
+   "nombre_en_la_fuente": "Cardoon, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 1.4,
+     "suyo": "0.7",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0.2,
+     "suyo": "0.1",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 22,
+     "suyo": "17",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Champiñón": {
+  "bedca": {
+   "id": "2384",
+   "veredicto": "SEGURO",
+   "de_donde": "escrito en la ficha",
+   "nombre_en_la_fuente": "Champiñon",
+   "detalle": {
+    "proteina": {
+     "nuestro": 1.8,
+     "suyo": "1.8",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0.3,
+     "suyo": "0.3",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 26,
+     "suyo": 26.218929254302104,
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Coles de Bruselas": {
+  "usda": {
+   "id": "170383",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Brussels sprouts, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 4,
+     "suyo": "3.38",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0.5,
+     "suyo": "0.3",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 86.0,
+     "suyo": "86",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 35,
+     "suyo": "43",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Col lombarda": {
+  "bedca": {
+   "id": "1178",
+   "veredicto": "REVISAR",
+   "de_donde": "búsqueda: Col lombarda, hervida",
+   "nombre_en_la_fuente": "Col lombarda, hervida",
+   "detalle": {
+    "proteina": {
+     "nuestro": 1.25,
+     "suyo": "1",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0.24,
+     "suyo": "0.3",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 20.0,
+     "suyo": 17.889579349904395,
+     "cuadra": true
+    },
+    "preparacion_distinta": "hervid"
+   }
+  }
+ },
+ "Col rizada": {
+  "bedca": {
+   "id": "852",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Col rizada, cruda",
+   "nombre_en_la_fuente": "Col rizada, cruda",
+   "detalle": {
+    "proteina": {
+     "nuestro": 3.4,
+     "suyo": "3.4",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 1.6,
+     "suyo": "1.6",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 34,
+     "suyo": 33.652007648183556,
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Coliflor": {
+  "bedca": {
+   "id": "859",
+   "veredicto": "REVISAR",
+   "de_donde": "escrito en la ficha",
+   "nombre_en_la_fuente": "Coliflor, congelada, cruda",
+   "detalle": {
+    "proteina": {
+     "nuestro": 2,
+     "suyo": "2",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0.175,
+     "suyo": "0.175",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 18,
+     "suyo": 18.206261950286805,
+     "cuadra": true
+    },
+    "preparacion_distinta": "congelad"
+   }
+  }
+ },
+ "Endibia": {
+  "bedca": {
+   "id": "2388",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Endibia",
+   "nombre_en_la_fuente": "Endibia",
+   "detalle": {
+    "proteina": {
+     "nuestro": 1.1,
+     "suyo": "1.1",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0.2,
+     "suyo": "0.2",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 93.8,
+     "suyo": "93.8",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 9,
+     "suyo": 9.082217973231357,
+     "cuadra": true
+    }
+   }
+  },
+  "usda": {
+   "id": "168412",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Endive, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 1.1,
+     "suyo": "1.25",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0.2,
+     "suyo": "0.2",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 93.8,
+     "suyo": "93.79",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 9,
+     "suyo": "17",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Espárrago verde": {},
+ "Grelo": {
+  "bedca": {
+   "id": "2396",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Grelo",
+   "nombre_en_la_fuente": "Grelo",
+   "detalle": {
+    "proteina": {
+     "nuestro": 2.7,
+     "suyo": "2.7",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0.2,
+     "suyo": "0.2",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 11,
+     "suyo": 11.376673040152964,
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Lechuga": {
+  "bedca": {
+   "id": "2399",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Lechuga",
+   "nombre_en_la_fuente": "Lechuga",
+   "detalle": {
+    "proteina": {
+     "nuestro": 1.125,
+     "suyo": "1.125",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0.6,
+     "suyo": "0.6",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 16,
+     "suyo": 15.565248565965582,
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Nabo pelado": {
+  "bedca": {
+   "id": "880",
+   "veredicto": "SEGURO",
+   "de_donde": "escrito en la ficha",
+   "nombre_en_la_fuente": "Nabo, pelado, crudo",
+   "detalle": {
+    "proteina": {
+     "nuestro": 0.9,
+     "suyo": "0.9",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0.2,
+     "suyo": "0.2",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 19,
+     "suyo": 18.427342256214146,
+     "cuadra": true
+    }
+   }
+  },
+  "ciqual": {
+   "id": "20064",
+   "veredicto": "PROBABLE",
+   "de_donde": "escrito en la ficha",
+   "nombre_en_la_fuente": "Navet, pelé, cru",
+   "detalle": {
+    "proteina": {
+     "nuestro": 0.9,
+     "suyo": "0,76",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0.2,
+     "suyo": "0,1",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Pepino": {
+  "bedca": {
+   "id": "2407",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Pepino",
+   "nombre_en_la_fuente": "Pepino",
+   "detalle": {
+    "proteina": {
+     "nuestro": 0.7,
+     "suyo": "0.7",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0.1,
+     "suyo": "0.1",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 95.2,
+     "suyo": "95.7",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 12,
+     "suyo": 11.854684512428298,
+     "cuadra": true
+    }
+   }
+  },
+  "usda": {
+   "id": "168409",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Cucumber, with peel, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 0.7,
+     "suyo": "0.65",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0.1,
+     "suyo": "0.11",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 95.2,
+     "suyo": "95.23",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 12,
+     "suyo": "15",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Rábano": {
+  "bedca": {
+   "id": "2415",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Rábano",
+   "nombre_en_la_fuente": "Rábano",
+   "detalle": {
+    "proteina": {
+     "nuestro": 0.6,
+     "suyo": "0.6",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0.3,
+     "suyo": "0.3",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 16,
+     "suyo": 15.654875717017207,
+     "cuadra": true
+    }
+   }
+  },
+  "ciqual": {
+   "id": "20045",
+   "veredicto": "PROBABLE",
+   "de_donde": "escrito en la ficha",
+   "nombre_en_la_fuente": "Radis rouge, cru",
+   "detalle": {
+    "proteina": {
+     "nuestro": 0.6,
+     "suyo": "0,94",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 16,
+     "suyo": 14.507648183556405,
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Repollo": {
+  "bedca": {
+   "id": "2417",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Repollo",
+   "nombre_en_la_fuente": "Repollo",
+   "detalle": {
+    "proteina": {
+     "nuestro": 1.8,
+     "suyo": "1.8",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0.4,
+     "suyo": "0.4",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 26,
+     "suyo": 25.884321223709367,
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Rucula": {
+  "bedca": {
+   "id": "2418",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Rúcula",
+   "nombre_en_la_fuente": "Rúcula",
+   "detalle": {
+    "proteina": {
+     "nuestro": 2.58,
+     "suyo": "2.58",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0.66,
+     "suyo": "0.66",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 31,
+     "suyo": 31.14961759082218,
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Tomate (puré)": {},
+ "Albaricoque": {
+  "bedca": {
+   "id": "2218",
+   "veredicto": "PROBABLE",
+   "de_donde": "búsqueda: Albaricoque",
+   "nombre_en_la_fuente": "Albaricoque",
+   "detalle": {
+    "proteina": {
+     "nuestro": 0.8,
+     "suyo": "0.8",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 42,
+     "suyo": 41.849904397705544,
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Coco fresco": {
+  "bedca": {
+   "id": "909",
+   "veredicto": "SEGURO",
+   "de_donde": "escrito en la ficha",
+   "nombre_en_la_fuente": "Coco, fresco",
+   "detalle": {
+    "proteina": {
+     "nuestro": 3.3,
+     "suyo": "3.3",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 33.5,
+     "suyo": "33.5",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 373,
+     "suyo": 371.41491395793497,
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Dátil": {
+  "bedca": {
+   "id": "2224",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Dátil",
+   "nombre_en_la_fuente": "Dátil",
+   "detalle": {
+    "proteina": {
+     "nuestro": 2.5,
+     "suyo": "2.5",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0.5,
+     "suyo": "0.5",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 288,
+     "suyo": 286.80688336520075,
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Frambuesa": {
+  "bedca": {
+   "id": "914",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Frambuesa, cruda",
+   "nombre_en_la_fuente": "Frambuesa, cruda",
+   "detalle": {
+    "proteina": {
+     "nuestro": 1.2,
+     "suyo": "1.2",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0.525,
+     "suyo": "0.525",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 38,
+     "suyo": 37.96008604206501,
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Mandarina": {
+  "bedca": {
+   "id": "2229",
+   "veredicto": "PROBABLE",
+   "de_donde": "búsqueda: Mandarina",
+   "nombre_en_la_fuente": "Mandarina",
+   "detalle": {
+    "proteina": {
+     "nuestro": 0.8,
+     "suyo": "0.8",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 40,
+     "suyo": 39.81835564053537,
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Mango": {
+  "bedca": {
+   "id": "1186",
+   "veredicto": "SEGURO",
+   "de_donde": "búsqueda: Mango, crudo",
+   "nombre_en_la_fuente": "Mango, crudo",
+   "detalle": {
+    "proteina": {
+     "nuestro": 0.6,
+     "suyo": "0.6",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0.2,
+     "suyo": "0.2",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 83.5,
+     "suyo": "83",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 59,
+     "suyo": 58.652007648183556,
+     "cuadra": true
+    }
+   }
+  },
+  "ciqual": {
+   "id": "13426",
+   "veredicto": "PROBABLE",
+   "de_donde": "búsqueda: Mango bassignac, pulpe, cru, prélevé à la Martinique",
+   "nombre_en_la_fuente": "Mango bassignac, pulpe, cru, prélevé à la Martinique",
+   "detalle": {
+    "proteina": {
+     "nuestro": 0.6,
+     "suyo": "0,32",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 83.5,
+     "suyo": "77,3",
+     "cuadra": true
+    }
+   }
+  },
+  "usda": {
+   "id": "169910",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Mangos, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 0.6,
+     "suyo": "0.82",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 0.2,
+     "suyo": "0.38",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 83.5,
+     "suyo": "83.46",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 59,
+     "suyo": "60",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Piña": {
+  "bedca": {
+   "id": "2394",
+   "veredicto": "NO",
+   "de_donde": "búsqueda: Espinaca, en conserva",
+   "nombre_en_la_fuente": "Espinaca, en conserva",
+   "detalle": {
+    "proteina": {
+     "nuestro": 0.5,
+     "suyo": "2.2",
+     "cuadra": false
+    },
+    "grasa": {
+     "nuestro": 0,
+     "suyo": "0.4",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 49,
+     "suyo": 14.588910133843212,
+     "cuadra": false
+    },
+    "preparacion_distinta": "conserva"
+   }
+  },
+  "ciqual": {
+   "id": "25140",
+   "veredicto": "NO",
+   "de_donde": "búsqueda: Poisson blanc à la florentine (sauce aux épinards), préembal",
+   "nombre_en_la_fuente": "Poisson blanc à la florentine (sauce aux épinards), préemballé",
+   "detalle": {
+    "proteina": {
+     "nuestro": 0.5,
+     "suyo": "11,4",
+     "cuadra": false
+    },
+    "grasa": {
+     "nuestro": 0,
+     "suyo": "4,35",
+     "cuadra": false
+    },
+    "energia": {
+     "nuestro": 49,
+     "suyo": 100.38240917782026,
+     "cuadra": false
+    }
+   }
+  },
+  "usda": {
+   "id": "168438",
+   "veredicto": "NO",
+   "de_donde": "búsqueda: Mustard spinach, (tendergreen), raw",
+   "nombre_en_la_fuente": "Mustard spinach, (tendergreen), raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 0.5,
+     "suyo": "2.2",
+     "cuadra": false
+    },
+    "grasa": {
+     "nuestro": 0,
+     "suyo": "0.3",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 49,
+     "suyo": "22",
+     "cuadra": false
+    }
+   }
+  }
+ },
+ "Cáscara de huevo casera (en polvo)": {},
+ "Hígado de conejo": {},
+ "Homemadekun (multivitamínico completo)": {},
+ "NEKTON Dog Easy-BARF (multivitamínico)": {},
+ "Hígado de pollo": {
+  "bedca": {
+   "id": "2270",
+   "veredicto": "NO",
+   "de_donde": "búsqueda: Higado de pollo, crudo",
+   "nombre_en_la_fuente": "Higado de pollo, crudo",
+   "detalle": {
+    "proteina": {
+     "nuestro": 16.92,
+     "suyo": "22.12",
+     "cuadra": false
+    },
+    "grasa": {
+     "nuestro": 4.83,
+     "suyo": "4.7",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 76.5,
+     "suyo": "72",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 119,
+     "suyo": 136.31453154875717,
+     "cuadra": true
+    }
+   }
+  },
+  "usda": {
+   "id": "171060",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Chicken, liver, all classes, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 16.92,
+     "suyo": "16.92",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 4.83,
+     "suyo": "4.83",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 76.5,
+     "suyo": "76.46",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 119,
+     "suyo": "119",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Carcasa de pato": {},
+ "Espinazo de conejo": {},
+ "napfcheck Novomineral proLEBER": {},
+ "astoral MultiVital BARF": {},
+ "V-INTEGRA Perro Adulto": {},
+ "Sal común (cloruro sódico)": {},
+ "Yoduro potásico (comprimidos 200 µg)": {},
+ "Nutratop Vitamínico-Mineral 7:1": {},
+ "Molleja de pollo": {
+  "usda": {
+   "id": "171456",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Chicken, gizzard, all classes, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 17.66,
+     "suyo": "17.66",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 2.06,
+     "suyo": "2.06",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 79.3,
+     "suyo": "79.33",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 94,
+     "suyo": "94",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Molleja de pavo": {
+  "usda": {
+   "id": "171085",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Turkey, gizzard, all classes, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 18.8,
+     "suyo": "18.8",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 3.37,
+     "suyo": "3.37",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 77.5,
+     "suyo": "77.47",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 111,
+     "suyo": "111",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Pollo pechuga sin piel": {
+  "usda": {
+   "id": "171077",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Chicken, broiler or fryers, breast, skinless, boneless, meat only, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 22.5,
+     "suyo": "22.5",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 2.59,
+     "suyo": "2.62",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 73.9,
+     "suyo": "73.9",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 120,
+     "suyo": "120",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Pollo muslo sin piel": {
+  "usda": {
+   "id": "173627",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Chicken, broilers or fryers, dark meat, thigh, meat only, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 19.66,
+     "suyo": "19.66",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 3.91,
+     "suyo": "4.12",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 76.2,
+     "suyo": "76.22",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 119,
+     "suyo": "121",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Hígado de cordero": {
+  "ciqual": {
+   "id": "40102",
+   "veredicto": "SEGURO",
+   "de_donde": "escrito en la ficha",
+   "nombre_en_la_fuente": "Foie, agneau, cru",
+   "detalle": {
+    "proteina": {
+     "nuestro": 20.7,
+     "suyo": "21,8",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 5.0,
+     "suyo": "5,45",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 71.4,
+     "suyo": "71,2",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 139,
+     "suyo": 148.66156787762907,
+     "cuadra": true
+    }
+   }
+  },
+  "usda": {
+   "id": "172531",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Lamb, variety meats and by-products, liver, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 20.7,
+     "suyo": "20.38",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 5.0,
+     "suyo": "5.02",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 71.4,
+     "suyo": "71.37",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 139,
+     "suyo": "139",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Corazón de conejo": {},
+ "V-INTEGRA Cachorro": {},
+ "V-INTEGRA Senior": {},
+ "V-INTEGRA Epato": {},
+ "V-INTEGRA Renal": {},
+ "Pecho de ternera con hueso": {},
+ "Cuello de ternera": {},
+ "Laringe de vacuno": {},
+ "Bazo de vaca": {
+  "usda": {
+   "id": "169454",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Beef, variety meats and by-products, spleen, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 18.3,
+     "suyo": "18.3",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 3.0,
+     "suyo": "3",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 77.2,
+     "suyo": "77.2",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 105,
+     "suyo": "105",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Páncreas de vaca": {
+  "usda": {
+   "id": "169452",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Beef, variety meats and by-products, pancreas, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 16,
+     "suyo": "15.7",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 19,
+     "suyo": "18.6",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 65.2,
+     "suyo": "65.2",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 233,
+     "suyo": "235",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Bazo de cordero": {
+  "usda": {
+   "id": "174364",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Lamb, variety meats and by-products, spleen, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 17.2,
+     "suyo": "17.2",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 3.1,
+     "suyo": "3.1",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 78.2,
+     "suyo": "78.15",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 101,
+     "suyo": "101",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Timo de vaca": {
+  "usda": {
+   "id": "170194",
+   "veredicto": "SEGURO",
+   "de_donde": "escrito en la ficha",
+   "nombre_en_la_fuente": "Beef, variety meats and by-products, thymus, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 12.17,
+     "suyo": "12.18",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 20.35,
+     "suyo": "20.35",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 236,
+     "suyo": "236",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Cerebro de vaca": {
+  "bedca": {
+   "id": "1047",
+   "veredicto": "NO",
+   "de_donde": "escrito en la ficha",
+   "nombre_en_la_fuente": "Sesos, de ternera, crudos",
+   "detalle": {
+    "proteina": {
+     "nuestro": 10.86,
+     "suyo": "10.4",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 10.3,
+     "suyo": "8.6",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 143,
+     "suyo": 118.30783938814531,
+     "cuadra": true
+    },
+    "especie_distinta": "nuestro vaca contra su ternera"
+   }
+  },
+  "ciqual": {
+   "id": "40006",
+   "veredicto": "NO",
+   "de_donde": "escrito en la ficha",
+   "nombre_en_la_fuente": "Cervelle, veau, crue",
+   "detalle": {
+    "proteina": {
+     "nuestro": 10.86,
+     "suyo": "10,3",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 10.3,
+     "suyo": "8,21",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 143,
+     "suyo": 116.63479923518165,
+     "cuadra": true
+    },
+    "especie_distinta": "nuestro vaca contra su ternera"
+   }
+  },
+  "usda": {
+   "id": "168622",
+   "veredicto": "SEGURO",
+   "de_donde": "escrito en la ficha",
+   "nombre_en_la_fuente": "Beef, variety meats and by-products, brain, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 10.86,
+     "suyo": "10.86",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 10.3,
+     "suyo": "10.3",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 143,
+     "suyo": "143",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Corazón de pavo": {
+  "usda": {
+   "id": "171484",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Turkey, all classes, heart, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 16.7,
+     "suyo": "16.7",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 7.44,
+     "suyo": "7.44",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 74.5,
+     "suyo": "74.47",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 140,
+     "suyo": "140",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Hígado de pavo": {
+  "usda": {
+   "id": "171486",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Turkey, all classes, liver, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 18.26,
+     "suyo": "18.26",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 5.5,
+     "suyo": "5.5",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 75.5,
+     "suyo": "75.54",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 128,
+     "suyo": "128",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Hígado de pato": {
+  "ciqual": {
+   "id": "40121",
+   "veredicto": "SEGURO",
+   "de_donde": "escrito en la ficha",
+   "nombre_en_la_fuente": "Foie, canard, cru",
+   "detalle": {
+    "proteina": {
+     "nuestro": 18.75,
+     "suyo": "18,7",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 4.64,
+     "suyo": "4,62",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 71.8,
+     "suyo": "71,8",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 136,
+     "suyo": 131.21414913957935,
+     "cuadra": true
+    }
+   }
+  },
+  "usda": {
+   "id": "174467",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Duck, domesticated, liver, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 18.75,
+     "suyo": "18.74",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 4.64,
+     "suyo": "4.64",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 71.8,
+     "suyo": "71.78",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 136,
+     "suyo": "136",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Timo de ternera": {
+  "usda": {
+   "id": "170194",
+   "veredicto": "NO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Beef, variety meats and by-products, thymus, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 17.21,
+     "suyo": "12.18",
+     "cuadra": false
+    },
+    "grasa": {
+     "nuestro": 3.07,
+     "suyo": "20.35",
+     "cuadra": false
+    },
+    "agua": {
+     "nuestro": 67.8,
+     "suyo": "67.8",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 101,
+     "suyo": "236",
+     "cuadra": false
+    },
+    "especie_distinta": "nuestro ternera contra su vaca"
+   }
+  }
+ },
+ "Pulmón de ternera": {
+  "usda": {
+   "id": "174361",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Veal, variety meats and by-products, lungs, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 16.3,
+     "suyo": "16.3",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 2.3,
+     "suyo": "2.3",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 80.5,
+     "suyo": "80.5",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 90,
+     "suyo": "90",
+     "cuadra": true
+    }
+   }
+  }
+ },
+ "Cerebro de ternera": {
+  "bedca": {
+   "id": "1047",
+   "veredicto": "SEGURO",
+   "de_donde": "escrito en la ficha",
+   "nombre_en_la_fuente": "Sesos, de ternera, crudos",
+   "detalle": {
+    "proteina": {
+     "nuestro": 10.4,
+     "suyo": "10.4",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 8.6,
+     "suyo": "8.6",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 79.8,
+     "suyo": "79",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 118,
+     "suyo": 118.30783938814531,
+     "cuadra": true
+    }
+   }
+  },
+  "usda": {
+   "id": "174351",
+   "veredicto": "SEGURO",
+   "de_donde": "el fdcId de la columna de humedad",
+   "nombre_en_la_fuente": "Veal, variety meats and by-products, brain, raw",
+   "detalle": {
+    "proteina": {
+     "nuestro": 10.4,
+     "suyo": "10.32",
+     "cuadra": true
+    },
+    "grasa": {
+     "nuestro": 8.6,
+     "suyo": "8.21",
+     "cuadra": true
+    },
+    "agua": {
+     "nuestro": 79.8,
+     "suyo": "79.78",
+     "cuadra": true
+    },
+    "energia": {
+     "nuestro": 118,
+     "suyo": "118",
+     "cuadra": true
+    }
+   }
+  }
+ }
+}

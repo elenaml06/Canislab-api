@@ -155,6 +155,28 @@ def _a_forma_del_motor(crudo):
             e["aviso_profesional"] = avisos["profesional"]
         if avisos.get("profesional_crecimiento"):
             e["aviso_profesional_crecimiento"] = avisos["profesional_crecimiento"]
+        # ⚠️ EL REGISTRO DEL DUEÑO (13 septiembre, noche). Elena, viendo un aviso
+        # de patología en su pantalla: «los avisos al usuario son muy técnicos y
+        # nombran fuentes. FUERA».
+        #
+        # No es un resumen ni una cifra nueva: es el MISMO aviso dicho sin la
+        # palabra de la fuente. Y no se borra nada -- `general` se queda entero
+        # y es el que lee el veterinario (`GET /patologias` y el modo
+        # profesional). Los dos registros, que es como el motor sirve ya las
+        # patologías, los nutrientes, los niveles de actividad y los premios.
+        #
+        # Es OPCIONAL a propósito: hay avisos que ya estaban escritos sin jerga
+        # y duplicarlos sería dos textos que mantener para decir lo mismo. Lo
+        # que no puede pasar es que se cuele jerga en el canal del dueño, y eso
+        # NO se vigila por la presencia del campo sino por el texto que SALE:
+        # el BLOQUE 107 mira el aviso servido -- `dueno` si lo hay, `general`
+        # si no -- y falla si nombra una fuente. Así un `general` limpio no
+        # necesita copia, y un `general` al que alguien le meta una tabla
+        # mañana pone la batería en rojo aunque nadie toque este archivo.
+        if avisos.get("dueno"):
+            e["aviso_dueno"] = avisos["dueno"]
+        if avisos.get("dueno_crecimiento"):
+            e["aviso_dueno_crecimiento"] = avisos["dueno_crecimiento"]
         # ⚠️ AÑADIDO (8 septiembre) — LOS AVISOS QUE NO SON NINGUNO DE ESOS
         # CUATRO. Hasta hoy `avisos` solo dejaba pasar «general»,
         # «crecimiento», «profesional» y «profesional_crecimiento»: cualquier
@@ -174,10 +196,38 @@ def _a_forma_del_motor(crudo):
         # archivo dé siempre los mismos avisos en el mismo orden -- si
         # dependiera del orden del JSON, un reordenado cambiaría lo que lee
         # el usuario sin cambiar ni una palabra.
-        _reservados = ("general", "crecimiento", "profesional", "profesional_crecimiento")
-        extra = [avisos[k] for k in sorted(avisos) if k not in _reservados and avisos[k]]
+        _reservados = ("general", "crecimiento", "profesional", "profesional_crecimiento",
+                       # ⚠️ SIN ESTAS DOS, EL ARREGLO SE VOLVERIA EN CONTRA:
+                       # `avisos_extra` se lleva toda clave que no este aqui, y
+                       # los extras salen por el canal del DUEÑO. O sea que el
+                       # registro llano se sumaria al tecnico en vez de
+                       # sustituirlo, y el dueño leeria las dos versiones
+                       # seguidas. Lo comprueba el BLOQUE 107.
+                       "dueno", "dueno_crecimiento")
+        # ⚠️ Y LOS AVISOS SUELTOS TAMBIEN TIENEN DOS REGISTROS (13 septiembre,
+        # noche). Son 25 y los lee el DUEÑO -- son los que dicen que el mitotano
+        # va con comida, que al perro con bromuro hay que medirle el bromo
+        # despues de cambiarle la dieta, o a que ritmo adelgaza --, y 23 de los
+        # 25 venian con la cita literal en ingles y el capitulo entre parentesis.
+        #
+        # La convencion es el prefijo `dueno_`: el aviso `mitotano_con_comida`
+        # puede tener al lado `dueno_mitotano_con_comida`. Se eligio asi y no un
+        # diccionario anidado porque `avisos` ya es plano en las 47 y el BLOQUE
+        # 64 lo recorre por clave; anidar habria obligado a tocar las dos
+        # puertas por las que salen y la forma de los 47.
+        _extra_llano = {k[len("dueno_"):]: v for k, v in avisos.items()
+                        if k.startswith("dueno_") and k not in _reservados and v}
+        _claves_extra = [k for k in sorted(avisos)
+                         if k not in _reservados and not k.startswith("dueno_") and avisos[k]]
+        extra = [avisos[k] for k in _claves_extra]
         if extra:
             e["avisos_extra"] = extra
+        # La lista paralela, en el MISMO orden: el llano donde lo hay y el de
+        # siempre donde no. Va aparte y no sustituye a `avisos_extra` porque el
+        # profesional tiene que seguir leyendo el tecnico, con su cita.
+        llanos = [_extra_llano.get(k) or avisos[k] for k in _claves_extra]
+        if llanos:
+            e["avisos_extra_dueno"] = llanos
         salida[clave] = e
     return salida
 

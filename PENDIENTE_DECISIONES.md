@@ -609,3 +609,101 @@ veterinario le ponga un 4. No es un caso raro.
 Las dos citas y la medida están aquí; el cambio, en `main._peso_de_referencia` y
 en `verificar.peso_objetivo_desde_bcs`, que son **dos copias** de la misma regla
 y tendrían que moverse juntas.
+
+---
+
+## Lo que dejó abierto leer Fascetti, capítulos 7 a 13 (11 de septiembre de 2026)
+
+⚠️ **ACTUALIZADO LA MISMA TARDE.** Elena: *«aplica todo lo de Fascetti menos la
+del 15 % de grasa y mira a ver por qué no entra»*. Así que de las cinco, **dos
+están aplicadas**, una se aplicó y **se retiró el mismo día al abrir el contexto
+entero**, y las otras dos siguen abiertas. Lo que sigue es el estado de cada
+una.
+
+- [x] ~~**El techo de vitamina D del cachorro (F-8).**~~ ✅ **APLICADO** el 11 de
+      septiembre. Va en `recomendaciones_libro.json`, en las dos etapas de
+      crecimiento, con su conversión rehecha por `auditar_conversiones.py`.
+      Medido después de aplicarlo: los cinco cachorros de prueba siguen dando
+      menú (3,56 a 5,87 µg/1000 kcal) y hubo que **regenerar el catálogo**,
+      porque 6 de los 12 menús de cachorro precalculados se pasaban.
+      · **Lo que queda de esto**, y es la razón por la que la línea sigue aquí:
+        el propio capítulo dice que *«a true safe upper limit for vitamin D
+        intake […] is not currently known in dogs»*, así que lo aplicado es la
+        concentración que recomienda su autor para un pienso de cachorro, no un
+        límite de seguridad demostrado. Merece que lo mire el nutricionista.
+
+- [ ] ~~**El techo de fibra en enteropatía crónica (F-10).**~~ ❌ **RETIRADO EL
+      MISMO DÍA, y conviene que quede escrito por qué.** Se aplicó a
+      `enteropatia_cronica` y se quitó horas después al abrir el contexto
+      entero en vez de la frase: esos *«less than 8 % total dietary fiber»* viven
+      dentro del apartado de **gastroenteritis AGUDA** — la lista que empieza
+      *«At the current point of understanding, the ideal dietary characteristics
+      would be:»* y sigue con *«Initial feeding should not exceed 25 % of the
+      calculated RER»* —, no en el de enteropatía crónica. Son dos cuadros
+      distintos del mismo capítulo.
+      · El motor **no tiene patología de gastroenteritis aguda**, y no debería
+        tenerla como está descrita: es realimentar al 25 % del RER durante unos
+        días, o sea una dieta deliberadamente incompleta, y el motor entrega
+        raciones completas o no entrega.
+      · Queda escrito en `patologias.json` bajo
+        `limites_escritos_que_el_solver_no_aplica`, con una coincidencia que
+        merece verse: **ese 8 % es el mismo 8 % que SACN5 le pone al síndrome de
+        intestino irritable, pero allí es un SUELO** y aquí sería un techo. Con
+        los dos aplicados, marcar las dos patologías dejaba una ventana de
+        exactamente 20-20 y el motor se quedaba sin menú, diciendo cuáles eran
+        las dos cifras que chocaban.
+
+- [ ] **El viejo punto del techo de vitamina D, para el nutricionista.** Fascetti cap. 10 recomienda
+      que un pienso de cachorro no pase de **12,5-25 µg/kg de dieta** = 3,125 a
+      **6,25 µg/1000 kcal**. Hoy el motor solo tiene ahí el máximo legal de
+      FEDIAF (14,19). **Medido: 6 de los 12 menús de cachorro del catálogo se
+      pasan**, hasta 8,96.
+      · A favor: el mecanismo está en el mismo capítulo y es serio —
+        osteocondrosis y radius curvus **sin signos de intoxicación clásica**.
+      · En contra: el propio capítulo dice que *«a true safe upper limit for
+        vitamin D intake […] is not currently known in dogs»*, así que lo que da
+        no es un límite de seguridad demostrado sino la concentración que
+        recomienda para un producto.
+      · Si se enciende, va a `recomendaciones_libro.json` (crecimiento), no a
+        `seguridad.py`, y hay que remedir los 216 menús del catálogo.
+
+- [ ] **En qué unidad va el «15 %» de la grasa en linfangiectasia (F-9).**
+      ⚠️ **MEDIDO PELDAÑO A PELDAÑO el 11 de septiembre**, que era lo que faltaba
+      para poder decidir. No lo impide la nutrición: lo impide la FORMA. La grasa
+      mínima alcanzable es 34,9 g/1000 kcal en el peldaño estricto, 23,6 sin
+      ningún mínimo de categoría y **18,1 en el último peldaño de la escalera**;
+      los 16,7 que pide Fascetti quedan **por debajo del último peldaño**.
+      Nutricionalmente sí existen — a 14,1, justo por encima del mínimo de grasa
+      de FEDIAF —, pero el menú que lo consigue es 1.592 g de frambuesa, 601 g de
+      judía verde y 441 g de dorada, que no es comida para un perro. Y lo que
+      baja la grasa en el último peldaño es el **boniato** (560 g de 1.018),
+      que es justo lo que hace una dieta veterinaria baja en grasa y lo que una
+      ración BARF no tiene. La tabla entera está en `HALLAZGOS_FASCETTI.md` F-9. SACN5
+      Tabla 58-1 lo da en **materia seca** (= 37,5 g/1000 kcal, lo que aplica el
+      motor) y Fascetti cap. 11 en **kcal** (= 16,7). **Medido: con 16,7 y con
+      20,0 no sale menú en perros de 10, 20 ni 35 kg**, preguntándole al solver
+      con 40 s. Así que la pregunta para el nutricionista no es qué número: es
+      **cuál de las dos lecturas es la buena**, y si la respuesta es «en kcal»,
+      entonces esta patología **no se puede formular con este catálogo** y hay
+      que decirlo en vez de dar un menú que incumple su propia fuente.
+
+- [ ] **El techo de fibra en enteropatía crónica (F-10).** *«Less than 8 % total
+      dietary fiber»* = 20 g/1000 kcal. **Medido: 8 de los 36 menús del catálogo
+      se pasarían**, hasta 31,1. Su propia fuente lo llama *«empirical
+      recommendation»* y la tabla de SACN5 que ya usa esa patología no lo trae.
+
+- [x] ~~**Una dieta casera hay que revisarla con un veterinario cada seis
+      meses.**~~ ✅ **DICHO** el 11 de septiembre. Panel propio en «Cómo darlo»,
+      junto a la congelación y la higiene, que son las otras dos cosas que
+      dependen de la persona y no del cálculo. Y con la otra mitad del párrafo,
+      que es la que la app sí puede arreglar: el *«diet drift»*, que el dueño
+      vaya sustituyendo ingredientes por su cuenta — el texto le pide que
+      regenere el menú con lo que de verdad le da.
+
+- [ ] **El omega-3 de la artrosis, que lleva escrito y sin aplicar desde el 8 de
+      septiembre.** Ahora hay segunda fuente y mide en las dos direcciones: un
+      ensayo doble ciego en 36 perros con artrosis de codo **no vio diferencia**
+      en la cojera medida por plataforma de fuerzas, y otro con EPA durante 90
+      días vio mejorar el apoyo en el **82 %** contra el **31 %** de los
+      controles. Con eso delante se puede decidir.
+

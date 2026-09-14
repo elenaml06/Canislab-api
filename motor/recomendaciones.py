@@ -97,8 +97,40 @@ def _topes_crudos(etapa, peso_adulto_esperado_kg=None):
     return salida
 
 
+# ⚠️ LA HOLGURA CON LA QUE SUBE UN TECHO QUE NO CABE, Y ES NUESTRA (13 de
+#    septiembre de 2026, por la noche). No sale de ninguna fuente y por eso va
+#    escrita aquí con su medida, no escondida en una multiplicación.
+#
+# Cuando el suelo de FEDIAF supera un techo del libro, hasta hoy el techo
+# DESAPARECÍA. Eso da menú —que es lo que importa— pero deja al solver suelto:
+# medido en el cachorro de Cairo con premios al 10 %, el suelo era 2778 y el
+# menú salía con 3402 de calcio, o sea un 24 % por encima del techo del libro
+# cuando con un 1 % le habría bastado. Elena, al leerlo: «pero a ver, ¿y no se
+# puede dar un menú que cumpla el techo? seguro que sí».
+#
+# Cumplir el techo NO se puede —el suelo está por encima, es aritmética— pero
+# acercarse todo lo posible SÍ. Así que el techo no desaparece: SUBE hasta el
+# suelo y se queda ahí.
+#
+# LA HOLGURA HACE FALTA PORQUE UNA VENTANA DE ANCHURA CERO NO TIENE MENÚ.
+# MEDIDO sobre tres cachorros de raza grande (20 kg -> 31, 12 -> 30, 30 -> 45)
+# con premios al 10 % y al 20 %, o sea seis casos:
+#
+#     techo = suelo x 1,005 .... 0 de 6 con menú
+#     techo = suelo x 1,02 ..... 6 de 6, calcio de Cairo 2821 (+2,6 % del libro)
+#     techo = suelo x 1,05 ..... 6 de 6, calcio de Cairo 2897
+#     sin techo (lo de antes) .. 6 de 6, calcio de Cairo 3402 (+24 %)
+#
+# Se coge 1,02: el más apretado de los que dan menú en los seis. Y aun así NO
+# se confía en esa medida -- `resolver` prueba con el techo puesto y, si no sale
+# menú, lo SUELTA y lo dice. Un número nuestro no puede dejar a un perro sin
+# comer, y seis casos no son todos los perros.
+HOLGURA_DEL_TECHO_QUE_SUBE = 1.02
+
+
 def topes_de_la_etapa(etapa, req=None, der_efectiva=None,
-                      peso_adulto_esperado_kg=None):
+                      peso_adulto_esperado_kg=None, factor_premios=1.0,
+                      apretar_el_techo_que_sube=True, subidos_fuera=None):
     """Los techos del libro para esta etapa, en la forma que espera el solver.
 
     Devuelve `{clave_nutriente: valor}`, o `{}` si la etapa no tiene ninguno.
@@ -145,15 +177,80 @@ def topes_de_la_etapa(etapa, req=None, der_efectiva=None,
     Sin `req` y `der_efectiva` se devuelven los techos tal cual. Es el lado
     estricto, y así quien no pueda calcular el mínimo escalado nunca aplica uno
     de más por accidente.
+
+    ⚠️ Y EL MÍNIMO CONTRA EL QUE CEDE ES EL QUE DE VERDAD SE APLICA, NO EL DE LA
+    FILA A SECAS (13 de septiembre de 2026).
+
+    CASO REAL, EN PRODUCCIÓN, encontrado por Elena con su propio perro: Cairo,
+    American Staffordshire, cachorro de casi 7 meses, 20 kg, al que va a pesar
+    unos 31 de adulto. **No salía ningún menú en cuanto se declaraban premios**,
+    y el mensaje decía «quita alguna restricción» — que no sirve de nada, porque
+    no había ninguna que quitar.
+
+    Se cruzaban DOS cifras de calcio, y las dos son correctas:
+
+        suelo  2500   FEDIAF, Tabla III-3b nota b: cachorro que pasará de 15 kg
+        techo  2750   SACN5 Tabla 17-1, columna del que pasará de 25 kg
+
+    Entre las dos hay un 10 % de sitio, y los premios se lo comen: el motor
+    formula la ración con las kcal QUE QUEDAN y le sigue exigiendo el día entero
+    de nutrientes, así que el SUELO sube por `der/der_racion` y el techo no se
+    mueve (regla 3-bis del CLAUDE.md).
+
+        sin premios ...... 2500  cabe
+        5 % .............. 2632  cabe, justo
+        10 % ............. 2778  NO CABE   <- el techo que la propia fuente recomienda
+        20 % ............. 3125  NO CABE
+
+    Esta función YA sabía ceder — es su párrafo de arriba, el del perro a dieta
+    — y no cedía aquí por dos motivos, los dos de la misma forma: **miraba un
+    mínimo que no es el que el solver aplica.**
+
+      1. `_minimo_de_fediaf` daba el 2000 de la fila «Calcio» y el solver usa el
+         **2500 reforzado de la nota b** (`Calcio_LateGrowth_RazaGrande`).
+      2. No sabía nada de los premios, que es justo lo que lo cruza.
+
+    Con las dos puestas, manda FEDIAF y el techo del libro se cae — que es la
+    regla escrita y no una excepción nueva: **el suelo es un REQUISITO y el
+    techo una RECOMENDACIÓN**. Dejar al cachorro sin comida para cumplir un
+    consejo es preferir el consejo al perro.
+
+    ⚠️ `factor_premios` TIENE QUE VALER LO MISMO AQUÍ QUE EN EL SOLVER. Es
+    `der / der_racion`, lo mismo que `_factor_premios` de `motor_completo`, y si
+    los dos no lo calculan igual esta función y la restricción dirían cosas
+    distintas — que es exactamente el fallo del 8 de septiembre con los suelos de
+    patología. Lo vigila el BLOQUE 104.
     """
     salida = {}
     for clave, t in _topes_crudos(etapa, peso_adulto_esperado_kg).items():
         valor = t["valor"]
         if req is not None and der_efectiva is not None:
-            minimo = _minimo_de_fediaf(req, clave, etapa, der_efectiva)
+            minimo = suelo_que_de_verdad_se_aplica(
+                req, clave, etapa, der_efectiva, peso_adulto_esperado_kg,
+                factor_premios)
             if minimo is not None and minimo > valor:
-                # El techo se cae. No en silencio: `cedidos_ante_fediaf` lo
-                # cuenta, y de ahí sale el aviso que lee quien pide el menú.
+                # ⚠️ EL TECHO NO DESAPARECE: SUBE HASTA EL SUELO (13 de
+                # septiembre, noche). Ver `HOLGURA_DEL_TECHO_QUE_SUBE` arriba:
+                # cumplir el techo no se puede, pero quedarse pegado a él sí, y
+                # la diferencia medida son 581 mg de calcio al día en un
+                # cachorro de raza grande.
+                #
+                # `apretar_el_techo_que_sube=False` lo suelta del todo, y es el
+                # plan B que usa `resolver` cuando con el techo apretado no sale
+                # menú: la holgura es un número NUESTRO y no puede dejar a un
+                # perro sin comer.
+                if not apretar_el_techo_que_sube:
+                    continue
+                salida[clave] = minimo * HOLGURA_DEL_TECHO_QUE_SUBE
+                # ⚠️ QUE HA SUBIDO SE DICE, NO SE DEDUCE. La primera versión lo
+                # deducía comparando el techo que sale con el del libro, y el
+                # fallo puesto la cazó: con una holgura de 0,99 sobre un suelo
+                # de 2777,8 sale EXACTAMENTE 2750, que es el techo del libro --
+                # así que «ha subido» y «no ha subido» daban el mismo número y
+                # el plan B no se disparaba. Un dato que se deduce de una
+                # comparación de flotantes tiene un caso en el que miente.
+                if subidos_fuera is not None:
+                    subidos_fuera[clave] = salida[clave]
                 continue
         salida[clave] = valor
     return salida
@@ -270,20 +367,48 @@ def _maximo_de_fediaf(req, clave, etapa):
     return maximo_de(fila, nombre, etapa)
 
 
-def cedidos_ante_fediaf(etapa, req, der_efectiva, peso_adulto_esperado_kg=None):
-    """Los techos que se han caído por cruzarse con el mínimo de FEDIAF.
+def cedidos_ante_fediaf(etapa, req, der_efectiva, peso_adulto_esperado_kg=None,
+                        factor_premios=1.0):
+    """Los techos que se han caído por cruzarse con el suelo que sí se aplica.
 
-    Devuelve `[{clave, techo, minimo_de_fediaf}]`. Existe para poder DECIRLO:
-    la regla 5 del CLAUDE.md es que se puede bajar de peldaño pero se dice, y
-    esto es lo mismo un escalón más abajo -- un límite que estaba puesto y ha
-    dejado de aplicarse a este perro concreto.
+    Devuelve `[{clave, techo, minimo_de_fediaf, por_que}]`. Existe para poder
+    DECIRLO: la regla 5 del CLAUDE.md es que se puede bajar de peldaño pero se
+    dice, y esto es lo mismo un escalón más abajo -- un límite que estaba puesto
+    y ha dejado de aplicarse a este perro concreto.
+
+    ⚠️ Y HASTA EL 13 DE SEPTIEMBRE DE 2026 NO LA LLAMABA NADIE. Su propio
+    comentario decía «el techo se cae, no en silencio: `cedidos_ante_fediaf` lo
+    cuenta», y era falso: la función existía, estaba bien escrita y no la
+    invocaba ni un endpoint. O sea que el techo SÍ se caía en silencio, que es
+    justo lo que decía que no pasaba. Ahora la llama `_garantizar_verificado`,
+    que es por donde pasa TODO menú.
+
+    ⚠️ Y compara contra `suelo_que_de_verdad_se_aplica`, no contra la fila a
+    secas: si mirara otro número diría que no ha cedido nada cuando sí, y un
+    aviso que no salta es peor que no tenerlo.
     """
     fuera = []
     for clave, t in _topes_crudos(etapa, peso_adulto_esperado_kg).items():
-        minimo = _minimo_de_fediaf(req, clave, etapa, der_efectiva)
+        minimo = suelo_que_de_verdad_se_aplica(
+            req, clave, etapa, der_efectiva, peso_adulto_esperado_kg,
+            factor_premios)
         if minimo is not None and minimo > t["valor"]:
             fuera.append({"clave": clave, "techo": t["valor"],
-                          "minimo_de_fediaf": round(minimo, 1)})
+                          "minimo_de_fediaf": round(minimo, 1),
+                          # A cuánto ha subido de verdad. Sin esto, «ha cedido»
+                          # se lee igual tanto si el menú se queda pegado al
+                          # techo como si se va un 24 % por encima -- y son
+                          # cosas muy distintas para un cachorro de raza grande.
+                          "techo_que_se_aplica": round(
+                              minimo * HOLGURA_DEL_TECHO_QUE_SUBE, 1),
+                          "con_premios": factor_premios not in (None, 1.0),
+                          "por_que": ("El suelo que FEDIAF exige a este perro "
+                                      f"({minimo:.0f}) está por encima de este techo "
+                                      f"({t['valor']:.0f}), que es una RECOMENDACIÓN del "
+                                      "libro y no un requisito. Manda FEDIAF: el techo sube "
+                                      f"hasta {minimo * HOLGURA_DEL_TECHO_QUE_SUBE:.0f} para "
+                                      "quedarse lo más cerca posible del consejo. El máximo de "
+                                      "seguridad de FEDIAF sigue puesto.")})
     return fuera
 
 
@@ -303,6 +428,50 @@ def _minimo_de_fediaf(req, clave, etapa, der_efectiva):
     if not fila:
         return None
     return minimo_de(fila, nombre, etapa, der_efectiva)
+
+
+def suelo_que_de_verdad_se_aplica(req, clave, etapa, der_efectiva,
+                                  peso_adulto_esperado_kg=None,
+                                  factor_premios=1.0):
+    """El suelo que el SOLVER le va a exigir a este nutriente, no el de la fila.
+
+    Tres cosas lo separan del número de `requerimientos_v2_final.json`, y las
+    tres las aplica el solver:
+
+      1. El escalado por lo que come el perro (ecuación 7.2.5 de FEDIAF), que
+         ya hace `minimo_de`.
+      2. El **mínimo reforzado de la nota b** para el cachorro que pasará de
+         `RAZA_GRANDE_O_GIGANTE_KG` de adulto, que vive en la fila
+         `Calcio_LateGrowth_RazaGrande` y es 2500 en vez de 2000.
+      3. **Los premios**, que suben todos los suelos por `der/der_racion`
+         porque son suelos de CONCENTRACIÓN sobre el día entero y la ración es
+         solo una parte de ese día.
+
+    Existe porque `topes_de_la_etapa` tiene que decidir si un techo del libro
+    cede, y para eso hay que compararlo con lo que de verdad se le pide al menú.
+    Comparar contra otra cosa es el fallo de Cairo: dos cifras que se cruzan, un
+    menú que no sale, y nadie capaz de decir por qué.
+
+    ⚠️ NO REPITE LA LÓGICA DE NADIE: el escalado se lo pregunta a `minimo_de`
+    (el único sitio que sabe escalar, regla del CLAUDE.md) y el umbral de raza
+    grande a `motor_completo.RAZA_GRANDE_O_GIGANTE_KG`. Si mañana ese umbral
+    cambia, cambia aquí con él.
+    """
+    minimo = _minimo_de_fediaf(req, clave, etapa, der_efectiva)
+    if clave == "calcio" and etapa in ("CachorroJoven", "CachorroCrecimiento"):
+        from motor_completo import RAZA_GRANDE_O_GIGANTE_KG as _UMBRAL_NOTA_B
+        if peso_adulto_esperado_kg and peso_adulto_esperado_kg >= _UMBRAL_NOTA_B:
+            fila = (req or {}).get("Calcio_LateGrowth_RazaGrande") or {}
+            crudo = fila.get("min" + str(etapa))
+            try:
+                reforzado = float(crudo) if crudo not in (None, "", "-") else None
+            except (TypeError, ValueError):
+                reforzado = None
+            if reforzado is not None and (minimo is None or reforzado > minimo):
+                minimo = reforzado
+    if minimo is not None and factor_premios and factor_premios != 1.0:
+        minimo = minimo * float(factor_premios)
+    return minimo
 
 
 def con_procedencia(etapa, peso_adulto_esperado_kg=None):

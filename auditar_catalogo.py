@@ -775,4 +775,54 @@ if _abiertas:
 
 
 
+# ── LA MISMA CIFRA EXACTA EN MEDIA FAMILIA ────────────────────────────
+#
+# ⚠️ CASO REAL ENCONTRADO (8 de septiembre). El cobre de 21 pescados tenia
+# solo CUATRO valores distintos en todo el grupo, y seis huesos carnosos de
+# especies distintas -- conejo, pato, pollo, cordero -- declaraban la misma
+# vitamina A, la misma vitamina D y la misma riboflavina. No coincidian: se
+# habia puesto una cifra de familia donde no habia medida individual. Las 86
+# casillas de esos dos casos se cerraron; esto es lo que las habria
+# encontrado sola, y lo que encuentra las que quedan.
+#
+# NO ES UN FALLO Y POR ESO NO ROMPE LA AUDITORIA. Repetirse no prueba nada
+# por si solo: la L-carnitina de siete carnes musculares vale 10,0 porque es
+# la cifra que Spitze 2003 publica para todas ellas, y el cloruro se DERIVA
+# del sodio (x 1,542), asi que dos alimentos con el mismo sodio tienen el
+# mismo cloruro por aritmetica. Lo que hay que mirar es si la FUENTE repite
+# el numero o lo repetimos nosotros, y eso solo se contesta abriendo la
+# fuente. Por eso sale como aviso y no como error.
+UMBRAL_REPETICION = 6
+# Los que llevan su propia procedencia en la ficha (`taurina_fuente`,
+# `lcarnitina_fuente`, `purinas_fuente`) ya estan contestados, y el cloruro
+# es aritmetica del sodio. La proteina, la grasa y la energia se repiten de
+# verdad entre cortes parecidos, y son justo los tres que la fuente siempre
+# publica.
+SIN_REPETICION = {"proteina", "grasa", "energia", "cloruro",
+                  "taurina", "lcarnitina", "purinas"}
+
+_repes = {}
+for _a in al:
+    _huecos = set(_a.get("sin_dato") or [])
+    for _k, _v in (_a.get("nutrientes") or {}).items():
+        if _k in _huecos or _k in SIN_REPETICION or not _v:
+            continue
+        _repes.setdefault((_a.get("categoria"), _k, _v), []).append(_a["nombre"])
+_repes = {k: v for k, v in _repes.items() if len(v) >= UMBRAL_REPETICION}
+if _repes:
+    print()
+    print("LA MISMA CIFRA EXACTA EN MEDIA FAMILIA — mirar si la fuente la repite")
+    print("(no son fallos: son sitios donde puede haber una constante de familia")
+    print(" haciendose pasar por una medida individual. Ver el BLOQUE 51.)")
+    for (_c, _k, _v), _quienes in sorted(_repes.items(), key=lambda x: -len(x[1])):
+        print()
+        print(f"  [{len(_quienes):>3} fichas]  {_c} · {_k} = {_v}")
+        for _linea in _envolver(", ".join(sorted(_quienes)), 70):
+            print(f"                {_linea}")
+    print()
+    print(f"  {len(_repes)} cifras repetidas en {UMBRAL_REPETICION}+ fichas de su categoria.")
+    print("  Cada una se cierra abriendo su fuente: o la fuente da ese mismo numero para")
+    print("  todas -- y entonces es correcto --, o no lo da y la casilla va a `sin_dato`.")
+
+
 sys.exit(1 if any(t == "BASE" for t, _, _ in avisos) else 0)

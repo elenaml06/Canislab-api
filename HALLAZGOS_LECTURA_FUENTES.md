@@ -1048,18 +1048,47 @@ europeo clásico usa 6 a 1; el americano moderno (RAE) usa 12 a 1.
 que viene de la categoría «Verduras y frutas» (todo caroteno, cero retinol) de
 la que viene de vísceras, carne y suplementos:
 
+⚠️ **ESTA MEDIDA ESTABA MAL Y SE CORRIGIÓ EL 13 DE SEPTIEMBRE DE 2026.** Se deja
+tachada y no se borra, porque una cifra borrada se vuelve a calcular igual:
+
 ```
-% de la vitamina A que viene de vegetal .... mediana 83 %, máximo 100 %
-
-menús que NO llegarían al mínimo de FEDIAF (526,2 µg/1000 kcal)
-si no se cuenta el caroteno ................ 103 de 216   (48 %)
-
-el peor:  Grande_Lactante   11.191 µg totales,
-                            de los cuales retinol de verdad: 29
+❌ % de la vitamina A que viene de vegetal .... mediana 83 %, máximo 100 %
+❌ menús que NO llegarían al mínimo de FEDIAF (526,2 µg/1000 kcal)
+❌ si no se cuenta el caroteno ................ 103 de 216   (48 %)
+❌ el peor:  Grande_Lactante   11.191 µg totales,
+❌                             de los cuales retinol de verdad: 29
 ```
 
-**Veintinueve microgramos de retinol en el menú de una perra lactante**, y el
-semáforo lo da verde porque suma los 11.191. Si el factor real del perro fuera
+**El fallo: el método contaba la vitamina A del HÍGADO como si fuera caroteno**,
+y la del hígado es retinol puro. Se reproduce exacto: poniendo a cero la
+vitamina A del hígado **y** de los multivitamínicos salen mediana 74 % y
+**máximo 100 %** — y ese máximo del 100 % es la huella, porque con el catálogo
+bien contado ningún menú pasa del 35 %. Lo delata también la propia frase de
+abajo: en un menú con 5.500 µg de hígado dentro, «solo 29 son retinol» sólo
+puede salir si el hígado está en el lado equivocado de la cuenta.
+
+**Lo que mide de verdad**, remedido sobre los mismos 216 menús, alimento por
+alimento y dividiendo por las kcal reales:
+
+| De dónde viene la vitamina A de los 216 menús | en `main` | en esta rama |
+|---|---|---|
+| Hígado | **77,9 %** | 78,0 % |
+| Multivitamínico | **12,7 %** | 12,7 % |
+| **Verdura y fruta** | **6,5 %** | 7,1 % |
+| Todo lo demás | 2,9 % | 2,2 % |
+
+```
+menús que NO llegarían al mínimo sin el caroteno ...... 0 de 216 en main
+                                                         (2 en esta rama)
+el menú con más vitamina A: Pequeño_Lactante#4
+        va a ......................................... 5.155 µg/1000 kcal
+        de los cuales pone el hígado de vaca ......... 80,5 %
+        y la zanahoria ...............................  12,4 %
+menús por encima del máximo de FEDIAF (30.000) ........ 0 de 216
+```
+
+Lo de abajo se conserva como estaba escrito, pero **su premisa era falsa**: no
+hay ningún menú de lactancia con 29 µg de retinol. Si el factor real del perro fuera
 el humano (21:1 en vez del 6:1 que traen las fichas), ese menú tendría que
 dividir el caroteno por 3,5 y se quedaría muy corto.
 

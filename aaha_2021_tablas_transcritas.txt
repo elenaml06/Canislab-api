@@ -1,0 +1,514 @@
+AAHA 2021 NUTRITION AND WEIGHT MANAGEMENT GUIDELINES FOR DOGS AND CATS
+Cline MG, Burns KM, Coe JB, Downing R, Durzi T, Murphy M, Parker V.
+J Am Anim Hosp Assoc 2021;57:153-178.
+
+LAS TABLAS Y EL CUADRO QUE NO SALEN DEL PDF — TRANSCRIPCION A MANO
+==================================================================
+
+POR QUE EXISTE ESTE FICHERO (12 de septiembre de 2026)
+
+El PDF de AAHA 2021 esta en `canislab-fuentes/AAHA_Guidelines/` y su texto
+corrido se extrae bien. Sus TABLAS no: estan dibujadas como trazos vectoriales,
+no como texto. Medido con PyMuPDF sobre el PDF del repo:
+
+    pagina (indice)   dibujos   caracteres de texto
+    4  (impresa 157)    332        3003   <- la prosa de la pagina; la Tabla 2 no
+    7  (impresa 160)    122        2707   <- idem; el Cuadro 1 no
+    11 (impresa 164)    398         194   <- la pagina es la Tabla 8 entera
+    12 (impresa 165)    375          86   <- idem, Tabla 8 continuada
+
+O sea que `page.get_text()` de la pagina 164 devuelve 194 caracteres —el titulo
+y el pie de pagina— y el cuerpo entero de la tabla no aparece. Tampoco hay
+imagenes: `get_images()` devuelve 0. No es un problema de columnas como el de
+SACN5 y FEDIAF (ver `canislab-fuentes/sacn5/extraer_texto.py`): ahi el texto
+estaba y salia desordenado; aqui NO ESTA.
+
+COMO SE HIZO ESTA TRANSCRIPCION
+
+Se renderizo cada pagina a PNG a 200 ppp con PyMuPDF y se leyo la imagen. No hay
+script que pueda rehacerla, y eso es lo que la separa de
+`fediaf_tabla_III_3b.txt`: aquella se puede reauditar celda a celda contra el
+PDF (`auditar_transcripcion_fediaf.py`) y esta NO. Por eso va escrito aqui, en
+la cabecera, y no en un comentario: quien use una cifra de este fichero tiene
+que saber que la cadena termina en un par de ojos.
+
+REGLA. Toda cita de una tabla o del cuadro de AAHA que se escriba en el repo se
+comprueba contra ESTE fichero, no contra el .txt del PDF —donde no esta—, y
+`auditar_citas.py` lo indexa por eso. Las citas del TEXTO CORRIDO de AAHA se
+siguen comprobando contra el .txt de siempre.
+
+Se transcribe solo la columna canina donde la tabla separa perro y gato. Lo
+felino se marca [felino] y se deja, para que no parezca que falta.
+
+
+TABLA 2 (pagina impresa 157)
+Summary of BCS Scales and Their Relationship with BF and BW
+----------------------------------------------------------
+
+9-Point Scale | 5-Point Scale | % BF*   | % Overweight
+      4       |      2.5      | 15-19   | Ideal
+      5       |      3        | 20-24   | -
+      6       |      3.5      | 25-29   | 10%
+      7       |      4        | 30-34   | 20%
+      8       |      4.5      | 35-39   | 30%
+      9       |      5        | 40-45+  | 40%
+     >9       |     >5        | -       | >40%
+
+* Current BW x (100 - % BF) / 0.8. Lean mass is 80% of ideal weight, assuming
+20% BF.
+
+-, not applicable; BCS, body condition score; BF, body fat; BW, body weight.
+
+
+TABLA 4 (pagina impresa 159)
+Nutritional Screening: Risk Factors as Determined by Life Stage,
+Medical/Dietary History, or Physical Exam
+----------------------------------------------------------------
+
+Life stage with specific nutritional requirements (e.g., growth, gestation,
+lactation, senior, geriatric)
+
+History
+  Altered gastrointestinal function (e.g., vomiting, diarrhea, reduced fecal
+  quality, nausea, flatulence, constipation)
+  Previous or ongoing medical condition/disease
+  Currently receiving medications and/or dietary supplements
+  Calories from noncomplete and balanced foods > 10% of total caloric intake
+  (e.g., commercial treats, table foods, chew bones, foods for medication
+  administration)
+  Unconventional diet (e.g., raw meat based, home prepared, vegetarian, vegan)
+  Inadequate or inappropriate housing
+
+Physical examination
+  Body condition score < 4/9 or > 5/9
+  Muscle condition score with mild, moderate, or severe muscle wasting
+  Unexplained weight change
+  Dental abnormalities or disease
+  Poor skin or hair coat
+  New medical condition/disease
+
+
+TABLA 5 (pagina impresa 159)
+Examples of Clinical Diagnostics for an Extended Nutritional Assessment
+-----------------------------------------------------------------------
+
+Complete blood count
+Serum biochemistry
+Urinalysis
+Thyroid screen
+Fecal flotation and antigen testing (e.g., Giardia)
+Urine protein:creatinine ratio*
+Vitamin B12 (cobalamin)*
+Folate*
+PLI, species specific*
+TLI, species specific*
+25-hydroxyvitamin D*
+Whole blood or plasma taurine*
+Plasma amino acids*
+Abdominal and/or thoracic imaging*
+
+*If indicated.
+PLI, pancreatic lipase immunoreactivity; TLI, trypsin-like immunoreactivity.
+
+
+CUADRO 1 (BOX 1, pagina impresa 160)
+Energy Requirement Calculations
+--------------------------------
+
+RER = BWkg^0.75 x 70
+MER = RER x life stage factor
+
+Example for a 10 lb neutered cat:
+RER = 4.5^0.75 x 70 = 216
+MER = 216 x 1.2 = 259
+
+Nutritional Assessment Factors | Feline Life Stage Factors* | Canine Life Stage Factors*
+Neutered adults                |  1.2-1.4                   |  1.4-1.6
+Intact adult                   |  1.4-1.6                   |  1.6-1.8
+Inactive/obese prone           |  1.0                       |  1.0-1.2
+Weight loss                    |  0.8                       |  1.0
+Gestation                      |  1.6-2.0                   |  3.0 (for last 21 days)
+Lactation (based on number of
+  offspring and weeks of
+  lactation)                   |  2.0-6.0                   |  3.0 to >=6.0
+Growth                         |  2.5                       |  <4 mo: 3.0
+                               |                            |  >=4 mo: 2.0
+Work                           |  -                         |  Light: 1.6-2.0
+                               |                            |  Moderate: 2.0-5.0
+                               |                            |  Heavy: 5.0-11.0
+
+*The above life stage factors are general guidelines for estimating caloric
+intake. Sedentary and/or indoor pets may require less caloric intake than
+indicated above. Adjustment of caloric intake should be done by monitoring BW
+and BCS.
+
+BCS, body condition score; BW, body weight; MER, maintenance energy
+requirement; RER, resting energy requirement.
+
+
+TABLA 8 (paginas impresas 164 y 165)
+Nutrients of Concern for Diseases and Select Specific Conditions
+----------------------------------------------------------------
+
+Disease Category | Specific Conditions | Nutrients of Concern | Notes
+
+Adverse food reaction
+  Cutaneous adverse food reaction
+  Food intolerance
+  Food-responsive chronic enteropathy
+    Nutrients of concern:
+      Limited antigen diet
+        Novel/hydrolyzed protein
+        Limited ingredients
+    Notes:
+      Ingredients impact success of treatment
+      Noningredients may also impact success (e.g., additives, Maillard
+      production reaction)
+
+Inflammatory skin condition
+  Non-food-related skin condition
+    Nutrients of concern:
+      High n-3 fatty acids
+        Consider n-6:n-3 ratio
+      High vitamin A
+      High vitamin E
+      High zinc
+      Added antioxidants
+    Notes:
+      Individual diseases may require different supplements and doses
+
+Osteoarthritis
+    Nutrients of concern:
+      High EPA/DHA
+      Added glucosamine
+      Added chondroitin
+      Added antioxidants
+      Low energy density if overweight/obese
+    Notes:
+      Additional supplementation may be required to achieve optimal dose
+      High n-3 fatty acid supplementation may result in gastrointestinal
+      disturbance
+
+Neurologic conditions
+  Cognitive dysfunction
+    Nutrients of concern:
+      Added lipoic acid
+      Added carnitine
+      High EPA/DHA
+      Added antioxidants
+  Idiopathic epilepsy
+    Nutrients of concern:
+      High medium-chain triglycerides
+  Anxiety
+    Nutrients of concern:
+      Added L-tryptophan
+      Added hydrolyzed casein
+      Added antioxidants
+      Modified fiber
+    Notes (de todo el bloque):
+      Synergistic effects of nutrients when combined.
+
+Cardiovascular disease
+  Degenerative valve disease
+  Hypertrophic cardiomyopathy
+    Nutrients of concern:
+      Controlled sodium
+      High EPA/DHA
+      Avoid low protein
+  Dilated cardiomyopathy
+    Nutrients of concern:
+      Controlled sodium
+      High EPA/DHA
+      Avoid low protein
+      Added taurine
+      Added carnitine
+    Notes (de todo el bloque):
+      Supplement potassium as required
+      Maintain optimal body and muscle condition.
+
+Urolithiasis
+  Calcium oxalate
+    Nutrients of concern:
+      Low oxalate ingredients
+      Controlled calcium with appropriate calcium to phosphorus ratio
+      Avoid vitamin C supplementation
+      Low relative supersaturation
+      Added water
+  Struvite
+    Nutrients of concern:
+      Controlled magnesium
+      Controlled phosphorus
+      Controlled protein
+      Target acidic urine pH
+      Added water
+  Urate
+    Nutrients of concern:
+      Low purines
+        Does not necessarily mean low protein
+      Target alkaline urine pH
+      Added water
+  Cystine
+    Nutrients of concern:
+      Controlled cystine
+      Controlled methionine
+      Target alkaline urine pH
+      Added water
+  Notes (de todo el bloque Urolithiasis y del siguiente):
+      Many of these nutrients of concern can be incorporated into other diets
+      but may be difficult to identify unless specifically labeled for this use
+      Aim for USG <=1.020 (dogs) or <=1.035 (cats)
+      Struve urolithiasis in dogs is typically infection related and special
+      diet may not be required long term
+
+Lower urinary tract disease
+  Matrix-crystalline plugs
+    Nutrients of concern:
+      Based on mineral content of the plug
+      Added water
+  Feline idiopathic cystitis [felino]
+    Nutrients of concern:
+      Added antioxidants
+      High EPA/DHA
+      Added water
+      Low energy density if overweight/obese
+
+Pancreatic disease
+  Endocrine — Diabetes mellitus
+    Nutrients of concern:
+      High soluble and insoluble fiber
+      Low carbohydrate (cats)
+      High protein (unless contraindicated, e.g., proteinuria)
+      Low energy density if overweight/obese
+    Notes:
+      Consistency of meal timing and insulin regimen are most important
+  Exocrine — Pancreatitis
+    Nutrients of concern:
+      Low fat (dogs)
+      Limited antigen (cats)
+    Notes:
+      Dietary fat recommendations may depend on baseline intake and degree of
+      hyperlipidemia
+  Exocrine — Exocrine pancreatic insufficiency
+    Nutrients of concern:
+      Achieve optimal body condition
+    Notes:
+      In most cases no specific diet is needed with appropriate enzyme
+      supplementation
+      Assess serum cobalamin and supplement if indicated
+      In cases with persistent soft stool, additional fiber supplementation may
+      be warranted
+
+Gastrointestinal
+  Acute vomiting, diarrhea
+    Nutrients of concern:
+      Highly digestible
+      Low to moderate fat
+    Notes:
+      Difficult to identify digestibility unless specifically labeled for this
+      use
+  Chronic enteropathy
+    Nutrients of concern:
+      Limited antigen diet
+        Novel/hydrolyzed protein
+      +/- modified fiber
+      +/- low fat
+    Notes:
+      Assess serum cobalamin and folate and supplement if indicated
+  Intestinal dysbiosis
+    Nutrients of concern:
+      Modified fiber
+    Notes:
+      Assess serum cobalamin and supplement if indicated
+  Protein-losing enteropathy
+    Nutrients of concern:
+      Low fat
+      +/- limited antigen
+  Fiber-responsive colitis
+  Large bowel diarrhea
+    Nutrients of concern:
+      Moderate to high fiber
+      Mixed fiber types
+    Notes:
+      Fiber can be separately supplemented
+  Constipation
+    Nutrients of concern:
+      Moderate to high fiber
+      Mixed fiber types
+      Low energy density if overweight/obese
+      Increased water
+    Notes:
+      Investigate underlying causes (e.g., hypercalcemia, hypokalemia, obesity)
+  Obstipation
+    Nutrients of concern:
+      Highly digestible
+      Low energy density if overweight/obese
+    Notes:
+      Difficult to identify digestibility unless specifically labeled for this
+      use
+      Caution with high-fiber weight loss diets
+
+Other endocrine
+  Hyperlipidemia
+    Nutrients of concern:
+      Low fat
+    Notes:
+      Consider EPA/DHA supplementation
+  Feline idiopathic hypercalcemia [felino]
+    Nutrients of concern:
+      Controlled calcium
+      Avoid excess vitamin D
+      Avoid excess vitamin A
+      +/- increased fiber
+  Hyperthyroid [felino]
+    Nutrients of concern:
+      Low iodine
+    Notes:
+      Impossible to achieve necessary level of iodine restriction without
+      specific formulation and production procedures
+      Specific nutritional modification not required if hyperthyroidism is
+      managed by other means
+
+Liver disease
+  Encephalopathic
+    Nutrients of concern:
+      Low protein
+      +/- B12 supplementation
+    Notes:
+      Avoid organ meats
+      Consider vegetarian protein sources
+  Nonencephalopathic — Portosystemic shunt
+  Nonencephalopathic — Microvascular dysplasia
+  Nonencephalopathic — Chronic hepatitis
+    Nutrients of concern:
+      Moderate protein
+  Copper-associated hepatopathy
+    Nutrients of concern:
+      Low copper
+      Added zinc
+    Notes:
+      Only specifically designed low-copper diets are below AAFCO minimums
+
+Kidney
+  Protein-losing nephropathy
+    Nutrients of concern:
+      25-50% protein reduction from current intake
+        Meet essential amino acid requirements
+      High EPA/DHA
+      Low phosphorus if azotemic
+    Notes:
+      Protein recommendations will depend upon the degree of proteinuria
+      Many medications used to address proteinuria and hypertension may
+      exacerbate hyperkalemia, and reducing dietary potassium intake may help
+  Acute kidney injury
+    Nutrients of concern:
+      Moderate protein
+    Notes:
+      Consider as a critical care disease category when hypercatabolic
+  Chronic kidney disease
+    Nutrients of concern:
+      Low phosphorus
+      +/- potassium supplementation
+      High EPA/DHA
+      Increased energy density to maintain body and muscle condition (unless
+      obese)
+    Notes:
+      Many medications used to address proteinuria and hypertension may
+      exacerbate hyperkalemia, and reducing dietary potassium intake may help
+      Consider vitamin D supplementation
+
+Obesity
+    Nutrients of concern:
+      High protein
+      Moderate to high fiber
+      Low energy density
+      Increased nutrient to calorie ratio
+      Moderate to low fat
+    Notes:
+      Restriction below RER is not recommended with over-the-counter products
+
+Dental disease
+    Nutrients of concern:
+      Mechanical action or masking flavor for
+        Plaque or tartar reduction and/or prevention
+        Control of bad breath odor
+    Notes:
+      Mechanical brushing and dental prophylaxis are most effective
+
+Critical care
+    Nutrients of concern:
+      Highly digestible
+      Increased energy density
+      High fat
+      Added antioxidants
+      Texture more amenable to tube feeding slurry use
+    Notes:
+      Difficult to identify digestibility unless specifically labeled for this
+      use
+
+AAFCO, Association of American Feed Control Officials; DHA, docosahexaenoic
+acid; EPA, eicosapentaenoic acid; RER, resting energy requirement; USG, urine
+specific gravity.
+
+
+LOS CUATRO SIGNOS QUE EL PDF NO ENTREGA, Y POR QUE ESTO ES GRAVE
+================================================================
+
+Hay un segundo defecto, y no esta en las tablas sino en el TEXTO CORRIDO, que si
+se extrae. El subconjunto de fuente embebido en el PDF devuelve los signos de
+desigualdad como signos de puntuacion corrientes:
+
+    lo que dice el PDF   lo que sale del texto
+         <                      ,   (coma)
+         >                      .   (punto)
+         >=                     $
+         <=                     #
+
+Comprobado con `page.get_text()` sobre el PDF del repo y contra la pagina
+renderizada a 400 ppp, letra a letra. No es cosa de nuestra extraccion: PyMuPDF
+devuelve exactamente eso.
+
+POR QUE IMPORTA. Las desigualdades de AAHA son justo donde estan sus cifras, y al
+corromperse **no parecen rotas**: quedan como prosa normal. «A BCS ,4/9 or .5/9»
+se lee como una enumeracion; «treats and other food items make up #10%» parece un
+numero de nota al pie. O sea que una cita de AAHA copiada del .txt puede decir
+algo distinto de lo que dice la fuente sin que nada salte — la misma familia del
+texto a dos columnas de SACN5 y FEDIAF.
+
+Las frases afectadas, con sus signos buenos, leidas de la pagina renderizada:
+
+pagina impresa 155:
+"Every incremental increase in BCS is equivalent to a 5% increase in BF% while
+each BCS >=5/9 is equivalent to being 10% overweight (Table 2)."
+
+  ⚠️ OJO: esta frase y la Tabla 2 NO dicen lo mismo. La tabla pone «-» (no
+  aplica) en el BCS 5 y empieza el 10 % en el 6. La discrepancia es de la fuente,
+  no nuestra. Manda la tabla, que es la que trae los numeros y la que cuadra con
+  «The ideal BCS should therefore be between 4/9 and 5/9».
+
+pagina impresa 156:
+"A BCS <4/9 or >5/9, MCS with any degree of loss, and unexplained weight change
+from the pet's previous assessment should prompt an extended assessment."
+
+pagina impresa 156:
+"Noncomplete or unbalanced food calories at >10% of a patient's daily caloric
+intake dilute essential nutrients and provide excess calories."
+
+pagina impresa 156:
+"A BCS is limited in its assessment of patients with a high BF% (>45%)."
+
+pagina impresa 156:
+"These measurements in addition to BFI are useful for patients with a BCS >=8/9."
+
+pagina impresa 159 (punto 2 de la lista de como comparar la ingesta):
+"Ensure the calories consumed are within a reasonable level of agreement to MER
+and that the main source of complete and balanced nutrition represents >=90% of
+total intake whereas treats and other food items make up <=10%."
+
+pagina impresa 160:
+"assisted feeding via enteral tubes (e.g., nasal, esophageal, gastric) is
+strongly recommended within 72 hr of consumption of <=1/3 RER including the time
+before hospitalization."
+
+pagina impresa 162:
+"Advise owners to maintain all additional item intake to <=10% total daily
+caloric intake to avoid disrupting nutrient balance of the primary diet."

@@ -132,6 +132,39 @@ distinguir corte ni tejido -- por eso hay más `sin_dato` en L-carnitina
 
 ---
 
+## `hueco_verificado`: un hueco también tiene que decir por qué lo es
+
+*(13 de septiembre. Es el gemelo de `cero_verificado`, y nace de una pregunta de
+Elena: si dejar un hueco a propósito no es peligroso.)*
+
+`sin_dato` era una **lista pelada**, así que dos cosas muy distintas se veían
+exactamente igual:
+
+| | |
+|---|---|
+| «Hemos ido a las tres fuentes, ninguna mide esta celda, y queda escrito cuáles» | — |
+| «Nadie ha mirado nunca esta celda» | — |
+
+Y para contestar si el hueco es peligroso hay que poder leer **lo primero**. Así
+que un hueco que se ha comprobado lleva ahora su motivo en `hueco_verificado`,
+con el mismo contrato que `cero_verificado`: **qué fuentes se miraron, qué dijo
+cada una, y cuándo**.
+
+**Lo que el hueco NO es, y conviene saberlo antes de preocuparse**: un hueco no
+cuenta como cero. Contra un MÁXIMO el motor le mete el **percentil 90 de su
+familia** (`constructor.valor_para_maximo`), o sea «un alimento como este, en el
+extremo alto de lo que suelen tener», y contra un MÍNIMO cuenta 0. Es decir que
+es conservador en las dos direcciones. El peligroso es el **cero mudo**, que
+afirma «no lo tiene» y **afloja** el techo.
+
+El BLOQUE 100 exige que el campo no pueda mentir, en cinco formas: su clave está
+en `sin_dato`, su valor es 0, **no** está también en `cero_verificado` (una celda
+no puede ser a la vez «la fuente mide 0» y «ninguna fuente la mide»), no tiene
+`composicion_fuente` (eso es para celdas con cifra), y su motivo dice de verdad
+qué se miró. Comprobado con las cinco reintroducidas.
+
+---
+
 ## Los tres campos que dicen qué sabemos de cada 0
 
 Añadido el 7 de septiembre, cuando se cerraron 52 celdas contra las tres
@@ -151,6 +184,32 @@ alimentos de la categoría tienen ese nutriente y este lo tiene a 0 sin
 declararlo, lo dice. Sin una forma de contestarle, volvería a preguntar lo
 mismo en cada pasada.
 
+## La humedad: la columna que no es un nutriente
+
+Añadida el 8 de septiembre, con procedencia, en **65 de las 163 fichas**.
+No es un requisito de FEDIAF ni entra en ningún cálculo del motor hoy: es
+el **prerrequisito** de los techos legales, que la UE expresa por materia
+seca. Con la densidad sobre producto fresco no se pueden calcular — es otra
+base y no sirve.
+
+| Campo | Qué es |
+|---|---|
+| `humedad_g_100g` | Agua en g por 100 g de alimento tal cual se da |
+| `humedad_fuente` | La descripción **exacta** de la fila de origen |
+| `humedad_fdc` | El `fdcId` del USDA, para poder volver a ella |
+
+Las 98 que no la llevan no están olvidadas, están declaradas: a las verduras
+les falta fijar el `fdcId` de la fila **cruda**, BEDCA no expone endpoint para
+los pescados, Köber 2017 publica calcio y fósforo del hueso pero no materia
+seca, y la humedad de los suplementos la declara el fabricante.
+
+⚠️ **Y hay tres que no cuadran y se dejan declaradas** (pavo 101,4 · ala de
+pollo 103,5 · cerebro 101,0): sumadas con nuestra proteína y grasa pasan de
+100 g por cada 100. Es el modo de fallo de la dorada — dos alimentos en una
+fila —, pero ahí el agua es el único dato de la fila con procedencia escrita,
+así que consta el número y consta que no cuadra. **El lenguado se quitó a
+propósito**: sumaba 102,4 y ese sí tenía alternativa.
+
 ## Qué publica cada base, y qué no
 
 Esto es lo que obliga a que el orden de `Bases.md` sea un orden y no una
@@ -167,6 +226,119 @@ Y una trampa de BEDCA que se cuela al copiar: cada celda lleva un
 que no hay número.** Al volcarlo a una tabla el `TR` vacío se convierte en 0
 y ya nadie sabe que no era una medida. Seis de los huecos cerrados el 7 de
 septiembre eran exactamente eso.
+
+⚠️ **Y son TRES marcas que no son un número, no una** (13 de septiembre). Al bajar
+por la cadena de mandato hay que reconocer las tres o se cierra una celda con algo
+que la fuente no dice:
+
+| Marca | Fuente | Qué significa |
+|---|---|---|
+| `TR` con la celda **vacía** | BEDCA | No hay cifra. **No significa «trazas»** — ya se intentó leerlo así y lo paró el BLOQUE 51 |
+| `-` | CIQUAL | Valor no disponible |
+| **`< X`** | CIQUAL | **Límite de detección**, no una medida |
+
+La tercera es la traicionera, porque **parece casi un número**: `Huile de
+tournesol` publica su vitamina D como «< 0,25», y quien lo lea como 0,25 —o como
+0— se está inventando una medida. Ese aceite hubo que cerrarlo bajando hasta USDA
+(mandato 4), que da 0 de verdad.
+
+Y el **cero lógico de BEDCA (`LZ`)** sí es un cero, y es el más fuerte de todos:
+significa que el alimento **no puede** contener ese nutriente. BEDCA pone `LZ` a la
+vitamina A del aceite de girasol y a la vitamina D del de cacahuete — a cada aceite
+le mide una y a la otra le pone `TR`.
+
+---
+
+## De dónde sale cada cifra, y en qué orden se pregunta
+
+Añadido el 13 de septiembre de 2026. Hasta ese día este documento decía **en qué
+unidad** va cada nutriente y `Bases.md` decía **en qué orden** se miran las
+fuentes, en prosa. Lo que faltaba era lo de en medio: **la unidad en que publica
+cada fuente cada nutriente, y el factor para llegar a la nuestra**, en un sitio
+que se pueda ejecutar.
+
+Vive en `fuentes_de_composicion.json` y lo rehace `auditar_composicion.py`: vuelve
+a leer la unidad que **declara** cada fuente (el `v_unit` de BEDCA, el
+`unit_name` de USDA, la unidad escrita dentro del nombre de columna de CIQUAL) y
+falla si no coincide con lo declarado. Una unidad escrita a mano que nadie rehace
+es una frase, y una frase no se ejecuta.
+
+**Lo primero que comprobó, y es la precondición de todo lo demás:** las **46**
+claves del catálogo tienen la **misma** unidad que su fila de
+`requerimientos_v2_final.json`. 46 de 46. Eso es lo que permite que el motor
+compare una contra la otra sin convertir nada — y por eso la conversión tiene que
+estar hecha **ya** cuando el dato entra al catálogo. Lo vigila el BLOQUE 100.
+
+**Solo hay cuatro factores distintos de 1, y conviene tenerlos juntos:**
+
+| | De | A | Factor |
+|---|---|---|---|
+| Araquidónico, en las **tres** fuentes | g | mg | **×1000** |
+| Energía de **BEDCA** | kJ | kcal | **÷4,184** |
+| Energía de **USDA** | se lee la fila **1008**, que ya viene en kcal | | ×1 |
+| Calcio y fósforo de **Köber** | g/kg fresco | mg/100 g | **×100** |
+
+⚠️ **La energía es la columna con más trampa de unidad del catálogo**, y no es
+cosmético: es el **divisor** de los 43 requisitos, que van todos por 1000 kcal, así
+que leerla mal los desplaza los 43 a la vez. BEDCA la publica **solo en kJ**. USDA
+la publica **dos veces con el mismo nombre**, `Energy`: la 1008 en kcal y la 1062
+en kJ. Leída por nombre gana la última, que es la de kJ — y así estuvo
+`contrastar_fuentes.py` hasta el 13 de septiembre, comparando los 343 kJ del
+bacalao contra nuestros 83 kcal y diciendo «discrepa −76 %» en toda ficha con
+identificador de USDA. CIQUAL la publica **cuatro** veces: dos unidades por dos
+métodos; se usa la del Reglamento UE 1169/2011 en kcal.
+
+### Dos columnas que mezclan DOS CONVENIOS, y ninguna se ha tocado
+
+Esto no es un error de unidad: es peor, porque las dos cifras están en la misma
+unidad y miden cosas distintas.
+
+**La vitamina A**, que ya tenía su sección arriba, y ahora con un dato nuevo: para
+aplicar el factor 4:1 que FEDIAF define para el perro hace falta el retinol y el
+β-caroteno **por separado**, y este documento decía que no lo tenemos. **Dos de las
+tres fuentes los publican en columnas separadas**: CIQUAL tiene «Rétinol» y
+«Beta-Carotène», y USDA tiene «Retinol» y «Carotene, beta». Así que lo que falta no
+es el dato: es la **decisión** de cambiar el convenio de la columna, que es clínica.
+
+**La niacina**, que es nueva del 13 de septiembre. BEDCA publica «equivalentes de
+niacina, **totales**» —que incluyen la niacina que el animal puede fabricar a
+partir del triptófano de ese mismo alimento— y USDA y CIQUAL publican la
+**preformada**. Medido: 84 fichas llevan la cifra de BEDCA y 63 la de USDA, y el
+motor las compara todas contra el mismo mínimo de FEDIAF. El impacto real es
+**pequeño** —donde las dos fuentes publican, solo tres fichas se separan más del
+1,5× (pepino ×2,3, manzana ×2,2, lengua de cordero ×1,6)—, pero la mezcla existe.
+Lo que falta por decidir es qué mide el mínimo de la Tabla III-3b, y eso no lo
+firma el software.
+
+### Y un cero de la fuente tampoco se copia a ciegas
+
+`auditar_composicion.py --cerrar` escribe un 0 de la fuente en
+**`cero_verificado`**, no como un 0 pelado: un 0 a secas es indistinguible de un
+hueco, que es justo lo que este documento existe para separar. El caso masivo es
+la **fibra de la carne y el pescado** — cero de verdad, porque el tejido animal no
+tiene fibra dietética, y hasta entonces era un cero mudo en 78 celdas.
+
+⚠️ **Con una excepción, porque una fuente también se equivoca.** BEDCA publica
+`calcio = 0` como **medida** (`value_type` AR) para el pollo entero con piel, y un
+tejido animal con 0 mg de calcio no existe. Se aplica el criterio de este mismo
+documento —«un cero solo es creíble si algún alimento de esa familia puede tenerlo
+de verdad»— y el hueco **se queda abierto**, diciéndolo.
+
+Y hay que leer ese criterio con cuidado, porque habla de **TEJIDO**: una manteca o
+una grasa de pollo **sí** tienen 0 de proteína, 0 de potasio y 0 de B12 de verdad,
+y la primera versión de esta regla las acusaba — doce celdas de trece eran falsos
+positivos. Se separan por lo mismo por lo que `sin_huella` separa los aceites: la
+grasa.
+
+### Los ácidos grasos se transfieren por gramo de grasa
+
+La regla del aminograma de abajo —«no se copia: se divide por SU proteína y se
+multiplica por la NUESTRA»— **vale igual para los ácidos grasos, por gramo de
+grasa**, y desde el 13 de septiembre se aplica así. El argumento es el mismo sin
+cambiar una palabra: un ácido graso es una **fracción de la grasa**, no una
+cantidad independiente. Si la fila de USDA trae 3,05 g de linoleico sobre 15,06 g
+de grasa y nuestra ficha tiene 9,25 g de grasa, copiar 3,05 declara un aceite que
+no está ahí.
 
 ---
 
@@ -219,11 +391,71 @@ el aceite de hígado de bacalao.
 zanahoria 1.346 (= β-caroteno ÷ 6), boniato 667 (= RAE), rúcula 596 (que
 no es ni lo uno ni lo otro: RAE sería 119 y ÷6 sería 237).
 
-**Por qué importa, con la medida hecha.** En los 216 menús del catálogo
-precalculado, **el 83 % de la vitamina A viene de verduras y frutas** —o
-sea de caroteno, no de retinol— y **103 de los 216 no llegarían al mínimo
-de FEDIAF (526,2 µg/1000 kcal) si el caroteno no contara**. El peor, un
-menú de lactancia, declara 11.191 µg y solo **29** son retinol de verdad.
+**Por qué importa, con la medida hecha.**
+
+⚠️ **CORREGIDO EL 13 DE SEPTIEMBRE DE 2026, y aquí había TRES cifras y las tres
+estaban mal.** Decía que «el 83 % de la vitamina A viene de verduras y frutas»,
+que «103 de los 216 no llegarían al mínimo si el caroteno no contara» y que el
+peor menú «declara 11.191 µg y solo 29 son retinol de verdad». Remedido sobre
+los mismos 216 menús, alimento por alimento y dividiendo por las kcal reales:
+
+| De dónde viene la vitamina A de los 216 menús | en `main` | en esta rama |
+|---|---|---|
+| Hígado | **77,9 %** | 78,0 % |
+| Multivitamínico | **12,7 %** | 12,7 % |
+| **Verdura y fruta** | **6,5 %** | 7,1 % |
+| Todo lo demás | 2,9 % | 2,2 % |
+
+⚠️ **Y la medida SE DA CON SU CATÁLOGO AL LADO a propósito**, porque sin eso no
+significa nada: `catalogo_menus.json` se regenera, y una cifra medida sobre unos
+menús que no son los de `main` describe algo que nadie más puede reproducir. Pasó
+el 13 de septiembre: se escribió aquí un máximo de 10.000 µg/1000 kcal medido
+sobre un estado intermedio de los menús que **ya no existía ni en la propia rama**,
+y lo cazó la otra lectura al no encontrar ese menú por ningún sitio.
+
+Y las otras dos: los menús que no llegarían al mínimo sin el caroteno son **0 de
+216** en `main` (2 en esta rama, por los huecos de vitamina A que se declararon el
+mismo día), no 103. Y el menú con más vitamina A es `Pequeño_Lactante#4`, que va a
+**5.155 µg/1000 kcal**: el **80,5 %** lo pone el hígado de vaca (89,26 g → 9.149 µg)
+y la zanahoria solo el 12,4 %. O sea que ni siquiera el menú MÁS vegetal del
+catálogo depende de la verdura para su vitamina A.
+
+**De dónde salía el 83 %, porque importa no repetirlo.** No era una invención:
+el método contaba **la vitamina A del hígado como si fuera caroteno**, y la del
+hígado es retinol puro. Se reproduce: poniendo a cero la vitamina A del hígado
+**y** de los multivitamínicos salen mediana 74 % y **máximo 100 %**, y el
+documento original decía «mediana 83 %, máximo 100 %». Ese máximo del 100 % es
+la huella. Lo delata además su propia frase: en un menú con 5.500 µg de hígado
+dentro, «solo 29 son retinol» sólo puede salir si el hígado está contado en el
+lado equivocado.
+
+**Y la dirección del riesgo son DOS cosas distintas, y conviene no elegir solo
+una** — las dos son verdad y hablan de comparaciones diferentes:
+
+| | Qué pasa | Contra qué avisa |
+|---|---|---|
+| **Nuestra columna contra la de FEDIAF** | usamos el 6:1 de BEDCA y FEDIAF pide 4:1, así que contamos **menos** de lo que FEDIAF contaría | el **MÁXIMO**: un menú podría pasarse del techo real creyéndonos por debajo |
+| **Meter caroteno y retinol en la misma columna** | el caroteno se cuenta como si ya fuera vitamina A, y el perro tiene que convertirlo | el **MÍNIMO**: sobreestima el retinol disponible y puede **ocultar una carencia** |
+
+Lo que **no** es verdad es la frase que había aquí antes, que decía que contar de
+menos era «el lado seguro» sin más. No lo es en ninguna de las dos lecturas.Lo que nos permite estar tranquilos hoy **es la medida, no el
+argumento**: el menú más alto va a **5.155 µg/1000 kcal contra un techo de
+30.000**, o sea el **17 %** — y el techo son 30.000 en TODAS las etapas, también
+en crecimiento, así que el denominador es el mismo para el peor caso.
+**Menús por encima del máximo: 0. Por debajo del mínimo: 0.**
+
+**Para rehacer la medida** (y no fiarse de esta): recorrer los 216 menús de
+`catalogo_menus.json` —los 36 de `CATALOGO` más los 180 de `CATALOGO_VARIANTES`—,
+sumar `vitA × gramos / 100` por alimento agrupando por categoría, y dividir por
+las kcal reales del menú.
+
+⚠️ **Y hay que decir contra qué catálogo se mide, porque son DOS ficheros y los
+dos cambian**: `alimentos_v3_final.json` (lo que lleva cada alimento) y
+`catalogo_menus.json` (cuántos gramos de cada uno). Cambiar el primero mueve poco;
+**regenerar el segundo lo mueve todo**, porque el solver reparte distinto. La
+primera versión de esta medida cambió de catálogo el primero y no el segundo, dio
+por bueno un máximo de 10.000, y el menú que lo justificaba no existía en `main`.
+Lo que se escriba aquí tiene que salir del catálogo **fusionado**.
 
 **Y con el factor de FEDIAF en la mano, el problema es otro y más
 concreto**: no es que no sepamos si el caroteno cuenta —cuenta, 4 a 1—, es

@@ -64,6 +64,7 @@ parece que damos vueltas — porque las damos.
 - **Citar una fuente de memoria en vez de abrirla.** Pasó con FEDIAF: se "corrigieron" valores correctos
 - **Escribir una prueba mal y creerse el resultado.** Pasó el 2 ago: una prueba dijo "51 alimentos con error"; el error estaba en la prueba (no hay campo de carbohidratos)
 - **Una regla de categoría con índice vacío se desactiva EN SILENCIO.** Si se poda el único hígado, la regla "hígado ≥ X%" deja de aplicarse
+- **Leer `TR` de BEDCA como «trazas».** Pasó el 3 de septiembre en la rama `nutrition-audit-data-validation-bihto9`: se creó un campo `trazas` con 14 celdas de vitamina A y D de diez pescados y **se sacaron de `sin_dato`**, con el argumento de que una traza es un dato publicado y no un hueco. Se comprobó el 8 de septiembre pidiéndole las fichas a BEDCA una a una: las 14 son `TR` **con la celda vacía**, que en BEDCA significa NO HAY CIFRA. La prueba de que era eso y no otra cosa: donde la rama NO marcaba traza —la vitamina A de calamar, pulpo y sepia— BEDCA sí publica cifra con `AR` (63, 70 y 2). El campo calcaba exactamente las celdas `TR`. Sacarlas de `sin_dato` habría convertido catorce huecos bien declarados en ceros medidos falsos, **aflojando el techo crónico de la vitamina D** en diez pescados. No se rescató; `main` ya las tenía bien.
 - **Un fallo silencioso es peor que un error visible.** El analizador decía "dieta perfecta" con 15 nutrientes faltando, porque la clave de etapa llegaba mal escrita
 
 ---
@@ -109,3 +110,69 @@ parece que damos vueltas — porque las damos.
 - **Los 3 modos como el mismo algoritmo**
 - **`cambiar()` dentro de la categoría** → el recálculo es estructuralmente seguro
 - **Probar N combinaciones y quedarse con la mejor** — no es una regla, es probar
+
+---
+
+## 🌿 LAS CUATRO RAMAS QUE NO SE FUSIONAN, Y POR QUÉ (11 de septiembre)
+
+Al llevar a `main` los cuatro días de trabajo del PR #92 quedaban cuatro ramas
+sueltas sin fusionar, la más vieja del 27 de agosto. Se miraron las cuatro con
+el catálogo delante. **Una se fusionó y tres no**, y esto queda escrito para que
+nadie vuelva a abrirlas creyendo que se olvidaron.
+
+Un `git merge` es a tres bandas, así que ninguna de ellas *borraría* lo nuevo
+por sí sola. El problema es otro y es peor: **traen valores más VIEJOS de las
+mismas casillas**, y un valor viejo con forma de dato bueno no lo caza el
+semáforo.
+
+### `nutricion-pendiente-vuoobq` — FUSIONADA
+
+Base del 8 de septiembre, 3 commits por detrás. Trae `fuentes_id` en 99 fichas
+y 95 casillas a hueco declarado, que no estaban en ningún otro sitio. Cuatro
+conflictos, resueltos sin descartar ningún lado. Ver el commit de la fusión.
+
+### `nutrition-audit-data-validation-bihto9` — NO
+
+Base del 2 de septiembre, **59 commits por detrás**. Su trabajo de fondo **ya
+está en `main`**, entró por otras vías, y se comprobó valor a valor:
+
+| Lo que traía | Dónde está hoy |
+|---|---|
+| Las 103 correcciones del catálogo | aplicadas · hígado de pollo vitA 3296 y cobre 0,492, albahaca fósforo 56, dorada grasa 1 y vitD 1,5 — idénticas |
+| La dorada, la laringe y los cuellos | resueltos, pero **por el camino contrario y posterior**: el hueco se declara en vez de borrar el alimento, y el tejido tiroideo se bloquea con `TIROIDES_EXCLUIR` en vez de quitar la ficha |
+| `cero_verificado` | `main` tiene 6, la rama 0. Va al revés de lo que parece: aquí la vieja es ella |
+
+Y lo que **sí** sería nuevo **está descartado sobre el fondo**, no por pereza:
+
+- **El campo `trazas`** leía el código `TR` de BEDCA como «trazas». `TR` con la
+  celda **vacía** significa NO HAY CIFRA. Comprobado contra BEDCA ficha a ficha
+  el 8 de septiembre: aplicarlo convertiría **catorce huecos bien declarados en
+  ceros medidos falsos** y **aflojaría el techo crónico de la vitamina D**. El
+  **BLOQUE 51** falla si el campo vuelve al catálogo.
+- **Once casillas** que la rama declara hueco y `main` declara con valor. Se
+  abrieron las once: las once llevan **procedencia escrita del 7 y el 8 de
+  septiembre** (CIQUAL para el EPA y el DHA del aceite de hígado de bacalao,
+  USDA 173564 para el linoleico de la grasa de pollo, USDA 172531 para el
+  araquidónico del hígado de cordero…), o sea **posterior** a la rama. La rama
+  no las declara hueco por haberlo investigado: es que entonces no había cifra.
+- **107 casillas más** con valor distinto en los dos lados, y la dirección es la
+  misma: el 0 mudo está en la rama y el valor con fuente en `main`.
+
+### `el-corazon-de-ternera-es-musculo` — NO
+
+Base del 27 de agosto, **82 commits por detrás**. Su cambio con nombre **ya está
+en `main`**: los cinco corazones figuran como «Carne muscular». Lo que queda es
+el catálogo entero con otro formato contra una base de hace dos semanas.
+
+### `veterinary-mode-ui-fixes-s9l5j7` — NO
+
+Base del 8 de septiembre. Trae `margen_del_profesional` con **19 cifras**. `main`
+trae `margen_profesional` con **80**, su Reglamento (UE) 2020/354 y un auditor
+que rehace las 79 ventanas contra la fuente viva (BLOQUE 80). Fusionarla dejaría
+**dos copias de la misma tabla con dos nombres**, que es exactamente cómo se
+desincronizó la tabla de patologías del `POST /menu` viejo.
+
+**La regla que sale de aquí**, y vale para la próxima vez: antes de fusionar una
+rama vieja hay que preguntarse **en qué dirección va cada diferencia**. «Esta
+rama tiene cosas que `main` no tiene» y «esta rama tiene la versión vieja de lo
+que `main` ya arregló» se ven igual en un `git diff`.

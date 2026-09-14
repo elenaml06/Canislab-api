@@ -1,0 +1,86 @@
+{
+  "_meta": {
+    "que_es": "Cómo se le ENSEÑA cada patología a quien la marca: en qué aparato va y cómo se llama sin jerga. Nada más.",
+    "por_que": "⚠️ Elena, 12 de septiembre de 2026: «COMPRUEBA TODO PARA QUE NINGUN DATO LO MANDE LA APP, TODO TIENE QUE VENIR DEL MOTOR». Hasta ese día las 47 etiquetas y los nueve grupos vivían dentro de `src/App.jsx` — la misma forma de fallo que las seis categorías de Personalizar (tres semanas respetando tres de seis, y el menú saliendo verde igual) y que los cinco niveles de actividad contra los tres de la base de datos. Una patología nueva en `patologias.json` no aparecía en ninguna pantalla y no saltaba nada.",
+    "lo_que_NO_esta_aqui": [
+      "El nombre TÉCNICO: es el `nombre` de `patologias.json`, y es el registro `veterinario`. Copiarlo aquí sería la segunda copia.",
+      "Si se puede formular: es el `formulable` de `patologias.json`.",
+      "Quién puede marcarla: es `quien_formula_cada_patologia.json`.",
+      "El aviso al marcarla: es `avisos.general` de `patologias.json`.",
+      "Las preguntas de subtipo y sus respuestas: son `preguntas_por_patologia.json`.",
+      "Ninguna cifra. Aquí no hay ni un número."
+    ],
+    "quien_lo_vigila": "El BLOQUE 98 de `pruebas_completas.py`: que estén las 47 y ni una más, que cada `aparato` exista, que ningún grupo quede vacío y que `GET /vocabulario` sirva lo mismo que hay aquí.",
+    "aparatos": [
+      { "clave": "renal_urinario", "dueno": "Riñón y orina", "veterinario": "Renal y urinario" },
+      { "clave": "digestivo", "dueno": "Digestión y páncreas", "veterinario": "Digestivo y pancreático" },
+      { "clave": "hepatico", "dueno": "Hepático y biliar", "veterinario": "Hepático y biliar",
+        "ojo": "«Hepático» y no «Hígado» EN LOS DOS REGISTROS: en la misma ficha hay una categoría de ALIMENTO llamada «Hígado» (la que se puede excluir), y dos botones con el mismo nombre en la misma pantalla se confunden. Lo vio primero una prueba, que no supo cuál de los dos pulsar; a quien use un lector de pantalla le pasaría igual." },
+      { "clave": "cardiaco", "dueno": "Corazón", "veterinario": "Cardiovascular" },
+      { "clave": "endocrino", "dueno": "Hormonas y peso", "veterinario": "Endocrino y metabólico" },
+      { "clave": "piel", "dueno": "Piel", "veterinario": "Dermatológico" },
+      { "clave": "locomotor_neuro", "dueno": "Huesos, articulaciones y sistema nervioso", "veterinario": "Locomotor y neurológico" },
+      { "clave": "oncologia_inmunidad", "dueno": "Cáncer y defensas", "veterinario": "Oncología e inmunidad" },
+      { "clave": "otras", "dueno": "Otras", "veterinario": "Otras" }
+    ],
+    "por_que_por_aparato": "⚠️ Pedido expreso de Elena (8 de septiembre de 2026): «la lista de patologías me parece un peñazo, es enorme; habría que hacer un desplegable o poner por categorías. No me gusta que más de la mitad de la página sea una lista de patologías hacia abajo». Se agrupa por APARATO y no por frecuencia ni alfabéticamente porque es como está ordenada la cabeza de quien las busca: el paciente viene con un problema renal, o digestivo, o de piel."
+  },
+  "patologias": {
+    "renal": { "aparato": "renal_urinario", "dueno": "Problema de riñón crónico (insuficiencia renal)" },
+    "renal_avanzada": { "aparato": "renal_urinario", "dueno": "Problema de riñón crónico, ya avanzado" },
+    "renal_proteinuria": { "aparato": "renal_urinario", "dueno": "Pierde proteína por la orina (proteinuria)" },
+    "fracaso_renal_agudo": { "aparato": "renal_urinario", "dueno": "Fallo de riñón repentino (no el crónico)" },
+    "oxalato": { "aparato": "renal_urinario", "dueno": "Piedras en la orina de oxalato de calcio" },
+    "estruvita": { "aparato": "renal_urinario", "dueno": "Piedras en la orina de estruvita" },
+    "urato": { "aparato": "renal_urinario", "dueno": "Piedras en la orina de urato" },
+    "cistina": { "aparato": "renal_urinario", "dueno": "Piedras en la orina de cistina" },
+    "urolitos_fosfato_calcico": { "aparato": "renal_urinario", "dueno": "Piedras en la orina de fosfato de calcio" },
+    "urolitos_silice": { "aparato": "renal_urinario", "dueno": "Piedras en la orina de sílice" },
+
+    "pancreatitis": { "aparato": "digestivo", "dueno": "Pancreatitis" },
+    "insuficiencia_pancreatica_exocrina": { "aparato": "digestivo", "dueno": "El páncreas no fabrica enzimas para digerir (EPI)" },
+    "enteropatia_cronica": { "aparato": "digestivo", "dueno": "Colitis o inflamación crónica del intestino" },
+    "ple_linfangiectasia": { "aparato": "digestivo", "dueno": "Pierde proteína por el intestino" },
+    "reaccion_adversa_alimento": { "aparato": "digestivo", "dueno": "Alergia o intolerancia a un alimento, diagnosticada",
+      "ojo": "El nombre que ve el dueño empieza por «Alergia» a propósito: es la palabra que busca quien la busca, no «reacción adversa». Y NO sustituye a la pantalla de Alergias — lo que cura una reacción adversa es quitar el ingrediente; esto es lo que la literatura pide ADEMÁS para una dieta de eliminación que se come durante meses." },
+    "estrenimiento_cronico": { "aparato": "digestivo", "dueno": "Estreñimiento que se repite" },
+    "flatulencia": { "aparato": "digestivo", "dueno": "Muchos gases" },
+    "sibo": { "aparato": "digestivo", "dueno": "Demasiadas bacterias en el intestino delgado (SIBO)" },
+    "intestino_irritable": { "aparato": "digestivo", "dueno": "Intestino irritable" },
+
+    "hepatopatia": { "aparato": "hepatico", "dueno": "Problema de hígado por acumular cobre" },
+    "raza_predispuesta_cobre": { "aparato": "hepatico", "dueno": "Raza que tiende a acumular cobre, sin diagnóstico" },
+    "shunt_sin_encefalopatia": { "aparato": "hepatico", "dueno": "Shunt de hígado (la sangre se salta el hígado)" },
+    "encefalopatia_hepatica": { "aparato": "hepatico", "dueno": "Shunt de hígado con síntomas nerviosos ahora mismo" },
+
+    "cardiopatia": { "aparato": "cardiaco", "dueno": "Problema de corazón" },
+    "cardiopatia_a": { "aparato": "cardiaco", "dueno": "Corazón: raza predispuesta, todavía sin enfermedad" },
+    "cardiopatia_b1": { "aparato": "cardiaco", "dueno": "Corazón: soplo, sin que el corazón haya cambiado de tamaño" },
+    "cardiopatia_b2": { "aparato": "cardiaco", "dueno": "Corazón: ya ha cambiado de tamaño, sin síntomas" },
+    "cardiopatia_c": { "aparato": "cardiaco", "dueno": "Corazón: ha tenido insuficiencia cardíaca" },
+    "cardiopatia_d": { "aparato": "cardiaco", "dueno": "Corazón: insuficiencia cardíaca que no responde al tratamiento" },
+    "dcm_taurina_respondedora": { "aparato": "cardiaco", "dueno": "Corazón dilatado que mejora con taurina" },
+    "dcm_asociada_a_dieta": { "aparato": "cardiaco", "dueno": "Corazón dilatado relacionado con la dieta («grain-free»)" },
+
+    "diabetes": { "aparato": "endocrino", "dueno": "Diabetes" },
+    "hipotiroidismo": { "aparato": "endocrino", "dueno": "Tiroides bajo (hipotiroidismo)" },
+    "hiperlipidemia": { "aparato": "endocrino", "dueno": "Grasa alta en sangre (colesterol o triglicéridos)" },
+    "obesidad": { "aparato": "endocrino", "dueno": "Sobrepeso, con plan para adelgazar" },
+    "cushing": { "aparato": "endocrino", "dueno": "Cushing (fabrica demasiado cortisol)" },
+    "addison": { "aparato": "endocrino", "dueno": "Addison (fabrica poco cortisol)" },
+
+    "dermatitis_atopica": { "aparato": "piel", "dueno": "Alergia de piel (dermatitis atópica)" },
+    "dermatosis_zinc": { "aparato": "piel", "dueno": "Piel que necesita más zinc (razas nórdicas)" },
+
+    "artrosis": { "aparato": "locomotor_neuro", "dueno": "Artrosis" },
+    "mielopatia_degenerativa": { "aparato": "locomotor_neuro", "dueno": "Mielopatía degenerativa (pierde fuerza en el tren trasero)" },
+    "epilepsia_idiopatica": { "aparato": "locomotor_neuro", "dueno": "Epilepsia" },
+    "disfuncion_cognitiva": { "aparato": "locomotor_neuro", "dueno": "Deterioro mental por la edad" },
+
+    "cancer_soporte": { "aparato": "oncologia_inmunidad", "dueno": "Cáncer: apoyo con la alimentación" },
+    "inmunosupresion": { "aparato": "oncologia_inmunidad", "dueno": "Defensas bajas (quimioterapia, corticoides, enfermedad inmunomediada)" },
+
+    "riesgo_gdv": { "aparato": "otras", "dueno": "Riesgo de torsión de estómago (razas de tórax profundo)" },
+    "otra": { "aparato": "otras", "dueno": "Otra cosa que no está en esta lista" }
+  }
+}

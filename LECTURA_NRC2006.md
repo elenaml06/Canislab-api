@@ -393,7 +393,7 @@ que parece bueno. Queda escrito, medido, y con la pregunta hecha en
 
 ⚠️ Y una frase de `patologias.json` que era **falsa** y se corrige con esto: el
 `por_que` de `intestino_irritable` decía que se usaba la fila de fibra bruta
-«porque es la unica que el catalogo sabe medir». Es al revés. Esa nota al pie de
+*porque es la unica que el catalogo sabe medir*. Es al revés. Esa nota al pie de
 SACN5 habla de **piensos**, cuya etiqueta solo declara la bruta; el catálogo de
 Rawku es el único de los dos que **sí** tiene el valor de fibra dietética total.
 

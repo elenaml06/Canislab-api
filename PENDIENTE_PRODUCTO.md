@@ -789,3 +789,210 @@ ofrece ni lo menciona.
 **Decisión, y son dos:** si entra una ficha de páncreas en el catálogo —con el
 trabajo de datos que eso lleva— y si el aviso de la EPI lo nombra aunque la
 ficha no exista. Lo segundo no depende de lo primero.
+
+## La lista de patologías del dueño es un scroll interminable
+
+**Pedido por Elena el 13 de septiembre de 2026:**
+
+> «para las patologías de usuario se ve una lista MUUUUY larga y no me gusta,
+> que sea un desplegable con un buscador o algo así mejor»
+
+Son **47**, y hoy se pintan seguidas. En el móvil eso es un scroll que nadie
+lee entero, y una patología que no se lee es una patología que no se marca —
+o sea un menú formulado para un perro sano que no lo es.
+
+**Lo que hay que hacer, y NADA de esto se inventa en la app:**
+
+- Un **desplegable con buscador**, agrupado por aparato. Los nueve grupos y la
+  etiqueta en cristiano de cada patología ya los sirve `GET /vocabulario` en
+  `patologias.por_aparato` (ver `patologias_como_se_presentan.json`): la app los
+  lee, no se los escribe.
+- El buscador **sin tildes ni mayúsculas**, con el mismo normalizador que ya usa
+  el formulador (`tests/buscar-sin-tildes-en-el-formulador.spec.js`).
+- Las **marcadas, arriba y siempre visibles**. Es lo que se pierde al meter una
+  lista en un desplegable, y aquí no se puede perder: quien marcó «renal» tiene
+  que verlo sin abrir nada.
+- Las **doce que no llevan casilla propia** siguen sin llevarla: son respuestas
+  de familias (los cinco estadios ACVIM, la renal avanzada, los cuatro urolitos
+  que no son estruvita, la predisposición al cobre y la encefalopatía). Ponerlas
+  sería la misma patología dos veces en la misma pantalla.
+
+**Para darlo por hecho:** una prueba que siembre una etiqueta **inventada** en
+`/vocabulario` y la busque en el desplegable — con las de verdad, «la app lo ha
+leído del motor» y «la app pinta su respaldo» se ven exactamente igual.
+
+### ✅ HECHO — 13 de septiembre de 2026, noche
+
+Plegada por aparato y con buscador, igual que la ficha del veterinario (que se
+arregló el 8 de septiembre y a la del dueño se le pasó). Dos matices sobre lo
+escrito arriba, medidos al hacerlo:
+
+- **No son 47 sino 22.** Las doce que no llevan casilla propia ya se
+  descontaban, y de las 35 restantes el dueño solo ve las **22** que puede
+  marcar: las 24 `solo_veterinario` se le esconden desde el 11 de septiembre.
+  Eso era «lo segundo que pidió» —«solo pueden entrar las patologías que puede
+  generar un usuario sin preguntas y sin supervisión veterinaria»— y **ya estaba
+  hecho**; sigue saliendo de `quien_formula_cada_patologia.json`, no de la app.
+- **Las marcadas no van arriba: abren su aparato solo**, y el aparato lo cuenta
+  en su cabecera. Cumple lo que pedía el punto («quien marcó renal tiene que
+  verlo sin abrir nada») sin sacar la patología de su sitio, que era la otra
+  forma de perderla de vista.
+
+Un aparato que se quede sin nada visible no se pinta —sería un desplegable
+vacío—, y si el motor no ha contestado se cae a la lista de siempre: una
+pantalla sin patologías sería un perro renal marcando «nada que destacar».
+Prueba nueva en `tests/patologias-del-motor.spec.js` con nombres inventados,
+comprobada con el fallo puesto.
+
+## El aviso de «el máximo era el 10 y llevaba un 11» — ✅ ENCONTRADO Y ARREGLADO (14 de septiembre)
+
+**Era el YODO, y el camino lo dio Elena al día siguiente:** «lo del máximo ha
+sido después de **cambiar (editar) un par de ingredientes** en modo usuario en
+automático». Barriendo **29 ediciones encadenadas** sobre cinco perros aparece un
+menú **entregado** con «El yodo de este menú llega a **2156 µg, por encima del
+límite prudente (2040 µg** — con margen extra por incluir kelp)».
+
+El margen extra del 50 % del kelp vivía **solo dentro del aviso**: el solver y el
+filtro final no lo conocían. Ahora la cuenta es una sola función que hacen los
+tres, el solver reintenta con el tope apretado, y si aun así se pasa **no se
+entrega** — el yodo es tope crónico (regla 2). Lo vigila el **BLOQUE 108**, cuyo
+invariante es general: ningún menú entregado puede decir que se pasa de un
+límite. Detalle en `CLAUDE.md` y en `HECHO.md`.
+
+Lo que sigue abajo es la búsqueda del día anterior, que **descartó los otros seis
+caminos** y por eso se deja escrita: fue lo que permitió que, con la pista de la
+edición, el sitio quedara acotado.
+
+## Lo que se descartó el 13 de septiembre
+
+**Dicho por Elena el 13 de septiembre de 2026:**
+
+> «me salio un menu con riñon y noseque y me salia un aviso de que el maximo era
+> el 10 y que llevaba un 11.... Eso no deberia ser un aviso, deberia ser un menu
+> en rojo»
+
+**Tiene razón en la regla, y por eso lo primero fue comprobar si el motor la
+rompe. No la rompe, y está medido.** Barridos `/menu/v2`, `/menu/semana`,
+`/menu/cambiar`, `/menu/anadir`, `/menu/revalidar` y `/catalogo/*` con toy,
+adulto, gigante, cachorro y lactante: **ningún menú entregado trae un aviso de
+«te has pasado del límite»**. El porqué es estructural —
+`_garantizar_verificado` llama a `_menu_precalculado_es_seguro`, que aplica los
+**mismos cinco topes con las mismas constantes** que el aviso, así que un menú
+que se pase no se entrega. Medido sobre un menú real: con 80 g de sardina
+(10,2 % de las kcal) el filtro dice que no, y `/menu/revalidar` devuelve el menú
+rehecho con 52 g.
+
+**El candidato más parecido es el aviso de la tiaminasa**, que dice literalmente
+«el límite seguro es 10 %» y nombra el pescado azul; y el del **selenio** dice
+«el riñón es la fuente más concentrada», que encaja con «un menú con riñón».
+Pero los dos solo pueden salir por **`/analizar`** —la dieta que ya le da el
+dueño—, y ahí avisar **es** lo correcto: no hay menú que rechazar, hay una dieta
+que alguien ya está dando.
+
+**Lo que falta es la captura.** Sin ella no se puede saber si es otra pantalla
+(la ficha clínica pinta «Por encima del máximo» en rojo, que sí es eso) o un
+caso que el barrido no alcanza. En cuanto llegue, se mira y se arregla.
+
+## Y mirar los TEXTOS, no solo si falla
+
+Del mismo día y de la misma frase de Elena: «también tienes que ver cuando hagas
+esas pruebas si algo te chirría de textos, y cosas así. O sea comprobar todo».
+
+Una prueba dice si algo se rompe; no dice si una pantalla se entiende. Al pasar
+la batería de la app de verdad (ver `CLAUDE.md`, «Antes de fusionar») hay que ir
+anotando lo que chirría —textos, orden, cosas que sobran— y traerlo como lista,
+no arreglarlo por cuenta propia: qué se enseña y cómo es decisión de producto.
+
+## ⚠️ LOS AVISOS AL DUEÑO SON TÉCNICOS Y CITAN FUENTES. FUERA.
+
+**Elena, 13 de septiembre de 2026, usando la app:**
+
+> «los avisos al usuario son muy técnicos y nombran fuentes. FUERA»
+
+El caso que lo destapó está en su pantalla, palabra por palabra:
+
+> «Están dentro del 10 % que recomiendan las fuentes (**Ettinger 8ª ed. caps. 175
+> y 192; Fascetti & Delaney 2ª ed. cap. 7**). Aun así, el motor no sabe qué llevan
+> dentro: si son carne sola desequilibran el calcio y el fósforo, y si es hígado
+> cuenta para el máximo de vitamina A.»
+
+Eso es el registro de VETERINARIO puesto en la pantalla del dueño. El motor ya
+sirve **los dos registros** para casi todo (`dueno` y `veterinario`), así que la
+pieza que falta no es escribir textos nuevos: es que cada aviso **tenga los dos**
+y que la app pinte el que toca según el rol.
+
+**Para darlo por hecho:** ningún aviso del canal del dueño nombra una fuente, una
+tabla, un capítulo ni una unidad del motor; y una prueba que recorra los avisos
+del rol dueño y falle si aparece «FEDIAF», «SACN5», «Ettinger», «Fascetti»,
+«NRC», «cap.», «Tabla» o «mg/1000 kcal».
+
+### ✅ HECHO — 13 de septiembre de 2026, noche
+
+Los **tres** canales, no solo el de los premios que Elena vio. Medido antes de
+tocar nada: **24 de los 54 avisos principales de patología, 23 de los 25
+sueltos y 4 de los 16 de seguridad** nombraban una fuente, una tabla, un
+capítulo, una unidad del motor o un fichero del repo. Se escriben **50 textos
+en registro llano** y las citas **se mueven** al canal del profesional — no se
+borra ninguna. Detalle completo en `CLAUDE.md` (`GET /patologias`) y en
+`HECHO.md`. Lo vigila el BLOQUE 107, con el fallo puesto de cuatro formas.
+
+⚠️ **Y la lección que deja, que vale para cualquier barrido de textos**: los
+avisos de seguridad dependen de **qué alimento** lleva el menú —el de la
+histamina solo sale con sardina, caballa, atún o boquerón—, así que pedir cinco
+menús y mirar lo que traigan es una **muestra, no un barrido**, y por ahí se
+colaron cuatro. Se barren pasándole a la función un menú sintético con el
+**catálogo entero**.
+
+## ⚠️ UN AVISO QUE DICE «EL MÁXIMO ERA 10 Y LLEVA 11» TIENE QUE SER UN MENÚ EN ROJO
+
+**Elena, el mismo día:**
+
+> «me salió un menú con riñón y no sé qué y me salía un aviso de que el máximo
+> era el 10 y que llevaba un 11... Eso no debería ser un aviso, debería ser un
+> menú en rojo»
+
+Y tiene razón en el principio, que además es la regla 2 del `CLAUDE.md`: **un
+aviso se puede ignorar; un límite no.** Si una cifra se pasa de su máximo, o el
+menú no sale, o el máximo no era un máximo.
+
+**Lo primero es identificar CUÁL es ese aviso**, porque de eso depende todo: si
+es un máximo de FEDIAF o un tope de seguridad, es un fallo grave y va a rojo; si
+es una proporción de BARF (las vísceras al 10 % de la ración, por ejemplo), es
+FORMA -- criterio nuestro, no de FEDIAF -- y entonces lo que está mal es el
+texto, que la hace sonar a requisito.
+
+**Para darlo por hecho:** el aviso identificado, y o bien convertido en
+restricción dura con su bloque de batería, o bien reescrito para que no parezca
+un requisito. Y en los dos casos, dicho en `HECHO.md` cuál de las dos era.
+
+➡️ **BUSCADO Y NO ENCONTRADO, con la medida escrita**: ver el apartado «El aviso
+de «el máximo era el 10 y llevaba un 11» — NO SE HA ENCONTRADO», más arriba en
+este mismo fichero. Resumen: ningún menú entregado por ninguno de los seis
+caminos trae un aviso de «te has pasado del límite», y está comprobado por qué
+—el filtro final aplica los **mismos cinco topes con las mismas constantes** que
+el aviso—. Falta la captura para saber de qué pantalla salía.
+
+## Editar un menú, también en PERSONALIZAR
+
+Del mismo día: «tanto en automático como en personalizar eh». El arreglo del 13
+de septiembre (que cambiar un alimento no rehaga el menú) va en
+`_recalcular_con_motor`, que sirve a los tres endpoints de edición -- pero el
+camino de Personalizar tiene además su **propio atajo** de `CATALOGO_VARIANTES`
+en `main.py`, y hay que comprobar que por ahí pasa lo mismo.
+
+### ✅ HECHO — 13 de septiembre de 2026, noche
+
+Comprobado: **los dos atajos de `CATALOGO_VARIANTES` viven en `/menu/v2`**, o
+sea al GENERAR, no en los tres endpoints de edición. Así que editar pasa siempre
+por `_recalcular_con_motor` en los dos modos, y no había nada que arreglar.
+
+El apartado del BLOQUE 102 se escribe igual, porque «pasa por la misma función»
+es un argumento y no una medida, y la próxima vez que alguien meta un atajo en
+la edición ese apartado es lo único que lo cazaría. Y trae algo que **solo se ve
+en personalizar**: si para que el cambio salga hay que bajar de peldaño y meter
+otra carne de una categoría que el dueño eligió a mano, eso es legítimo —lo dice
+la regla 5— pero **tiene que decirse**, y eso es lo que se exige.
+
+Medido con el perro de Elena: cambiando «Pollo muslo con piel» por «Pavo pechuga
+sin piel» entra además «Pollo ala con piel», porque la pechuga sin piel no trae
+el linoleico que traía la piel, y el menú lo dice.

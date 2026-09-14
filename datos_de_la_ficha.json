@@ -7,7 +7,7 @@
       "dentro_de": "No viaja suelto: va cocinado dentro de un numero que si viaja. `va_dentro_de` dice dentro de cual. ⚠️ Esta forma es la peligrosa: el dato llega SIN PODER DESHACERSE, asi que el motor solo puede usarlo para lo que ya esta cocinado. Si algun dia hace falta para otra cosa, hay que sacarlo.",
       "no_hace_falta": "No llega, y esta bien que no llegue. `por_que_no` tiene que decirlo, y tiene que ser un motivo, no una excusa."
     },
-    "como_se_comprueba": "El BLOQUE 87 de `pruebas_completas.py`: que los 21 campos esten declarados, que los que dicen `campo` existan de verdad en `PeticionMenu`, y que ninguno se quede sin motivo. La lista de campos sale de `tests/ficha-ida-y-vuelta.spec.js` del repo de la app, que es la que ya vigila que no se pierdan al guardar.",
+    "como_se_comprueba": "El BLOQUE 87 de `pruebas_completas.py`: que los 21 campos esten declarados, que los que dicen `campo` existan de verdad en `PeticionMenu`, y que ninguno se quede sin motivo. La lista de campos sale de `tests/ficha-ida-y-vuelta.spec.js` del repo de la app, que es la que ya vigila que no se pierdan al guardar. || Y desde el 11 de septiembre comprueba tambien el bloque `lo_que_la_ficha_todavia_no_pregunta`: lo contrario de este fichero. `campos` dice a donde va lo que la ficha SI pregunta; ese dice que le falta por preguntar, con la fuente que lo pide y el campo que el motor YA sabe recibir. Sin el, un dato que el motor acepta y nadie le manda no aparece en ningun inventario: no esta en `campos` porque la ficha no lo pregunta, y no esta en ningun pendiente porque el motor ya lo hace.",
     "medido": "11 de septiembre de 2026, contra `src/App.jsx` de canislab-web (el cuerpo que monta para /menu/v2 y /menu/revalidar) y `PeticionMenu` de main.py."
   },
   "campos": {
@@ -120,6 +120,20 @@
       "forma": "campo",
       "llega_como": "patologias",
       "para_que": "Los topes por patologia, sus suelos y sus ratios. Es el campo que mas cambia un menu."
+    }
+  },
+  "lo_que_la_ficha_todavia_no_pregunta": {
+    "_que_es": "Datos que el MOTOR ya sabe recibir y que la ficha no pide todavia. Cada uno con la fuente que lo pide, el campo por el que entraria y que hace el motor mientras tanto. Un hueco declarado se puede cerrar; uno sin declarar se vuelve a descubrir.",
+    "premios": {
+      "llega_como": "premios_nivel",
+      "que_es": "Las kcal que el perro toma AL DIA fuera de su racion: premios, sobras de la mesa, la galleta del adiestramiento, los suplementos que le da el dueno por su cuenta.",
+      "quien_lo_pide": "Cuatro fuentes, y las cuatro con la misma cifra: no mas del 10 % de las calorias del dia. Ettinger 8a ed. cap.192 (con el mecanismo), cap.175 (que ademas los define: «premios, sobras de la mesa, suplementos»), y Fascetti & Delaney 2a ed. cap.7 («The authors recommend that the energy intake from snacks or treats not exceed 10 % of the animal's total daily calories»).",
+      "cita": "«Los alimentos y premios desequilibrados no se deben proporcionar en mas de un 10 % de la ingesta calorica diaria total. Cuando se agregan alimentos desequilibrados a una dieta completa y equilibrada, se produce una dilucion de nutrientes, y los nutrientes esenciales pueden quedar por debajo de los requerimientos minimos.»",
+      "que_hace_el_motor_ya": "Formula la racion con las kcal QUE QUEDAN y le sigue exigiendo EL DIA ENTERO de nutrientes, asi que la dilucion que describe la fuente no puede pasar. Lo dice en `problemas_seguridad`: si pasan del 10 %, que son demasiadas y a cuanto hay que bajarlas. Y desde el 11 de septiembre sirve tambien LA PREGUNTA y sus cuatro respuestas por `GET /vocabulario`, con los dos registros -- el del dueño y el del veterinario --, para que la app no se invente ni las opciones ni las cifras.",
+      "que_falta": "Que la ficha haga la pregunta y que la app mande la respuesta. ⚠️ ESCRITO YA en `canislab-web` (rama `claude/sincronizar-front-con-el-motor`): el paso 5 del asistente la hace en registro de dueño, la ficha clinica en registro tecnico, se guarda en `perros.premios_nivel` y viaja en los cinco cuerpos de peticion. Aqui sigue declarado como HUECO porque en PRODUCCION todavia no esta: mientras esa rama no se fusione, la app no pregunta y el campo llega vacio siempre.",
+      "por_que_no_se_puede_deducir": "No hay de donde. Las kcal que manda la app son las que el perro tiene que comer al dia, y de esas el motor no puede saber que parte se va en premios. Es un dato del dueño. Y tampoco se le puede pedir en kcal: nadie sabe las calorias de la galleta que le da, y el catalogo no tiene fichas de premios. Por eso la pregunta va en PORCENTAJE, que es la unidad en la que habla la fuente.",
+      "o_tambien": "kcal_de_premios, el numero exacto, para quien lo sepa (un veterinario con la etiqueta del premio delante). Si llegan los dos, manda el numero.",
+      "cuando_deja_de_ser_un_hueco": "El dia que se fusione esa rama. Entonces `premios` se mueve a `campos` con forma `campo` y `llega_como: premios_nivel`, y la lista `_DE_LA_FICHA_87` de `pruebas_completas.py` pasa de 21 a 22. Los dos cambios van juntos: el BLOQUE 87 exige que `campos` y esa lista digan exactamente lo mismo, asi que mover uno sin el otro pone la bateria en rojo -- que es justo lo que se quiere, para que no se olvide."
     }
   }
 }
