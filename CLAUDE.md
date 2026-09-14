@@ -191,9 +191,16 @@ con alguna, casi siempre el error está en el cambio.
    pregunta y sus cuatro respuestas las sirve `GET /vocabulario` con los dos
    registros, y **de las cuatro cifras solo el 10 % es de la fuente**: el 5 %
    y el 20 % son nuestros y van marcados como tales. Lo vigilan los BLOQUES
-   88, 87 y 95. ⚠️ **La ficha todavía no hace la pregunta**, y eso está
-   declarado en `lo_que_la_ficha_todavia_no_pregunta` de
-   `datos_de_la_ficha.json`.
+   88, 87 y 95. ⚠️ **Y la ficha SÍ la hace** desde el 11 de septiembre, aunque
+   aquí siguiera puesto lo contrario hasta el 14: la pregunta el dueño en el
+   paso 5 —y **no deja continuar sin contestarla**— y el formulador como
+   «Aporte calórico extraración». El hueco estuvo escrito tres días después de
+   cerrarse, y no era inofensivo: el BLOQUE 87 **exigía** que siguiera escrito,
+   o sea que la batería estaba de guardia de una afirmación falsa sobre el
+   producto. Es la **pregunta zombi** de `PREGUNTAS_ABIERTAS.md`, aquí en su
+   peor forma. Ahora los premios viven en `campos` con la fecha en que se
+   cerraron, y `lo_que_la_ficha_todavia_no_pregunta` se queda **vacío y
+   diciendo que está vacío** —el sitio hace falta para el hueco que venga—.
 4. **Las alergias y las categorías excluidas a mano no se tocan jamás.**
    Pueden ser médicas.
 5. **Lo que eliges a mano se respeta, con un perro o con cinco.** Si la

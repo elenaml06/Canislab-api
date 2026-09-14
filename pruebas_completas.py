@@ -13042,6 +13042,13 @@ _DE_LA_FICHA_87 = [
     "tamano", "dieta_actual", "alergia_si", "alergias", "otros_evitar_si",
     "otros_evitar", "categorias_excluidas_si", "categorias_excluidas",
     "patologia_si", "patologias",
+    # ⚠️ AÑADIDO EL 14 DE SEPTIEMBRE, y es la TERCERA vez que a esta lista le
+    # falta un campo que la ficha sí pregunta -- antes fue `raza`. Los premios
+    # se preguntan en el paso 5 del dueño (y no deja continuar sin contestar) y
+    # en «Aporte calórico extraración» del formulador, desde el 11 de
+    # septiembre, y esta lista no se enteró. La causa es la de siempre: se copió
+    # a mano de `tests/ficha-ida-y-vuelta.spec.js`, donde tampoco estaba.
+    "premios",
 ]
 _FORMAS_87 = ("campo", "dentro_de", "no_hace_falta")
 
@@ -13111,11 +13118,28 @@ if "actividad" not in _recibe87:
 # campo llega vacío SIEMPRE y el menú sale igual que si el perro no comiera
 # nada más. Un hueco declarado se puede cerrar; uno sin declarar se vuelve a
 # descubrir dentro de seis meses.
+#
+# ⚠️ Y DESDE EL 14 DE SEPTIEMBRE EL BLOQUE PUEDE ESTAR VACÍO, que no es lo mismo
+# que no estar. Los premios se cerraron --la ficha del dueño los pregunta en el
+# paso 5 y NO DEJA CONTINUAR sin respuesta, y la del veterinario los pregunta
+# como «Aporte calórico extraración»-- y el hueco se quedó escrito, así que este
+# bloque estaba EXIGIENDO que el repo siguiera afirmando algo falso del
+# producto. Es la pregunta zombi de `PREGUNTAS_ABIERTAS.md`, aquí con la
+# batería de guardia. Lo que se exige ahora es que el SITIO siga existiendo:
+# vacío y diciendo que está vacío, para que un hueco nuevo tenga dónde
+# escribirse.
 _huecos87 = _ficha87.get("lo_que_la_ficha_todavia_no_pregunta")
-if not isinstance(_huecos87, dict) or len(_huecos87) <= 1:
+if not isinstance(_huecos87, dict) or not _huecos87:
     fallos.append("BLOQUE87: `datos_de_la_ficha.json` ya no declara "
                   "`lo_que_la_ficha_todavia_no_pregunta`. Sin ese bloque, un dato que el motor "
                   "acepta y que nadie le manda no sale en ningún inventario")
+elif not any(not _k87.startswith("_") for _k87 in _huecos87):
+    # Vacío: entonces tiene que DECIR que está vacío y por qué, o no se
+    # distingue de un bloque que alguien dejó a medias.
+    if not any((_v87 or "").strip() for _k87, _v87 in _huecos87.items()
+               if _k87.startswith("_") and isinstance(_v87, str)):
+        fallos.append("BLOQUE87: el bloque de huecos está vacío y no dice que lo esté. «No queda "
+                      "ninguno» y «alguien lo vació sin querer» se ven igual")
 else:
     for _h87, _v87 in _huecos87.items():
         if _h87.startswith("_"):
@@ -13131,12 +13155,20 @@ else:
                           f"PeticionMenu no tiene ese campo. Entonces el hueco no es de la ficha: "
                           f"es del motor, y esto lo está tapando")
 
-# El de los premios, con nombre y apellidos: es el que abrió el bloque, y lo
-# que hace el motor con él tiene que seguir enchufado.
-if "premios" not in (_huecos87 or {}):
-    fallos.append("BLOQUE87: ha desaparecido el hueco de los premios. Lo piden CUATRO fuentes "
-                  "(Ettinger caps. 175 y 192, Fascetti cap. 7) y la ficha sigue sin preguntarlo: "
-                  "mientras siga así, el hueco tiene que estar escrito")
+# El de los premios, con nombre y apellidos: es el que abrió el bloque. YA NO ES
+# UN HUECO --la ficha lo pregunta y no deja seguir sin contestarlo-- así que lo
+# que se exige es lo contrario de antes: que esté en `campos`, que viaje por
+# `premios_nivel`, y que se diga CUÁNDO se cerró. Un hueco que se cierra y no se
+# tacha es una pregunta zombi, y la de aquí la sostenía esta misma prueba.
+_premios87 = (_ficha87.get("campos") or {}).get("premios") or {}
+if _premios87.get("forma") != "campo" or _premios87.get("llega_como") != "premios_nivel":
+    fallos.append(f"BLOQUE87: los premios tienen que viajar como campo por `premios_nivel` y "
+                  f"declaran {_premios87.get('forma')!r} / {_premios87.get('llega_como')!r}. Lo "
+                  f"piden CUATRO fuentes con la misma cifra (Ettinger caps. 175 y 192, Fascetti "
+                  f"cap. 7) y la ficha ya lo pregunta")
+if not (_premios87.get("cerrado") or "").strip():
+    fallos.append("BLOQUE87: los premios pasaron de hueco a campo y no se dice cuándo ni cómo. Un "
+                  "hueco que se cierra sin tacharse se vuelve a descubrir dentro de seis meses")
 if "kcal_de_premios" not in _recibe87:
     fallos.append("BLOQUE87: PeticionMenu ha dejado de aceptar `kcal_de_premios`. Sin ese campo "
                   "la ración se formula con el día entero de calorías y los premios se suman por "

@@ -9,6 +9,49 @@ Este archivo no se lee solo: se abre cuando hace falta el detalle de algo
 que ya se resolvió — por qué se decidió así, qué se midió, qué PR lo trajo.
 Nada de esto es agenda; es historial. Se separó el 6 de septiembre.
 
+## La pregunta zombi que la batería estaba defendiendo — 14 de septiembre de 2026
+
+Repasando `PENDIENTE.md` aparecieron **tres cosas ya resueltas que seguían
+escritas como pendientes**, y la tercera es la que enseña algo.
+
+| | Decía | Está así desde |
+|---|---|---|
+| El aviso del estreñimiento no nombra el hueso | falso | 13 sep |
+| A la EPI le falta la B12 | falso | 13 sep |
+| **La ficha no pregunta por los premios** | **falso** | **11 sep** |
+
+Las dos primeras se tachan y ya. La tercera no, porque **el hueco no estaba solo
+escrito: estaba VIGILADO**. `datos_de_la_ficha.json` lo declaraba en
+`lo_que_la_ficha_todavia_no_pregunta` y el **BLOQUE 87 exigía que siguiera
+declarado**:
+
+> «BLOQUE87: ha desaparecido el hueco de los premios. […] la ficha sigue sin
+> preguntarlo: mientras siga así, el hueco tiene que estar escrito»
+
+O sea que la batería llevaba tres días **de guardia de una afirmación falsa
+sobre el producto**, y cerrar el hueco la habría puesto roja. Es la *pregunta
+zombi* de `PREGUNTAS_ABIERTAS.md` en su peor forma: no es que nadie la tachara,
+es que tacharla daba error.
+
+**Comprobado antes de tocar nada**, porque afirmar que está cerrado es
+exactamente lo que se estaba haciendo mal: la ficha del dueño lo pregunta en el
+**paso 5** y `puedeContinuar` incluye `!!perfil.premiosNivel`, o sea que **no
+deja seguir sin contestar**; el formulador lo pregunta como «Aporte calórico
+extraración»; y `premios_nivel` viaja en las cinco llamadas que generan menú.
+`ficha-ida-y-vuelta.spec.js` y `sin-cuenta.spec.js` ya lo llevaban.
+
+**Lo que cambia**: los premios pasan a `campos` con la fecha y el motivo del
+cierre, el bloque de huecos se queda **vacío y diciendo que está vacío** —el
+sitio hace falta para el hueco que venga—, y el BLOQUE 87 da la vuelta a su
+comprobación: antes exigía que el hueco existiera, ahora exige que el campo
+viaje por `premios_nivel` y que el cierre esté fechado.
+
+⚠️ **Y a la lista `_DE_LA_FICHA_87` le faltaba «premios», que es la TERCERA vez
+que le falta un campo que la ficha sí pregunta** — antes fue `raza`. La causa es
+la misma las tres veces y está escrita en `CLAUDE.md`: se copió a mano de
+`tests/ficha-ida-y-vuelta.spec.js`. Dos inventarios copiados a mano, el mismo
+hueco en los dos.
+
 ## Una patología se marca con diagnóstico, y «otra cosa» deja de ser una patología — 14 de septiembre de 2026
 
 ### 1 · La puerta
