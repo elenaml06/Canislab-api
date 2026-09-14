@@ -9,6 +9,85 @@ Este archivo no se lee solo: se abre cuando hace falta el detalle de algo
 que ya se resolvió — por qué se decidió así, qué se midió, qué PR lo trajo.
 Nada de esto es agenda; es historial. Se separó el 6 de septiembre.
 
+## Una patología se marca con diagnóstico, y «otra cosa» deja de ser una patología — 14 de septiembre de 2026
+
+### 1 · La puerta
+
+> «solo deberíamos dejar marcar patologías si están prescritas por un
+> veterinario, o sea, si un veterinario eso lo ha dicho, porque si yo digo, ay,
+> es que creo que mi perro tiene colon irritable, y no lo sé, no podría generar
+> un menú, ¿entiendes?»
+
+Y funcionaba tal cual. Medido antes de tocarlo:
+
+| | |
+|---|---|
+| Casillas que veía el dueño | **23 de 47** |
+| De ellas, marcadas `dueno_con_diagnostico` | **18** |
+| Veces que se le preguntaba si había diagnóstico | **0** |
+
+Las 24 de `solo_veterinario` ya estaban fuera desde el 11 de septiembre. El
+hueco era el de en medio.
+
+**Lo que hay ahora**: al marcar una de las 18 se abre la pregunta y la casilla
+**no se marca** hasta contestar.
+
+> ¿Se lo ha diagnosticado un veterinario?
+> `Sí, tiene diagnóstico` · `No, es una sospecha mía`
+>
+> Y si dice que no: «Entonces mejor no le tocamos el menú por esto. Un menú
+> ajustado a algo que tu perro puede no tener le puede hacer más mal que bien.
+> Coméntaselo a tu veterinario y, si te lo confirma, vuelves y lo marcas.»
+
+Tres decisiones de forma, y las tres están vigiladas:
+
+1. **No es una casilla de «acepto».** Son dos respuestas y el «no» tiene
+   consecuencia escrita. Un «acepto» se pulsa sin leer, y entonces esto no
+   protege de nada.
+2. **Una por patología**, no una vez y ya: cada una es un diagnóstico distinto.
+3. **Desmarcar no pregunta.** El muro es para marcar, no para corregirse.
+
+**Las cinco que no la piden**: sobrepeso, raza predispuesta al cobre, riesgo de
+torsión, la dermatosis de las razas nórdicas y «otra». Se ven o se saben sin
+analítica.
+
+### 2 · «Otra cosa» sale de la lista de enfermedades
+
+> «¿y tiene sentido meter otra como patología???»
+
+No. `otra` no es una condición: es la forma de decir «tiene algo que no está en
+vuestra lista», y lo que hace es **quitar el menú automático**. La función hace
+falta; el sitio estaba mal. Ahora se sirve en `patologias.salida`, al final de
+la pantalla, con su pregunta y con lo que pasa al marcarla. En el motor no
+cambia nada: misma clave, mismo `formulable: false`, mismo efecto.
+
+### 3 · Tres cosas que casi salen mal, y las tres son de la misma familia
+
+- **La guarda de la app habría tirado las 47 al respaldo.** La pantalla rechaza
+  la lista servida si alguna casilla no está en ningún grupo —puesto a
+  propósito, porque una patología sin grupo sería invisible—. Al sacar `otra` de
+  los aparatos, esa guarda se disparaba **con las 47**, en silencio y con la
+  pantalla perfecta. Por eso `es_la_salida` también la saca de las casillas.
+- **La primera versión del BLOQUE 109 no podía fallar.** Comprobaba que las
+  cinco sin analítica no pidieran diagnóstico… derivándolas del MISMO fichero
+  del que sale la respuesta. Comprobado con el fallo puesto: moviendo `obesidad`
+  a `dueno_con_diagnostico`, verde. Ahora van ancladas por nombre.
+- **Un nombre corto pisó una variable del bloque de al lado.** `_v98` era la
+  respuesta del endpoint y mi bucle lo reutilizó: `AttributeError` a media
+  batería. Misma familia que `_baja` del BLOQUE 13 el mismo día.
+
+### Cómo se ha comprobado
+
+- **BLOQUE 109** nuevo, con el fallo puesto de cinco formas: lista escrita a
+  mano en vez de derivada · el «no» sin consecuencia · una sola respuesta · jerga
+  en el texto del dueño · muro sin motivo delante del sobrepeso.
+- **BLOQUE 105** ampliado, con el fallo puesto de dos formas: la salida
+  desapareciendo de las dos puertas, y la salida sin `que_pasa`.
+- `tests/confirmar-diagnostico.spec.js` en `canislab-web`, con **todo el texto
+  inventado** y `pide_confirmacion_de_diagnostico` **al revés** de como lo tiene
+  el motor. Con la puerta quitada y con una lista propia en la app, se cae.
+- Batería entera en verde y **560 pruebas de la app** en verde.
+
 ## Los avisos del dueño, segunda pasada: COMIDA, no NUTRIENTES — 14 de septiembre de 2026
 
 La primera pasada (13 de septiembre) les quitó las fuentes: *«los avisos al

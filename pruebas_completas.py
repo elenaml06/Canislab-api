@@ -15239,13 +15239,56 @@ else:
                           f"ninguna de las 47")
 
     # ── 4. Los grupos cubren las 47 exactamente una vez ──────────────────
+    #
+    # ⚠️ MENOS LA SALIDA, Y NO ES UNA EXCEPCIÓN GRATIS (14 septiembre). Elena:
+    # «¿y tiene sentido meter otra como patología???». No lo tiene: `otra` no es
+    # una condición, es la forma de decir «tiene algo que no está en vuestra
+    # lista», y lo que hace es QUITAR el menú automático. Como casilla entre 46
+    # enfermedades de verdad, quien la leía no tenía forma de saber eso.
+    #
+    # Así que sale de los aparatos y se sirve en `patologias.salida`. Lo que
+    # este bloque exige es que NO DESAPAREZCA: si no está en ningún grupo,
+    # tiene que estar ahí, con su pregunta y con lo que pasa al marcarla. Una
+    # patología que se cae de los grupos y de la salida a la vez es una casilla
+    # que ya no existe en ninguna pantalla, y eso saldría verde.
+    _salida98 = _pat_v98.get("salida") or {}
+    _clave_salida98 = _salida98.get("clave")
     _grupos98 = _pat_v98.get("por_aparato") or []
     _en_grupos98 = [k for g in _grupos98 for k in g["patologias"]]
-    if sorted(_en_grupos98) != sorted(_lista98):
+    _deben_ir_en_grupos98 = [k for k in _lista98 if k != _clave_salida98]
+    if sorted(_en_grupos98) != sorted(_deben_ir_en_grupos98):
         _repes98 = sorted({k for k in _en_grupos98 if _en_grupos98.count(k) > 1})
-        fallos.append(f"BLOQUE105: los grupos por aparato no cubren las 47 exactamente una vez "
-                      f"(repetidas: {_repes98}; sin grupo: "
-                      f"{sorted(set(_lista98) - set(_en_grupos98))})")
+        fallos.append(f"BLOQUE105: los grupos por aparato no cubren las patologías con casilla "
+                      f"exactamente una vez (repetidas: {_repes98}; sin grupo: "
+                      f"{sorted(set(_deben_ir_en_grupos98) - set(_en_grupos98))})")
+    if not _clave_salida98 or _clave_salida98 not in _lista98:
+        fallos.append(f"BLOQUE105: `patologias.salida` no nombra ninguna de las 47 "
+                      f"({_clave_salida98!r}). Sin ella, quien tiene un perro con algo que no "
+                      f"está en la lista genera el menú como si estuviera sano")
+    else:
+        if not _lista98[_clave_salida98].get("es_la_salida"):
+            fallos.append(f"BLOQUE105: «{_clave_salida98}» se sirve como salida y en su ficha no "
+                          f"lo dice. La app la pintaría como una casilla más")
+        if _lista98[_clave_salida98].get("formulable"):
+            fallos.append(f"BLOQUE105: «{_clave_salida98}» es la salida y se sirve como "
+                          f"formulable. La salida existe justo para NO dar menú automático")
+        for _reg98 in ("dueno", "veterinario"):
+            _r98 = _salida98.get(_reg98) or {}
+            for _campo98 in ("pregunta", "respuesta", "que_pasa"):
+                if not (_r98.get(_campo98) or "").strip():
+                    fallos.append(f"BLOQUE105: a la salida le falta «{_campo98}» en el registro "
+                                  f"«{_reg98}». Sin el «que_pasa», marcarla deja sin menú en "
+                                  f"silencio, que es el fallo que esto viene a arreglar")
+    # Y las que sí llevan casilla no pueden decir que son la salida.
+    # (`_ficha98` y no `_v98`: ese nombre ya es la respuesta del endpoint unas
+    # líneas más abajo, y pisarlo deja el bloque en AttributeError. Es la misma
+    # familia que `_baja` del BLOQUE 13: un fichero de 15.000 líneas en un solo
+    # ámbito no perdona un nombre corto.)
+    for _k98, _ficha98 in sorted(_lista98.items()):
+        if _ficha98.get("es_la_salida") and _k98 != _clave_salida98:
+            fallos.append(f"BLOQUE105: «{_k98}» dice ser la salida y la salida es "
+                          f"«{_clave_salida98}». Dos salidas son dos formas de quedarse sin menú, "
+                          f"y la app solo pinta una")
     _orden98 = [a["clave"] for a in _PRES98["_meta"]["aparatos"] if a["clave"] in _usados98]
     if [g["clave"] for g in _grupos98] != _orden98:
         fallos.append(f"BLOQUE105: los grupos se sirven en otro orden que el del fichero: "
@@ -17524,6 +17567,137 @@ print(f"  {_ediciones108} ediciones encadenadas miradas · {len(_sucios108)} men
       f"diciendo que se pasan de un límite")
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
+
+
+# ============================================================
+# BLOQUE 109 — UNA PATOLOGÍA SE MARCA CON DIAGNÓSTICO, NO CON UNA CORAZONADA
+# ============================================================
+#
+# ⚠️ Elena, 14 de septiembre de 2026: «solo deberíamos dejar marcar patologías
+# si están prescritas por un veterinario, o sea, si un veterinario eso lo ha
+# dicho, porque si yo digo, ay, es que creo que mi perro tiene colon irritable,
+# y no lo sé, no podría generar un menú, ¿entiendes?».
+#
+# El caso era literal y funcionaba tal cual: el dueño veía 23 de las 47
+# casillas y en NINGÚN momento se le preguntaba si había diagnóstico. Marcar
+# `intestino_irritable` por una sospecha movía la fibra y la grasa de la ración
+# de un perro que quizá no tiene nada.
+#
+# LO QUE VIGILA, y por qué cada cosa:
+#
+#   1. Que la pregunta la SIRVA EL MOTOR, entera y en los dos registros. Es la
+#      regla 6: escrita en la app, el día que se cambie la redacción se cambia
+#      en un sitio y sigue vieja en el otro, y la pantalla se ve perfecta.
+#   2. Que QUIÉN la pide se DERIVE de `quien_formula_cada_patologia.json` y no
+#      sea una lista escrita a mano. Una lista escrita se separa: es el fallo
+#      de las seis categorías de Personalizar, el de los cinco niveles de
+#      actividad y el de las 47 patologías, tres veces el mismo.
+#   3. Que las cinco que el dueño SÍ sabe sin analítica no la pidan. Un muro
+#      sin motivo delante del sobrepeso no protege a nadie y enseña a pulsar
+#      «sí» sin leer, que es justo lo que rompe los otros dieciocho.
+#   4. Que la respuesta del «no» tenga CONSECUENCIA escrita. Si el «no» no
+#      dijera qué pasa, esto sería una casilla de «acepto» -- y un «acepto» lo
+#      marca todo el mundo sin leerlo.
+#   5. Que el texto del dueño no traiga jerga, como todo lo demás que él lee
+#      (misma regla del BLOQUE 107).
+print("=== BLOQUE 109: marcar una patología pide diagnóstico, no sospecha ===")
+
+_voc109 = _c.get("/vocabulario").json()
+_pp109 = (_voc109 or {}).get("preguntas_por_patologia") or {}
+_conf109 = _pp109.get("confirmacion_de_diagnostico") or {}
+_por_pat109 = _pp109.get("por_patologia") or {}
+
+if not _conf109:
+    fallos.append("BLOQUE109: `/vocabulario` no sirve la confirmación de diagnóstico. Sin ella la "
+                  "app no tiene de dónde sacar la pregunta y acabará escribiéndola a mano, que es "
+                  "la regla 6 rota otra vez")
+else:
+    for _reg109 in ("dueno", "veterinario"):
+        _r109 = _conf109.get(_reg109) or {}
+        if not (_r109.get("pregunta") or "").strip():
+            fallos.append(f"BLOQUE109: falta la pregunta del registro «{_reg109}»")
+        _resp109 = _r109.get("respuestas") or []
+        _marcan109 = [x for x in _resp109 if x.get("se_marca")]
+        _no_marcan109 = [x for x in _resp109 if not x.get("se_marca")]
+        if len(_marcan109) != 1 or len(_no_marcan109) != 1:
+            fallos.append(f"BLOQUE109: el registro «{_reg109}» tiene que ofrecer EXACTAMENTE dos "
+                          f"respuestas, una que marca y otra que no. Con una sola es una casilla "
+                          f"de «acepto», y un «acepto» lo marca todo el mundo sin leerlo. "
+                          f"Hay {len(_resp109)}")
+        if len((_r109.get("si_dice_que_no") or "").strip()) < 40:
+            fallos.append(f"BLOQUE109: el «no» del registro «{_reg109}» no dice qué pasa si se "
+                          f"contesta que no. Una respuesta sin consecuencia escrita no es una "
+                          f"respuesta: es un botón que nadie entiende para qué está")
+
+# 2 y 3 — QUE SE DERIVE, casilla a casilla, y no de una lista escrita.
+with open("quien_formula_cada_patologia.json", encoding="utf-8") as _f109:
+    _quien109 = json.load(_f109)["patologias"]
+
+_mal109 = []
+for _k109, _v109 in sorted(_quien109.items()):
+    _debe109 = _v109.get("quien_puede_marcarla") == "dueno_con_diagnostico"
+    _dice109 = bool((_por_pat109.get(_k109) or {}).get("pide_confirmacion_de_diagnostico"))
+    if _debe109 != _dice109:
+        _mal109.append((_k109, _v109.get("quien_puede_marcarla"), _dice109))
+if _mal109:
+    fallos.append(f"BLOQUE109: la confirmación NO se está derivando de `quien_puede_marcarla`. "
+                  f"Discrepan {len(_mal109)}: {_mal109[:5]}. Una lista escrita a mano aquí sería la "
+                  f"tercera copia de lo mismo, y ya sabemos cómo acaban: se quedan paradas y la "
+                  f"pantalla se ve perfecta")
+
+# Las cinco que el dueño sabe sin analítica no pueden pedirla.
+#
+# ⚠️ VAN ANCLADAS POR NOMBRE, Y ESO NO ES PEREZA. La primera versión las
+# derivaba de `quien_puede_marcarla == "dueno"`, o sea del MISMO fichero del
+# que sale la respuesta -- así que no podía fallar nunca: comprobado con el
+# fallo puesto, moviendo `obesidad` a `dueno_con_diagnostico` en el JSON el
+# bloque seguía verde. Una comprobación que no puede fallar es peor que no
+# tenerla, porque parece que alguien mira.
+#
+# Que estas cinco no pidan diagnóstico es una DECISIÓN, no un derivado: el
+# sobrepeso se ve y se pesa, la raza está en la ficha, el riesgo de torsión es
+# la forma del perro, la dermatosis de las razas nórdicas también, y «otra» es
+# la salida para lo que no está en la lista. Si alguien mueve una de ellas, que
+# tenga que venir aquí a decirlo.
+_SIN_ANALITICA_109 = ["dermatosis_zinc", "obesidad", "otra",
+                      "raza_predispuesta_cobre", "riesgo_gdv"]
+for _k109 in _SIN_ANALITICA_109:
+    if _k109 not in _quien109:
+        fallos.append(f"BLOQUE109: «{_k109}» ya no existe en quien_formula_cada_patologia.json, "
+                      f"así que esta ancla no vigila nada")
+    elif (_por_pat109.get(_k109) or {}).get("pide_confirmacion_de_diagnostico"):
+        fallos.append(f"BLOQUE109: «{_k109}» le pide diagnóstico al dueño, y es de las que se ven "
+                      f"o se saben sin analítica. Un muro sin motivo no protege a nadie y enseña a "
+                      f"pulsar «sí» sin leer, que es justo lo que rompe los otros dieciocho")
+_sin_analitica109 = sorted(k for k, v in _quien109.items()
+                           if v.get("quien_puede_marcarla") == "dueno")
+if sorted(_SIN_ANALITICA_109) != _sin_analitica109:
+    fallos.append(f"BLOQUE109: las que el dueño puede marcar sin diagnóstico han cambiado. "
+                  f"Ancladas aquí: {sorted(_SIN_ANALITICA_109)}. En el fichero: {_sin_analitica109}. "
+                  f"Si el cambio es a propósito, se cambia también esta lista y se dice por qué")
+
+# 5 — el texto del dueño, sin jerga (misma regla del BLOQUE 107).
+_texto109 = " ".join([(_conf109.get("dueno") or {}).get("pregunta") or "",
+                      (_conf109.get("dueno") or {}).get("si_dice_que_no") or ""]
+                     + [x.get("texto") or "" for x in
+                        ((_conf109.get("dueno") or {}).get("respuestas") or [])])
+for _jerga109 in ("FEDIAF", "SACN5", "NRC", "1000 kcal", "g/1000", "mg/1000", "IRIS", "Tabla"):
+    if _jerga109.lower() in _texto109.lower():
+        fallos.append(f"BLOQUE109: la pregunta que lee el DUEÑO nombra «{_jerga109}». Lo que lee "
+                      f"el dueño no lleva la palabra de la fuente -- se mueve al registro del "
+                      f"veterinario, no se borra")
+
+# Y que el número servido cuadre con lo derivado: un contador que no cuadra con
+# lo que hay debajo es peor que no tenerlo, porque parece que alguien mira.
+_esperadas109 = sum(1 for v in _quien109.values()
+                    if v.get("quien_puede_marcarla") == "dueno_con_diagnostico")
+if _conf109.get("cuantas_la_piden") != _esperadas109:
+    fallos.append(f"BLOQUE109: el contador dice {_conf109.get('cuantas_la_piden')} y las que la "
+                  f"piden de verdad son {_esperadas109}")
+
+print(f"  {_esperadas109} patologías piden diagnóstico · {len(_sin_analitica109)} no lo piden "
+      f"a propósito · los dos registros servidos")
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
 _cerrar_el_ultimo_bloque()

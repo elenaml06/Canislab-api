@@ -463,6 +463,78 @@ una restricción que no existe—, y aceptar sinónimos solo en la positiva habr
 dejado colar un «le baja el fósforo» en crecimiento, que es falso. Comprobado
 con el fallo puesto por los dos lados.
 
+### Marcar una patología pide diagnóstico, no una corazonada
+
+*(14 de septiembre de 2026.)* Elena:
+
+> «solo deberíamos dejar marcar patologías si están prescritas por un veterinario,
+> o sea, si un veterinario eso lo ha dicho, porque si yo digo, ay, es que creo que
+> mi perro tiene colon irritable, y no lo sé, no podría generar un menú,
+> ¿entiendes?»
+
+**Y funcionaba tal cual.** La pantalla del dueño enseñaba **23 de las 47**
+casillas —las 5 de `dueno` y las 18 de `dueno_con_diagnostico`— y **no preguntaba
+en ningún momento si había diagnóstico**. Marcar `intestino_irritable` por una
+sospecha movía la fibra y la grasa de la ración de un perro que quizá no tiene
+nada. Las 24 de `solo_veterinario` ya estaban fuera desde el 11 de septiembre;
+el hueco era el de en medio, que es el que nadie mira.
+
+**La puerta**: al marcar una de las 18 se abre la pregunta y la casilla **no se
+marca** hasta contestar. ⚠️ **No es una casilla de «acepto», y eso es lo único
+que la hace servir**: son **dos respuestas**, y el «no» tiene consecuencia
+escrita —no se marca, y se dice por qué—. Un «acepto» se pulsa sin leer.
+⚠️ Y **se pregunta una vez por patología**, no una vez y ya: cada una es un
+diagnóstico distinto, y que le hayan visto el hipotiroidismo no dice nada del
+colon. ⚠️ Y **desmarcar nunca pregunta**: el muro es para marcar, no para
+corregirse.
+
+**Las cinco que NO la piden** son las que se ven o se saben sin analítica:
+sobrepeso, raza predispuesta al cobre, riesgo de torsión, la dermatosis de las
+razas nórdicas y «otra». ⚠️ Van **ancladas por nombre** en el BLOQUE 109, y eso
+no es pereza: la primera versión las derivaba del MISMO fichero del que sale la
+respuesta, así que **no podía fallar nunca** —comprobado, moviendo `obesidad` a
+`dueno_con_diagnostico` el bloque seguía verde—. Una comprobación que no puede
+fallar es peor que no tenerla, porque parece que alguien mira.
+
+El texto y quién la pide los sirve `GET /vocabulario`
+(`preguntas_por_patologia.confirmacion_de_diagnostico` y
+`pide_confirmacion_de_diagnostico`), **derivado** de `quien_puede_marcarla` —
+regla 6. Lo vigilan el **BLOQUE 109** (comprobado con el fallo puesto de cinco
+formas) y `tests/confirmar-diagnostico.spec.js` en `canislab-web`, que siembra
+la pregunta, las dos respuestas y el texto del «no» **inventados**, y
+`pide_confirmacion` **al revés** de como lo tiene el motor: si la app decidiera
+por su cuenta quién la pide, se cae.
+
+### «Otra cosa» no es una patología: es la salida
+
+*(14 de septiembre.)* Elena, el mismo día: «¿y tiene sentido meter otra como
+patología???».
+
+No lo tiene. `otra` **no es una condición**: es la forma de decir «tiene algo que
+no está en vuestra lista», y lo que hace es **quitar el menú automático** y
+mandar al veterinario. Esa función hace falta —sin ella, quien tiene un perro con
+algo raro genera el menú como si estuviera sano— pero vivía **como una casilla
+más**, con nombre de diagnóstico, metida entre 46 enfermedades de verdad y
+agrupada por aparato. Quien la leía **no tenía forma de saber que marcarla le
+dejaba sin menú**.
+
+Se saca de `por_aparato` y se sirve en **`patologias.salida`**, con su pregunta y
+con lo que pasa al marcarla, en los dos registros; la ficha lleva `es_la_salida`
+para que la app no le ponga casilla. **En el motor no cambia nada**: misma clave,
+mismo `formulable: false`, mismo efecto. Es solo dónde se enseña.
+
+⚠️ Y el **BLOQUE 105 no la deja desaparecer**: si no está en ningún grupo, tiene
+que estar en la salida, con su `que_pasa`. Una patología que se cae de los grupos
+y de la salida a la vez es una casilla que ya no existe en ninguna pantalla, y
+eso saldría verde. Comprobado con el fallo puesto de las dos formas.
+
+⚠️ **Y aquí había una trampa que casi deshace la regla 6 entera**: la app rechaza
+la lista servida y se cae a su respaldo si alguna casilla no está en ningún
+grupo —puesto a propósito, porque una patología sin grupo sería invisible—. Al
+sacar `otra` de los aparatos, esa guarda habría tirado **las 47** al respaldo, en
+silencio y con la pantalla perfecta. Por eso `es_la_salida` también la saca de
+las casillas, igual que `dentro_de_la_pregunta_de`.
+
 ⚠️ **Y LOS AVISOS DE SEGURIDAD LLEVABAN LA MISMA FUENTE DENTRO, y a esos no
 llegaba el barrido.** Son los 16 de `revisar_seguridad` y `avisos_rotacion`
 —la tiaminasa, el mercurio, la vitamina D, el yodo, el selenio, la histamina,
