@@ -34,7 +34,7 @@ from scipy.optimize import milp, LinearConstraint, Bounds
 from verificar import (MAPA, _num, EQUIVALENCIA, maximo_de, minimo_de,
                        maximo_por_g_de_materia_seca,
                        der_efectiva_de)
-from constructor import (valor_nutriente, valor_plausible_de,
+from constructor import (CAT_SUPLEMENTO, valor_nutriente, valor_plausible_de,
                          tabla_imputacion_maximos, valor_para_maximo,
                          materia_seca_g_100g)
 
@@ -821,8 +821,7 @@ def _resolver_una_vez(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn
     # linoleico dependía solo de lo que aportara la carne, sin poder usar
     # aceite de girasol. Ahora entra, y junto con los suplementos
     # comerciales queda topado al 5% del peso (decisión de la usuaria).
-    SUP_CATS = ("Multivitamínico", "Omega-3", "Yodo", "Fibra", "Calcio",
-               "Hierro", "Vitamina B", "Extras")
+    SUP_CATS = CAT_SUPLEMENTO + ("Extras",)   # la lista, no una copia
 
     # Candidatos: TODOS los accesibles de cada categoría de comida, y
     # TODOS los suplementos del catálogo (no solo unos pocos elegidos).
@@ -2583,8 +2582,7 @@ def _resolver_una_vez(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn
     # equipo) está en el PR: si alguien lo vuelve a tocar por tiempo, que
     # mida en vez de suponer -- es lo que falló la primera vez.
     SUELO_MEDIBLE_G = 1.0
-    CATEGORIAS_QUE_SE_DOSIFICAN = ("Multivitamínico", "Omega-3", "Yodo", "Fibra",
-                                   "Calcio", "Hierro", "Vitamina B")
+    CATEGORIAS_QUE_SE_DOSIFICAN = CAT_SUPLEMENTO   # la lista, no una copia
     # ⚠️ Y UN GRAMO DE COSTILLAS NO ES UNA RACIÓN (29 agosto).
     #
     # CASO REAL ENCONTRADO POR LA USUARIA: "me ha salido 1 gramo de costillas
@@ -2753,8 +2751,7 @@ def _resolver_una_vez(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn
     # 6. MÁXIMO DE SUPLEMENTOS (solo los COMERCIALES cuentan para el
     # límite de "2" — los aceites/huevos de Extras no son "un suplemento"
     # en el sentido de producto de marca, cuentan aparte en el peso)
-    SUP_COMERCIALES = ("Multivitamínico", "Omega-3", "Yodo", "Fibra",
-                       "Calcio", "Hierro", "Vitamina B")
+    SUP_COMERCIALES = CAT_SUPLEMENTO   # la lista, no una copia
     # ⚠️ CORREGIDO (5 agosto, tarde) — FALLO GRAVE ENCONTRADO por la
     # batería de pruebas: esto comparaba categoria_de[n] (que vale
     # literalmente el texto genérico "Suplementos" para CUALQUIER

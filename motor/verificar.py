@@ -1038,8 +1038,7 @@ def suplementar(menu, alimentos, req, der, etapa, catalogo_suplementos,
     # semillas, huevos): pipa de girasol + pipa de calabaza es perfectamente
     # normal, y bloquearlo dejaba el magnesio al 88% pudiendo cerrarlo (la
     # calabaza tiene 592 mg/100g frente a los 390 del girasol).
-    COMERCIALES = ("Multivitamínico", "Omega-3", "Yodo", "Fibra",
-                   "Calcio", "Hierro", "Vitamina B")
+    from constructor import CAT_SUPLEMENTO as COMERCIALES   # la lista, no una copia
     # los maximos, calculados una vez
     topes_max = {}
     _et = EQUIVALENCIA.get(etapa, etapa)

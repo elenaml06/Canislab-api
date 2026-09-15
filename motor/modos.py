@@ -63,6 +63,11 @@ CUANTOS_MAX = {
     # sacaban dos multivitamínicos pasan a uno, y de paso el perro de 3 kg baja
     # de dos aceites a uno.
     "Multivitamínico": 1,
+    # ⚠️ Y UNO DE VITAMINA E (15 de septiembre de 2026). Dos botes distintos de
+    # lo mismo en el mismo cuenco no es comida, igual que con el multivitamínico.
+    # Se suelta en la escalera por el mismo sitio y por el mismo motivo: es
+    # FORMA, y la forma no puede dejar a un perro sin comer.
+    "Vitamina E": 1,
 }
 
 

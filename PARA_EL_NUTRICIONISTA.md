@@ -1357,7 +1357,7 @@ Tabla 17-1 de arriba, que están por encima de ese mínimo.
 > suelo de sodio por encima del mínimo de FEDIAF (290) en un perro sano no lo
 > pide nadie. Si eso es leerlo mal, es una línea de cambio.
 
-## 8 · Las patologías: 47 perfiles, 74 límites numéricos y 4 ratios
+## 8 · Las patologías: 47 perfiles, 75 límites numéricos y 4 ratios
 
 Los topes por patología **son más estrictos que FEDIAF** y se miden sobre las
 **kcal reales del menú**, no las pedidas — el menú puede salir un 3 % por
@@ -1411,18 +1411,27 @@ ahí lo que falta no es maquinaria sino una decisión: las fuentes van de <1:1
 
 ### 8.1 · Los 73, verificados uno a uno contra su capítulo
 
-⚠️ **Y UNA DE ESAS FILAS DEJÓ DE APLICARSE EL 15 DE SEPTIEMBRE, Y LA CIFRA NO SE HA
-BAJADO**: la **vitamina E de la insuficiencia renal crónica** (67,1 mg/1000 kcal,
-Tabla 37-9). Llegar a ella obliga a meter **dos multivitamínicos** —en el catálogo no
-hay vitamina E suelta— y dos ya no caben debajo de los **siete máximos LEGALES de la
-UE**, que desde ese día van sobre **materia seca**, que es la única forma en que
-FEDIAF los publica. Medido en el perro de referencia (adulto de 20 kg, DER 950): sin
-ese suelo la renal **sí** da menú y llega a **34,5 mg/1000 kcal** con el **zinc al
-99,0 % de su techo legal** y el selenio al 93,5 %. Subir la vitamina E se paga en
-zinc, y el zinc es ley. Está en `limites_escritos_que_el_solver_no_aplica` con esa
-medida. **Las otras tres que piden la misma cifra —artrosis, obesidad y hepatopatía—
-la siguen aplicando**: en las tres cabe, bajando de peldaño, y en la renal no; medido
-una por una.
+⚠️ **Y UNA DE ESAS FILAS SE APAGÓ Y SE VOLVIÓ A ENCENDER EL MISMO DÍA, EL 15 DE
+SEPTIEMBRE, Y MERECE LEERSE ENTERA**: la **vitamina E de la insuficiencia renal
+crónica** (67,1 mg/1000 kcal, Tabla 37-9).
+
+Por la mañana dejó de poder aplicarse: llegar a esa cifra obliga a meter **dos
+multivitamínicos** —en el catálogo no había vitamina E suelta— y dos ya no caben
+debajo de los **siete máximos LEGALES de la UE**, que desde ese día van sobre
+**materia seca**, que es la única forma en que FEDIAF los publica. Medido en el
+perro de referencia (adulto de 20 kg, DER 950): sin ese suelo la renal sí daba
+menú, con **34,5 mg/1000 kcal** y el **zinc al 99,0 % de su techo legal**. Se
+movió a `limites_escritos_que_el_solver_no_aplica` con esa medida, **sin bajar la
+cifra**, que es lo que manda el procedimiento de este repo.
+
+Por la tarde entraron al catálogo **dos suplementos de vitamina E suelta** que se
+venden en España —un aceite de germen de trigo enriquecido (396 mg/100 g) y una
+vitamina E líquida natural (2620 mg/100 g)— y con ellos la renal **vuelve a dar
+menú con el suelo puesto**: sale con **77,0 mg/1000 kcal** usando 9,2 g del
+aceite.
+
+**La lección, que es la de todo el repo**: la cifra de la fuente no se baja. Se
+dice lo que cuesta, y lo que fallaba era el **catálogo**, no el número.
 
 
 **Verificado el 8 de septiembre abriendo cada capítulo de SACN5 y leyendo la
@@ -1504,7 +1513,7 @@ moverse sin que salte.
 | Insuficiencia renal crónica | potasio | ≤ | **2000.0 mg** | 1450 | sin máximo | SACN5 cap.37 «Chronic Kidney Disease», Tabla 37-9 |
 | Insuficiencia renal crónica | proteina | ≤ | **62.5 g** | 52.1 | sin máximo | Reglamento (UE) 2020/354, Anexo parte B, entrada 10 |
 | Insuficiencia renal crónica | sodio | ≤ | **750.0 mg** | 290 | 3750 | SACN5 cap.37 «Chronic Kidney Disease», Tabla 37-9 |
-| Insuficiencia renal crónica | vitE | ≥ | **67.1 mg** · *escrito y NO aplicado desde el 15 sep* | 6.968 | sin máximo | SACN5 Tabla 37-9 |
+| Insuficiencia renal crónica | vitE | ≥ | **67.1 mg** | 6.968 | sin máximo | SACN5 Tabla 37-9 |
 | Insuficiencia renal crónica, moderada-grave (equivalente a IRIS 3-4) | fosforo | ≤ | **1200.0 mg** | 1160 | sin máximo | Igual que renal (Freeman LM, dvm360 2009; WSAVA; IRIS; SACN5 cap.37 Tabla 37-9) |
 | Sobrecrecimiento bacteriano en el intestino delgado (SIBO) | grasa | ≤ | **37.5 g** | 13.75 | sin máximo | SACN5 cap.60 «Small intestinal bacterial overgrowth», Tabla 60-1 |
 | Urolitos de fosfato cálcico | fosforo | ≤ | **1500.0 mg** | 1160 | sin máximo | SACN5 cap.41 «Canine Calcium Phosphate Urolithiasis», Tabla 41-6 |

@@ -123,8 +123,16 @@ PILARES_OBLIGATORIOS = ["Carne muscular", "Hueso carnoso", "Vísceras",
 
 # SUPLEMENTOS: productos comerciales con dosis de etiqueta del fabricante.
 # Solo estos entran en el paso 5. NO son comida.
+# ⚠️ ESTA ES **LA** LISTA, Y LAS DEMÁS SE DERIVAN DE ELLA (15 de septiembre de
+# 2026). Había ONCE copias de este mismo conjunto repartidas por el repo, cada
+# una escrita a mano — en `verificar.py`, en tres sitios de `motor_completo.py`,
+# en dos de este fichero y en cuatro de la batería. Añadir la categoría
+# «Vitamina E» obligó a tocarlas todas, y ahí se ve el fallo: una lista copiada
+# a mano no da error cuando se queda corta, se queda parada. Es exactamente lo
+# que ya pasó con las seis categorías de Personalizar y con los cinco niveles de
+# actividad. Lo vigila el BLOQUE 117.
 CAT_SUPLEMENTO = ("Multivitamínico", "Omega-3", "Yodo", "Fibra",
-                  "Calcio", "Hierro", "Vitamina B")
+                  "Calcio", "Hierro", "Vitamina B", "Vitamina E")
 
 # EXTRAS: aceites, semillas, huevos, yogur. NO son suplementos -- son comida,
 # solo que muy densa. Van "fuera del 100%" de la estructura BARF.
@@ -901,8 +909,12 @@ def redondear_a_pesable(menu, alimentos, der, req=None, etapa="Adulto",
     solo quita unas kcal.
     """
     import math
-    CON_MAXIMO = ("Hígado", "Multivitamínico", "Omega-3", "Yodo", "Calcio",
-                  "Hierro", "Vitamina B", "Vísceras")
+    # ⚠️ «Fibra» NO está aquí y no es un olvido: se quedó fuera cuando se
+    # escribió y quitarla o meterla cambia menús, así que se deja como estaba y
+    # el resto se DERIVA de `CAT_SUPLEMENTO` para que una categoría nueva entre
+    # sola.
+    CON_MAXIMO = ("Hígado", "Vísceras") + tuple(c for c in CAT_SUPLEMENTO
+                                                if c != "Fibra")
 
     def paso_de(g):
         if g >= 100: return 5.0
@@ -914,8 +926,7 @@ def redondear_a_pesable(menu, alimentos, der, req=None, etapa="Adulto",
     # Se pesan por SEMANA (0,16 g al día no los coge ninguna báscula) y se
     # redondean AL ALZA al 0,1 g de la semana, topando en la dosis máxima del
     # fabricante. Redondearlos a la baja como el resto tiraba el yodo al 98%.
-    COMERCIALES = ("Multivitamínico", "Omega-3", "Yodo", "Calcio", "Hierro",
-                   "Vitamina B", "Fibra")
+    COMERCIALES = CAT_SUPLEMENTO      # la lista, no una copia
 
     salida, avisos = {}, []
     for nombre, g in menu.items():

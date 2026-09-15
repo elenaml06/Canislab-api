@@ -112,7 +112,7 @@ INSTANTANEA = os.path.join(RAIZ, "fuentes_instantanea.json")
 
 # Las fichas cuya fuente es la etiqueta del fabricante (mandato 5): no tienen
 # fila en ninguna base de composición, así que no entran en el barrido.
-CATEGORIAS_DE_ETIQUETA = {"Multivitamínico", "Omega-3", "Calcio", "Vitamina B",
+CATEGORIAS_DE_ETIQUETA = {"Multivitamínico", "Omega-3", "Calcio", "Vitamina B", "Vitamina E",
                           "Yodo", "Fibra", "Hierro"}
 NOMBRES_DE_ETIQUETA = {"Sal común (cloruro sódico)"}
 
