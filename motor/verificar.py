@@ -241,8 +241,8 @@ def maximo_de(r, nombre_req, etapa):
 # LOS MÍNIMOS. FEDIAF los publica por 1000 kcal en la propia Tabla III-3b,
 # anclados a la ingesta diaria («Recommended minimum values are based on an
 # average daily energy intake of either 95 kcal/kg0.75 (398 kJ/kg0.75) or 110
-# kcal/kg0.75 (460 kJ/kg0.75) for dogs»), y
-# el motor usa ESOS números, no una conversión nuestra. Ahí no hay nada que
+# kcal/kg0.75 (460 kJ/kg0.75) for dogs»), y el motor usa ESOS números, no una
+# conversión nuestra. Ahí no hay nada que
 # corregir. Y los seis máximos NUTRICIONALES que FEDIAF sí publica por 1000
 # kcal —calcio 6,25/4,00/4,50 · fósforo 4,00 · vitamina A 100 000 · vitamina D
 # (N) 800 · lisina 7,00 · linoleico 16,25— tampoco: el motor ya aplica el

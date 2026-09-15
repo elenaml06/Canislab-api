@@ -18785,6 +18785,333 @@ else:
           f"suman {sum(_presupuestos112):.0f} s")
 
 
+# ============================================================
+# BLOQUE 113 — LOS SIETE MÁXIMOS LEGALES DE LA UE, SOBRE MATERIA SECA
+# ============================================================
+#
+# ⚠️ POR QUÉ (15 de septiembre de 2026). FEDIAF publica sus máximos en DOS
+# columnas y NO en la misma unidad, y lo dice en su §3.2.1:
+#
+#     «Legal maxima in EU legislation are expressed on 12% moisture content and
+#      they do not account for energy density. Therefore in these guidelines
+#      they are only provided on a dry matter basis.»
+#
+# O sea: la celda por 1000 kcal de esos siete está VACÍA en la Tabla III-3b
+# —solo pone «(L)»— y el número vive en la III-3a, por 100 g de materia seca.
+# El motor los aplicaba por 1000 kcal con el ×2,5 de la Tabla III-2, que supone
+# 4,0 kcal/g de MS… y una ración de ESTE motor va a 5,20 kcal/g (4,05-6,18),
+# porque es proteína y grasa sin almidón, sin fibra y sin ceniza de relleno.
+# Los siete techos iban un ~23 % flojos, y los siete son LEY.
+#
+# Un límite en % de materia seca es LINEAL en los gramos
+# (suma(n_i g_i) <= L_ms * suma(ms_i g_i)), así que se escribe EXACTO dentro del
+# MILP sin suponer ninguna densidad. No hay aproximación que auditar: hay una
+# fila.
+#
+# ⚠️ Y LO QUE **NO** SE TOCA SON LOS MÍNIMOS. FEDIAF los publica por 1000 kcal
+# en la propia III-3b, anclados a la ingesta diaria, y el motor usa ESOS
+# números. Mi segunda lectura decía que la nota valía para toda la tabla y que
+# había que bajarlos un 23 %: si llego a aplicarlo, el motor habría pedido un
+# 23 % MENOS de todos los nutrientes. Este bloque vigila también esa mitad,
+# porque es la que no tiene quien la mire.
+#
+# CINCO COMPROBACIONES, y la quinta es la que vale: con la fila desconectada
+# tiene que volver a salir un menú por encima de un techo legal.
+print("\n=== BLOQUE 113: los siete maximos legales, sobre materia seca ===")
+
+from verificar import maximo_por_g_de_materia_seca as _mxms113
+import motor_completo as _MC113
+
+# --- 1. la conversión, REHECHA desde la cifra que imprime la Tabla III-3a ----
+#
+# No se copia el número del JSON: se parte de lo que pone la fuente por 100 g
+# de materia seca y se comprueba que el motor aplica ESO. Un número que no se
+# puede rehacer no se puede auditar (la lección de `auditar_conversiones.py`).
+#
+# (nutriente, cifra impresa en la III-3a por 100 g MS, unidad impresa,
+#  cuántas unidades del MOTOR es una unidad impresa)
+_III_3a_113 = [
+    ("Cobre",       2.80,   "mg", 1.0),
+    ("Zinc",       22.70,   "mg", 1.0),
+    ("Hierro",     68.18,   "mg", 1.0),
+    ("Yodo",        1.10,   "mg", 1000.0),   # el motor mide el yodo en µg
+    ("Selenio",     0.0568, "mg", 1000.0),   # y el selenio tambien
+    ("Manganeso",  17.00,   "mg", 1.0),
+    ("Vitamina_D", 227.00,  "UI", 0.025),    # el motor mide la vit. D en µg
+]
+_legales113 = sorted(n for n, r in req.items() if r.get("maximo_origen") == "legal_UE")
+if _legales113 != sorted(n for n, _, _, _ in _III_3a_113):
+    fallos.append(
+        f"BLOQUE113: los nutrientes con `maximo_origen: legal_UE` han cambiado. Los que rehace "
+        f"este bloque son {sorted(n for n, _, _, _ in _III_3a_113)} y el JSON dice {_legales113}. "
+        f"Un techo legal que no este en esta lista no tiene quien le rehaga la conversion")
+for _n113, _impreso113, _u113, _factor113 in _III_3a_113:
+    _r113 = req.get(_n113)
+    if not _r113:
+        fallos.append(f"BLOQUE113: `{_n113}` ya no esta en requerimientos_v2_final.json")
+        continue
+    _esperado113 = _impreso113 * _factor113 / 100.0     # por GRAMO de materia seca
+    for _et113 in ("Adulto", "CachorroJoven", "CachorroCrecimiento"):
+        _aplica113 = _mxms113(_r113, _n113, _et113)
+        if _aplica113 is None:
+            fallos.append(
+                f"BLOQUE113: {_n113} ({_et113}) es un maximo LEGAL y el motor NO lo aplica sobre "
+                f"materia seca -- vuelve a ir por 1000 kcal, o sea un ~23% flojo sobre una racion "
+                f"de este motor, que va a 5,20 kcal/g MS y no a los 4,0 que supone la conversion")
+            continue
+        if abs(_aplica113 - _esperado113) > _esperado113 * 0.002:
+            fallos.append(
+                f"BLOQUE113: {_n113} ({_et113}): la Tabla III-3a imprime {_impreso113} {_u113} por "
+                f"100 g de MS, o sea {_esperado113:.6g} por gramo de MS en la unidad del motor, y "
+                f"el motor aplica {_aplica113:.6g}. La conversion no cuadra con la fuente")
+print(f"  las {len(_III_3a_113)} conversiones de la Tabla III-3a, rehechas y cuadrando")
+
+# --- 2. los que FEDIAF SÍ imprime por 1000 kcal NO se tocan ------------------
+#
+# Es la otra mitad, y es la que casi me llevo por delante. Los máximos
+# NUTRICIONALES y los MÍNIMOS los publica FEDIAF en la III-3b por 1000 kcal:
+# ahí no hay conversión nuestra que corregir, y tratarlos como materia seca
+# sería convertir dos veces un número que la fuente ya da en nuestra unidad.
+for _n113b in ("Calcio", "Fósforo", "Vitamina_A", "Lisina", "Linoleico"):
+    _r113b = req.get(_n113b)
+    if not _r113b:
+        continue
+    if _mxms113(_r113b, _n113b, "Adulto") is not None:
+        fallos.append(
+            f"BLOQUE113: {_n113b} tiene maximo NUTRICIONAL, impreso por 1000 kcal en la Tabla "
+            f"III-3b, y el motor lo esta tratando como si fuera de materia seca. Eso es convertir "
+            f"dos veces un numero que la fuente ya publica en la unidad que usamos")
+# Y que los MÍNIMOS siguen siendo los de la III-3b, sin corregir por densidad.
+# La fila impresa es «Calcium* g 1.45» (fediaf_tabla_III_3b.txt).
+if abs((req["Calcio"].get("minAdulto") or 0) - 1450.0) > 0.01:
+    fallos.append(
+        f"BLOQUE113: el minimo de calcio del adulto ya no es el 1,45 g/1000 kcal que imprime la "
+        f"Tabla III-3b, es {req['Calcio'].get('minAdulto')}. Los minimos NO se corrigen por "
+        f"densidad: FEDIAF los publica por 1000 kcal, anclados a la ingesta diaria. Corregirlos "
+        f"bajaria un ~23% lo que el motor exige de TODOS los nutrientes")
+print("  los maximos nutricionales y los minimos siguen por 1000 kcal, sin tocar")
+
+# --- 3. solver y semáforo aplican EL MISMO techo ----------------------------
+#
+# La lección del 8 de septiembre: cuando cada uno aplica un límite a su manera,
+# el motor construye menús enteros para que el filtro final los tire.
+_CASOS113 = [("adulto 20 kg", 1100.0, "Adulto", 20.0),
+             ("cachorro 10 kg", 900.0, "CachorroJoven", 10.0),
+             ("toy 3 kg", 300.0, "Adulto", 3.0)]
+_menus113 = 0
+for _etq113, _der113, _eta113, _peso113 in _CASOS113:
+    _ok113, _g113, _tarde113 = _resolver_con_holgura(
+        _der113, _eta113, al, req, _peso113, dosis_maxima_fabricante,
+        margenes_categoria=MARGENES, max_suplementos=2, time_limit=_con_este_reloj(20))
+    if not _ok113:
+        fallos.append(
+            f"BLOQUE113: no sale menu para {_etq113} con los siete techos legales puestos, ni "
+            f"dandole al solver tiempo de sobra. Eran 10 de 10 perros de referencia al aplicarlos")
+        continue
+    if _tarde113:
+        print(f"  ({_etq113} necesito el reintento con mas tiempo; el menu sale igual)")
+    _menus113 += 1
+    _f113 = verificar(_g113, al, req, _der113, _eta113)
+    _rotos113 = [x["nutriente"] for x in _f113.get("se_pasa", [])
+                 if x["nutriente"] in _legales113]
+    if _rotos113:
+        fallos.append(
+            f"BLOQUE113: el menu de {_etq113} lo construyo el SOLVER y el SEMAFORO lo tira por "
+            f"{', '.join(_rotos113)}. Los dos miran el mismo techo legal, asi que si discrepan es "
+            f"que uno de los dos lo esta escribiendo de otra forma")
+print(f"  {_menus113} menus resueltos: solver y semaforo dicen lo mismo de los siete")
+
+# --- 4. ningún menú del catálogo por encima de un techo legal ---------------
+#
+# El BLOQUE 25 ya exige que los 216 esten en verde, y un techo legal roto los
+# pone en rojo -- pero su mensaje no dice CUAL, y aqui hace falta saber si lo
+# que se cayo fue justo esto. Se recorre igual que alli, con el DER medido del
+# propio menu.
+_pasados113 = []
+for _grupo113, _datos113 in (("menu", _CAT_B25), ("variante", _VAR_B25)):
+    for _k113, _v113 in _datos113.items():
+        _etapa113c = _k113.split("_", 1)[1]
+        for _m113 in (_v113 if isinstance(_v113, list) else [_v113]):
+            _g113c = (_m113 or {}).get("gramos")
+            if not _g113c:
+                continue
+            _der113c = sum(al[_n]["energia"] * _gr / 100.0
+                           for _n, _gr in _g113c.items() if _n in al)
+            if not _der113c:
+                continue
+            for _x113 in verificar(_g113c, al, req, _der113c, _etapa113c).get("se_pasa", []):
+                if _x113["nutriente"] in _legales113:
+                    _pasados113.append(f"{_grupo113} {_k113}/{_x113['nutriente']} "
+                                       f"x{_x113.get('veces')}")
+if _pasados113:
+    fallos.append(
+        f"BLOQUE113: {len(_pasados113)} menus PRECALCULADOS se pasan de un techo LEGAL de la UE: "
+        + ", ".join(_pasados113[:6])
+        + ". Se arregla con `python3 regenerar_catalogo.py`")
+else:
+    print("  los 216 menus precalculados: ninguno por encima de un techo legal")
+
+# --- 5. CON EL FALLO PUESTO (lo que de verdad vigila esto) ------------------
+#
+# Se le quita al SOLVER la fila de materia seca —dejándole el techo por 1000
+# kcal de antes— y se exige que el menú que salga SE PASE al medirlo como lo
+# mide la fuente. Si no se pasara, esa fila no estaría sujetando nada y este
+# bloque entero seria decorativo.
+_antes113 = _MC113.maximo_por_g_de_materia_seca
+_MC113.maximo_por_g_de_materia_seca = lambda *a, **k: None
+try:
+    _ok113f, _g113f, _ = _resolver_con_holgura(
+        1100.0, "Adulto", al, req, 20.0, dosis_maxima_fabricante,
+        margenes_categoria=MARGENES, max_suplementos=2, time_limit=_con_este_reloj(20))
+finally:
+    _MC113.maximo_por_g_de_materia_seca = _antes113
+if not _ok113f:
+    print("  (con la fila quitada tampoco salio menu; de esta vuelta no se afirma nada)")
+else:
+    _rotos113f = [x["nutriente"]
+                  for x in verificar(_g113f, al, req, 1100.0, "Adulto").get("se_pasa", [])
+                  if x["nutriente"] in _legales113]
+    if not _rotos113f:
+        fallos.append(
+            "BLOQUE113: quitandole al solver la fila de materia seca, el menu que sale SIGUE "
+            "cumpliendo los siete techos legales. O el catalogo ya no da para pasarse de ninguno "
+            "-- y entonces hay que remedirlo y escribirlo --, o la fila no esta sujetando nada")
+    else:
+        print(f"  con el fallo puesto se pasa de {len(_rotos113f)}: "
+              f"{', '.join(_rotos113f)} -- la fila sujeta")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+# ============================================================
+# BLOQUE 114 — AL QUITAR UN SUPLEMENTO SE DICE POR QUÉ ENTRA OTRO
+# ============================================================
+#
+# ⚠️ CASO REAL DE ELENA, USANDO LA APP (15 de septiembre de 2026):
+#
+#     «he hecho un menu en personalizar y me ha metido 3 suplementos, borraba
+#      uno y metia otro y asi todo el rato»
+#
+# Que fueran TRES era otra cosa y esta arreglada: la regla 5 del solver
+# comparaba la CLAVE del grupo de candidatos («Suplementos», para todos) en vez
+# de la categoria real del catalogo, asi que las entradas de `CUANTOS_MAX` para
+# «Multivitaminico» y «Extras» no hacian nada. Eso lo vigila el BLOQUE 110.
+#
+# Lo que vigila ESTE bloque es la otra mitad de la frase, que no es de motor
+# sino de producto: al quitar uno entraba otro Y NO SE DECIA POR QUE. Quitar
+# algo y ver aparecer a su primo, sin una palabra, se lee como que la app no ha
+# hecho caso -- y por eso se vuelve a intentar «todo el rato».
+#
+# TRES COSAS, y las tres pueden fallar:
+#   1. que el texto SALGA, y que salga tambien por `aviso`, que es la clave que
+#      la app ya pinta. Una clave nueva que la app no lee es un texto que no lee
+#      nadie: es la regla 6 por el lado que no se ve.
+#   2. que NO salga cuando no ha entrado nadie de esa familia -- un texto que
+#      sale siempre no dice nada.
+#   3. que este en el registro del DUEÑO: ni el nombre de una categoria del
+#      motor, ni el de un nutriente, ni un peldaño. Es la regla COMIDA-NO-
+#      NUTRIENTES del 14 de septiembre, aplicada a una puerta nueva.
+print("\n=== BLOQUE 114: al quitar un suplemento se dice por que entra otro ===")
+
+import main as _M114
+from fastapi.testclient import TestClient as _TestClient114
+from constructor import CAT_SUPLEMENTO as _CATSUP114
+
+_cli114 = _TestClient114(_M114.app, raise_server_exceptions=False)
+_BASE114 = {"nombres_alimentos": [], "der_objetivo": 1100.0, "etapa_requisitos": "Adulto",
+            "peso_perro_kg": 20.0, "peso_objetivo_kg": 20.0}
+
+_r114 = _cli114.post("/menu/v2", json=_BASE114).json()
+_menu114 = _r114.get("gramos") or _r114.get("menu") or {}
+_sup114 = [n for n in _menu114 if (al.get(n) or {}).get("categoria") in _CATSUP114]
+if not _menu114:
+    fallos.append("BLOQUE114: no sale menu para el adulto de 20 kg, asi que no hay nada que "
+                  "quitar y este bloque no comprueba nada")
+elif not _sup114:
+    print("  (este menu no lleva ningun suplemento; no se puede probar el caso de Elena)")
+else:
+    _quitado114 = _sup114[0]
+    _cat114 = (al.get(_quitado114) or {}).get("categoria")
+    _q114 = dict(_BASE114, alimento=_quitado114, menu_actual=sorted(_menu114))
+    _res114 = _cli114.post("/menu/quitar", json=_q114).json()
+    _g114 = _res114.get("gramos") or {}
+    if not _res114.get("factible"):
+        print(f"  (quitando «{_quitado114}» no queda menu; el caso no se puede probar hoy)")
+    else:
+        if _quitado114 in _g114:
+            fallos.append(f"BLOQUE114: se pidio quitar «{_quitado114}» y sigue en el menu. "
+                          f"Quitar algo tiene que quitarlo, siempre")
+        _entraron114 = [n for n in _g114
+                        if n not in _menu114 and (al.get(n) or {}).get("categoria") == _cat114]
+        _texto114 = _res114.get("por_que_entro_otro")
+        if _entraron114 and not _texto114:
+            fallos.append(
+                f"BLOQUE114: se quito «{_quitado114}» y entro «{_entraron114[0]}» de su misma "
+                f"familia SIN DECIR POR QUE. Es exactamente lo que vio Elena: se lee como que la "
+                f"app no ha hecho caso")
+        if _texto114 and not _entraron114:
+            fallos.append(
+                f"BLOQUE114: no ha entrado nada de la familia de «{_quitado114}» y aun asi se "
+                f"dice que si. Un aviso que sale siempre no informa de nada: {_texto114[:120]}")
+        if _texto114:
+            # 1-bis. Y por la clave que la app YA pinta.
+            if _texto114 not in (_res114.get("aviso") or ""):
+                fallos.append(
+                    "BLOQUE114: `por_que_entro_otro` no va dentro de `aviso`, que es lo que la "
+                    "app pinta en los ocho caminos. Servirlo en una clave que nadie lee es "
+                    "no servirlo")
+            if _quitado114 not in _texto114:
+                fallos.append(f"BLOQUE114: el texto no nombra «{_quitado114}», que es justo lo "
+                              f"que el usuario acaba de tocar")
+            if not any(n in _texto114 for n in _entraron114):
+                fallos.append(f"BLOQUE114: el texto no dice QUE ha entrado en su lugar "
+                              f"({_entraron114}), que es lo unico que hay que ir a comprar")
+            # 3. registro del DUEÑO: ni vocabulario del motor, ni la palabra con
+            #    la que el motor indexa el catalogo.
+            _JERGA114 = ["peldaño", "peldano", "1000 kcal", "FEDIAF", "MILP", "solver",
+                         "materia seca", "categoría", "categoria", "restricción"]
+            _sucias114 = [p for p in _JERGA114 if p.lower() in _texto114.lower()]
+            if _sucias114:
+                fallos.append(
+                    f"BLOQUE114: el texto que lee el DUEÑO nombra {_sucias114}, que es vocabulario "
+                    f"del motor. Es la regla de los dos registros. Texto: {_texto114[:160]}")
+            # ⚠️ Y LA CATEGORIA EN CRUDO TAMPOCO, que es lo que de verdad se
+            #    escapa: `_COMO_SE_LLAMA_LA_FAMILIA` existe justo para que no
+            #    salga «Multivitaminico» ni «Omega-3» con su mayuscula. Se mira
+            #    con mayusculas y todo a proposito: el nombre llano va en
+            #    minusculas, asi que «higado» pasa y «Higado» no.
+            if _cat114 in _texto114 and _M114._COMO_SE_LLAMA_LA_FAMILIA.get(_cat114) != _cat114:
+                fallos.append(
+                    f"BLOQUE114: el texto le enseña al dueño «{_cat114}» tal cual, que es la clave "
+                    f"con la que el motor indexa el catalogo y no una comida. Texto: "
+                    f"{_texto114[:160]}")
+            print(f"  «{_quitado114}» -> «{_entraron114[0]}», y se dice "
+                  f"({len(_texto114)} caracteres, sin jerga)")
+
+# ── Y CADA CATEGORÍA DEL CATÁLOGO TIENE NOMBRE LLANO ─────────────────────────
+#
+# El texto se construye con `_COMO_SE_LLAMA_LA_FAMILIA`. Lo que no esté ahí cae
+# a la categoría en minúsculas -- que es cierto pero feo, y con una categoría
+# nueva («Vitamina B») el dueño leería el nombre de un nutriente, que es justo
+# lo que la regla del 14 de septiembre manda fuera. Se comprueba contra el
+# catálogo, no contra una copia.
+_cats114 = {(a or {}).get("categoria") for a in al.values() if (a or {}).get("categoria")}
+_sin_nombre114 = sorted(_cats114 - set(_M114._COMO_SE_LLAMA_LA_FAMILIA))
+if _sin_nombre114:
+    fallos.append(
+        f"BLOQUE114: estas categorias del catalogo no tienen nombre llano en "
+        f"`_COMO_SE_LLAMA_LA_FAMILIA`: {_sin_nombre114}. Al dueño se le enseñaria la palabra con "
+        f"la que el motor indexa el catalogo -- «Vitamina B», «Omega-3» -- que es el nombre de un "
+        f"nutriente y no de una comida")
+_sobran114 = sorted(set(_M114._COMO_SE_LLAMA_LA_FAMILIA) - _cats114)
+if _sobran114:
+    fallos.append(
+        f"BLOQUE114: `_COMO_SE_LLAMA_LA_FAMILIA` nombra categorias que ya no existen en el "
+        f"catalogo: {_sobran114}. Una entrada que no puede dispararse nunca se lee y se cree")
+print(f"  las {len(_cats114)} categorias del catalogo tienen su nombre llano")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
 _cerrar_el_ultimo_bloque()
 
 # ⚠️ ¿SE HAN EJECUTADO TODOS LOS BLOQUES QUE HAY ESCRITOS? (14 de septiembre).

@@ -4977,11 +4977,99 @@ def endpoint_anadir_alimento(datos: PeticionAnadirQuitarAlimento):
     return _recalcular_con_motor(datos, forzar=[datos.alimento])
 
 
+def _decir_por_que_entro_otro_de_lo_mismo(resultado, datos, quitado):
+    """⚠️ CASO REAL, DE ELENA USANDO LA APP (15 de septiembre de 2026):
+
+        «he hecho un menu en personalizar y me ha metido 3 suplementos,
+         borraba uno y metia otro y asi todo el rato»
+
+    Que fueran TRES era otra cosa y está arreglada: la regla 5 del solver
+    comparaba la clave equivocada, así que `CUANTOS_MAX` no ataba a los
+    suplementos. Lo que queda es la otra mitad de la frase, que es de
+    producto y no de motor: al quitar uno entraba otro Y NO SE DECÍA POR QUÉ.
+
+    Quitar algo y ver aparecer a su primo, sin una palabra, se lee como que
+    la app no ha hecho caso -- y por eso se vuelve a intentar «todo el rato».
+    El motor SÍ ha hecho caso: ese alimento ya no está y no va a volver. Lo
+    que pasa es que de esa familia hace falta ALGO para cerrar los requisitos.
+
+    Y eso se dice con comida y sin jerga, que es la regla de los dos
+    registros: ni «categoría», ni el nombre de un nutriente, ni un peldaño.
+    """
+    if not resultado.get("factible"):
+        return resultado
+    nuevos = resultado.get("gramos") or resultado.get("menu") or {}
+    antes = set(getattr(datos, "menu_actual", None) or [])
+    if not antes:
+        return resultado
+    al_, _req_ = cargar_v2()
+    cat = (al_.get(quitado) or {}).get("categoria")
+    if not cat:
+        return resultado
+    # Los de SU MISMA familia que no estaban antes. Si no ha entrado ninguno,
+    # es que se ha podido quitar limpiamente y no hay nada que explicar.
+    entraron = sorted(n for n in nuevos
+                      if n not in antes
+                      and (al_.get(n) or {}).get("categoria") == cat)
+    if not entraron:
+        return resultado
+    como_se_llama = _COMO_SE_LLAMA_LA_FAMILIA.get(cat, cat.lower())
+    resultado["por_que_entro_otro"] = (
+        f"«{quitado}» ya no está en el menú y no va a volver. Lo que pasa es "
+        f"que a este perro le hace falta {como_se_llama} para que la ración "
+        f"esté completa, así que hemos puesto "
+        + " y ".join(f"«{n}»" for n in entraron)
+        + " en su lugar. Si tampoco te encaja, quítalo también y probamos con "
+          "otro.")
+    # ⚠️ Y VA TAMBIEN EN `aviso`, QUE ES LO QUE LA APP YA PINTA. Una clave
+    # nueva que la app no lee es un texto que no lee nadie -- la regla 6 por
+    # el lado que no se ve: el motor puede servirlo y seguir sin llegar. Se
+    # pone DELANTE porque es la respuesta a lo que el usuario acaba de hacer;
+    # lo que viene detras es la lista de todo lo demas que se movio.
+    if resultado.get("aviso"):
+        resultado["aviso"] = resultado["por_que_entro_otro"] + " " + resultado["aviso"]
+    else:
+        resultado["aviso"] = resultado["por_que_entro_otro"]
+    return resultado
+
+
+# ⚠️ EN COMIDA, NO EN CATEGORÍAS DEL MOTOR. «Multivitamínico» y «Omega-3» son
+# las palabras con las que el motor indexa el catálogo, no con las que habla
+# alguien que quiere dar de comer a su perro. Es la regla de los dos registros
+# del 13 de septiembre, y la de COMIDA-NO-NUTRIENTES del 14: lo que falta aquí
+# no se llama con el nombre de un nutriente.
+# Lo que NO esté en este diccionario cae a la categoría en minúsculas, que es
+# fea pero cierta -- preferible a inventarse un nombre bonito por cada
+# categoría nueva que entre al catálogo.
+_COMO_SE_LLAMA_LA_FAMILIA = {
+    "Multivitamínico": "un complemento de vitaminas y minerales",
+    "Omega-3": "una fuente de omega-3 (aceite de pescado o similar)",
+    "Yodo": "una fuente de yodo",
+    "Fibra": "fibra",
+    "Calcio": "una fuente de calcio",
+    "Hierro": "una fuente de hierro",
+    "Vitamina B": "un complemento del grupo B",
+    "Hueso carnoso": "hueso carnoso",
+    "Vísceras": "vísceras",
+    "Hígado": "hígado",
+    "Verduras y frutas": "verdura o fruta",
+    "Carne muscular": "carne",
+    "Pescados y mariscos": "pescado o marisco",
+    "Extras": "extras (aceites, semillas, huevo o sal)",
+}
+
+
 @app.post("/menu/quitar")
 def endpoint_quitar_alimento(datos: PeticionAnadirQuitarAlimento):
     """Quita un alimento (excluyéndolo) y resuelve TODO de nuevo con el
-    motor real."""
-    return _recalcular_con_motor(datos, excluir_nombres=[datos.alimento])
+    motor real.
+
+    ⚠️ Y DICE POR QUÉ HA ENTRADO OTRO de su misma familia, si es que ha
+    entrado: ver `_decir_por_que_entro_otro_de_lo_mismo`.
+    """
+    return _decir_por_que_entro_otro_de_lo_mismo(
+        _recalcular_con_motor(datos, excluir_nombres=[datos.alimento]),
+        datos, datos.alimento)
 
 
 # =====================================================================
