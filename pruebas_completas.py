@@ -18562,9 +18562,16 @@ for _f111 in _con111:
     # letras. Es la lección del BLOQUE 13 otra vez -- una prueba que mide la
     # redacción en vez del hecho acusa al motor de acertar.
     _fu111 = str(_f111.get("humedad_fuente") or "").lower()
+    # ⚠️ «etiqueta» ENTRA EL 15-sep-2026, al revisar las etiquetas de los
+    # suplementos: seis de los dieciocho huecos se cerraron porque el
+    # fabricante SÍ publica la humedad («umidità 1,9 %» en las cinco
+    # V-INTEGRA, «Restfeuchte 12,33 %» en el alga). La etiqueta es el
+    # mandato 5 de `fuentes_de_composicion.json`, o sea una fuente como las
+    # otras -- y para un suplemento formulado es la ÚNICA que existe, porque
+    # no tiene fila en ninguna base de composición.
     if not any(_q111 in _fu111 for _q111 in
                ("bedca", "ciqual", "usda", "ber 2017", "köber", "kober",
-                "composición", "composicion", "proxy", "fooddata")):
+                "composición", "composicion", "proxy", "fooddata", "etiqueta")):
         _mal111.append(f"{_f111['nombre']}: su humedad no dice de qué fuente sale "
                        f"({_f111.get('humedad_fuente')!r})")
     if _f111.get("humedad_hueco"):
@@ -19314,6 +19321,359 @@ if _pasados115:
                   f"propias kcal: {', '.join(_pasados115[:4])}")
 else:
     print("  y ninguno se pasa de un maximo medido con la misma vara")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+
+# ============================================================
+# BLOQUE 116 — LAS ETIQUETAS DE LOS SUPLEMENTOS, EN NUESTRAS UNIDADES
+# ============================================================
+#
+# ⚠️ POR QUÉ EXISTE (15 de septiembre de 2026). Elena pidió revisar las
+# etiquetas de todos los suplementos igual que se había revisado el catálogo
+# contra sus bases de composición, y al hacerlo salió **un patrón, no una lista
+# de despistes**: la etiqueta declara la **SAL o el ÉSTER** de la vitamina y el
+# catálogo anotó ese número **como si fuera la vitamina**.
+#
+# Es exactamente la trampa que el repo ya tenía escrita para los minerales
+# (`sacn5_fuentes_de_minerales.json`: «óxido de zinc 100 mg son 72 mg de zinc»)
+# y para la que ya existía la tabla de conversión **auditada contra el PDF**:
+# `fediaf_conversiones_vitaminas.json`, la Tabla VII-14. O sea que la fuente
+# estaba, la conversión estaba escrita, y **nadie la aplicaba a los
+# suplementos**. 62 celdas en 12 fichas.
+#
+# Y tres formas distintas de que un número tenga forma de dato bueno:
+#
+#   1. **El peso de la sal.** «Cloruro di colina 55.000 mg/kg» son 4.125 mg de
+#      COLINA por 100 g, no 5.500. Pasaba en siete fichas con la colina, en
+#      siete con el D-pantotenato cálcico, en tres con el clorhidrato de
+#      piridoxina y en dos con el mononitrato de tiamina.
+#   2. **La unidad de la celda.** El folato va en **µg** (UNIDADES.md) y las
+#      etiquetas lo dan en mg/kg: napfcheck llevaba un `2` donde su etiqueta
+#      dice «Folsäure: 20 mg» por kg, que son **2000 µg**/100 g. MIL VECES por
+#      debajo, en seis fichas.
+#   3. **La actividad frente al peso.** La vitamina E se mide en UI en la
+#      etiqueta y el motor la aplica en **mg de d-α-tocoferol** (así está
+#      escrita la conversión del mínimo de FEDIAF, en la `nota_auditoria` de
+#      Vitamina_E de `requerimientos_v2_final.json`). 6.250 UI/kg no son 625 mg.
+#
+# ⚠️ Y UNA CUARTA QUE NO ES DE VITAMINAS Y ES LA QUE MÁS PESA: **la energía a
+# cero en un suplemento que declara proteína**. El polvo de sangre llevaba 92 g
+# de proteína y 0 kcal. La energía es el **DIVISOR** de los 43 requisitos, que
+# van todos por 1000 kcal, así que esa proteína entraba en el numerador de
+# cualquier menú que lo llevara y no en el denominador.
+#
+# LO QUE VIGILA, y no es el fichero contra sí mismo: la cifra de la etiqueta
+# está transcrita AQUÍ, el factor se lee VIVO de `fediaf_conversiones_vitaminas.json`
+# (que a su vez lo rehace `auditar_transcripcion_fediaf.py` contra el PDF), y la
+# cuenta se rehace contra el valor que aplica el motor. Si alguien cambia la
+# celda, el factor o la transcripción, el bloque se pone rojo. Y además exige
+# que la ficha SIGA CITANDO esa misma cifra de etiqueta en su
+# `composicion_fuente`, para que la transcripción de aquí y la de allí no puedan
+# separarse en silencio.
+print("\n=== BLOQUE 116: las etiquetas de los suplementos, en nuestras unidades ===")
+
+_conv116 = json.load(open("fediaf_conversiones_vitaminas.json", encoding="utf-8"))
+_act116 = _conv116["actividad_por_mg_de_fuente"]
+_cat116 = {_f["nombre"]: _f for _f in json.load(open("alimentos_v3_final.json", encoding="utf-8"))}
+
+# (ficha, celda, cifra de la etiqueta POR KG, trozo que tiene que seguir citando
+#  la ficha, factor -> (grupo, clave) de la Tabla VII-14, esperado por 100 g)
+#
+# Las cifras por kg están transcritas de la etiqueta del fabricante, una a una,
+# el 15 de septiembre de 2026. El factor NO se escribe: se busca vivo.
+_SALES116 = [
+ ("Homemadekun (multivitamínico completo)", "colina",           28750.0, "28 750 mg/kg", ("colina", "cloruro_de_colina_base_ion_colina")),
+ ("Homemadekun (multivitamínico completo)", "acidoPantotenico",   205.0, "205 mg/kg",    ("acidoPantotenico", "D_pantotenato_calcico")),
+ ("NEKTON Dog Easy-BARF (multivitamínico)", "colina",           12000.0, "12.000 mg Cholinchlorid", ("colina", "cloruro_de_colina_base_ion_colina")),
+ ("NEKTON Dog Easy-BARF (multivitamínico)", "acidoPantotenico",   500.0, "500 mg Calcium-D-Pantothenat", ("acidoPantotenico", "D_pantotenato_calcico")),
+ ("NEKTON Dog Easy-BARF (multivitamínico)", "vitB6",              320.0, "Pyridoxinhydrochlorid", ("vitB6", "clorhidrato_de_piridoxina")),
+ ("astoral MultiVital BARF",                "tiamina",            500.0, "3a821",        ("tiamina", "mononitrato_de_tiamina")),
+ ("astoral MultiVital BARF",                "vitB6",              200.0, "3a831",        ("vitB6", "clorhidrato_de_piridoxina")),
+ ("astoral MultiVital BARF",                "acidoPantotenico",  3000.0, "3a841",        ("acidoPantotenico", "D_pantotenato_calcico")),
+ ("napfcheck Novomineral proLEBER",         "colina",           25000.0, "Cholinchlorid", ("colina", "cloruro_de_colina_base_ion_colina")),
+ ("napfcheck Novomineral proLEBER",         "acidoPantotenico",  1500.0, "Calcium-D-Pantothenat", ("acidoPantotenico", "D_pantotenato_calcico")),
+ ("napfcheck Novomineral proLEBER",         "tiamina",            200.0, "Thiaminmononitrat", ("tiamina", "mononitrato_de_tiamina")),
+ ("napfcheck Novomineral proLEBER",         "vitB6",              100.0, "Pyridoxinhydrochlorid", ("vitB6", "clorhidrato_de_piridoxina")),
+ ("V-INTEGRA Perro Adulto",                 "colina",           55000.0, "Cloruro di colina 55.000 mg", ("colina", "cloruro_de_colina_base_ion_colina")),
+ ("V-INTEGRA Perro Adulto",                 "acidoPantotenico",   450.0, "Calcio D-pantotenato 450 mg", ("acidoPantotenico", "D_pantotenato_calcico")),
+ ("V-INTEGRA Cachorro",                     "colina",           35000.0, "Cloruro di colina 35.000 mg", ("colina", "cloruro_de_colina_base_ion_colina")),
+ ("V-INTEGRA Cachorro",                     "acidoPantotenico",   315.0, "Calcio D-pantotenato 315 mg", ("acidoPantotenico", "D_pantotenato_calcico")),
+ ("V-INTEGRA Senior",                       "colina",           55000.0, "cloruro di colina 55.000 mg", ("colina", "cloruro_de_colina_base_ion_colina")),
+ ("V-INTEGRA Senior",                       "acidoPantotenico",   450.0, "calcio D-pantotenato 450 mg", ("acidoPantotenico", "D_pantotenato_calcico")),
+ ("V-INTEGRA Epato",                        "colina",           50000.0, "cloruro di colina 50.000 mg", ("colina", "cloruro_de_colina_base_ion_colina")),
+ ("V-INTEGRA Epato",                        "acidoPantotenico",   450.0, "calcio D-pantotenato 450 mg", ("acidoPantotenico", "D_pantotenato_calcico")),
+ ("V-INTEGRA Renal",                        "colina",           50000.0, "Cloruro di colina 50.000 mg", ("colina", "cloruro_de_colina_base_ion_colina")),
+ ("V-INTEGRA Renal",                        "acidoPantotenico",   450.0, "Calcio D-pantotenato 450 mg", ("acidoPantotenico", "D_pantotenato_calcico")),
+]
+
+_mal116, _rehechas116 = [], 0
+for _n116, _c116, _kg116, _cita116, (_g116, _k116) in _SALES116:
+    _f116 = _cat116.get(_n116)
+    if _f116 is None:
+        _mal116.append(f"{_n116}: la ficha ya no existe en el catálogo")
+        continue
+    _fac116 = _act116[_g116][_k116]
+    _esperado116 = round(_kg116 / 10.0 * _fac116, 2)
+    _tiene116 = float(_f116["nutrientes"].get(_c116) or 0)
+    if abs(_tiene116 - _esperado116) > 0.02:
+        _mal116.append(f"{_n116} · {_c116}: la etiqueta dice {_kg116:.0f} mg/kg de la SAL, "
+                       f"x{_fac116} (FEDIAF VII-14) son {_esperado116}, y la ficha dice {_tiene116}")
+    else:
+        _rehechas116 += 1
+    _proc116 = str((_f116.get("composicion_fuente") or {}).get(_c116) or "")
+    if _cita116 not in _proc116:
+        _mal116.append(f"{_n116} · {_c116}: su procedencia ya no cita «{_cita116}», así que la "
+                       f"cifra de la etiqueta que hay aquí y la que hay allí pueden separarse")
+if _mal116:
+    fallos.append(f"BLOQUE116: {len(_mal116)} conversiones de sal que no se rehacen: "
+                  + " · ".join(_mal116[:4]))
+print(f"  conversiones de sal rehechas contra la Tabla VII-14: {_rehechas116} de {len(_SALES116)}")
+
+# --- 2. la vitamina E va en mg de d-alfa-tocoferol, nunca en UI --------------
+#
+# ⚠️ Y ESTO NO ES UN DETALLE: el mínimo que aplica el motor (6,968 mg/1000 kcal
+# en adulto) es la cifra de FEDIAF -- que la publica en UI, 10,40 -- dividida
+# por 1,49. O sea que la celda del catálogo está escrita en mg de d-α-tocoferol.
+# Un suplemento anotado en UI aporta un 49 % más de lo que de verdad da.
+_UI116 = [   # (ficha, UI por kg segun etiqueta, trozo que cita, mg esperados)
+ ("Homemadekun (multivitamínico completo)", 6250.0, "6 250 UI/kg", 419.5),
+ ("Beaphar Aceite de Germen de Trigo (vitamina E)", 5900.0, "5900 UI/kg", 396.0),
+]
+_malE116 = []
+_fnat116 = _act116["vitE"]["d_alfa_tocoferol"]
+for _n116, _ui116, _cita116, _mg116 in _UI116:
+    _f116 = _cat116.get(_n116)
+    if _f116 is None:
+        _malE116.append(f"{_n116}: la ficha ya no existe")
+        continue
+    _esp116 = round(_ui116 / 10.0 / _fnat116, 1)
+    _tiene116 = round(float(_f116["nutrientes"].get("vitE") or 0), 1)
+    if abs(_esp116 - _mg116) > 0.2:
+        _malE116.append(f"{_n116}: la cuenta de este bloque da {_esp116} y aquí se espera {_mg116}")
+    if abs(_tiene116 - _mg116) > 0.2:
+        _malE116.append(f"{_n116}: la etiqueta dice {_ui116:.0f} UI/kg, que son {_mg116} mg de "
+                        f"d-α-tocoferol, y la ficha dice {_tiene116}")
+    if abs(_tiene116 - _ui116 / 10.0) < 0.5:
+        _malE116.append(f"{_n116}: la ficha lleva las UI TAL CUAL ({_tiene116}), sin convertir")
+if _malE116:
+    fallos.append("BLOQUE116: " + " · ".join(_malE116[:4]))
+
+# --- 3. el folato de un multivitamínico no puede ir en miligramos ------------
+#
+# La celda va en µg (UNIDADES.md) y las etiquetas lo dan en mg/kg. Un
+# multivitamínico que declare ácido fólico y traiga menos de 50 µg/100 g está,
+# con certeza, con la cifra en mg dentro de una celda de µg: la dosis más floja
+# de las revisadas es 6,8 mg/kg, o sea 680 µg/100 g.
+_malF116 = [f"{_n}: folato {_f['nutrientes'].get('folato')} µg/100 g"
+            for _n, _f in sorted(_cat116.items())
+            if _f.get("categoria") == "Multivitamínico"
+            and 0 < float(_f["nutrientes"].get("folato") or 0) < 50]
+if _malF116:
+    fallos.append(f"BLOQUE116: {len(_malF116)} multivitamínicos con el folato en miligramos "
+                  f"dentro de una celda que va en microgramos: " + " · ".join(_malF116[:5]))
+
+# --- 4. energía cero con proteína o grasa dentro ----------------------------
+_malK116 = [f"{_n}: {_f['nutrientes'].get('proteina')} g de proteína y "
+            f"{_f['nutrientes'].get('grasa')} g de grasa con energía {_f.get('energia')}"
+            for _n, _f in sorted(_cat116.items())
+            if not _f.get("energia")
+            and (float(_f["nutrientes"].get("proteina") or 0) > 0
+                 or float(_f["nutrientes"].get("grasa") or 0) > 0)]
+if _malK116:
+    fallos.append(f"BLOQUE116: {len(_malK116)} fichas con energía 0 teniendo proteína o grasa "
+                  f"dentro. La energía es el DIVISOR de los 43 requisitos: " + " · ".join(_malK116[:5]))
+
+# --- 5. y la energía que se pone se rehace con la fórmula de FEDIAF ----------
+#
+# FEDIAF §7.2.2.2 b), para productos crudos y naturales: kcal ME = 4 x %proteína
+# + 9 x %grasa + 4 x %NFE. En estos suplementos el NFE se cuenta como 0 y va
+# escrito por qué: sus etiquetas no publican la humedad de la que habría que
+# despejarlo. Contar menos energía aprieta las concentraciones, que es el lado
+# del que no se entrega un menú de más.
+_malA116 = []
+for _n116 in ("Homemadekun (multivitamínico completo)", "NEKTON Dog Easy-BARF (multivitamínico)",
+              "astoral MultiVital BARF", "Nutratop Vitamínico-Mineral 7:1",
+              "AniForte Beef Blood Powder", "V-INTEGRA Perro Adulto", "V-INTEGRA Cachorro",
+              "V-INTEGRA Senior", "V-INTEGRA Epato", "V-INTEGRA Renal"):
+    _f116 = _cat116.get(_n116)
+    if _f116 is None:
+        _malA116.append(f"{_n116}: la ficha ya no existe"); continue
+    _esp116 = round(4 * float(_f116["nutrientes"].get("proteina") or 0)
+                    + 9 * float(_f116["nutrientes"].get("grasa") or 0), 1)
+    if abs(float(_f116.get("energia") or 0) - _esp116) > 0.15:
+        _malA116.append(f"{_n116}: 4x{_f116['nutrientes'].get('proteina')} + "
+                        f"9x{_f116['nutrientes'].get('grasa')} = {_esp116} y la ficha dice "
+                        f"{_f116.get('energia')}")
+if _malA116:
+    fallos.append(f"BLOQUE116: {len(_malA116)} energías que no se rehacen con la fórmula de "
+                  f"FEDIAF 7.2.2.2 b): " + " · ".join(_malA116[:4]))
+
+# --- 6. la taurina y la L-carnitina que la etiqueta declara, puestas ---------
+#
+# Seis fichas las traían en sus aditivos nutricionales -- hasta 40.000 mg/kg --
+# y las tenían como hueco. No son requisitos de FEDIAF para el perro, pero SÍ
+# son el suelo de `dcm_taurina_respondedora` (taurina >= 250 y L-carnitina >= 50
+# mg/1000 kcal), así que un hueco ahí puede dejar sin menú a esa patología
+# teniendo la fuente en el bote.
+_TAU116 = {"napfcheck Novomineral proLEBER": (3000.0, 3500.0),
+           "V-INTEGRA Perro Adulto": (2500.0, None), "V-INTEGRA Cachorro": (3996.0, None),
+           "V-INTEGRA Senior": (4000.0, None), "V-INTEGRA Epato": (4000.0, None),
+           "V-INTEGRA Renal": (4000.0, None)}
+_malT116 = []
+for _n116, (_t116, _l116) in sorted(_TAU116.items()):
+    _f116 = _cat116.get(_n116)
+    if _f116 is None:
+        _malT116.append(f"{_n116}: la ficha ya no existe"); continue
+    for _cl116, _v116 in (("taurina", _t116), ("lcarnitina", _l116)):
+        if _v116 is None:
+            continue
+        if abs(float(_f116["nutrientes"].get(_cl116) or 0) - _v116) > 0.5:
+            _malT116.append(f"{_n116} · {_cl116}: la etiqueta la declara y la ficha dice "
+                            f"{_f116['nutrientes'].get(_cl116)}")
+        if _cl116 in (_f116.get("sin_dato") or []):
+            _malT116.append(f"{_n116} · {_cl116}: tiene valor Y sigue declarada como hueco")
+if _malT116:
+    fallos.append(f"BLOQUE116: {len(_malT116)} celdas que la etiqueta declara y la ficha no: "
+                  + " · ".join(_malT116[:4]))
+
+# --- 7. y la vitamina E de las V-INTEGRA NO puede volver ---------------------
+#
+# ⚠️ Las cinco declaran una línea de aditivos TECNOLÓGICOS («antiossidanti X mg
+# di cui estratti di origine naturale ricchi in tocoferolo Y mg»), que es el
+# conservante del propio polvo, y NINGUNA declara vitamina E como aditivo
+# NUTRICIONAL. De esa línea salía el número que llevaban las fichas -- Y/10
+# exacto: Adulto 2.380 -> 238, Senior 6.700 -> 670. Con el suelo de vitamina E
+# del perro sano encendido, eso era hasta el 82 % de la vitamina E del menú.
+_malV116 = [f"{_n}: vitE {_cat116[_n]['nutrientes'].get('vitE')}"
+            for _n in ("V-INTEGRA Perro Adulto", "V-INTEGRA Cachorro", "V-INTEGRA Senior",
+                       "V-INTEGRA Epato", "V-INTEGRA Renal")
+            if _n in _cat116 and float(_cat116[_n]["nutrientes"].get("vitE") or 0) > 0]
+if _malV116:
+    fallos.append(f"BLOQUE116: {len(_malV116)} V-INTEGRA con vitamina E, que sus etiquetas NO "
+                  f"declaran como aditivo nutricional: " + " · ".join(_malV116))
+print(f"  huecos y ceros de etiqueta comprobados · "
+      f"{len(_TAU116)} fichas con taurina/L-carnitina de etiqueta")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+
+# ============================================================
+# BLOQUE 118 — `CERRADO.md` NO PUEDE SEÑALAR A UNA PRUEBA QUE NO EXISTE
+# ============================================================
+#
+# ⚠️ POR QUÉ EXISTE (15 de septiembre de 2026). Elena, después de tres días
+# viendo salir cosas de fuentes «cerradas»:
+#
+#     «no me vale que digas que está cerrado y que luego sigan saliendo cosas y
+#      cosas y más cosas de una fuente que se supone que ya estaba totalmente
+#      estudiada y todo cerrado como todo eh, aplicado ya lo necesario»
+#
+# **Y tenía una causa concreta, dentro del propio `CERRADO.md`.** El cierre de
+# FEDIAF, firmado el 10 de septiembre, certificaba su condición 1 con
+# `lecturas_fuentes.json` y `fediaf_tablas.json`, y su condición 4 —«test que
+# falla si se rompe»— con los **BLOQUES 67 y 68**.
+#
+# **Los cuatro se borraron el 11 de septiembre**, un día después, cuando Elena
+# mandó fuera toda la maquinaria de contar lecturas. El borrado fue correcto: esos
+# contadores contaban frases con nota y no cosas decididas. Lo que no se hizo fue
+# volver a `CERRADO.md`.
+#
+# Así que el documento cuyo único trabajo es decir **qué es verdad** estaba
+# certificando la fuente más importante del motor con **dos ficheros y dos pruebas
+# que no existen** — y no daba ningún error, porque una referencia rota en un
+# Markdown no lo da. Es la misma familia que los dos BLOQUES 98 del 13 de
+# septiembre: *un número de bloque es la única forma que tiene el repo de decir
+# quién vigila qué*.
+#
+# LO QUE EXIGE, y es barato y determinista: que cada fichero y cada BLOQUE que
+# `CERRADO.md` nombra **exista**. No mira la prosa ni las cifras —de eso se ocupa
+# el 65 con `PARA_EL_NUTRICIONISTA.md`—: mira que las pruebas que se citan se
+# puedan abrir. Un cierre que señala a una prueba borrada no está desactualizado:
+# es que **no prueba nada y no lo dice**.
+#
+# ⚠️ Y una línea de comentario NO puede empezar por «# BLOQUE N» dentro del cuerpo
+# de otro bloque: `probar_bloques.py` corta ahí, y la primera versión de este
+# texto partía este bloque por la mitad — se extraía sin su código y salía verde.
+print("\n=== BLOQUE 118: `CERRADO.md` no señala a pruebas que no existen ===")
+
+import re as _re118
+# ⚠️ con su propio alias: `probar_bloques.py` extrae un bloque suelto, y este no
+# puede depender de que otro haya importado `os` antes.
+import os as _os118
+_txt118 = open("CERRADO.md", encoding="utf-8").read()
+_bat118 = open("pruebas_completas.py", encoding="utf-8").read()
+
+# ⚠️ El marcador de que un bloque EXISTE es su `print("=== BLOQUE N:`, no su
+# cabecera de comentario: el 80 se escribió sin cabecera y la primera versión de
+# este bloque lo acusó de no existir. Se mira lo que se EJECUTA.
+_vivos118 = set(int(_x) for _x in _re118.findall(r'=== BLOQUE (\d{1,3})[:\s]', _bat118))
+# ⚠️ SOLO LAS FILAS DE CONDICIÓN, NUNCA LA PROSA, y esto no es un atajo: este
+# mismo documento explica ahora POR QUÉ se borraron los BLOQUES 67 y 68, o sea
+# que los nombra a propósito. Lo que es una promesa de prueba es la fila «4 ·
+# Test», no una frase que cuente su historia. Un escáner que no distingue las dos
+# cosas obliga a dejar de contar la historia para que salga verde, que es al
+# revés de lo que hace falta.
+_citados118 = set()
+for _fila118 in _re118.findall(r'^\|\s*4\s*·[^\n]*$', _txt118, _re118.M):
+    _citados118 |= set(int(_x) for _x in _re118.findall(r'BLOQUES?\s+(?:\*\*)?(\d{1,3})', _fila118))
+    for _n118 in _re118.findall(r'\bel \*{0,2}(\d{1,3})\*{0,2}\b', _fila118):
+        _citados118.add(int(_n118))
+_muertos118 = sorted(_citados118 - _vivos118)
+if _muertos118:
+    fallos.append(f"BLOQUE118: `CERRADO.md` cita como prueba {len(_muertos118)} bloques que NO "
+                  f"EXISTEN en la batería: {_muertos118}. Un cierre certificado por una prueba "
+                  f"borrada no prueba nada, y no da ningún error: es justo lo que pasó con los "
+                  f"BLOQUES 67 y 68 el 11 de septiembre")
+print(f"  bloques citados como prueba: {len(_citados118)} · todos vivos: {not _muertos118}")
+
+# --- los ficheros que nombra tienen que poder abrirse ------------------------
+#
+# Se miran solo los que parecen datos o código del repo. Los `.md` entran también:
+# `LECTURAS.md` y `HALLAZGOS_*.md` son la condición 5 («decisión escrita»), así que
+# si uno desaparece el cierre se queda igual de huérfano.
+_NO_SON_DEL_REPO118 = {
+    # El documento donde Elena escribió las seis condiciones. Vive fuera del repo
+    # a propósito: es su texto, no código nuestro.
+    "PROMPT_CIERRE_RAWKU_2.md",
+}
+_filas118 = "\n".join(_re118.findall(r'^\|\s*[1-6]\s*·[^\n]*$', _txt118, _re118.M))
+_falta118 = []
+for _f118 in sorted(set(_re118.findall(r'`([A-Za-z0-9_./-]+\.(?:json|py|md|txt))`', _filas118))):
+    if _f118 in _NO_SON_DEL_REPO118:
+        continue
+    if not (_os118.path.exists(_f118)
+            or _os118.path.exists(_os118.path.join("motor", _f118))):
+        _falta118.append(_f118)
+if _falta118:
+    fallos.append(f"BLOQUE118: `CERRADO.md` nombra {len(_falta118)} ficheros que NO EXISTEN: "
+                  + " · ".join(_falta118))
+_todos118 = set(_re118.findall(r'`([A-Za-z0-9_./-]+[.](?:json|py|md|txt))`', _filas118))
+_mirados118 = len(_todos118 - _NO_SON_DEL_REPO118)
+print(f"  ficheros nombrados que se pueden abrir: {_mirados118 - len(_falta118)} de {_mirados118}")
+
+# --- y un cierre tiene que traer sus seis condiciones, no cinco -------------
+#
+# La regla la escribe el propio documento: «No se añade porque parezca terminado.
+# Se añade cuando las seis condiciones se cumplen y se puede señalar dónde se
+# cumple cada una». Un cierre al que le falta una fila es cinco de seis, y el
+# documento dice que eso NO es cerrado.
+_malc118 = []
+for _m118 in _re118.finditer(r'^## CERRADO · (.+)$', _txt118, _re118.M):
+    _fin118 = _txt118.find("\n## ", _m118.end())
+    _cuerpo118 = _txt118[_m118.end(): _fin118 if _fin118 > 0 else len(_txt118)]
+    _faltan118 = [_i118 for _i118 in range(1, 7)
+                  if not _re118.search(r'\|\s*%d\s*·' % _i118, _cuerpo118)]
+    if _faltan118:
+        _malc118.append(f"«{_m118.group(1)[:44]}» no señala dónde se cumplen las condiciones "
+                        f"{_faltan118}")
+if _malc118:
+    fallos.append(f"BLOQUE118: {len(_malc118)} cierres a los que les falta alguna de las seis "
+                  f"condiciones: " + " · ".join(_malc118[:4]))
+print(f"  cierres con las seis condiciones señaladas: "
+      f"{len(_re118.findall(r'^## CERRADO · ', _txt118, _re118.M)) - len(_malc118)}")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 

@@ -212,7 +212,7 @@
   "nombre": "AniForte Beef Blood Powder",
   "tipo": "Suplemento",
   "categoria": "Hierro",
-  "energia": 0,
+  "energia": 371.6,
   "nutrientes": {
    "proteina": 92.0,
    "grasa": 0.4,
@@ -244,7 +244,7 @@
    "acidoPantotenico": 0,
    "colina": 0,
    "cloruro": 1080.0,
-   "fibra": 0,
+   "fibra": 0.5,
    "arginina": 0,
    "histidina": 0,
    "isoleucina": 0,
@@ -262,7 +262,7 @@
    "taurina": 0
   },
   "dosis_fuente": "Etiqueta AniForte: 1,5 g por cada 5 kg de peso. El fabricante recomienda NO pasar de 12 g/día",
-  "nota_datos": "Minerales corregidos: estaban metidos como porcentaje en bruto (0,28) en vez de mg/100g (280). Verificado contra etiqueta AniForte. Minerales convertidos de % a mg/100g (estaban en bruto). ⚠️ COBRE Y CINC VACIADOS (27 agosto). La etiqueta declara Kupfer 0,08% y Zink 0,25%, y la conversion a 80 y 250 mg/100 g era correcta, pero la sangre bovina desecada ronda 0,85 y 2,3 (Feedipedia node 221 / INRA-CIRAD-AFZ): unas 100 veces menos. La etiqueta se contradice ademas sola, sin salir de ella -- declara 4% de cenizas = 40 g/kg, sus macrominerales suman 20,5, y anadir los 3,3 g/kg de cinc y cobre mas el cloruro y el sulfato que la sangre lleva por fuerza desborda su propio presupuesto de cenizas. Todo apunta a que se convirtio de mg/kg a porcentaje dividiendo entre 100 en vez de entre 10.000, y que solo toco la columna de oligoelementos: el HIERRO, que esta en otro orden de magnitud, si cuadra (~2.800 mg/kg = 0,28% y declara 0,28%). MEDIDO antes de vaciarlos: con los 80 mg puestos, forzando el producto en un perro de 25 kg, el menu declaraba 8,31 mg de cobre y el real eran 2,34 sobre un minimo de 2,60 -- deficitario y en VERDE. El producto se queda porque su motivo de existir es el hierro y ese si es coherente; lo que se va son las dos celdas que no se sostienen. ⚠️ 13 sep 2026: lcarnitina, taurina estaba(n) declarado(s) en `sin_dato` pero LA CLAVE NO EXISTÍA en `nutrientes`. Es la peor de las tres formas de esconder un hueco que describe `UNIDADES.md`: `valor_nutriente()` devuelve 0 igual que en los otros dos casos, pero NO HAY NINGÚN CERO QUE ENCONTRAR, así que ni la auditoría ni `datos_incompletos` podían decir nada. Se añade la clave a 0 —que es lo que el motor ya usaba— sin tocar ningún valor: lo único que cambia es que ahora el hueco se ve. Afectaba a 58 fichas.",
+  "nota_datos": "Minerales corregidos: estaban metidos como porcentaje en bruto (0,28) en vez de mg/100g (280). Verificado contra etiqueta AniForte. Minerales convertidos de % a mg/100g (estaban en bruto). ⚠️ COBRE Y CINC VACIADOS (27 agosto). La etiqueta declara Kupfer 0,08% y Zink 0,25%, y la conversion a 80 y 250 mg/100 g era correcta, pero la sangre bovina desecada ronda 0,85 y 2,3 (Feedipedia node 221 / INRA-CIRAD-AFZ): unas 100 veces menos. La etiqueta se contradice ademas sola, sin salir de ella -- declara 4% de cenizas = 40 g/kg, sus macrominerales suman 20,5, y anadir los 3,3 g/kg de cinc y cobre mas el cloruro y el sulfato que la sangre lleva por fuerza desborda su propio presupuesto de cenizas. Todo apunta a que se convirtio de mg/kg a porcentaje dividiendo entre 100 en vez de entre 10.000, y que solo toco la columna de oligoelementos: el HIERRO, que esta en otro orden de magnitud, si cuadra (~2.800 mg/kg = 0,28% y declara 0,28%). MEDIDO antes de vaciarlos: con los 80 mg puestos, forzando el producto en un perro de 25 kg, el menu declaraba 8,31 mg de cobre y el real eran 2,34 sobre un minimo de 2,60 -- deficitario y en VERDE. El producto se queda porque su motivo de existir es el hierro y ese si es coherente; lo que se va son las dos celdas que no se sostienen. ⚠️ 13 sep 2026: lcarnitina, taurina estaba(n) declarado(s) en `sin_dato` pero LA CLAVE NO EXISTÍA en `nutrientes`. Es la peor de las tres formas de esconder un hueco que describe `UNIDADES.md`: `valor_nutriente()` devuelve 0 igual que en los otros dos casos, pero NO HAY NINGÚN CERO QUE ENCONTRAR, así que ni la auditoría ni `datos_incompletos` podían decir nada. Se añade la clave a 0 —que es lo que el motor ya usaba— sin tocar ningún valor: lo único que cambia es que ahora el hueco se ve. Afectaba a 58 fichas. ⚠️ ETIQUETA REVISADA UNA A UNA EL 15-sep-2026, a peticion de Elena («me gustaria que revisaras todos los suplementos tambien, todas las etiquetas, igual que hemos hecho con el catalogo»). ⚠️ LA ENERGIA ESTABA A CERO CON 92 g DE PROTEINA DENTRO, y eso no es un hueco inofensivo: la energia es el DIVISOR de los 43 requisitos, que van todos por 1000 kcal. Una ficha con 92 % de proteina y 0 kcal le regalaba al motor proteina que no contaba en el denominador, asi que cualquier menu que la llevara salia con mas proteina por 1000 kcal de la que de verdad tiene. Pasa a 371,6 kcal/100 g por la formula de FEDIAF 7.2.2.2 b). ⚠️ ETIQUETA RELEIDA ENTERA EL 15-sep-2026 (aniforte.de), y hace DOS cosas. (1) Cierra dos huecos que la etiqueta si publica: «Rohfaser 0,5 %» y «Restfeuchte 6 %». Con la humedad puesta, la energia de 371,6 kcal/100 g deja de ser una estimacion: el NFE sale NEGATIVO (100-6-92-0,4-4-0,5 = -2,9), o sea 0, asi que la formula de FEDIAF 7.2.2.2 b) da 4x92 + 9x0,4 y nada mas. (2) CONFIRMA el vaciado del cobre y el cinc del 27 de agosto en vez de desdecirlo: la etiqueta declara «Rohasche 4 %», que es exactamente el presupuesto de cenizas con el que no cuadran los 3,3 g/kg de esas dos celdas.",
   "dosis_g_por_kg_peso": 0.3,
   "dosis_max_absoluta_g": 12.0,
   "sin_dato": [
@@ -298,7 +298,6 @@
    "yodo",
    "zinc"
   ],
-  "humedad_hueco": "14-sep-2026, buscar_humedad.py: no tiene fila en BEDCA, CIQUAL ni USDA (es Hierro, mandato 5: la etiqueta del fabricante), y la etiqueta no declara humedad. Köber 2017 tampoco la mide: su Tabla 1 es de hueso y cartílago.",
   "hueco_verificado": {
    "lisina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto («Blood, beef»: USDA no tiene ninguna fila de sangre bovina desecada).",
    "metionina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto («Blood, beef»: USDA no tiene ninguna fila de sangre bovina desecada).",
@@ -312,7 +311,14 @@
    "fenilalanina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto («Blood, beef»: USDA no tiene ninguna fila de sangre bovina desecada).",
    "tirosina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto («Blood, beef»: USDA no tiene ninguna fila de sangre bovina desecada).",
    "arginina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto («Blood, beef»: USDA no tiene ninguna fila de sangre bovina desecada)."
-  }
+  },
+  "composicion_fuente": {
+   "energia": "etiqueta:aniforte_rinderblutpulver · «Rohprotein 92 %, Rohfett 0,4 %, Rohasche 4 %, Rohfaser 0,5 %, Restfeuchte 6 %» · el NFE sale NEGATIVO (100-6-92-0,4-4-0,5 = -2,9), o sea 0 · FEDIAF 7.2.2.2 b): 4x92 + 9x0,4 = 371,6 kcal/100 g · 2026-09-15",
+   "fibra": "etiqueta:aniforte_rinderblutpulver · «Rohfaser 0,5 %» · 0,5 g/100 g · 2026-09-15",
+   "humedad_g_100g": "etiqueta:aniforte_rinderblutpulver · «Restfeuchte 6 %» · 2026-09-15"
+  },
+  "humedad_g_100g": 6.0,
+  "humedad_fuente": "etiqueta del fabricante (aniforte.de) · «Restfeuchte 6 %»"
  },
  {
   "nombre": "Aceite de Salmón Natural Greatness",
@@ -641,10 +647,10 @@
   "nombre": "GRAU Levadura de cerveza",
   "tipo": "Suplemento",
   "categoria": "Vitamina B",
-  "energia": 350,
+  "energia": 349.5,
   "nutrientes": {
    "proteina": 46,
-   "grasa": 0,
+   "grasa": 2.7,
    "dha": 0,
    "epa": 0,
    "linoleico": 0,
@@ -673,7 +679,7 @@
    "acidoPantotenico": 5.14,
    "colina": 0,
    "cloruro": 310.0,
-   "fibra": 0,
+   "fibra": 1.0,
    "arginina": 0,
    "histidina": 0,
    "isoleucina": 0,
@@ -692,7 +698,7 @@
   },
   "dosis_fuente": "≈3 g por 10 kg de peso (dosis habitual de levadura de cerveza)",
   "dosis_g_por_kg_peso": 0.3,
-  "nota_datos": "Vitaminas del grupo B añadidas con valores típicos de levadura seca inactiva. NO lleva B12 (solo si está fortificada). Minerales convertidos de % a mg/100g (estaban en bruto). ⚠️ CASO REAL ENCONTRADO (27 agosto): el folato decia 2.340 ug, que es el valor del USDA FDC 175043 «yeast, BAKER'S, active dry» — levadura de PANADERIA, no de cerveza. Factor 3,4. El resto del grupo B venia de sitios distintos (la B1 coincidia con CIQUAL, la B6 no). Todo el bloque B se toma ahora de UNA sola procedencia, CIQUAL 11009 «Levure alimentaire»: folatos 697 · B1 11,6 · B3 18,5 · B5 5,14 · B2 1,0 · B6 0,88 · B12 0,34. Un folato sobreestimado es la direccion que hace dano: el motor lo da por cubierto y deja de buscarlo. Yodo 0: NO es un hueco, es una AUSENCIA MEDIDA. CIQUAL 11009 lo analizo y salio por debajo del limite de cuantificacion (< 20 ug/100 g). La levadura de cerveza no es fuente de yodo. Por eso sale de sin_dato: no es que nadie lo haya mirado, es que se miro y no hay. ⚠️ 13 sep 2026: lcarnitina estaba(n) declarado(s) en `sin_dato` pero LA CLAVE NO EXISTÍA en `nutrientes`. Es la peor de las tres formas de esconder un hueco que describe `UNIDADES.md`: `valor_nutriente()` devuelve 0 igual que en los otros dos casos, pero NO HAY NINGÚN CERO QUE ENCONTRAR, así que ni la auditoría ni `datos_incompletos` podían decir nada. Se añade la clave a 0 —que es lo que el motor ya usaba— sin tocar ningún valor: lo único que cambia es que ahora el hueco se ve. Afectaba a 58 fichas.",
+  "nota_datos": "Vitaminas del grupo B añadidas con valores típicos de levadura seca inactiva.  Minerales convertidos de % a mg/100g (estaban en bruto). ⚠️ CASO REAL ENCONTRADO (27 agosto): el folato decia 2.340 ug, que es el valor del USDA FDC 175043 «yeast, BAKER'S, active dry» — levadura de PANADERIA, no de cerveza. Factor 3,4. El resto del grupo B venia de sitios distintos (la B1 coincidia con CIQUAL, la B6 no). Todo el bloque B se toma ahora de UNA sola procedencia, CIQUAL 11009 «Levure alimentaire»: folatos 697 · B1 11,6 · B3 18,5 · B5 5,14 · B2 1,0 · B6 0,88 · B12 0,34. Un folato sobreestimado es la direccion que hace dano: el motor lo da por cubierto y deja de buscarlo. Yodo 0: NO es un hueco, es una AUSENCIA MEDIDA. CIQUAL 11009 lo analizo y salio por debajo del limite de cuantificacion (< 20 ug/100 g). La levadura de cerveza no es fuente de yodo. Por eso sale de sin_dato: no es que nadie lo haya mirado, es que se miro y no hay. ⚠️ 13 sep 2026: lcarnitina estaba(n) declarado(s) en `sin_dato` pero LA CLAVE NO EXISTÍA en `nutrientes`. Es la peor de las tres formas de esconder un hueco que describe `UNIDADES.md`: `valor_nutriente()` devuelve 0 igual que en los otros dos casos, pero NO HAY NINGÚN CERO QUE ENCONTRAR, así que ni la auditoría ni `datos_incompletos` podían decir nada. Se añade la clave a 0 —que es lo que el motor ya usaba— sin tocar ningún valor: lo único que cambia es que ahora el hueco se ve. Afectaba a 58 fichas. ⚠️ CONTRADICCION INTERNA ARREGLADA EL 15-sep-2026, al revisar las etiquetas. Esta ficha decia a la vez dos cosas incompatibles: la nota afirmaba «NO lleva B12 (solo si esta fortificada)» y el mismo parrafo daba «B12 0,34» de CIQUAL 11009, con la clave `vitB12` metida ADEMAS en `sin_dato`. O sea: un valor puesto, usado por el solver, y declarado hueco al mismo tiempo -- `datos_incompletos` lo contaba como que falta mientras `valor_nutriente()` devolvia 0,34. Manda CIQUAL 11009 «Levure alimentaire», que es de donde sale TODO el bloque B de esta ficha y la unica procedencia que tiene: se queda el 0,34 y sale de `sin_dato`. La frase que sobraba era la de «no lleva», que venia de la version anterior de la ficha y no se borro al cambiar la fuente. ⚠️ Y hay que saber lo que ESTE bloque B no es: NO sale de la etiqueta de GRAU ni de la de PAWS & PATCH -- ninguna de las dos publica vitaminas --, sale de CIQUAL, que es por lo que las dos fichas llevan las mismas siete cifras. Lo que SI es de cada etiqueta son los minerales, y por eso difieren. ⚠️ ETIQUETA LEIDA EL 15-sep-2026 (grau-generationpet.de). Publica SEIS cifras y la ficha tenia tres. Se anaden la grasa («Fettgehalt 2,7 %»), la fibra («Rohfaser 1,0 %») y la humedad («Feuchte 7,0 %»), y con eso la ENERGIA deja de ser un numero heredado y pasa a rehacerse: la etiqueta trae ademas «Rohasche 8,0 %» y «Stärke 6,2 %», asi que el NFE se despeja (100-7,0-46,0-2,7-8,0-1,0 = 35,3) y la formula de FEDIAF 7.2.2.2 b) da 349,5 kcal/100 g -- practicamente el 350 que ya tenia, que queda asi CONFIRMADO en vez de heredado. La proteina, 46 %, ya coincidia exacta con la etiqueta.",
   "sin_dato": [
    "arginina",
    "cistina",
@@ -711,12 +717,10 @@
    "triptofano",
    "valina",
    "vitA",
-   "vitB12",
    "vitD",
    "vitE"
   ],
   "taurina_fuente": "Taurina = 11,2 mg/100g: Spitze et al. 2003, tabla 1, seccion de hongos/plantas, \"Yeast\" = 112 (0-337) mg/kg -> 11,2 mg/100g.",
-  "humedad_hueco": "14-sep-2026, buscar_humedad.py: no tiene fila en BEDCA, CIQUAL ni USDA (es Vitamina B, mandato 5: la etiqueta del fabricante), y la etiqueta no declara humedad. Köber 2017 tampoco la mide: su Tabla 1 es de hueso y cartílago.",
   "hueco_verificado": {
    "lisina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto («Yeast, brewer» y «Leavening agents, yeast»: USDA no tiene levadura de CERVEZA (solo de panadero, que es otro producto)).",
    "metionina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto («Yeast, brewer» y «Leavening agents, yeast»: USDA no tiene levadura de CERVEZA (solo de panadero, que es otro producto)).",
@@ -730,16 +734,24 @@
    "fenilalanina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto («Yeast, brewer» y «Leavening agents, yeast»: USDA no tiene levadura de CERVEZA (solo de panadero, que es otro producto)).",
    "tirosina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto («Yeast, brewer» y «Leavening agents, yeast»: USDA no tiene levadura de CERVEZA (solo de panadero, que es otro producto)).",
    "arginina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto («Yeast, brewer» y «Leavening agents, yeast»: USDA no tiene levadura de CERVEZA (solo de panadero, que es otro producto))."
+  },
+  "humedad_g_100g": 7.0,
+  "humedad_fuente": "etiqueta del fabricante (grau-generationpet.de) · «Feuchte 7,0 %»",
+  "composicion_fuente": {
+   "energia": "etiqueta:grau_bierhefe_pulver · «Rohprotein 46,0 %, Fettgehalt 2,7 %, Rohfaser 1,0 %, Rohasche 8,0 %, Stärke 6,2 %, Feuchte 7,0 %» · NFE = 100-7,0-46,0-2,7-8,0-1,0 = 35,3 · FEDIAF 7.2.2.2 b): 4x46,0 + 9x2,7 + 4x35,3 = 349,5 kcal/100 g · 2026-09-15",
+   "fibra": "etiqueta:grau_bierhefe_pulver · «Rohfaser 1,0 %» · 1,0 g/100 g · 2026-09-15",
+   "grasa": "etiqueta:grau_bierhefe_pulver · «Fettgehalt 2,7 %» · 2,7 g/100 g · 2026-09-15",
+   "humedad_g_100g": "etiqueta:grau_bierhefe_pulver · «Feuchte 7,0 %» · 2026-09-15"
   }
  },
  {
   "nombre": "PAWS & PATCH Levadura de cerveza",
   "tipo": "Suplemento",
   "categoria": "Vitamina B",
-  "energia": 350,
+  "energia": 330.1,
   "nutrientes": {
    "proteina": 44,
-   "grasa": 0,
+   "grasa": 3.3,
    "dha": 0,
    "epa": 0,
    "linoleico": 0,
@@ -787,13 +799,14 @@
   },
   "dosis_fuente": "≈3 g por 10 kg de peso (dosis habitual de levadura de cerveza)",
   "dosis_g_por_kg_peso": 0.3,
-  "nota_datos": "Vitaminas del grupo B añadidas con valores típicos de levadura seca inactiva. NO lleva B12 (solo si está fortificada). ⚠️ CASO REAL ENCONTRADO (27 agosto): el folato decia 2.340 ug, que es el valor del USDA FDC 175043 «yeast, BAKER'S, active dry» — levadura de PANADERIA, no de cerveza. Factor 3,4. El resto del grupo B venia de sitios distintos (la B1 coincidia con CIQUAL, la B6 no). Todo el bloque B se toma ahora de UNA sola procedencia, CIQUAL 11009 «Levure alimentaire»: folatos 697 · B1 11,6 · B3 18,5 · B5 5,14 · B2 1,0 · B6 0,88 · B12 0,34. Un folato sobreestimado es la direccion que hace dano: el motor lo da por cubierto y deja de buscarlo. Yodo 0: NO es un hueco, es una AUSENCIA MEDIDA. CIQUAL 11009 lo analizo y salio por debajo del limite de cuantificacion (< 20 ug/100 g). La levadura de cerveza no es fuente de yodo. Por eso sale de sin_dato: no es que nadie lo haya mirado, es que se miro y no hay. Los cinco minerales (Ca 130 · P 1.100 · K 1.700 · Na 141 · Mg 150) se anaden desde CIQUAL 11009. Las dos filas de levadura se construyeron con «valores tipicos de levadura seca inactiva», pero solo GRAU los traia: o los llevan las dos o no los lleva ninguna. ⚠️ 13 sep 2026: lcarnitina estaba(n) declarado(s) en `sin_dato` pero LA CLAVE NO EXISTÍA en `nutrientes`. Es la peor de las tres formas de esconder un hueco que describe `UNIDADES.md`: `valor_nutriente()` devuelve 0 igual que en los otros dos casos, pero NO HAY NINGÚN CERO QUE ENCONTRAR, así que ni la auditoría ni `datos_incompletos` podían decir nada. Se añade la clave a 0 —que es lo que el motor ya usaba— sin tocar ningún valor: lo único que cambia es que ahora el hueco se ve. Afectaba a 58 fichas.",
+  "nota_datos": "Vitaminas del grupo B añadidas con valores típicos de levadura seca inactiva.  ⚠️ CASO REAL ENCONTRADO (27 agosto): el folato decia 2.340 ug, que es el valor del USDA FDC 175043 «yeast, BAKER'S, active dry» — levadura de PANADERIA, no de cerveza. Factor 3,4. El resto del grupo B venia de sitios distintos (la B1 coincidia con CIQUAL, la B6 no). Todo el bloque B se toma ahora de UNA sola procedencia, CIQUAL 11009 «Levure alimentaire»: folatos 697 · B1 11,6 · B3 18,5 · B5 5,14 · B2 1,0 · B6 0,88 · B12 0,34. Un folato sobreestimado es la direccion que hace dano: el motor lo da por cubierto y deja de buscarlo. Yodo 0: NO es un hueco, es una AUSENCIA MEDIDA. CIQUAL 11009 lo analizo y salio por debajo del limite de cuantificacion (< 20 ug/100 g). La levadura de cerveza no es fuente de yodo. Por eso sale de sin_dato: no es que nadie lo haya mirado, es que se miro y no hay. Los cinco minerales (Ca 130 · P 1.100 · K 1.700 · Na 141 · Mg 150) se anaden desde CIQUAL 11009. Las dos filas de levadura se construyeron con «valores tipicos de levadura seca inactiva», pero solo GRAU los traia: o los llevan las dos o no los lleva ninguna. ⚠️ 13 sep 2026: lcarnitina estaba(n) declarado(s) en `sin_dato` pero LA CLAVE NO EXISTÍA en `nutrientes`. Es la peor de las tres formas de esconder un hueco que describe `UNIDADES.md`: `valor_nutriente()` devuelve 0 igual que en los otros dos casos, pero NO HAY NINGÚN CERO QUE ENCONTRAR, así que ni la auditoría ni `datos_incompletos` podían decir nada. Se añade la clave a 0 —que es lo que el motor ya usaba— sin tocar ningún valor: lo único que cambia es que ahora el hueco se ve. Afectaba a 58 fichas. ⚠️ CONTRADICCION INTERNA ARREGLADA EL 15-sep-2026, al revisar las etiquetas. Esta ficha decia a la vez dos cosas incompatibles: la nota afirmaba «NO lleva B12 (solo si esta fortificada)» y el mismo parrafo daba «B12 0,34» de CIQUAL 11009, con la clave `vitB12` metida ADEMAS en `sin_dato`. O sea: un valor puesto, usado por el solver, y declarado hueco al mismo tiempo -- `datos_incompletos` lo contaba como que falta mientras `valor_nutriente()` devolvia 0,34. Manda CIQUAL 11009 «Levure alimentaire», que es de donde sale TODO el bloque B de esta ficha y la unica procedencia que tiene: se queda el 0,34 y sale de `sin_dato`. La frase que sobraba era la de «no lleva», que venia de la version anterior de la ficha y no se borro al cambiar la fuente. ⚠️ Y hay que saber lo que ESTE bloque B no es: NO sale de la etiqueta de GRAU ni de la de PAWS & PATCH -- ninguna de las dos publica vitaminas --, sale de CIQUAL, que es por lo que las dos fichas llevan las mismas siete cifras. Lo que SI es de cada etiqueta son los minerales, y por eso difieren. ⚠️ ETIQUETA LEIDA EL 15-sep-2026 (pawsandpatch.de). Se anade la grasa («Rohfett 3,3 %») y la ENERGIA se rehace: 350 era un numero heredado y la etiqueta permite despejar el NFE (100-14,0-44,0-3,3-7,3-0,3 = 31,1), lo que da 330,1 kcal/100 g por la formula de FEDIAF 7.2.2.2 b). ⚠️ DOS DE SUS CIFRAS NO SON CIFRAS, son COTAS: «Rohfaser < 0,3 %» y «Feuchtigkeit <14 %». La fibra se queda en hueco declarado -- copiar el 1,0 % de la GRAU seria describir este producto con la medida de otra marca -- y la humedad se toma en su extremo ALTO, 14 %, que es el que deja MENOS materia seca y por tanto aprieta mas los siete techos legales de la UE. Y la proteina, 44 %, ya coincidia exacta: la ficha si bebio de esta etiqueta para eso.",
   "sin_dato": [
    "arginina",
    "cistina",
    "cloruro",
    "colina",
    "fenilalanina",
+   "fibra",
    "histidina",
    "isoleucina",
    "lcarnitina",
@@ -807,26 +820,32 @@
    "triptofano",
    "valina",
    "vitA",
-   "vitB12",
    "vitD",
    "vitE"
   ],
   "taurina_fuente": "Taurina = 11,2 mg/100g: Spitze et al. 2003, tabla 1, seccion de hongos/plantas, \"Yeast\" = 112 (0-337) mg/kg -> 11,2 mg/100g.",
-  "humedad_hueco": "14-sep-2026, buscar_humedad.py: no tiene fila en BEDCA, CIQUAL ni USDA (es Vitamina B, mandato 5: la etiqueta del fabricante), y la etiqueta no declara humedad. Köber 2017 tampoco la mide: su Tabla 1 es de hueso y cartílago.",
   "hueco_verificado": {
-   "lisina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto («Yeast, brewer» y «Leavening agents, yeast»: USDA no tiene levadura de CERVEZA (solo de panadero, que es otro producto)).",
-   "metionina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto («Yeast, brewer» y «Leavening agents, yeast»: USDA no tiene levadura de CERVEZA (solo de panadero, que es otro producto)).",
+   "arginina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto («Yeast, brewer» y «Leavening agents, yeast»: USDA no tiene levadura de CERVEZA (solo de panadero, que es otro producto)).",
    "cistina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto («Yeast, brewer» y «Leavening agents, yeast»: USDA no tiene levadura de CERVEZA (solo de panadero, que es otro producto)).",
-   "triptofano": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto («Yeast, brewer» y «Leavening agents, yeast»: USDA no tiene levadura de CERVEZA (solo de panadero, que es otro producto)).",
-   "treonina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto («Yeast, brewer» y «Leavening agents, yeast»: USDA no tiene levadura de CERVEZA (solo de panadero, que es otro producto)).",
+   "fenilalanina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto («Yeast, brewer» y «Leavening agents, yeast»: USDA no tiene levadura de CERVEZA (solo de panadero, que es otro producto)).",
+   "fibra": "⚠️ MIRADO EL 15-sep-2026 Y LA ETIQUETA NO DA UNA CIFRA: pone «Rohfaser < 0,3 %», que es una marca de LIMITE DE DETECCION, no un numero -- la misma familia que el `< X` de CIQUAL que ya describe `UNIDADES.md`. La otra levadura del catalogo (GRAU) SI la publica, «Rohfaser 1,0 %», pero es OTRA marca y copiar su cifra aqui seria describir este producto con la medida de otro. Queda en hueco y no en cero: contra un MINIMO el motor cuenta 0 y contra un MAXIMO le mete el percentil 90 de su familia, que es conservador en las dos direcciones; un cero mudo afirmaria «no tiene fibra» y aflojaria el techo.",
+   "histidina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto («Yeast, brewer» y «Leavening agents, yeast»: USDA no tiene levadura de CERVEZA (solo de panadero, que es otro producto)).",
    "isoleucina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto («Yeast, brewer» y «Leavening agents, yeast»: USDA no tiene levadura de CERVEZA (solo de panadero, que es otro producto)).",
    "leucina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto («Yeast, brewer» y «Leavening agents, yeast»: USDA no tiene levadura de CERVEZA (solo de panadero, que es otro producto)).",
-   "valina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto («Yeast, brewer» y «Leavening agents, yeast»: USDA no tiene levadura de CERVEZA (solo de panadero, que es otro producto)).",
-   "histidina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto («Yeast, brewer» y «Leavening agents, yeast»: USDA no tiene levadura de CERVEZA (solo de panadero, que es otro producto)).",
-   "fenilalanina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto («Yeast, brewer» y «Leavening agents, yeast»: USDA no tiene levadura de CERVEZA (solo de panadero, que es otro producto)).",
+   "lisina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto («Yeast, brewer» y «Leavening agents, yeast»: USDA no tiene levadura de CERVEZA (solo de panadero, que es otro producto)).",
+   "metionina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto («Yeast, brewer» y «Leavening agents, yeast»: USDA no tiene levadura de CERVEZA (solo de panadero, que es otro producto)).",
    "tirosina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto («Yeast, brewer» y «Leavening agents, yeast»: USDA no tiene levadura de CERVEZA (solo de panadero, que es otro producto)).",
-   "arginina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto («Yeast, brewer» y «Leavening agents, yeast»: USDA no tiene levadura de CERVEZA (solo de panadero, que es otro producto))."
-  }
+   "treonina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto («Yeast, brewer» y «Leavening agents, yeast»: USDA no tiene levadura de CERVEZA (solo de panadero, que es otro producto)).",
+   "triptofano": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto («Yeast, brewer» y «Leavening agents, yeast»: USDA no tiene levadura de CERVEZA (solo de panadero, que es otro producto)).",
+   "valina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto («Yeast, brewer» y «Leavening agents, yeast»: USDA no tiene levadura de CERVEZA (solo de panadero, que es otro producto))."
+  },
+  "composicion_fuente": {
+   "energia": "etiqueta:paws_and_patch_bierhefe · «Rohprotein 44,0 %, Rohasche 7,3 %, Rohfett 3,3 %, Rohfaser < 0,3 %, Feuchtigkeit <14 %» · NFE = 100-14,0-44,0-3,3-7,3-0,3 = 31,1 · FEDIAF 7.2.2.2 b): 4x44,0 + 9x3,3 + 4x31,1 = 330,1 kcal/100 g · 2026-09-15",
+   "grasa": "etiqueta:paws_and_patch_bierhefe · «Rohfett 3,3 %» · 3,3 g/100 g · 2026-09-15",
+   "humedad_g_100g": "etiqueta:paws_and_patch_bierhefe · «Feuchtigkeit <14 %» · cota alta · 2026-09-15"
+  },
+  "humedad_g_100g": 14.0,
+  "humedad_fuente": "etiqueta del fabricante (pawsandpatch.de) · «Feuchtigkeit <14 %» · COTA, no cifra: se toma el extremo ALTO porque es el que deja MENOS materia seca, y menos materia seca aprieta los siete techos legales de la UE, que van sobre ella"
  },
  {
   "nombre": "AniForte Seaweed Meal",
@@ -850,21 +869,21 @@
    "tiamina": 0,
    "vitB12": 0,
    "vitB6": 0,
-   "calcio": 1200.0,
+   "calcio": 0,
    "hierro": 0,
    "potasio": 0,
-   "magnesio": 800.0,
-   "sodio": 3600.0,
+   "magnesio": 0,
+   "sodio": 0,
    "fosforo": 0,
-   "yodo": 76000,
+   "yodo": 79000.0,
    "selenio": 8.4,
    "zinc": 0,
    "cobre": 0,
    "manganeso": 0,
    "acidoPantotenico": 0,
    "colina": 0,
-   "cloruro": 5540.0,
-   "fibra": 0,
+   "cloruro": 0,
+   "fibra": 8.0,
    "arginina": 0,
    "histidina": 0,
    "isoleucina": 0,
@@ -883,11 +902,13 @@
   },
   "dosis_fuente": "½ cucharadita por 10 kg de peso (etiqueta Ascophyllum/Sanadog)",
   "dosis_g_por_kg_peso": 0.1,
-  "nota_datos": "Minerales convertidos de % a mg/100g (estaban en bruto). Selenio 8,4 ug/100 g: mediana de Ascophyllum nodosum, n=24, cuartiles 4,4-9,6 (Duinker et al. 2020, Rapport fra Havforskningen 2020-44, Instituto de Investigaciones Marinas de Noruega, Tabla 7). Nutricionalmente es ruido —0,34 ug/dia en un perro de 40 kg— pero cierra el hueco. El COBRE se queda en blanco a proposito: factor 30 entre fuentes (0,20 mg/100 g en Frontiers Vet Sci 2024 frente a 0,8-6,3 en Feedipedia), porque el Ascophyllum se usa como BIOMONITOR de contaminacion por metales: acumula cobre en proporcion a lo que hay en el agua. En el alga la variable de control es el yodo, no el cobre. ⚠️ 13 sep 2026: lcarnitina, taurina estaba(n) declarado(s) en `sin_dato` pero LA CLAVE NO EXISTÍA en `nutrientes`. Es la peor de las tres formas de esconder un hueco que describe `UNIDADES.md`: `valor_nutriente()` devuelve 0 igual que en los otros dos casos, pero NO HAY NINGÚN CERO QUE ENCONTRAR, así que ni la auditoría ni `datos_incompletos` podían decir nada. Se añade la clave a 0 —que es lo que el motor ya usaba— sin tocar ningún valor: lo único que cambia es que ahora el hueco se ve. Afectaba a 58 fichas.",
+  "nota_datos": "Minerales convertidos de % a mg/100g (estaban en bruto). Selenio 8,4 ug/100 g: mediana de Ascophyllum nodosum, n=24, cuartiles 4,4-9,6 (Duinker et al. 2020, Rapport fra Havforskningen 2020-44, Instituto de Investigaciones Marinas de Noruega, Tabla 7). Nutricionalmente es ruido —0,34 ug/dia en un perro de 40 kg— pero cierra el hueco. El COBRE se queda en blanco a proposito: factor 30 entre fuentes (0,20 mg/100 g en Frontiers Vet Sci 2024 frente a 0,8-6,3 en Feedipedia), porque el Ascophyllum se usa como BIOMONITOR de contaminacion por metales: acumula cobre en proporcion a lo que hay en el agua. En el alga la variable de control es el yodo, no el cobre. ⚠️ 13 sep 2026: lcarnitina, taurina estaba(n) declarado(s) en `sin_dato` pero LA CLAVE NO EXISTÍA en `nutrientes`. Es la peor de las tres formas de esconder un hueco que describe `UNIDADES.md`: `valor_nutriente()` devuelve 0 igual que en los otros dos casos, pero NO HAY NINGÚN CERO QUE ENCONTRAR, así que ni la auditoría ni `datos_incompletos` podían decir nada. Se añade la clave a 0 —que es lo que el motor ya usaba— sin tocar ningún valor: lo único que cambia es que ahora el hueco se ve. Afectaba a 58 fichas. ⚠️ ETIQUETA REVISADA EL 15-sep-2026 (peticion de Elena: «revisa todos los suplementos, todas las etiquetas»). EL YODO DEL ALGA NO TIENE UN NUMERO: las hojas publicadas de ESTE MISMO producto dicen cuatro cosas distintas -- 339 mg/kg (fuetternundfit.de), 600 mg/kg (aniforte.de en aleman), 760 mg/kg (fressnapf.de) y 790 mg/kg (aniforte.de en ingles) --, o sea un factor 2,3 entre la mas baja y la mas alta, y DOS DE ELLAS SON LA PAGINA DEL PROPIO FABRICANTE. No es un descuido de nadie: es lo que el repo ya tiene escrito en la ficha del yoduro potasico, que el yodo del Ascophyllum varia hasta 100 veces entre lotes (Aakre et al. 2021, Food & Nutrition Research 65:7584). Se toma la MAS ALTA de las cuatro, 790 mg/kg, y eso es una decision con direccion: el yodo es uno de los cinco topes cronicos (regla 2), asi que sobreestimar lo que lleva el alga hace que el solver meta MENOS gramos, que es el lado seguro contra el techo. Es ademas coherente con el margen del 50 % que `seguridad.tope_de_yodo` ya deja cuando el menu lleva kelp, puesto el 14-sep-2026 por esto mismo.",
   "sin_dato": [
    "acidoPantotenico",
    "arginina",
+   "calcio",
    "cistina",
+   "cloruro",
    "cobre",
    "colina",
    "fenilalanina",
@@ -899,6 +920,7 @@
    "lcarnitina",
    "leucina",
    "lisina",
+   "magnesio",
    "manganeso",
    "metionina",
    "niacina",
@@ -906,6 +928,7 @@
    "proteina",
    "purinas",
    "riboflavina",
+   "sodio",
    "taurina",
    "tiamina",
    "tirosina",
@@ -919,7 +942,19 @@
    "vitE",
    "zinc"
   ],
-  "humedad_hueco": "14-sep-2026, buscar_humedad.py: no tiene fila en BEDCA, CIQUAL ni USDA (es Yodo, mandato 5: la etiqueta del fabricante), y la etiqueta no declara humedad. Köber 2017 tampoco la mide: su Tabla 1 es de hueso y cartílago."
+  "humedad_g_100g": 12.33,
+  "composicion_fuente": {
+   "fibra": "etiqueta:aniforte_seealgenmehl (aniforte.de) · «Rohfaser 8,0 %» · 8,0 g/100 g · 2026-09-15",
+   "humedad_g_100g": "etiqueta:aniforte_seealgenmehl · «Restfeuchte 12,33 %» · 2026-09-15",
+   "yodo": "etiqueta:aniforte_seealgenmehl (aniforte.de/en/products/seealgenmehl) · «Iodine 790 mg/kg» · 79.000 µg/100 g · 2026-09-15"
+  },
+  "hueco_verificado": {
+   "calcio": "⚠️ MIRADO EL 15-sep-2026 Y NO HAY CIFRA QUE SE PUEDA SOSTENER. La ficha llevaba calcio 1,2 %, magnesio 0,8 %, sodio 3,6 % y cloruro 5,54 %, que salen de una hoja de distribuidor cuya CENIZA BRUTA es 19,47 %. La etiqueta del FABRICANTE (aniforte.de, en aleman y en ingles, las dos) declara «Rohasche 11,12 %, Rohfaser 8,0 %, Restfeuchte 12,33 %» y NO PUBLICA ni calcio ni magnesio ni sodio: una ceniza de 11,12 % no puede contener el 10,1 % de minerales que sumaban esas cuatro cifras. O sea que las dos hojas no describen el mismo producto, y la del fabricante manda (mandato 5 de fuentes_de_composicion.json). Se dejan en HUECO y no en cero: un cero mudo afirmaria «no lo tiene» y aflojaria un techo. Medido antes de quitarlas: a la dosis de la etiqueta (0,5 g por 10 kg) aportaban 72 mg de sodio y 24 mg de calcio al dia en un perro de 20 kg, o sea nada.",
+   "cloruro": "⚠️ MIRADO EL 15-sep-2026 Y NO HAY CIFRA QUE SE PUEDA SOSTENER. La ficha llevaba calcio 1,2 %, magnesio 0,8 %, sodio 3,6 % y cloruro 5,54 %, que salen de una hoja de distribuidor cuya CENIZA BRUTA es 19,47 %. La etiqueta del FABRICANTE (aniforte.de, en aleman y en ingles, las dos) declara «Rohasche 11,12 %, Rohfaser 8,0 %, Restfeuchte 12,33 %» y NO PUBLICA ni calcio ni magnesio ni sodio: una ceniza de 11,12 % no puede contener el 10,1 % de minerales que sumaban esas cuatro cifras. O sea que las dos hojas no describen el mismo producto, y la del fabricante manda (mandato 5 de fuentes_de_composicion.json). Se dejan en HUECO y no en cero: un cero mudo afirmaria «no lo tiene» y aflojaria un techo. Medido antes de quitarlas: a la dosis de la etiqueta (0,5 g por 10 kg) aportaban 72 mg de sodio y 24 mg de calcio al dia en un perro de 20 kg, o sea nada.",
+   "magnesio": "⚠️ MIRADO EL 15-sep-2026 Y NO HAY CIFRA QUE SE PUEDA SOSTENER. La ficha llevaba calcio 1,2 %, magnesio 0,8 %, sodio 3,6 % y cloruro 5,54 %, que salen de una hoja de distribuidor cuya CENIZA BRUTA es 19,47 %. La etiqueta del FABRICANTE (aniforte.de, en aleman y en ingles, las dos) declara «Rohasche 11,12 %, Rohfaser 8,0 %, Restfeuchte 12,33 %» y NO PUBLICA ni calcio ni magnesio ni sodio: una ceniza de 11,12 % no puede contener el 10,1 % de minerales que sumaban esas cuatro cifras. O sea que las dos hojas no describen el mismo producto, y la del fabricante manda (mandato 5 de fuentes_de_composicion.json). Se dejan en HUECO y no en cero: un cero mudo afirmaria «no lo tiene» y aflojaria un techo. Medido antes de quitarlas: a la dosis de la etiqueta (0,5 g por 10 kg) aportaban 72 mg de sodio y 24 mg de calcio al dia en un perro de 20 kg, o sea nada.",
+   "sodio": "⚠️ MIRADO EL 15-sep-2026 Y NO HAY CIFRA QUE SE PUEDA SOSTENER. La ficha llevaba calcio 1,2 %, magnesio 0,8 %, sodio 3,6 % y cloruro 5,54 %, que salen de una hoja de distribuidor cuya CENIZA BRUTA es 19,47 %. La etiqueta del FABRICANTE (aniforte.de, en aleman y en ingles, las dos) declara «Rohasche 11,12 %, Rohfaser 8,0 %, Restfeuchte 12,33 %» y NO PUBLICA ni calcio ni magnesio ni sodio: una ceniza de 11,12 % no puede contener el 10,1 % de minerales que sumaban esas cuatro cifras. O sea que las dos hojas no describen el mismo producto, y la del fabricante manda (mandato 5 de fuentes_de_composicion.json). Se dejan en HUECO y no en cero: un cero mudo afirmaria «no lo tiene» y aflojaria un techo. Medido antes de quitarlas: a la dosis de la etiqueta (0,5 g por 10 kg) aportaban 72 mg de sodio y 24 mg de calcio al dia en un perro de 20 kg, o sea nada."
+  },
+  "humedad_fuente": "etiqueta del fabricante · Etiqueta del fabricante: «Restfeuchte 12,33 %»."
  },
  {
   "nombre": "Pavo pechuga con piel",
@@ -1356,7 +1391,6 @@
   "humedad_g_100g": 72.7,
   "humedad_fuente": "USDA FoodData Central · Turkey, whole, meat and skin, raw",
   "humedad_fdc": "171081",
-  "humedad_nota": "⚠️ NO CUADRA CON NUESTROS MACROS: agua + proteina + grasa = 101.4 g por cada 100 g de alimento, y no puede pasar de 100. Nuestra proteina y grasa no declaran fuente. La fila del USDA de la que sale esta humedad SI cuadra consigo misma (su suma de proximales esta comprobada), asi que el que sobra es uno de NUESTROS numeros, no el agua. Se deja la humedad porque es el unico dato de esta fila con procedencia escrita; lo que hay que revisar es la proteina y la grasa contra ese mismo FDC. Anotado el 5-sep-2026.",
   "fuentes_id": {
    "bedca": "2285"
   },
@@ -1902,7 +1936,6 @@
   "humedad_g_100g": 63.6,
   "humedad_fuente": "USDA FoodData Central · Fish, mackerel, Atlantic, raw",
   "humedad_fdc": "175119",
-  "humedad_nota": "La fila de USDA suma 97,45 y no 100: es propio de los pescados grasos, donde el lipido se mide como acidos grasos. El agua es el valor analizado de la propia fuente. Declarado, no corregido.",
   "fuentes_id": {
    "usda": "175119"
   },
@@ -5593,7 +5626,6 @@
   "humedad_g_100g": 61.8,
   "humedad_fuente": "USDA FoodData Central · Chicken, stewing, meat and skin, raw",
   "humedad_fdc": "172400",
-  "humedad_nota": "La fila USDA es 'meat and skin'. Nuestra ficha dice CARNE DESHUESADA. Si la nuestra es carne sin piel, esta humedad (61,8) no vale: la de 'stewing, meat only, raw' es distinta. Verificar.",
   "fuentes_id": {
    "usda": "172400"
   },
@@ -6023,7 +6055,6 @@
   "humedad_g_100g": 69.2,
   "humedad_fuente": "USDA FoodData Central · Chicken, broilers or fryers, wing, meat and skin, raw",
   "humedad_fdc": "172390",
-  "humedad_nota": "⚠️ NO CUADRA CON NUESTROS MACROS: agua + proteina + grasa = 103.5 g por cada 100 g de alimento, y no puede pasar de 100. Nuestra proteina y grasa no declaran fuente. Es el mayor de los cuatro. La fila del USDA de la que sale esta humedad SI cuadra consigo misma (su suma de proximales esta comprobada), asi que el que sobra es uno de NUESTROS numeros, no el agua. Se deja la humedad porque es el unico dato de esta fila con procedencia escrita; lo que hay que revisar es la proteina y la grasa contra ese mismo FDC. Anotado el 5-sep-2026.",
   "fuentes_id": {
    "usda": "172390"
   },
@@ -11670,7 +11701,7 @@
   "nombre": "Homemadekun (multivitamínico completo)",
   "tipo": "Suplemento",
   "categoria": "Multivitamínico",
-  "energia": 0,
+  "energia": 90.8,
   "nutrientes": {
    "proteina": 16.5,
    "grasa": 2.76,
@@ -11681,7 +11712,7 @@
    "araquidonico": 0,
    "vitA": 3560,
    "vitD": 46.9,
-   "vitE": 625,
+   "vitE": 419.5,
    "folato": 1400,
    "niacina": 31.3,
    "riboflavina": 10.6,
@@ -11699,10 +11730,10 @@
    "zinc": 187.5,
    "cobre": 10.4,
    "manganeso": 8.4,
-   "acidoPantotenico": 20.5,
-   "colina": 2875,
+   "acidoPantotenico": 18.86,
+   "colina": 2156.25,
    "cloruro": 0,
-   "fibra": 0,
+   "fibra": 1.44,
    "arginina": 0,
    "histidina": 0,
    "isoleucina": 0,
@@ -11757,7 +11788,7 @@
    "triptofano",
    "valina"
   ],
-  "nota_datos": " ⚠️ 13 sep 2026: lcarnitina, taurina estaba(n) declarado(s) en `sin_dato` pero LA CLAVE NO EXISTÍA en `nutrientes`. Es la peor de las tres formas de esconder un hueco que describe `UNIDADES.md`: `valor_nutriente()` devuelve 0 igual que en los otros dos casos, pero NO HAY NINGÚN CERO QUE ENCONTRAR, así que ni la auditoría ni `datos_incompletos` podían decir nada. Se añade la clave a 0 —que es lo que el motor ya usaba— sin tocar ningún valor: lo único que cambia es que ahora el hueco se ve. Afectaba a 58 fichas.",
+  "nota_datos": "⚠️ 13 sep 2026: lcarnitina, taurina estaba(n) declarado(s) en `sin_dato` pero LA CLAVE NO EXISTÍA en `nutrientes`. Es la peor de las tres formas de esconder un hueco que describe `UNIDADES.md`: `valor_nutriente()` devuelve 0 igual que en los otros dos casos, pero NO HAY NINGÚN CERO QUE ENCONTRAR, así que ni la auditoría ni `datos_incompletos` podían decir nada. Se añade la clave a 0 —que es lo que el motor ya usaba— sin tocar ningún valor: lo único que cambia es que ahora el hueco se ve. Afectaba a 58 fichas. ⚠️ ETIQUETA REVISADA UNA A UNA EL 15-sep-2026, a peticion de Elena («me gustaria que revisaras todos los suplementos tambien, todas las etiquetas, igual que hemos hecho con el catalogo»). CINCO CELDAS CAMBIADAS. La vitamina E venia como 625 leyendo «6 250 UI/kg» como si fueran miligramos: son UNIDADES DE ACTIVIDAD, y la celda del catalogo va en mg de d-alfa-tocoferol (asi esta escrito el mínimo de FEDIAF que aplica el motor), o sea 419,5. El cloruro de colina y el D-pantotenato calcico son SALES y estaban anotados como si fueran la vitamina: x0,75 y x0,92 de la Tabla VII-14. Y faltaban dos cifras que la etiqueta SI publica: la fibra bruta (1,44 %) y de que la energia se pueda calcular (90,8 kcal/100 g).",
   "humedad_hueco": "14-sep-2026, buscar_humedad.py: no tiene fila en BEDCA, CIQUAL ni USDA (es Multivitamínico, mandato 5: la etiqueta del fabricante), y la etiqueta no declara humedad. Köber 2017 tampoco la mide: su Tabla 1 es de hueso y cartílago.",
   "hueco_verificado": {
    "lisina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto. Es un preparado de marca, no un alimento.",
@@ -11772,13 +11803,20 @@
    "fenilalanina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto. Es un preparado de marca, no un alimento.",
    "tirosina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto. Es un preparado de marca, no un alimento.",
    "arginina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto. Es un preparado de marca, no un alimento."
+  },
+  "composicion_fuente": {
+   "acidoPantotenico": "etiqueta:homemadekun · «D-pantotenato de calcio – 205 mg/kg» · 20,5 mg/100 g × 0,92 (FEDIAF VII-14) → 18,86 mg · 2026-09-15",
+   "colina": "etiqueta:homemadekun · «Cloruro de colina – 28 750 mg/kg» · 2875 mg/100 g × 0,75 (FEDIAF VII-14) → 2156,25 mg · 2026-09-15",
+   "energia": "etiqueta:homemadekun · «Proteína bruta 16.50%» + «Grasa bruta 2.76%» · FEDIAF 7.2.2.2 b): 4×16,50 + 9×2,76 = 90,8 kcal/100 g · 2026-09-15",
+   "fibra": "etiqueta:homemadekun · «Fibras brutas 1.44%» · 1,44 g/100 g · 2026-09-15",
+   "vitE": "etiqueta:homemadekun (maaupetstore.com) · «Vitamina E – 6 250 UI/kg» · 625 UI/100 g ÷ 1,49 (FEDIAF VII-14, d-α-tocoferol) → 419,5 mg · 2026-09-15"
   }
  },
  {
   "nombre": "NEKTON Dog Easy-BARF (multivitamínico)",
   "tipo": "Suplemento",
   "categoria": "Multivitamínico",
-  "energia": 0,
+  "energia": 39.6,
   "nutrientes": {
    "proteina": 1.8,
    "grasa": 3.6,
@@ -11789,13 +11827,13 @@
    "araquidonico": 0,
    "vitA": 4805,
    "vitD": 50,
-   "vitE": 200,
+   "vitE": 134.2,
    "folato": 960,
    "niacina": 50,
    "riboflavina": 17.6,
    "tiamina": 8,
    "vitB12": 120,
-   "vitB6": 32,
+   "vitB6": 26.24,
    "calcio": 16100,
    "hierro": 187.2,
    "potasio": 0,
@@ -11807,10 +11845,10 @@
    "zinc": 120,
    "cobre": 6.5,
    "manganeso": 14.4,
-   "acidoPantotenico": 50,
-   "colina": 1200,
+   "acidoPantotenico": 46.0,
+   "colina": 900.0,
    "cloruro": 0,
-   "fibra": 0,
+   "fibra": 4.6,
    "arginina": 0,
    "histidina": 0,
    "isoleucina": 0,
@@ -11830,7 +11868,7 @@
   "dosis_fuente": "Etiqueta NEKTON: 1 cucharadita (~4,5 g) por 10 kg de peso, máximo 6 cucharaditas/día. El fabricante limita además a un 10% de la ración diaria por su contenido en vitamina D y oligoelementos.",
   "dosis_g_por_kg_peso": 0.45,
   "dosis_max_absoluta_g": 27.0,
-  "nota_datos": "Vitaminas verificadas una a una contra la etiqueta (coinciden exactas). Minerales añadidos de la etiqueta (Ca 16.1%, P 0.1%, Na 7.0%). ⚠️ 13 sep 2026: lcarnitina, taurina estaba(n) declarado(s) en `sin_dato` pero LA CLAVE NO EXISTÍA en `nutrientes`. Es la peor de las tres formas de esconder un hueco que describe `UNIDADES.md`: `valor_nutriente()` devuelve 0 igual que en los otros dos casos, pero NO HAY NINGÚN CERO QUE ENCONTRAR, así que ni la auditoría ni `datos_incompletos` podían decir nada. Se añade la clave a 0 —que es lo que el motor ya usaba— sin tocar ningún valor: lo único que cambia es que ahora el hueco se ve. Afectaba a 58 fichas.",
+  "nota_datos": "Vitaminas verificadas una a una contra la etiqueta (coinciden exactas). Minerales añadidos de la etiqueta (Ca 16.1%, P 0.1%, Na 7.0%). ⚠️ 13 sep 2026: lcarnitina, taurina estaba(n) declarado(s) en `sin_dato` pero LA CLAVE NO EXISTÍA en `nutrientes`. Es la peor de las tres formas de esconder un hueco que describe `UNIDADES.md`: `valor_nutriente()` devuelve 0 igual que en los otros dos casos, pero NO HAY NINGÚN CERO QUE ENCONTRAR, así que ni la auditoría ni `datos_incompletos` podían decir nada. Se añade la clave a 0 —que es lo que el motor ya usaba— sin tocar ningún valor: lo único que cambia es que ahora el hueco se ve. Afectaba a 58 fichas. ⚠️ ETIQUETA REVISADA UNA A UNA EL 15-sep-2026, a peticion de Elena («me gustaria que revisaras todos los suplementos tambien, todas las etiquetas, igual que hemos hecho con el catalogo»). SEIS CELDAS. Colina, pantotenico y B6 estaban anotados con el peso de la SAL (cloruro de colina, D-pantotenato calcico, clorhidrato de piridoxina). Faltaban la fibra (4,6 %) y la energia (39,6 kcal/100 g), que la etiqueta publica. ⚠️ Y LA VITAMINA E LLEVA UN SUPUESTO: la etiqueta pone «2.000 mg Vitamin E» y NO dice la forma quimica, asi que se toma el aditivo autorizado que se declara asi (3a700, all-rac-alfa-tocoferil acetato, 1 mg = 1 UI). Si el fabricante confirma otra forma, la cifra cambia. Va escrito y no dado por hecho.",
   "sin_dato": [
    "arginina",
    "cistina",
@@ -11866,6 +11904,14 @@
    "fenilalanina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto. Es un preparado de marca, no un alimento.",
    "tirosina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto. Es un preparado de marca, no un alimento.",
    "arginina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto. Es un preparado de marca, no un alimento."
+  },
+  "composicion_fuente": {
+   "acidoPantotenico": "etiqueta:nekton_dog_easy_barf · «500 mg Calcium-D-Pantothenat» /kg · 50 × 0,92 → 46 mg · 2026-09-15",
+   "colina": "etiqueta:nekton_dog_easy_barf · «12.000 mg Cholinchlorid» /kg · 1200 × 0,75 → 900 mg · 2026-09-15",
+   "energia": "etiqueta:nekton_dog_easy_barf · «Rohprotein 1,8 %» + «Rohfett 3,6 %» · 4×1,8 + 9×3,6 = 39,6 kcal/100 g · 2026-09-15",
+   "fibra": "etiqueta:nekton_dog_easy_barf · «Rohfaser 4,6 %» · 4,6 g/100 g · 2026-09-15",
+   "vitB6": "etiqueta:nekton_dog_easy_barf · «320 mg Vitamin B6 (Pyridoxinhydrochlorid)» /kg · 32 × 0,82 → 26,24 mg · 2026-09-15",
+   "vitE": "etiqueta:nekton_dog_easy_barf · «2.000 mg Vitamin E» /kg, SIN forma química · supuesto 3a700 all-rac-α-tocoferil acetato (1 mg = 1 UI) → 200 UI/100 g ÷ 1,49 → 134,2 mg · 2026-09-15"
   }
  },
  {
@@ -12150,7 +12196,7 @@
   "energia": 0,
   "dosis_g_por_kg_peso": 0.3,
   "fuente": "Etiqueta del fabricante, napfcheck-shop.de. Constituyentes analiticos y aditivos por kg.",
-  "nota_datos": "El unico del mercado europeo que declara a la vez magnesio, cloruro, selenio, manganeso, zinc, hierro y vitamina D. Se vende como apoyo hepatico pero su etiqueta es la mas completa. Vit A 240.000 UI/kg y D3 33.000 UI/kg convertidas a ug. ⚠️ 13 sep 2026: lcarnitina, taurina estaba(n) declarado(s) en `sin_dato` pero LA CLAVE NO EXISTÍA en `nutrientes`. Es la peor de las tres formas de esconder un hueco que describe `UNIDADES.md`: `valor_nutriente()` devuelve 0 igual que en los otros dos casos, pero NO HAY NINGÚN CERO QUE ENCONTRAR, así que ni la auditoría ni `datos_incompletos` podían decir nada. Se añade la clave a 0 —que es lo que el motor ya usaba— sin tocar ningún valor: lo único que cambia es que ahora el hueco se ve. Afectaba a 58 fichas.",
+  "nota_datos": "El unico del mercado europeo que declara a la vez magnesio, cloruro, selenio, manganeso, zinc, hierro y vitamina D. Se vende como apoyo hepatico pero su etiqueta es la mas completa. Vit A 240.000 UI/kg y D3 33.000 UI/kg convertidas a ug. ⚠️ 13 sep 2026: lcarnitina, taurina estaba(n) declarado(s) en `sin_dato` pero LA CLAVE NO EXISTÍA en `nutrientes`. Es la peor de las tres formas de esconder un hueco que describe `UNIDADES.md`: `valor_nutriente()` devuelve 0 igual que en los otros dos casos, pero NO HAY NINGÚN CERO QUE ENCONTRAR, así que ni la auditoría ni `datos_incompletos` podían decir nada. Se añade la clave a 0 —que es lo que el motor ya usaba— sin tocar ningún valor: lo único que cambia es que ahora el hueco se ve. Afectaba a 58 fichas. ⚠️ ETIQUETA REVISADA UNA A UNA EL 15-sep-2026, a peticion de Elena («me gustaria que revisaras todos los suplementos tambien, todas las etiquetas, igual que hemos hecho con el catalogo»). SIETE CELDAS. La peor era el FOLATO: la etiqueta pone «Folsaure: 20 mg» por kg, que son 2000 ug/100 g, y la ficha llevaba un 2 -- la cifra en miligramos dentro de una celda que va en microgramos, o sea MIL VECES POR DEBAJO. Colina, pantotenico, B1 y B6 estaban con el peso de la sal. Y la etiqueta declara «Taurin: 30.000 mg» y «L-Carnitin: 35.000 mg» por kg, que estaban las dos como hueco. ⚠️ La vitamina E SE QUEDA en 600: la etiqueta pone «Vitamin E naturlichen Ursprungs: 6.000 mg», o sea el PESO del d-alfa-tocoferol natural, que es ya la unidad del catalogo.",
   "nutrientes": {
    "proteina": 0,
    "grasa": 0,
@@ -12169,14 +12215,14 @@
    "vitA": 7200,
    "vitD": 82.5,
    "vitE": 600,
-   "tiamina": 20,
+   "tiamina": 16.2,
    "riboflavina": 60,
-   "vitB6": 10,
+   "vitB6": 8.2,
    "vitB12": 1200,
    "niacina": 100,
-   "acidoPantotenico": 150,
-   "folato": 2,
-   "colina": 2500,
+   "acidoPantotenico": 138.0,
+   "folato": 2000.0,
+   "colina": 1875.0,
    "dha": 0,
    "epa": 0,
    "linoleico": 0,
@@ -12196,8 +12242,8 @@
    "triptofano": 0,
    "valina": 0,
    "purinas": 0,
-   "lcarnitina": 0,
-   "taurina": 0
+   "lcarnitina": 3500.0,
+   "taurina": 3000.0
   },
   "sin_dato": [
    "arginina",
@@ -12205,26 +12251,33 @@
    "fenilalanina",
    "histidina",
    "isoleucina",
-   "lcarnitina",
    "leucina",
    "lisina",
    "metionina",
    "purinas",
-   "taurina",
    "tirosina",
    "treonina",
    "triptofano",
    "valina"
   ],
-  "humedad_hueco": "14-sep-2026, buscar_humedad.py: no tiene fila en BEDCA, CIQUAL ni USDA (es Multivitamínico, mandato 5: la etiqueta del fabricante), y la etiqueta no declara humedad. Köber 2017 tampoco la mide: su Tabla 1 es de hueso y cartílago."
+  "humedad_hueco": "14-sep-2026, buscar_humedad.py: no tiene fila en BEDCA, CIQUAL ni USDA (es Multivitamínico, mandato 5: la etiqueta del fabricante), y la etiqueta no declara humedad. Köber 2017 tampoco la mide: su Tabla 1 es de hueso y cartílago.",
+  "composicion_fuente": {
+   "acidoPantotenico": "etiqueta:napfcheck_novomineral_proleber · «Calcium-D-Pantothenat: 1.500 mg» /kg · 150 × 0,92 → 138 mg · 2026-09-15",
+   "colina": "etiqueta:napfcheck_novomineral_proleber · «Cholinchlorid: 25.000 mg» /kg · 2500 × 0,75 → 1875 mg · 2026-09-15",
+   "folato": "etiqueta:napfcheck_novomineral_proleber (napfcheck-shop.de) · «Folsäure: 20 mg» /kg · 2 mg/100 g = 2000 µg/100 g · 2026-09-15",
+   "lcarnitina": "etiqueta:napfcheck_novomineral_proleber · «L-Carnitin: 35.000 mg» /kg · 3500 mg/100 g · 2026-09-15",
+   "taurina": "etiqueta:napfcheck_novomineral_proleber · «Taurin: 30.000 mg» /kg · 3000 mg/100 g · 2026-09-15",
+   "tiamina": "etiqueta:napfcheck_novomineral_proleber · «Vitamin B1 (als Thiaminmononitrat): 200 mg» /kg · 20 × 0,81 → 16,2 mg · 2026-09-15",
+   "vitB6": "etiqueta:napfcheck_novomineral_proleber · «Vitamin B6 (als Pyridoxinhydrochlorid): 100 mg» /kg · 10 × 0,82 → 8,2 mg · 2026-09-15"
+  }
  },
  {
   "nombre": "astoral MultiVital BARF",
   "categoria": "Multivitamínico",
-  "energia": 0,
+  "energia": 129.3,
   "dosis_g_por_kg_peso": 0.05,
   "fuente": "Etiqueta del fabricante almapharm (via fuetternundfit.de). Dosis 0,5 g/10 kg; MAXIMA declarada 5 g/10 kg.",
-  "nota_datos": "El que mas magnesio declara (5,5%). NO declara selenio ni vitaminas A ni D. ⚠️ 13 sep 2026: lcarnitina, taurina estaba(n) declarado(s) en `sin_dato` pero LA CLAVE NO EXISTÍA en `nutrientes`. Es la peor de las tres formas de esconder un hueco que describe `UNIDADES.md`: `valor_nutriente()` devuelve 0 igual que en los otros dos casos, pero NO HAY NINGÚN CERO QUE ENCONTRAR, así que ni la auditoría ni `datos_incompletos` podían decir nada. Se añade la clave a 0 —que es lo que el motor ya usaba— sin tocar ningún valor: lo único que cambia es que ahora el hueco se ve. Afectaba a 58 fichas.",
+  "nota_datos": "El que mas magnesio declara (5,5%). NO declara selenio ni vitaminas A ni D. ⚠️ 13 sep 2026: lcarnitina, taurina estaba(n) declarado(s) en `sin_dato` pero LA CLAVE NO EXISTÍA en `nutrientes`. Es la peor de las tres formas de esconder un hueco que describe `UNIDADES.md`: `valor_nutriente()` devuelve 0 igual que en los otros dos casos, pero NO HAY NINGÚN CERO QUE ENCONTRAR, así que ni la auditoría ni `datos_incompletos` podían decir nada. Se añade la clave a 0 —que es lo que el motor ya usaba— sin tocar ningún valor: lo único que cambia es que ahora el hueco se ve. Afectaba a 58 fichas. ⚠️ ETIQUETA REVISADA UNA A UNA EL 15-sep-2026, a peticion de Elena («me gustaria que revisaras todos los suplementos tambien, todas las etiquetas, igual que hemos hecho con el catalogo»). SEIS CELDAS, y esta etiqueta es la mejor de todas las revisadas porque da el NUMERO E de cada aditivo: 3a700 (rrr-alfa-tocoferil acetato), 3a821 (mononitrato de tiamina), 3a831 (clorhidrato de piridoxina), 3a841 (D-pantotenato calcico). Los cuatro estaban anotados con el peso de la sal o del ester. Faltaban tambien la fibra (1,3 %) y la energia (129,3 kcal/100 g).",
   "nutrientes": {
    "proteina": 24.9,
    "grasa": 3.3,
@@ -12239,18 +12292,18 @@
    "zinc": 800,
    "manganeso": 100,
    "yodo": 20000,
-   "vitE": 500,
-   "tiamina": 50,
+   "vitE": 456.4,
+   "tiamina": 40.5,
    "riboflavina": 100,
-   "vitB6": 20,
+   "vitB6": 16.4,
    "vitB12": 500,
-   "acidoPantotenico": 300,
+   "acidoPantotenico": 276.0,
    "dha": 0,
    "epa": 0,
    "linoleico": 0,
    "linolenico": 0,
    "araquidonico": 0,
-   "fibra": 0,
+   "fibra": 1.3,
    "selenio": 0,
    "vitA": 0,
    "vitD": 0,
@@ -12310,16 +12363,24 @@
    "fenilalanina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto. Es un preparado de marca, no un alimento.",
    "tirosina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto. Es un preparado de marca, no un alimento.",
    "arginina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto. Es un preparado de marca, no un alimento."
+  },
+  "composicion_fuente": {
+   "acidoPantotenico": "etiqueta:almapharm_astoral_multivital_barf · «Calcium-D-Pantothenat (3a841) 3000 mg» /kg · 300 × 0,92 → 276 mg · 2026-09-15",
+   "energia": "etiqueta:almapharm_astoral_multivital_barf · «Protein 24,9 %» + «Fettgehalt 3,3 %» · 4×24,9 + 9×3,3 = 129,3 kcal/100 g · 2026-09-15",
+   "fibra": "etiqueta:almapharm_astoral_multivital_barf · «Rohfaser 1,3 %» · 1,3 g/100 g · 2026-09-15",
+   "tiamina": "etiqueta:almapharm_astoral_multivital_barf · «Vitamin B1 (3a821) 500 mg» /kg (mononitrato) · 50 × 0,81 → 40,5 mg · 2026-09-15",
+   "vitB6": "etiqueta:almapharm_astoral_multivital_barf · «Vitamin B6 / Pyridoxinhydrochlorid (3a831) 200 mg» /kg · 20 × 0,82 → 16,4 mg · 2026-09-15",
+   "vitE": "etiqueta:almapharm_astoral_multivital_barf · «Vitamin E / rrr-alpha-Tocopherylacetat (3a700) 5000 mg» /kg · 500 mg/100 g × 1,36 UI/mg = 680 UI ÷ 1,49 → 456,4 mg · 2026-09-15"
   }
  },
  {
   "nombre": "V-INTEGRA Perro Adulto",
   "categoria": "Multivitamínico",
-  "energia": 0,
+  "energia": 46.6,
   "dosis_g_por_kg_peso": 0.4,
   "dosis_max_absoluta_g": 25,
   "fuente": "Etiqueta del fabricante Vetekipp (via vetropia.com, Espana). Formulado por nutricionistas de la Universidad de Padua.",
-  "nota_datos": "SE VENDE EN ESPANA. Oligoelementos QUELATADOS (mejor absorcion). NO declara cloruro: lo lleva como cloruro sodico ingrediente pero no publica cuanto. Vit A 250.000 UI/kg y D3 25.000 UI/kg convertidas a ug. ⚠️ 13 sep 2026: lcarnitina, taurina estaba(n) declarado(s) en `sin_dato` pero LA CLAVE NO EXISTÍA en `nutrientes`. Es la peor de las tres formas de esconder un hueco que describe `UNIDADES.md`: `valor_nutriente()` devuelve 0 igual que en los otros dos casos, pero NO HAY NINGÚN CERO QUE ENCONTRAR, así que ni la auditoría ni `datos_incompletos` podían decir nada. Se añade la clave a 0 —que es lo que el motor ya usaba— sin tocar ningún valor: lo único que cambia es que ahora el hueco se ve. Afectaba a 58 fichas.",
+  "nota_datos": "SE VENDE EN ESPANA. Oligoelementos QUELATADOS (mejor absorcion). NO declara cloruro: lo lleva como cloruro sodico ingrediente pero no publica cuanto. Vit A 250.000 UI/kg y D3 25.000 UI/kg convertidas a ug. ⚠️ 13 sep 2026: lcarnitina, taurina estaba(n) declarado(s) en `sin_dato` pero LA CLAVE NO EXISTÍA en `nutrientes`. Es la peor de las tres formas de esconder un hueco que describe `UNIDADES.md`: `valor_nutriente()` devuelve 0 igual que en los otros dos casos, pero NO HAY NINGÚN CERO QUE ENCONTRAR, así que ni la auditoría ni `datos_incompletos` podían decir nada. Se añade la clave a 0 —que es lo que el motor ya usaba— sin tocar ningún valor: lo único que cambia es que ahora el hueco se ve. Afectaba a 58 fichas. ⚠️ ETIQUETA REVISADA UNA A UNA EL 15-sep-2026, a peticion de Elena («me gustaria que revisaras todos los suplementos tambien, todas las etiquetas, igual que hemos hecho con el catalogo»). CINCO O SEIS CELDAS, y las mismas en las cinco de la gama. (1) El FOLATO llevaba la cifra de la etiqueta en MILIGRAMOS dentro de una celda que va en MICROGRAMOS (UNIDADES.md): mil veces por debajo. (2) El «cloruro di colina» es la SAL y estaba anotado como colina: x0,75 de la Tabla VII-14 de FEDIAF. (3) Lo mismo el «calcio D-pantotenato»: x0,92. (4) La TAURINA la declara la etiqueta en sus aditivos nutricionales -- entre 25.000 y 40.000 mg/kg, que no es poco -- y estaba puesta como hueco. (5) La ENERGIA estaba a 0 teniendo la etiqueta la proteina y la grasa brutas. (6) Y se anade la HUMEDAD, que hace falta desde el 15-sep-2026 para los siete maximos legales de la UE, que van sobre materia seca. ⚠️ LA VITAMINA E NO VUELVE: se comprobo en las cinco etiquetas y en NINGUNA aparece como aditivo NUTRICIONAL; lo que hay es una linea de aditivos TECNOLOGICOS («antiossidanti X mg di cui estratti di origine naturale ricchi in tocoferolo Y mg»), que es un conservante del propio polvo, y de ahi salia el numero que llevaba la ficha.",
   "nutrientes": {
    "proteina": 5.8,
    "grasa": 2.6,
@@ -12336,15 +12397,15 @@
    "selenio": 150,
    "vitA": 7500,
    "vitD": 62.5,
-   "vitE": 238,
+   "vitE": 0,
    "tiamina": 7.5,
    "riboflavina": 25,
    "vitB6": 5,
    "vitB12": 150,
    "niacina": 50,
-   "acidoPantotenico": 45,
-   "folato": 1,
-   "colina": 5500,
+   "acidoPantotenico": 41.4,
+   "folato": 1000.0,
+   "colina": 4125.0,
    "dha": 0,
    "epa": 0,
    "linoleico": 0,
@@ -12366,7 +12427,7 @@
    "valina": 0,
    "purinas": 0,
    "lcarnitina": 0,
-   "taurina": 0
+   "taurina": 2500.0
   },
   "sin_dato": [
    "arginina",
@@ -12380,13 +12441,12 @@
    "lisina",
    "metionina",
    "purinas",
-   "taurina",
    "tirosina",
    "treonina",
    "triptofano",
-   "valina"
+   "valina",
+   "vitE"
   ],
-  "humedad_hueco": "14-sep-2026, buscar_humedad.py: no tiene fila en BEDCA, CIQUAL ni USDA (es Multivitamínico, mandato 5: la etiqueta del fabricante), y la etiqueta no declara humedad. Köber 2017 tampoco la mide: su Tabla 1 es de hueso y cartílago.",
   "hueco_verificado": {
    "lisina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto. Es un preparado de marca, no un alimento.",
    "metionina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto. Es un preparado de marca, no un alimento.",
@@ -12399,8 +12459,19 @@
    "histidina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto. Es un preparado de marca, no un alimento.",
    "fenilalanina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto. Es un preparado de marca, no un alimento.",
    "tirosina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto. Es un preparado de marca, no un alimento.",
-   "arginina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto. Es un preparado de marca, no un alimento."
-  }
+   "arginina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto. Es un preparado de marca, no un alimento.",
+   "vitE": "⚠️ SU ETIQUETA NO DECLARA VITAMINA E COMO ADITIVO NUTRICIONAL (15-sep-2026). Lo que habia aqui era la cifra de los ADITIVOS TECNOLOGICOS: «antiossidanti X mg (di cui estratti di origine naturale ricchi in tocoferolo Y mg)», y el numero escrito era Y/10 clavado en las CINCO fichas de la familia (Adulto 2.380 -> 238 · Cachorro 2.206 -> 220,6 · Senior 6.700 -> 670 · Epato 6.000 -> 600 · Renal 6.700 -> 670). || POR QUE NO VALE, y son dos motivos: (1) es un CONSERVANTE, esta ahi para que no se oxide la grasa del producto, no para aportar un nutriente; (2) la cifra es la masa del EXTRACTO, no la del alfa-tocoferol -- un extracto rico en tocoferoles es una mezcla de alfa, beta, gamma y delta, y el gamma tiene CIEN VECES menos actividad que el alfa (FEDIAF Tabla VII-14). O sea que no se puede saber cuanta vitamina E ACTIVA lleva. || MEDIDO ANTES DE QUITARLO: de la vitamina E de un menu, entre el 14 % y el 82 % la ponia este numero. Quitandolo, el adulto, el senior y el toy pasan a 114-167 mg/1000 kcal --por encima del suelo de 67,1-- porque el solver se va a las fuentes de vitamina E de verdad que entraron al catalogo ese mismo dia. O sea que el suelo del perro sano NO se sostenia en esto. || Es hueco y no cero: el producto SI lleva tocoferoles, lo que no se sabe es cuantos. Un hueco cuenta 0 contra un minimo y el percentil 90 de su familia contra un maximo, que es conservador por los dos lados."
+  },
+  "humedad_g_100g": 1.9,
+  "composicion_fuente": {
+   "acidoPantotenico": "etiqueta:vintegra_cane_adulto · «Calcio D-pantotenato 450 mg» /kg × 0,92 (FEDIAF VII-14) → 41.40 mg · 2026-09-15",
+   "colina": "etiqueta:vintegra_cane_adulto · «Cloruro di colina 55.000 mg» /kg × 0,75 (FEDIAF VII-14) → 4125.0 mg · 2026-09-15",
+   "energia": "etiqueta:vintegra_cane_adulto · «proteina grezza 5,8 %» + «oli e grassi grezzi 2,6 %» · FEDIAF 7.2.2.2 b) → 46.6 kcal/100 g · 2026-09-15",
+   "folato": "etiqueta:vintegra_cane_adulto · «Acido folico 10 mg» /kg · 1000.0 µg/100 g · 2026-09-15",
+   "humedad_g_100g": "etiqueta:vintegra_cane_adulto · «umidità 1.9 %» · 2026-09-15",
+   "taurina": "etiqueta:vintegra_cane_adulto · «Taurina 25.000 mg» /kg · 2500 mg/100 g · 2026-09-15"
+  },
+  "humedad_fuente": "etiqueta del fabricante · Etiqueta, componenti analitici: «umidita 1.9%»."
  },
  {
   "nombre": "Sal común (cloruro sódico)",
@@ -12493,8 +12564,7 @@
   "taurina_fuente": "Taurina = 0: compuesto quimico inorganico puro, sin materia organica.",
   "lcarnitina_fuente": "L-carnitina = 0: compuesto quimico inorganico puro, sin materia organica.",
   "humedad_g_100g": 0.0,
-  "humedad_fuente": "composicion quimica · ",
-  "humedad_nota": "NaCl puro: 39,3 % sodio y 60,7 % cloruro por definicion. Sin agua de constitucion."
+  "humedad_fuente": "composicion quimica · "
  },
  {
   "nombre": "Yoduro potásico (comprimidos 200 µg)",
@@ -12573,20 +12643,20 @@
  {
   "nombre": "Nutratop Vitamínico-Mineral 7:1",
   "categoria": "Multivitamínico",
-  "energia": 0,
+  "energia": 78.8,
   "dosis_g_por_kg_peso": 0.3,
   "fuente": "Etiqueta del fabricante via MAAU PetStore (maaupetstore.com), Espana. 'Yodo (E2)(Yodato de calcio anhidro) 37 mg' por kg.",
-  "nota_datos": "SE VENDE EN ESPANA. Yodo como YODATO CALCICO, contenido constante. Relacion Ca/P 7:1. La etiqueta publicada solo detalla el yodo; el resto va marcado como sin dato. ⚠️ 13 sep 2026: lcarnitina, taurina estaba(n) declarado(s) en `sin_dato` pero LA CLAVE NO EXISTÍA en `nutrientes`. Es la peor de las tres formas de esconder un hueco que describe `UNIDADES.md`: `valor_nutriente()` devuelve 0 igual que en los otros dos casos, pero NO HAY NINGÚN CERO QUE ENCONTRAR, así que ni la auditoría ni `datos_incompletos` podían decir nada. Se añade la clave a 0 —que es lo que el motor ya usaba— sin tocar ningún valor: lo único que cambia es que ahora el hueco se ve. Afectaba a 58 fichas.",
+  "nota_datos": "SE VENDE EN ESPANA. Yodo como YODATO CALCICO, contenido constante. Relacion Ca/P 7:1. La etiqueta publicada solo detalla el yodo; el resto va marcado como sin dato. ⚠️ 13 sep 2026: lcarnitina, taurina estaba(n) declarado(s) en `sin_dato` pero LA CLAVE NO EXISTÍA en `nutrientes`. Es la peor de las tres formas de esconder un hueco que describe `UNIDADES.md`: `valor_nutriente()` devuelve 0 igual que en los otros dos casos, pero NO HAY NINGÚN CERO QUE ENCONTRAR, así que ni la auditoría ni `datos_incompletos` podían decir nada. Se añade la clave a 0 —que es lo que el motor ya usaba— sin tocar ningún valor: lo único que cambia es que ahora el hueco se ve. Afectaba a 58 fichas. ⚠️ ETIQUETA REVISADA UNA A UNA EL 15-sep-2026, a peticion de Elena («me gustaria que revisaras todos los suplementos tambien, todas las etiquetas, igual que hemos hecho con el catalogo»). La etiqueta publicada sigue detallando solo el yodo entre los aditivos, pero SI trae los componentes analiticos, que estaban sin poner: proteina bruta 17,00 %, grasas 1,20 % y fibra bruta 4,20 %. Con eso la energia deja de ser 0 y pasa a 78,8 kcal/100 g.",
   "nutrientes": {
    "yodo": 3700,
-   "proteina": 0,
-   "grasa": 0,
+   "proteina": 17.0,
+   "grasa": 1.2,
    "dha": 0,
    "epa": 0,
    "linoleico": 0,
    "linolenico": 0,
    "araquidonico": 0,
-   "fibra": 0,
+   "fibra": 4.2,
    "calcio": 0,
    "fosforo": 0,
    "potasio": 0,
@@ -12664,7 +12734,13 @@
    "vitE",
    "zinc"
   ],
-  "humedad_hueco": "14-sep-2026, buscar_humedad.py: no tiene fila en BEDCA, CIQUAL ni USDA (es Multivitamínico, mandato 5: la etiqueta del fabricante), y la etiqueta no declara humedad. Köber 2017 tampoco la mide: su Tabla 1 es de hueso y cartílago."
+  "humedad_hueco": "14-sep-2026, buscar_humedad.py: no tiene fila en BEDCA, CIQUAL ni USDA (es Multivitamínico, mandato 5: la etiqueta del fabricante), y la etiqueta no declara humedad. Köber 2017 tampoco la mide: su Tabla 1 es de hueso y cartílago.",
+  "composicion_fuente": {
+   "energia": "etiqueta:nutratop_cvm_7_1 · 4×17 + 9×1,2 = 78,8 kcal/100 g · 2026-09-15",
+   "fibra": "etiqueta:nutratop_cvm_7_1 · «Fibra Bruta 4.20%» · 4,2 g/100 g · 2026-09-15",
+   "grasa": "etiqueta:nutratop_cvm_7_1 · «Aceites y Grasas Brutas 1,20%» · 1,2 g/100 g · 2026-09-15",
+   "proteina": "etiqueta:nutratop_cvm_7_1 · «Proteína Bruta 17,00%» · 17 g/100 g · 2026-09-15"
+  }
  },
  {
   "nombre": "Molleja de pollo",
@@ -13242,11 +13318,11 @@
  {
   "nombre": "V-INTEGRA Cachorro",
   "categoria": "Multivitamínico",
-  "energia": 0,
+  "energia": 38.6,
   "dosis_g_por_kg_peso": 0.9,
   "dosis_max_absoluta_g": 40,
   "fuente": "Etiqueta del fabricante Vetekipp (shop.vetekipp.it, ficha completa en italiano). Formulado por nutricionistas de la Universidad de Padua.",
-  "nota_datos": "AÑADIDO 5 agosto: antes solo existía la version 'Perro Adulto', que se usaba tambien para cachorros por no tener otra opcion. Oligoelementos QUELATADOS. NO declara cloruro (mismo limite que el Adulto): lleva 'Sodio cloruro' como ingrediente pero no publica el % exacto de cloruro. Vit A 175.000 UI/kg y D3 17.500 UI/kg convertidas a ug. ⚠️ 13 sep 2026: lcarnitina, taurina estaba(n) declarado(s) en `sin_dato` pero LA CLAVE NO EXISTÍA en `nutrientes`. Es la peor de las tres formas de esconder un hueco que describe `UNIDADES.md`: `valor_nutriente()` devuelve 0 igual que en los otros dos casos, pero NO HAY NINGÚN CERO QUE ENCONTRAR, así que ni la auditoría ni `datos_incompletos` podían decir nada. Se añade la clave a 0 —que es lo que el motor ya usaba— sin tocar ningún valor: lo único que cambia es que ahora el hueco se ve. Afectaba a 58 fichas.",
+  "nota_datos": "AÑADIDO 5 agosto: antes solo existía la version 'Perro Adulto', que se usaba tambien para cachorros por no tener otra opcion. Oligoelementos QUELATADOS. NO declara cloruro (mismo limite que el Adulto): lleva 'Sodio cloruro' como ingrediente pero no publica el % exacto de cloruro. Vit A 175.000 UI/kg y D3 17.500 UI/kg convertidas a ug. ⚠️ 13 sep 2026: lcarnitina, taurina estaba(n) declarado(s) en `sin_dato` pero LA CLAVE NO EXISTÍA en `nutrientes`. Es la peor de las tres formas de esconder un hueco que describe `UNIDADES.md`: `valor_nutriente()` devuelve 0 igual que en los otros dos casos, pero NO HAY NINGÚN CERO QUE ENCONTRAR, así que ni la auditoría ni `datos_incompletos` podían decir nada. Se añade la clave a 0 —que es lo que el motor ya usaba— sin tocar ningún valor: lo único que cambia es que ahora el hueco se ve. Afectaba a 58 fichas. ⚠️ ETIQUETA REVISADA UNA A UNA EL 15-sep-2026, a peticion de Elena («me gustaria que revisaras todos los suplementos tambien, todas las etiquetas, igual que hemos hecho con el catalogo»). CINCO O SEIS CELDAS, y las mismas en las cinco de la gama. (1) El FOLATO llevaba la cifra de la etiqueta en MILIGRAMOS dentro de una celda que va en MICROGRAMOS (UNIDADES.md): mil veces por debajo. (2) El «cloruro di colina» es la SAL y estaba anotado como colina: x0,75 de la Tabla VII-14 de FEDIAF. (3) Lo mismo el «calcio D-pantotenato»: x0,92. (4) La TAURINA la declara la etiqueta en sus aditivos nutricionales -- entre 25.000 y 40.000 mg/kg, que no es poco -- y estaba puesta como hueco. (5) La ENERGIA estaba a 0 teniendo la etiqueta la proteina y la grasa brutas. (6) Y se anade la HUMEDAD, que hace falta desde el 15-sep-2026 para los siete maximos legales de la UE, que van sobre materia seca. ⚠️ LA VITAMINA E NO VUELVE: se comprobo en las cinco etiquetas y en NINGUNA aparece como aditivo NUTRICIONAL; lo que hay es una linea de aditivos TECNOLOGICOS («antiossidanti X mg di cui estratti di origine naturale ricchi in tocoferolo Y mg»), que es un conservante del propio polvo, y de ahi salia el numero que llevaba la ficha.",
   "nutrientes": {
    "proteina": 5.6,
    "grasa": 1.8,
@@ -13268,15 +13344,15 @@
    "vitB6": 3.5,
    "vitB12": 100,
    "niacina": 35,
-   "acidoPantotenico": 31.5,
-   "folato": 0.68,
-   "colina": 3500,
+   "acidoPantotenico": 28.98,
+   "folato": 680.0,
+   "colina": 2625.0,
    "dha": 0,
    "epa": 0,
    "linoleico": 0,
    "linolenico": 0,
    "araquidonico": 0,
-   "vitE": 220.6,
+   "vitE": 0,
    "fibra": 0,
    "cloruro": 0,
    "arginina": 0,
@@ -13293,7 +13369,7 @@
    "valina": 0,
    "purinas": 0,
    "lcarnitina": 0,
-   "taurina": 0
+   "taurina": 3996.0
   },
   "sin_dato": [
    "arginina",
@@ -13307,13 +13383,12 @@
    "lisina",
    "metionina",
    "purinas",
-   "taurina",
    "tirosina",
    "treonina",
    "triptofano",
-   "valina"
+   "valina",
+   "vitE"
   ],
-  "humedad_hueco": "14-sep-2026, buscar_humedad.py: no tiene fila en BEDCA, CIQUAL ni USDA (es Multivitamínico, mandato 5: la etiqueta del fabricante), y la etiqueta no declara humedad. Köber 2017 tampoco la mide: su Tabla 1 es de hueso y cartílago.",
   "hueco_verificado": {
    "lisina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto. Es un preparado de marca, no un alimento.",
    "metionina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto. Es un preparado de marca, no un alimento.",
@@ -13326,17 +13401,28 @@
    "histidina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto. Es un preparado de marca, no un alimento.",
    "fenilalanina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto. Es un preparado de marca, no un alimento.",
    "tirosina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto. Es un preparado de marca, no un alimento.",
-   "arginina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto. Es un preparado de marca, no un alimento."
-  }
+   "arginina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto. Es un preparado de marca, no un alimento.",
+   "vitE": "⚠️ SU ETIQUETA NO DECLARA VITAMINA E COMO ADITIVO NUTRICIONAL (15-sep-2026). Lo que habia aqui era la cifra de los ADITIVOS TECNOLOGICOS: «antiossidanti X mg (di cui estratti di origine naturale ricchi in tocoferolo Y mg)», y el numero escrito era Y/10 clavado en las CINCO fichas de la familia (Adulto 2.380 -> 238 · Cachorro 2.206 -> 220,6 · Senior 6.700 -> 670 · Epato 6.000 -> 600 · Renal 6.700 -> 670). || POR QUE NO VALE, y son dos motivos: (1) es un CONSERVANTE, esta ahi para que no se oxide la grasa del producto, no para aportar un nutriente; (2) la cifra es la masa del EXTRACTO, no la del alfa-tocoferol -- un extracto rico en tocoferoles es una mezcla de alfa, beta, gamma y delta, y el gamma tiene CIEN VECES menos actividad que el alfa (FEDIAF Tabla VII-14). O sea que no se puede saber cuanta vitamina E ACTIVA lleva. || MEDIDO ANTES DE QUITARLO: de la vitamina E de un menu, entre el 14 % y el 82 % la ponia este numero. Quitandolo, el adulto, el senior y el toy pasan a 114-167 mg/1000 kcal --por encima del suelo de 67,1-- porque el solver se va a las fuentes de vitamina E de verdad que entraron al catalogo ese mismo dia. O sea que el suelo del perro sano NO se sostenia en esto. || Es hueco y no cero: el producto SI lleva tocoferoles, lo que no se sabe es cuantos. Un hueco cuenta 0 contra un minimo y el percentil 90 de su familia contra un maximo, que es conservador por los dos lados."
+  },
+  "humedad_g_100g": 1.8,
+  "composicion_fuente": {
+   "acidoPantotenico": "etiqueta:vintegra_cane_cucciolo · «Calcio D-pantotenato 315 mg» /kg × 0,92 (FEDIAF VII-14) → 28.98 mg · 2026-09-15",
+   "colina": "etiqueta:vintegra_cane_cucciolo · «Cloruro di colina 35.000 mg» /kg × 0,75 (FEDIAF VII-14) → 2625.0 mg · 2026-09-15",
+   "energia": "etiqueta:vintegra_cane_cucciolo · «proteina grezza 5,6 %» + «oli e grassi grezzi 1,8 %» · FEDIAF 7.2.2.2 b) → 38.6 kcal/100 g · 2026-09-15",
+   "folato": "etiqueta:vintegra_cane_cucciolo · «Acido folico 6,8 mg» /kg · 680.0 µg/100 g · 2026-09-15",
+   "humedad_g_100g": "etiqueta:vintegra_cane_cucciolo · «umidità 1.8 %» · 2026-09-15",
+   "taurina": "etiqueta:vintegra_cane_cucciolo · «Taurina 39.960 mg» /kg · 3996 mg/100 g · 2026-09-15"
+  },
+  "humedad_fuente": "etiqueta del fabricante · Etiqueta, componenti analitici: «umidita 1.8%»."
  },
  {
   "nombre": "V-INTEGRA Senior",
   "categoria": "Multivitamínico",
-  "energia": 0,
+  "energia": 51.0,
   "dosis_g_por_kg_peso": 0.4,
   "dosis_max_absoluta_g": 25,
   "fuente": "Ficha oficial del fabricante Vetekipp, en espanol, pasada por la usuaria.",
-  "nota_datos": "AÑADIDO 5 agosto: antes no existia ninguna version para perros mayores. Rico en antioxidantes (vitE y vitC) para el envejecimiento, segun el fabricante. NO declara cloruro, igual que el resto de la gama. ⚠️ 13 sep 2026: lcarnitina, taurina estaba(n) declarado(s) en `sin_dato` pero LA CLAVE NO EXISTÍA en `nutrientes`. Es la peor de las tres formas de esconder un hueco que describe `UNIDADES.md`: `valor_nutriente()` devuelve 0 igual que en los otros dos casos, pero NO HAY NINGÚN CERO QUE ENCONTRAR, así que ni la auditoría ni `datos_incompletos` podían decir nada. Se añade la clave a 0 —que es lo que el motor ya usaba— sin tocar ningún valor: lo único que cambia es que ahora el hueco se ve. Afectaba a 58 fichas.",
+  "nota_datos": "AÑADIDO 5 agosto: antes no existia ninguna version para perros mayores. Rico en antioxidantes (vitE y vitC) para el envejecimiento, segun el fabricante. NO declara cloruro, igual que el resto de la gama. ⚠️ 13 sep 2026: lcarnitina, taurina estaba(n) declarado(s) en `sin_dato` pero LA CLAVE NO EXISTÍA en `nutrientes`. Es la peor de las tres formas de esconder un hueco que describe `UNIDADES.md`: `valor_nutriente()` devuelve 0 igual que en los otros dos casos, pero NO HAY NINGÚN CERO QUE ENCONTRAR, así que ni la auditoría ni `datos_incompletos` podían decir nada. Se añade la clave a 0 —que es lo que el motor ya usaba— sin tocar ningún valor: lo único que cambia es que ahora el hueco se ve. Afectaba a 58 fichas. ⚠️ ETIQUETA REVISADA UNA A UNA EL 15-sep-2026, a peticion de Elena («me gustaria que revisaras todos los suplementos tambien, todas las etiquetas, igual que hemos hecho con el catalogo»). CINCO O SEIS CELDAS, y las mismas en las cinco de la gama. (1) El FOLATO llevaba la cifra de la etiqueta en MILIGRAMOS dentro de una celda que va en MICROGRAMOS (UNIDADES.md): mil veces por debajo. (2) El «cloruro di colina» es la SAL y estaba anotado como colina: x0,75 de la Tabla VII-14 de FEDIAF. (3) Lo mismo el «calcio D-pantotenato»: x0,92. (4) La TAURINA la declara la etiqueta en sus aditivos nutricionales -- entre 25.000 y 40.000 mg/kg, que no es poco -- y estaba puesta como hueco. (5) La ENERGIA estaba a 0 teniendo la etiqueta la proteina y la grasa brutas. (6) Y se anade la HUMEDAD, que hace falta desde el 15-sep-2026 para los siete maximos legales de la UE, que van sobre materia seca. ⚠️ LA VITAMINA E NO VUELVE: se comprobo en las cinco etiquetas y en NINGUNA aparece como aditivo NUTRICIONAL; lo que hay es una linea de aditivos TECNOLOGICOS («antiossidanti X mg di cui estratti di origine naturale ricchi in tocoferolo Y mg»), que es un conservante del propio polvo, y de ahi salia el numero que llevaba la ficha.",
   "nutrientes": {
    "proteina": 6.9,
    "grasa": 2.6,
@@ -13353,15 +13439,15 @@
    "selenio": 180,
    "vitA": 7500,
    "vitD": 62.5,
-   "vitE": 670,
+   "vitE": 0,
    "tiamina": 7.5,
    "riboflavina": 25,
    "vitB6": 5,
    "vitB12": 150,
    "niacina": 50,
-   "acidoPantotenico": 45,
-   "folato": 1.0,
-   "colina": 5500,
+   "acidoPantotenico": 41.4,
+   "folato": 1000.0,
+   "colina": 4125.0,
    "dha": 0,
    "epa": 0,
    "linoleico": 0,
@@ -13383,7 +13469,7 @@
    "valina": 0,
    "purinas": 0,
    "lcarnitina": 0,
-   "taurina": 0
+   "taurina": 4000.0
   },
   "sin_dato": [
    "arginina",
@@ -13397,13 +13483,12 @@
    "lisina",
    "metionina",
    "purinas",
-   "taurina",
    "tirosina",
    "treonina",
    "triptofano",
-   "valina"
+   "valina",
+   "vitE"
   ],
-  "humedad_hueco": "14-sep-2026, buscar_humedad.py: no tiene fila en BEDCA, CIQUAL ni USDA (es Multivitamínico, mandato 5: la etiqueta del fabricante), y la etiqueta no declara humedad. Köber 2017 tampoco la mide: su Tabla 1 es de hueso y cartílago.",
   "hueco_verificado": {
    "lisina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto. Es un preparado de marca, no un alimento.",
    "metionina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto. Es un preparado de marca, no un alimento.",
@@ -13416,21 +13501,32 @@
    "histidina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto. Es un preparado de marca, no un alimento.",
    "fenilalanina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto. Es un preparado de marca, no un alimento.",
    "tirosina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto. Es un preparado de marca, no un alimento.",
-   "arginina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto. Es un preparado de marca, no un alimento."
-  }
+   "arginina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto. Es un preparado de marca, no un alimento.",
+   "vitE": "⚠️ SU ETIQUETA NO DECLARA VITAMINA E COMO ADITIVO NUTRICIONAL (15-sep-2026). Lo que habia aqui era la cifra de los ADITIVOS TECNOLOGICOS: «antiossidanti X mg (di cui estratti di origine naturale ricchi in tocoferolo Y mg)», y el numero escrito era Y/10 clavado en las CINCO fichas de la familia (Adulto 2.380 -> 238 · Cachorro 2.206 -> 220,6 · Senior 6.700 -> 670 · Epato 6.000 -> 600 · Renal 6.700 -> 670). || POR QUE NO VALE, y son dos motivos: (1) es un CONSERVANTE, esta ahi para que no se oxide la grasa del producto, no para aportar un nutriente; (2) la cifra es la masa del EXTRACTO, no la del alfa-tocoferol -- un extracto rico en tocoferoles es una mezcla de alfa, beta, gamma y delta, y el gamma tiene CIEN VECES menos actividad que el alfa (FEDIAF Tabla VII-14). O sea que no se puede saber cuanta vitamina E ACTIVA lleva. || MEDIDO ANTES DE QUITARLO: de la vitamina E de un menu, entre el 14 % y el 82 % la ponia este numero. Quitandolo, el adulto, el senior y el toy pasan a 114-167 mg/1000 kcal --por encima del suelo de 67,1-- porque el solver se va a las fuentes de vitamina E de verdad que entraron al catalogo ese mismo dia. O sea que el suelo del perro sano NO se sostenia en esto. || Es hueco y no cero: el producto SI lleva tocoferoles, lo que no se sabe es cuantos. Un hueco cuenta 0 contra un minimo y el percentil 90 de su familia contra un maximo, que es conservador por los dos lados."
+  },
+  "humedad_g_100g": 2.5,
+  "composicion_fuente": {
+   "acidoPantotenico": "etiqueta:vintegra_cane_anziano · «calcio D-pantotenato 450 mg» /kg × 0,92 (FEDIAF VII-14) → 41.40 mg · 2026-09-15",
+   "colina": "etiqueta:vintegra_cane_anziano · «cloruro di colina 55.000 mg» /kg × 0,75 (FEDIAF VII-14) → 4125.0 mg · 2026-09-15",
+   "energia": "etiqueta:vintegra_cane_anziano · «proteina grezza 6,9 %» + «oli e grassi grezzi 2,6 %» · FEDIAF 7.2.2.2 b) → 51.0 kcal/100 g · 2026-09-15",
+   "folato": "etiqueta:vintegra_cane_anziano · «acido folico 10 mg» /kg · 1000.0 µg/100 g · 2026-09-15",
+   "humedad_g_100g": "etiqueta:vintegra_cane_anziano · «umidità 2.5 %» · 2026-09-15",
+   "taurina": "etiqueta:vintegra_cane_anziano · «taurina 40.000 mg» /kg · 4000 mg/100 g · 2026-09-15"
+  },
+  "humedad_fuente": "etiqueta del fabricante · Etiqueta, componenti analitici: «umidita 2.5%»."
  },
  {
   "nombre": "V-INTEGRA Epato",
   "categoria": "Multivitamínico",
-  "energia": 0,
+  "energia": 51.4,
   "dosis_g_por_kg_peso": 0.45,
   "dosis_max_absoluta_g": 28,
   "fuente": "Ficha oficial del fabricante Vetekipp, en espanol, pasada por la usuaria.",
-  "nota_datos": "AÑADIDO 5 agosto: pensado para dietas con restriccion de cobre en perros con problemas hepaticos. Cobre MUY bajo (3 mg/100g, frente a 25 del Adulto) y zinc MUY alto (555 mg/100g, frente a 250 del Adulto) a proposito, segun el fabricante. NO declara potasio en sus componentes analiticos (a diferencia de los demas). NO declara cloruro. ⚠️ 13 sep 2026: lcarnitina, taurina estaba(n) declarado(s) en `sin_dato` pero LA CLAVE NO EXISTÍA en `nutrientes`. Es la peor de las tres formas de esconder un hueco que describe `UNIDADES.md`: `valor_nutriente()` devuelve 0 igual que en los otros dos casos, pero NO HAY NINGÚN CERO QUE ENCONTRAR, así que ni la auditoría ni `datos_incompletos` podían decir nada. Se añade la clave a 0 —que es lo que el motor ya usaba— sin tocar ningún valor: lo único que cambia es que ahora el hueco se ve. Afectaba a 58 fichas.",
+  "nota_datos": "AÑADIDO 5 agosto: pensado para dietas con restriccion de cobre en perros con problemas hepaticos. Cobre MUY bajo (3 mg/100g, frente a 25 del Adulto) y zinc MUY alto (555 mg/100g, frente a 250 del Adulto) a proposito, segun el fabricante. NO declara potasio en sus componentes analiticos (a diferencia de los demas). NO declara cloruro. ⚠️ 13 sep 2026: lcarnitina, taurina estaba(n) declarado(s) en `sin_dato` pero LA CLAVE NO EXISTÍA en `nutrientes`. Es la peor de las tres formas de esconder un hueco que describe `UNIDADES.md`: `valor_nutriente()` devuelve 0 igual que en los otros dos casos, pero NO HAY NINGÚN CERO QUE ENCONTRAR, así que ni la auditoría ni `datos_incompletos` podían decir nada. Se añade la clave a 0 —que es lo que el motor ya usaba— sin tocar ningún valor: lo único que cambia es que ahora el hueco se ve. Afectaba a 58 fichas. ⚠️ ETIQUETA REVISADA UNA A UNA EL 15-sep-2026, a peticion de Elena («me gustaria que revisaras todos los suplementos tambien, todas las etiquetas, igual que hemos hecho con el catalogo»). CINCO O SEIS CELDAS, y las mismas en las cinco de la gama. (1) El FOLATO llevaba la cifra de la etiqueta en MILIGRAMOS dentro de una celda que va en MICROGRAMOS (UNIDADES.md): mil veces por debajo. (2) El «cloruro di colina» es la SAL y estaba anotado como colina: x0,75 de la Tabla VII-14 de FEDIAF. (3) Lo mismo el «calcio D-pantotenato»: x0,92. (4) La TAURINA la declara la etiqueta en sus aditivos nutricionales -- entre 25.000 y 40.000 mg/kg, que no es poco -- y estaba puesta como hueco. (5) La ENERGIA estaba a 0 teniendo la etiqueta la proteina y la grasa brutas. (6) Y se anade la HUMEDAD, que hace falta desde el 15-sep-2026 para los siete maximos legales de la UE, que van sobre materia seca. ⚠️ LA VITAMINA E NO VUELVE: se comprobo en las cinco etiquetas y en NINGUNA aparece como aditivo NUTRICIONAL; lo que hay es una linea de aditivos TECNOLOGICOS («antiossidanti X mg di cui estratti di origine naturale ricchi in tocoferolo Y mg»), que es un conservante del propio polvo, y de ahi salia el numero que llevaba la ficha. ⚠️ Y ESTA FICHA TENIA TRES CIFRAS QUE SU PROPIA ETIQUETA CONTRADICE, no una: calcio 17.300 contra «calcio 16,1 %», proteina 4,2 contra «proteina grezza 7,0 %» y grasa 0,2 contra «oli e grassi grezzi 2,6 %». Las tres se corrigen a lo que dice la etiqueta. Que la ficha SI es de este producto lo prueban las otras ocho cifras de esas mismas dos lineas, que coinciden exactas -- magnesio 1,3 %, sodio 1,2 %, fosforo 6,9 %, la AUSENCIA de potasio (que solo le pasa al Epato de toda la gama), cobre 30 mg/kg, zinc 5.550 mg/kg, yodo 45 mg/kg y vitamina B12 1,50 mg/kg --, asi que son cifras mal copiadas y no otra formulacion. Comprobado contra tres fuentes que dicen lo mismo: shop.vetekipp.it (el fabricante), ziliottigroup.it y farmaciacavalieri.it.",
   "nutrientes": {
-   "proteina": 4.2,
-   "grasa": 0.2,
-   "calcio": 17300,
+   "proteina": 7.0,
+   "grasa": 2.6,
+   "calcio": 16100.0,
    "fosforo": 6900,
    "sodio": 1200,
    "magnesio": 1300,
@@ -13442,15 +13538,15 @@
    "selenio": 383,
    "vitA": 7500,
    "vitD": 62.5,
-   "vitE": 600,
+   "vitE": 0,
    "tiamina": 12,
    "riboflavina": 25,
    "vitB6": 5,
    "vitB12": 150,
    "niacina": 50,
-   "acidoPantotenico": 45,
-   "folato": 1.6,
-   "colina": 5000,
+   "acidoPantotenico": 41.4,
+   "folato": 980.0,
+   "colina": 3750.0,
    "dha": 0,
    "epa": 0,
    "linoleico": 0,
@@ -13473,7 +13569,7 @@
    "valina": 0,
    "purinas": 0,
    "lcarnitina": 0,
-   "taurina": 0
+   "taurina": 4000.0
   },
   "sin_dato": [
    "arginina",
@@ -13488,13 +13584,12 @@
    "metionina",
    "potasio",
    "purinas",
-   "taurina",
    "tirosina",
    "treonina",
    "triptofano",
-   "valina"
+   "valina",
+   "vitE"
   ],
-  "humedad_hueco": "14-sep-2026, buscar_humedad.py: no tiene fila en BEDCA, CIQUAL ni USDA (es Multivitamínico, mandato 5: la etiqueta del fabricante), y la etiqueta no declara humedad. Köber 2017 tampoco la mide: su Tabla 1 es de hueso y cartílago.",
   "hueco_verificado": {
    "lisina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto. Es un preparado de marca, no un alimento.",
    "metionina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto. Es un preparado de marca, no un alimento.",
@@ -13507,17 +13602,31 @@
    "histidina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto. Es un preparado de marca, no un alimento.",
    "fenilalanina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto. Es un preparado de marca, no un alimento.",
    "tirosina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto. Es un preparado de marca, no un alimento.",
-   "arginina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto. Es un preparado de marca, no un alimento."
-  }
+   "arginina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto. Es un preparado de marca, no un alimento.",
+   "vitE": "⚠️ SU ETIQUETA NO DECLARA VITAMINA E COMO ADITIVO NUTRICIONAL (15-sep-2026). Lo que habia aqui era la cifra de los ADITIVOS TECNOLOGICOS: «antiossidanti X mg (di cui estratti di origine naturale ricchi in tocoferolo Y mg)», y el numero escrito era Y/10 clavado en las CINCO fichas de la familia (Adulto 2.380 -> 238 · Cachorro 2.206 -> 220,6 · Senior 6.700 -> 670 · Epato 6.000 -> 600 · Renal 6.700 -> 670). || POR QUE NO VALE, y son dos motivos: (1) es un CONSERVANTE, esta ahi para que no se oxide la grasa del producto, no para aportar un nutriente; (2) la cifra es la masa del EXTRACTO, no la del alfa-tocoferol -- un extracto rico en tocoferoles es una mezcla de alfa, beta, gamma y delta, y el gamma tiene CIEN VECES menos actividad que el alfa (FEDIAF Tabla VII-14). O sea que no se puede saber cuanta vitamina E ACTIVA lleva. || MEDIDO ANTES DE QUITARLO: de la vitamina E de un menu, entre el 14 % y el 82 % la ponia este numero. Quitandolo, el adulto, el senior y el toy pasan a 114-167 mg/1000 kcal --por encima del suelo de 67,1-- porque el solver se va a las fuentes de vitamina E de verdad que entraron al catalogo ese mismo dia. O sea que el suelo del perro sano NO se sostenia en esto. || Es hueco y no cero: el producto SI lleva tocoferoles, lo que no se sabe es cuantos. Un hueco cuenta 0 contra un minimo y el percentil 90 de su familia contra un maximo, que es conservador por los dos lados."
+  },
+  "humedad_g_100g": 2.0,
+  "composicion_fuente": {
+   "acidoPantotenico": "etiqueta:vintegra_epato · «calcio D-pantotenato 450 mg» /kg × 0,92 (FEDIAF VII-14) → 41.40 mg · 2026-09-15",
+   "calcio": "etiqueta:vintegra_epato · «calcio 16,1 %» · 16100 mg/100 g · 2026-09-15",
+   "colina": "etiqueta:vintegra_epato · «cloruro di colina 50.000 mg» /kg × 0,75 (FEDIAF VII-14) → 3750.0 mg · 2026-09-15",
+   "energia": "etiqueta:vintegra_epato · «proteina grezza 7,0 %» + «oli e grassi grezzi 2,6 %» · FEDIAF 7.2.2.2 b) → 51.4 kcal/100 g · 2026-09-15",
+   "folato": "etiqueta:vintegra_epato · «acido folico 9,8 mg» /kg · 980.0 µg/100 g · 2026-09-15",
+   "grasa": "etiqueta:vintegra_epato · «oli e grassi grezzi 2,6 %» · 2,6 g/100 g · 2026-09-15",
+   "humedad_g_100g": "etiqueta:vintegra_epato · «umidità 2.0 %» · 2026-09-15",
+   "proteina": "etiqueta:vintegra_epato · «proteina grezza 7,0 %» · 7,0 g/100 g · 2026-09-15",
+   "taurina": "etiqueta:vintegra_epato · «taurina 40.000 mg» /kg · 4000 mg/100 g · 2026-09-15"
+  },
+  "humedad_fuente": "etiqueta del fabricante · Etiqueta, componenti analitici: «umidita 2.0%»."
  },
  {
   "nombre": "V-INTEGRA Renal",
   "categoria": "Multivitamínico",
-  "energia": 0,
+  "energia": 51.0,
   "dosis_g_por_kg_peso": 0.45,
   "dosis_max_absoluta_g": 28,
   "fuente": "Ficha oficial del fabricante Vetekipp, en espanol, pasada por la usuaria.",
-  "nota_datos": "AÑADIDO 5 agosto: pensado para dietas con restriccion de fosforo (insuficiencia renal). Fosforo declarado 0% -- ausencia total de fosforo a proposito, segun el fabricante. NO declara cloruro. ⚠️ 13 sep 2026: lcarnitina, taurina estaba(n) declarado(s) en `sin_dato` pero LA CLAVE NO EXISTÍA en `nutrientes`. Es la peor de las tres formas de esconder un hueco que describe `UNIDADES.md`: `valor_nutriente()` devuelve 0 igual que en los otros dos casos, pero NO HAY NINGÚN CERO QUE ENCONTRAR, así que ni la auditoría ni `datos_incompletos` podían decir nada. Se añade la clave a 0 —que es lo que el motor ya usaba— sin tocar ningún valor: lo único que cambia es que ahora el hueco se ve. Afectaba a 58 fichas.",
+  "nota_datos": "AÑADIDO 5 agosto: pensado para dietas con restriccion de fosforo (insuficiencia renal). Fosforo declarado 0% -- ausencia total de fosforo a proposito, segun el fabricante. NO declara cloruro. ⚠️ 13 sep 2026: lcarnitina, taurina estaba(n) declarado(s) en `sin_dato` pero LA CLAVE NO EXISTÍA en `nutrientes`. Es la peor de las tres formas de esconder un hueco que describe `UNIDADES.md`: `valor_nutriente()` devuelve 0 igual que en los otros dos casos, pero NO HAY NINGÚN CERO QUE ENCONTRAR, así que ni la auditoría ni `datos_incompletos` podían decir nada. Se añade la clave a 0 —que es lo que el motor ya usaba— sin tocar ningún valor: lo único que cambia es que ahora el hueco se ve. Afectaba a 58 fichas. ⚠️ ETIQUETA REVISADA UNA A UNA EL 15-sep-2026, a peticion de Elena («me gustaria que revisaras todos los suplementos tambien, todas las etiquetas, igual que hemos hecho con el catalogo»). CINCO O SEIS CELDAS, y las mismas en las cinco de la gama. (1) El FOLATO llevaba la cifra de la etiqueta en MILIGRAMOS dentro de una celda que va en MICROGRAMOS (UNIDADES.md): mil veces por debajo. (2) El «cloruro di colina» es la SAL y estaba anotado como colina: x0,75 de la Tabla VII-14 de FEDIAF. (3) Lo mismo el «calcio D-pantotenato»: x0,92. (4) La TAURINA la declara la etiqueta en sus aditivos nutricionales -- entre 25.000 y 40.000 mg/kg, que no es poco -- y estaba puesta como hueco. (5) La ENERGIA estaba a 0 teniendo la etiqueta la proteina y la grasa brutas. (6) Y se anade la HUMEDAD, que hace falta desde el 15-sep-2026 para los siete maximos legales de la UE, que van sobre materia seca. ⚠️ LA VITAMINA E NO VUELVE: se comprobo en las cinco etiquetas y en NINGUNA aparece como aditivo NUTRICIONAL; lo que hay es una linea de aditivos TECNOLOGICOS («antiossidanti X mg di cui estratti di origine naturale ricchi in tocoferolo Y mg»), que es un conservante del propio polvo, y de ahi salia el numero que llevaba la ficha.",
   "nutrientes": {
    "proteina": 6.9,
    "grasa": 2.6,
@@ -13534,15 +13643,15 @@
    "selenio": 550,
    "vitA": 7500,
    "vitD": 62.5,
-   "vitE": 670,
+   "vitE": 0,
    "tiamina": 12,
    "riboflavina": 25,
    "vitB6": 5,
    "vitB12": 150,
    "niacina": 50,
-   "acidoPantotenico": 45,
-   "folato": 0.98,
-   "colina": 5000,
+   "acidoPantotenico": 41.4,
+   "folato": 980.0,
+   "colina": 3750.0,
    "dha": 0,
    "epa": 0,
    "linoleico": 0,
@@ -13564,7 +13673,7 @@
    "valina": 0,
    "purinas": 0,
    "lcarnitina": 0,
-   "taurina": 0
+   "taurina": 4000.0
   },
   "sin_dato": [
    "arginina",
@@ -13578,13 +13687,12 @@
    "lisina",
    "metionina",
    "purinas",
-   "taurina",
    "tirosina",
    "treonina",
    "triptofano",
-   "valina"
+   "valina",
+   "vitE"
   ],
-  "humedad_hueco": "14-sep-2026, buscar_humedad.py: no tiene fila en BEDCA, CIQUAL ni USDA (es Multivitamínico, mandato 5: la etiqueta del fabricante), y la etiqueta no declara humedad. Köber 2017 tampoco la mide: su Tabla 1 es de hueso y cartílago.",
   "hueco_verificado": {
    "lisina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto. Es un preparado de marca, no un alimento.",
    "metionina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto. Es un preparado de marca, no un alimento.",
@@ -13597,8 +13705,19 @@
    "histidina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto. Es un preparado de marca, no un alimento.",
    "fenilalanina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto. Es un preparado de marca, no un alimento.",
    "tirosina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto. Es un preparado de marca, no un alimento.",
-   "arginina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto. Es un preparado de marca, no un alimento."
-  }
+   "arginina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto. Es un preparado de marca, no un alimento.",
+   "vitE": "⚠️ SU ETIQUETA NO DECLARA VITAMINA E COMO ADITIVO NUTRICIONAL (15-sep-2026). Lo que habia aqui era la cifra de los ADITIVOS TECNOLOGICOS: «antiossidanti X mg (di cui estratti di origine naturale ricchi in tocoferolo Y mg)», y el numero escrito era Y/10 clavado en las CINCO fichas de la familia (Adulto 2.380 -> 238 · Cachorro 2.206 -> 220,6 · Senior 6.700 -> 670 · Epato 6.000 -> 600 · Renal 6.700 -> 670). || POR QUE NO VALE, y son dos motivos: (1) es un CONSERVANTE, esta ahi para que no se oxide la grasa del producto, no para aportar un nutriente; (2) la cifra es la masa del EXTRACTO, no la del alfa-tocoferol -- un extracto rico en tocoferoles es una mezcla de alfa, beta, gamma y delta, y el gamma tiene CIEN VECES menos actividad que el alfa (FEDIAF Tabla VII-14). O sea que no se puede saber cuanta vitamina E ACTIVA lleva. || MEDIDO ANTES DE QUITARLO: de la vitamina E de un menu, entre el 14 % y el 82 % la ponia este numero. Quitandolo, el adulto, el senior y el toy pasan a 114-167 mg/1000 kcal --por encima del suelo de 67,1-- porque el solver se va a las fuentes de vitamina E de verdad que entraron al catalogo ese mismo dia. O sea que el suelo del perro sano NO se sostenia en esto. || Es hueco y no cero: el producto SI lleva tocoferoles, lo que no se sabe es cuantos. Un hueco cuenta 0 contra un minimo y el percentil 90 de su familia contra un maximo, que es conservador por los dos lados."
+  },
+  "humedad_g_100g": 2.3,
+  "composicion_fuente": {
+   "acidoPantotenico": "etiqueta:vintegra_renal · «Calcio D-pantotenato 450 mg» /kg × 0,92 (FEDIAF VII-14) → 41.40 mg · 2026-09-15",
+   "colina": "etiqueta:vintegra_renal · «Cloruro di colina 50.000 mg» /kg × 0,75 (FEDIAF VII-14) → 3750.0 mg · 2026-09-15",
+   "energia": "etiqueta:vintegra_renal · «Proteina grezza 6,9 %» + «Grassi grezzi 2,6 %» · FEDIAF 7.2.2.2 b) → 51.0 kcal/100 g · 2026-09-15",
+   "folato": "etiqueta:vintegra_renal · «Acido folico 9,8 mg» /kg · 980.0 µg/100 g · 2026-09-15",
+   "humedad_g_100g": "etiqueta:vintegra_renal · «umidità 2.3 %» · 2026-09-15",
+   "taurina": "etiqueta:vintegra_renal · «Taurina 40.000 mg» /kg · 4000 mg/100 g · 2026-09-15"
+  },
+  "humedad_fuente": "etiqueta del fabricante · Etiqueta, componenti analitici: «umidita 2.3%»."
  },
  {
   "nombre": "Pecho de ternera con hueso",
@@ -14545,7 +14664,6 @@
   "humedad_g_100g": 79.16,
   "humedad_fuente": "USDA FoodData Central · Veal, variety meats and by-products, thymus, raw",
   "humedad_fdc": "172542",
-  "humedad_nota": "⚠️ CORREGIDO 13 sep 2026, y esto CIERRA la pregunta que esta misma nota dejaba abierta («verificar si el nombre o la fuente es lo que hay que cambiar»). La respuesta es LA FUENTE DEL AGUA: la energía, la proteína y la grasa de esta ficha (101 · 17,21 · 3,07) coinciden EXACTAS con FDC 172542, que es «VEAL … thymus, raw», así que la ficha es de ternera y su nombre está bien. El agua, en cambio, estaba en 67,8 con el `humedad_fdc` puesto en 170194, que es «BEEF … thymus» — la fila de la OTRA ficha del catálogo, «Timo de vaca». La de ternera da 79,16. Es el fallo «Timo de ternera contra Ris de veau» que el repo ya tenía avisado, colado por la única columna que no lleva huella.",
   "fuentes_id": {
    "usda": "172542",
    "ciqual": "40304"
@@ -14715,7 +14833,6 @@
   "humedad_g_100g": 79.8,
   "humedad_fuente": "USDA FoodData Central · Veal, variety meats and by-products, brain, raw",
   "humedad_fdc": "174351",
-  "humedad_nota": "⚠️ NO CUADRA CON NUESTROS MACROS: agua + proteina + grasa = 101.0 g por cada 100 g de alimento, y no puede pasar de 100. Nuestra ficha declara ser un CRUCE de USDA con Recipal, FatSecret y Prospre: el agua es de la fila de USDA sola. La fila del USDA de la que sale esta humedad SI cuadra consigo misma (su suma de proximales esta comprobada), asi que el que sobra es uno de NUESTROS numeros, no el agua. Se deja la humedad porque es el unico dato de esta fila con procedencia escrita; lo que hay que revisar es la proteina y la grasa contra ese mismo FDC. Anotado el 5-sep-2026.",
   "fuentes_id": {
    "bedca": "1047",
    "usda": "174351"

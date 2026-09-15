@@ -2544,6 +2544,66 @@ kcal**, no 67,1.
 
 ---
 
+### P-43 · El único producto que arregla el hueco de metionina que señaló Cris lleva **DL**-metionina, y ella pidió **L**
+
+| | |
+|---|---|
+| **Dueño** | **Cris Carles** (es clínica: si la forma DL vale) y **Elena** (es de producto: si se mete esa ficha) |
+| **Estado** | **abierta** — encontrado el 15 de septiembre de 2026 al revisar las etiquetas de los suplementos |
+
+**De dónde viene.** `REVISION_NUTRICIONISTA.md` §3: «Empieza a salir carente de
+metionina, que se tiene que suplementar como **L-metionina**». Está marcado ❌ y
+es el tercero de los tres puntos suyos que siguen sin cubrir. El motor **sí**
+verifica la metionina (está en `verificar.MAPA` desde el 28 de agosto, con su
+mínimo y el de metionina+cistina), así que **detecta** la carencia; lo que no
+hay es **con qué arreglarla**.
+
+**Lo que se ha encontrado.** **`V-INTEGRA Renal Met`**, del mismo fabricante que
+las cinco fichas de esa gama que ya están en el catálogo, **se vende en España**
+(viralataspetshop.es) y su etiqueta está publicada entera. Declara, entre sus
+aditivos nutricionales por kg:
+
+> «DL-metionina: 58.200 mg»
+
+y lo confirma su propio bloque analítico: «Metionina 5,8 %». Son **5.820 mg de
+metionina por 100 g**, que es un orden de magnitud por encima de cualquier otra
+cosa del catálogo. El resto de su etiqueta es el hermano del `V-INTEGRA Renal`
+que ya tenemos, con el fósforo a 0 %: ácido fólico 9,6 mg/kg, cloruro de colina
+49.000, taurina 39.200, yodo 44, calcio 14,8 %, proteína bruta 10,2 %, grasa 2,5 %,
+humedad 1,8 %.
+
+**Por qué no lo meto yo y ya está.** Por dos cosas, y las dos son de quien firma:
+
+1. **DL no es L.** La D-metionina se convierte a L en el perro, pero **no gratis
+   ni del todo**, y NRC 2006 (cap. «Methionine · Dogs») dice que **da la
+   eficiencia de utilización de la DL respecto a la L precisamente porque no es
+   1:1**. Contar los 5.820 enteros sería darlo por resuelto; contar la mitad
+   sería inventarme un factor. Y la dirección del error importa: la metionina
+   tiene **mínimo y no máximo**, así que contar de más deja al perro corto sin
+   que el semáforo lo vea.
+2. **Y NRC avisa de toxicidad, de la DL en concreto.** «Biourge et al. (2002)
+   reported methionine toxicosis in six hunting dogs fed a single meal of about
+   300 g of a normal diet containing 47 g DL-methionine·kg–1» —ataxia,
+   desorientación, temblores, vómitos, y convulsiones en el cachorro de 6 meses—
+   y concluye: «it would appear that the **SUL for DL-methionine is well below
+   47 g·kg–1** diet containing 4 kcal ME·g–1». Del mismo párrafo sale lo otro:
+   «If they used L-methionine, **D-methionine would appear to be considerably
+   more toxic than the L-form**».
+
+**Lo que hace falta para cerrarla**, y es poco: que Cris diga **(a)** si la
+DL-metionina le vale para lo que ella pedía, y **(b)** con qué factor se cuenta
+la mitad D. Con eso la ficha entra en una tarde, con su dosis máxima de etiqueta
+y su tope, como cualquier otra. Mientras tanto **no se mete**, porque una ficha
+de metionina con el número mal contado es peor que no tenerla: el motor daría la
+carencia por arreglada.
+
+**Y hay una alternativa que también es de producto**: la DL-metionina de grado
+pienso al 99 % existe suelta y barata, pero se vende **a granel de 25 kg** y sin
+etiqueta de producto para mascota. Que eso sea o no aceptable es decisión de
+Elena, no mía.
+
+---
+
 ## Cerradas
 
 *(Cuando una pregunta se contesta, se mueve aquí con la respuesta, la fecha y

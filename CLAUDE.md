@@ -291,7 +291,7 @@ jubilado — que desde fuera se parecen mucho.
 | `especies.py`, `accesibles.py` | Qué especie es cada alimento |
 | `transicion.py` | Plan de cambio gradual de dieta |
 | `persistencia.py`, `observabilidad.py` | Supabase y Sentry |
-| `pruebas_completas.py` | **La batería.** Los 108 bloques, ~45 min. Es lo que se ejecuta entero antes de entregar cualquier cambio (ver «Cómo se prueba») |
+| `pruebas_completas.py` | **La batería.** Los 112 bloques, ~45 min. Es lo que se ejecuta entero antes de entregar cualquier cambio (ver «Cómo se prueba») |
 | `datos_de_la_ficha.json` | **Los 21 campos que la ficha pregunta, y CÓMO llega cada uno al motor** (11 de septiembre). Nació de una frase de Elena: «TODOS LOS DATOS QUE RECOJA LA APP TIENEN QUE LLEGAR DE ALGUNA MANERA AL MOTOR, SI NO SON DATOS INUTILES Y CUANDO SE PIDEN ES SIEMPRE POR ALGO». Y tiene un caso que lo justifica solo, del mismo día: la ficha pregunta la **actividad** desde siempre, la app la usaba para calcular las kcal y mandaba solo el número — el motor veía 1955 kcal y no sabía si era un galgo de sofá o un perro de trineo, que es justo lo que decide si se le aprietan los topes crónicos por peso metabólico. Hay tres formas de llegar: `campo` (viaja suelto), `dentro_de` (va cocinado dentro de un número que sí viaja, y entonces **hay que escribir qué se pierde por ir así**) y `no_hace_falta` (con su motivo, que tiene que ser un motivo y no una excusa). Lo vigila el BLOQUE 87. ⚠️ Eran 20 y faltaba `raza`: la lista se copió a mano de `tests/ficha-ida-y-vuelta.spec.js`… donde `raza` tampoco estaba, porque su perro de ejemplo era un mestizo y `null` vuelve como `null` aunque se pierda. Dos inventarios copiados a mano, el mismo hueco en los dos |
 | `niveles_de_actividad.json` | **La Tabla VII-7 de FEDIAF fila por fila**, con lo que hace el motor y lo que ofrece la app (11 de septiembre). Cinco filas emparejadas, una **partida por nosotros** (el rango «High activity 150-175» es UNA fila de la fuente y el motor la parte en dos niveles), una fuera a propósito (los perros de trineo, 860-1240) y un **HUECO** declarado: «Obese prone adults ≤ 90» no está ni en el motor ni en la app. Lo vigila el BLOQUE 88 |
 | `preguntas_por_patologia.json` | **Qué pregunta decide la cifra de cada patología, qué respuestas tiene, y a qué clave del motor lleva cada una** (11 de septiembre). Nació de una frase de Elena: «tendrá que haber preguntas para cada patología preguntando resultados de analíticas o lo que sea para que pueda coger según la respuesta los límites para cada estadio o cada caso». ⚠️ **Y lo primero que hay que saber al abrirlo es que la mitad ya estaba hecha**: la cardiopatía tiene **cinco claves con cinco techos de sodio** (`cardiopatia_c` 625, `cardiopatia_d` 480) y la app **ya pregunta el estadio ACVIM**. Cuatro de las diez están `aplicada`. Aquí no hay ni un número escrito: se **derivan** de `patologias.json`, y donde el motor no tiene una clave por respuesta se dice en vez de inventarla. Cinco estados, y el que importa es **`no_cambia_ninguna_cifra`**: una pregunta cuyas respuestas aplican exactamente lo mismo no decide nada — se le pide un dato clínico a quien firma y da igual lo que conteste. Hoy le pasa a `shunt_sin_encefalopatia`. Lo vigila el BLOQUE 90, que además exige que **cada `requiere` de un tope condicional apunte a una patología que exista**: el de la diabetes decía `hipertrigliceridemia`, que no es ninguna de las 47, así que ese techo **no se aplicaba nunca** por esa puerta — el solver lo resuelve con `any(otra in lista ...)` y un nombre que nadie puede marcar no entra jamás, con el menú saliendo verde igual. ⚠️ **Y desde la noche del 11 comprueba las 19 respuestas, no solo las cinco de la cardiopatía**: cifra a cifra, techos con `min()` y suelos con `max()`, contra lo que devuelve `topes_de_patologias` — que es la función que llama el solver. Son 28 cifras, y de 14 de ellas nadie comprobaba que contestar una cosa u otra cambiara nada. Y las dos direcciones: un tope que el solver aplica y la respuesta no dice es una restricción que quien firma no ve, y que puede dejar al perro sin menú sin que se sepa por qué. ⚠️ **La lista la lee ahora la app de `GET /vocabulario`** y no de su propia `FAMILIAS_PATOLOGIA`, que queda de respaldo — y `segura` se deriva del `_no_formulable` que dice el motor, que era el riesgo escrito en `App.jsx` desde agosto. Lo vigila `tests/puerta-veterinario.spec.js` sembrando un estadio **inventado** |
@@ -314,7 +314,7 @@ jubilado — que desde fuera se parecen mucho.
 | `canislab-fuentes/sacn5/extraer_texto.py` | ⚠️ **Y esto es lo que estaba fallando de verdad.** Los `.txt` de SACN5 y de FEDIAF se habían extraído **conservando la disposición visual**, y los dos libros van a **dos columnas**: cada línea pegaba la de la izquierda con la de la derecha. **El 37,5 % de las líneas de SACN5 y el 49,3 % de las de FEDIAF.** O sea que la mitad de lo que se leía eran frases que la fuente **no dice** —«Linoleic and α-linolenic acids are considered / DM fat should be restricted to between 7 to 10 %» son dos párrafos distintos—, y **cualquier cita sacada de ahí puede ser falsa**. Eso explica cómo «leído entero» podía ser verdad en esfuerzo y falso en resultado. Rehecho con `page.get_text()`, que sí lee las columnas en orden: quedan 2 líneas de 123.191. ⚠️ **Y por eso hay tablas que NO se pueden leer del `.txt`**: la VII-8a de FEDIAF, la de la curva de crecimiento, saca sus cinco bandas y sus cinco ecuaciones en dos columnas cruzadas y el emparejamiento que parece natural las cruza. Esa se leyó del PDF por coordenadas, y el BLOQUE 96 vigila que no se vuelva a cruzar |
 | `fuentes_de_composicion.json` | **La prioridad de las fuentes del catálogo, con número de mandato, y la unidad en que publica cada una cada nutriente** (13 de septiembre). Nació de una petición de Elena: «coge cada fuente que tenemos y según la importancia de la fuente les pones número de prioridad o mandato». El orden existía y estaba en dos sitios donde no se puede auditar: en **prosa** en `Bases.md` y **cableado** en una tupla de `contrastar_fuentes.py` (`next(x for x in (b, c, u) ...)`). Son **1 BEDCA · 2 Köber 2017 (solo el calcio y el fósforo del hueso) · 3 CIQUAL · 4 USDA · 5 la etiqueta del fabricante**, cada uno con su porqué escrito. ⚠️ Y el orden **se volvió a justificar** el mismo día, porque Elena empujó («igual CIQUAL y la otra que empieza por F valen más que USDA»): se confirma, pero los motivos escritos eran otros. BEDCA es **la que MENOS nutrientes publica** de las europeas (~40 de 968 alimentos, contra 65 de CIQUAL y 105 de Frida) — no manda por completa, manda por **ser la española** y por ser **la única que distingue un hueco de un cero** (`value_type`: `TR` con la celda vacía = no hay cifra). Trae además el **mandato por nutriente**, que es donde el orden general no se puede aplicar a ciegas: el yodo no puede venir de USDA porque no lo publica, los 12 aminoácidos y la colina SOLO los publica USDA, y el cloruro solo CIQUAL. Y dos **conflictos de convenio declarados y sin resolver**: la vitamina A (tres convenios del β-caroteno y ninguno es el 4:1 que FEDIAF define para el perro) y la niacina (BEDCA da equivalentes, USDA preformada) |
 | `auditar_composicion.py` + `fuentes_instantanea.json` | **El catálogo contra sus fuentes, celda a celda** (13 de septiembre). Entre una base de composición y el catálogo había un paso **a mano que nadie rehacía**, que es la misma forma de fallo que `auditar_transcripcion_fediaf.py` y `auditar_kober.py`. Lo que había mira otras cosas: `auditar_catalogo.py` compara el catálogo consigo mismo y nunca sale a la fuente, `fijar_identificadores.py` solo mira cuatro cifras, y `contrastar_fuentes.py` mira **una** ficha a mano — nadie la había pasado por las 163. El `.json` es la **instantánea congelada** de lo que publica cada fuente, en **su** unidad, con la **descripción literal de la fila**: eso último no es decoración, es lo único que delata un emparejamiento malo, porque un identificador a secas no dice si «pollo» trajo «Repollo». Con ella la batería puede comprobarlo **sin red**. Tiene tres modos: barrer, `--instantanea` y `--cerrar` (el único que escribe). Lo vigila el **BLOQUE 104** — nació como 100, pasó a 101 y acabó en 104, y las dos veces por lo mismo: dos ramas creando el mismo número el mismo día, y las dos con razón en su lado. ⚠️ Es la tercera vez que pasa (antes fue el 98), así que la lección ya no es «renumerar»: es que **un número de bloque es la única forma que tiene el repo de decir quién vigila qué**, y dos con el mismo número es una referencia rota que no da ningún error |
-| `buscar_humedad.py` | **La humedad de cada ficha, y el supuesto de los 4,0 kcal/g que sostiene 135 límites** (14 de septiembre). El catálogo va en gramos de alimento TAL CUAL SE DA y casi toda fuente que no sea FEDIAF publica en **% de materia seca**; entre las dos hay una conversión, y su supuesto lo escribe la propia FEDIAF al lado de la tabla que lo hace: *«These conversions assume an energy density of 16.7 kJ (4.0 kcal) ME/g DM. For foods with energy densities different from this value, the recommendations should be corrected for energy density»* (§3.2.1). **Sin la humedad de cada alimento eso no se podía ni comprobar**, porque la materia seca de una ración es `suma(gramos × (100 − humedad) / 100)` y 97 de las 162 fichas no la tenían. No busca por nombre: usa el `fuentes_id` que la ficha YA declara y baja por la cadena de mandato, respetando las tres marcas que no son un número (el `TR` de BEDCA con la celda vacía, el `-` de CIQUAL y su `< X`). ⚠️ Y **tres caminos más para las 33 fichas sin fila en ninguna base**: las **once piezas con hueso** salen de la columna «DM [%]» de la Tabla 1 de **Köber**, que es la MISMA fila de la que ya sale su calcio —eso amplía el mandato 2, y la ampliación va escrita en `fuentes_de_composicion.json` porque un mandato que se estira en silencio deja números sin procedencia—; los **cinco aceites** llevan una **cota por composición** (99,5 g de grasa por 100 g dejan medio gramo para todo lo demás, agua incluida), que es el mismo argumento ya aceptado en la ficha del aceite de oliva para su zinc; y el **corazón de conejo** hereda la humedad por el mismo proxy declarado del que salen su energía y su proteína. Quedan **18 huecos**, todos suplementos en polvo cuya etiqueta no la declara, y pesan 7,4 g sobre una ración de 730 g. ⚠️ **Y LA MEDIDA ES EL HALLAZGO**: una ración de este motor va a **5,20 kcal/g de materia seca** (4,05-6,18), no a 4,0, porque es proteína y grasa sin almidón, sin fibra y sin ceniza de relleno — o sea que **135 cifras del motor van un ~23 % flojas**, y entre ellas **los 13 máximos de FEDIAF que solo se publican en base materia seca**, siete de ellos LÍMITES LEGALES de la UE (vitamina D, hierro, yodo, selenio, zinc, cobre, manganeso). ⚠️ El repo afirmaba lo contrario desde el 11 de septiembre —«4040 kcal/kg MS, un 1 % de diferencia»— y era una **estimación presentada como medida**, con su propio punto ciego declarado en la misma frase. ⚠️ Y no es solo la conversión: **SACN5 recomienda una densidad y no la cumplimos** — «Active young adult dogs should be fed a food with an energy density range of 3.5 to 4.5 kcal/g dry matter (DM)» (cap.13), y de los 216 menús **3 caen dentro y 213 están por encima**. Decir que eso es un fallo sería pasarse —esa banda está escrita para un pienso, donde la densidad decide el volumen y por tanto la saciedad—, y por eso es una pregunta y no un arreglo. **No se ha aplicado nada todavía**: está medido lo que costaría (8 de 8 perros de referencia siguen con menú) y la decisión es la **P-38**. ⚠️ NO lo ejecuta la batería (necesita red); lo que sí ejecuta es el **BLOQUE 111**, que rehace cada humedad contra la instantánea congelada y contra Köber, y **mide la densidad en cada pasada** para que el día que cambie no se siga citando un 23 % que ya no existe |
+| `buscar_humedad.py` | **La humedad de cada ficha, y el supuesto de los 4,0 kcal/g que sostiene 135 límites** (14 de septiembre). El catálogo va en gramos de alimento TAL CUAL SE DA y casi toda fuente que no sea FEDIAF publica en **% de materia seca**; entre las dos hay una conversión, y su supuesto lo escribe la propia FEDIAF al lado de la tabla que lo hace: *«These conversions assume an energy density of 16.7 kJ (4.0 kcal) ME/g DM. For foods with energy densities different from this value, the recommendations should be corrected for energy density»* (§3.2.1). **Sin la humedad de cada alimento eso no se podía ni comprobar**, porque la materia seca de una ración es `suma(gramos × (100 − humedad) / 100)` y 97 de las 162 fichas no la tenían. No busca por nombre: usa el `fuentes_id` que la ficha YA declara y baja por la cadena de mandato, respetando las tres marcas que no son un número (el `TR` de BEDCA con la celda vacía, el `-` de CIQUAL y su `< X`). ⚠️ Y **tres caminos más para las 33 fichas sin fila en ninguna base**: las **once piezas con hueso** salen de la columna «DM [%]» de la Tabla 1 de **Köber**, que es la MISMA fila de la que ya sale su calcio —eso amplía el mandato 2, y la ampliación va escrita en `fuentes_de_composicion.json` porque un mandato que se estira en silencio deja números sin procedencia—; los **cinco aceites** llevan una **cota por composición** (99,5 g de grasa por 100 g dejan medio gramo para todo lo demás, agua incluida), que es el mismo argumento ya aceptado en la ficha del aceite de oliva para su zinc; y el **corazón de conejo** hereda la humedad por el mismo proxy declarado del que salen su energía y su proteína. Quedan **9 huecos**, todos suplementos en polvo cuya etiqueta no la declara — eran 18 hasta el 15 de septiembre, y **nueve se cerraron leyendo la etiqueta**: las cinco V-INTEGRA la publican («umidità 1,9 %»), el alga también («Restfeuchte 12,33 %»), la levadura GRAU («Feuchte 7,0 %»), el polvo de sangre («Restfeuchte 6 %») y la levadura PAWS & PATCH como COTA («Feuchtigkeit <14 %»). Pesan 7,4 g sobre una ración de 730 g. ⚠️ **Y LA MEDIDA ES EL HALLAZGO**: una ración de este motor va a **5,20 kcal/g de materia seca** (4,05-6,18), no a 4,0, porque es proteína y grasa sin almidón, sin fibra y sin ceniza de relleno — o sea que **135 cifras del motor van un ~23 % flojas**, y entre ellas **los 13 máximos de FEDIAF que solo se publican en base materia seca**, siete de ellos LÍMITES LEGALES de la UE (vitamina D, hierro, yodo, selenio, zinc, cobre, manganeso). ⚠️ El repo afirmaba lo contrario desde el 11 de septiembre —«4040 kcal/kg MS, un 1 % de diferencia»— y era una **estimación presentada como medida**, con su propio punto ciego declarado en la misma frase. ⚠️ Y no es solo la conversión: **SACN5 recomienda una densidad y no la cumplimos** — «Active young adult dogs should be fed a food with an energy density range of 3.5 to 4.5 kcal/g dry matter (DM)» (cap.13), y de los 216 menús **3 caen dentro y 213 están por encima**. Decir que eso es un fallo sería pasarse —esa banda está escrita para un pienso, donde la densidad decide el volumen y por tanto la saciedad—, y por eso es una pregunta y no un arreglo. **No se ha aplicado nada todavía**: está medido lo que costaría (8 de 8 perros de referencia siguen con menú) y la decisión es la **P-38**. ⚠️ NO lo ejecuta la batería (necesita red); lo que sí ejecuta es el **BLOQUE 111**, que rehace cada humedad contra la instantánea congelada y contra Köber, y **mide la densidad en cada pasada** para que el día que cambie no se siga citando un 23 % que ya no existe |
 | `contrastar_fuentes.py` | Una ficha del catálogo contra **BEDCA, CIQUAL y USDA a la vez**, en el orden de `Bases.md`. **No lo ejecuta la batería** (necesita red y se baja 10 MB): es la herramienta de quien va a mirar una ficha. Trae dentro cómo se lee cada fuente — el XML de BEDCA hay que reconstruirlo de su `query.js`, y con la lista de atributos recortada devuelve el cuerpo vacío sin dar error |
 
 **Y una patología marcada `formulable: true` tiene que formular de verdad.**
@@ -413,6 +413,119 @@ no es comida es un tercio del plato de hierba.
 `_escalera_de_relajacion`), con las dos filas medidas y sin perder ni un menú.
 Lo que queda sin decidir es el caso de verdad de un alimento suelto: si dentro
 de un techo de verdura razonable debería poder ir **toda** en una sola hierba.
+
+### «Cerrado» señalaba a pruebas que ya no existen
+
+*(15 de septiembre de 2026.)* Elena, después de tres días viendo salir cosas de
+fuentes que estaban dadas por cerradas:
+
+> «**no me vale que digas que está cerrado y que luego sigan saliendo cosas y
+> cosas y más cosas** de una fuente que se supone que ya estaba totalmente
+> estudiada y todo cerrado como todo eh, aplicado ya lo necesario»
+
+**Y tiene una causa concreta, dentro del propio `CERRADO.md`.** El cierre de
+FEDIAF, firmado el 10 de septiembre, certificaba su condición 1 con dos ficheros
+—`lecturas_fuentes.json` y `fediaf_tablas.json`— y su condición 4, la de «test
+que falla si se rompe», con **los BLOQUES 67 y 68**.
+
+**Los cuatro se borraron el 11 de septiembre**, un día después, cuando Elena
+mandó fuera la maquinaria de contar lecturas. *El borrado fue correcto*: esos
+contadores contaban frases con nota y no cosas decididas, y decían «0 pendientes»
+mientras seguían saliendo cosas. Lo que no se hizo fue **volver a `CERRADO.md`**.
+
+Así que el documento cuyo único trabajo es decir **qué es verdad** estuvo cuatro
+días certificando la fuente más importante del motor con **dos ficheros y dos
+pruebas que no existen**, sin dar ningún error: una referencia rota en un
+Markdown no lo da. Es la misma familia que los dos BLOQUES 98 del 13 de
+septiembre — *un número de bloque es la única forma que tiene el repo de decir
+quién vigila qué*.
+
+**Y no era el único sitio.** Su tabla de ABIERTO afirmaba tres cosas más que ya
+eran falsas: que «la humedad no está en ninguna ficha» (está en 155 de 164 desde
+el 14 de septiembre), que «solo 34 fichas tienen `fuente`» (82 llevan
+`composicion_fuente` celda a celda desde el barrido del 13) y que «ninguna ficha
+declara en qué forma química viene cada nutriente» — que es justo lo que se
+arregló el 15 en doce fichas de suplemento, y al hacerlo se vio que la frase era
+falsa **por los dos lados**: las etiquetas **sí** lo dicen, y el catálogo no lo
+estaba aplicando.
+
+Lo vigila el **BLOQUE 118**, y lo que exige es barato y determinista: que cada
+fichero y cada BLOQUE que una **fila de condición** de `CERRADO.md` ofrece como
+prueba **exista**, y que ningún cierre tenga menos de las seis filas — porque el
+propio documento dice que cinco de seis no es cerrado. ⚠️ Mira **las filas y no
+la prosa** a propósito: ese documento ahora **cuenta** por qué se borraron los
+BLOQUES 67 y 68, y un escáner que no distinguiera las dos cosas obligaría a dejar
+de contar la historia para que la batería saliera verde. Nada más escribirlo
+encontró un tercero: el cierre del **DER** tenía **dos** de las seis filas, con
+las otras cuatro dadas por buenas en la prosa.
+
+### Las etiquetas de los suplementos: la SAL no es la vitamina
+
+*(15 de septiembre de 2026.)* Elena: «revisa todos los suplementos también,
+**todas las etiquetas**, igual que hemos hecho con el catálogo. Menos el Pets
+Purest, que te la pasé yo». Y, a media faena, el aviso que resultó ser la mitad
+del trabajo: «**ten en cuenta las unidades eh**, todas tienen que estar en las
+mismas unidades que lo que usamos nosotros».
+
+**62 celdas en 12 fichas, y no es una lista de despistes: es UN patrón.** La
+etiqueta declara la **SAL o el ÉSTER** de la vitamina y el catálogo anotó ese
+número **como si fuera la vitamina**. Es la misma trampa que el repo ya tenía
+escrita para los minerales (`sacn5_fuentes_de_minerales.json`, «óxido de zinc
+100 mg son 72 mg de zinc») y para la que **ya existía la tabla auditada contra
+el PDF**: `fediaf_conversiones_vitaminas.json`, la Tabla VII-14. O sea que la
+fuente estaba, la conversión estaba escrita y la tabla estaba auditada, y
+**nadie la había aplicado a los suplementos** — `auditar_conversiones.py` otra
+vez, pero peor: aquí ni siquiera era una frase sin ejecutar, era una tabla sin
+nadie que la usara.
+
+| Lo que pasa | Cuántas fichas |
+|---|---|
+| **El peso de la sal**: cloruro de colina ×0,75 · D-pantotenato cálcico ×0,92 · clorhidrato de piridoxina ×0,82 · mononitrato de tiamina ×0,81 | 7 · 7 · 3 · 2 |
+| **La unidad de la celda**: el folato va en **µg** y las etiquetas en mg/kg — napfcheck llevaba un `2` donde su etiqueta dice «Folsäure: 20 mg» /kg, que son **2000 µg**. Mil veces por debajo | **6** |
+| **La actividad frente al peso**: la vitamina E se aplica en mg de d-α-tocoferol (así está escrita la conversión del mínimo de FEDIAF), y «6 250 UI/kg» no son 625 mg sino **419,5** | 3 |
+| **La energía a cero teniendo proteína dentro** | 8 |
+
+⚠️ **La que más pesa no es de vitaminas**: el `AniForte Beef Blood Powder`
+declaraba **92 g de proteína y 0 kcal**. La energía es el **DIVISOR** de los 43
+requisitos, así que esa proteína entraba en el numerador de cualquier menú que
+lo llevara y no en el denominador. Se rehace con FEDIAF §7.2.2.2 b) en las ocho
+fichas que publican su proteína y su grasa brutas, con el NFE contado como 0 y
+declarado (sus etiquetas no publican la humedad de la que habría que
+despejarlo), que es el lado del que **no** se entrega un menú de más.
+
+⚠️ **Y la vitamina E de las cinco V-INTEGRA era un CONSERVANTE.** Ninguna de las
+cinco etiquetas la declara como aditivo **nutricional**; lo que declaran es una
+línea de aditivos **tecnológicos** («antiossidanti X mg di cui estratti di
+origine naturale ricchi in tocoferolo Y mg»), y el número de la ficha era ese
+partido por diez, exacto, en las cinco. Importaba justo ahora porque el suelo de
+vitamina E del perro sano se acababa de encender: medido, **entre el 14 % y el
+82 %** de la vitamina E de un menú salía de ahí. Con él a cero los menús llegan a
+**114-167 mg/1000 kcal** contra un suelo de 67,1, porque el solver se va a las
+dos fichas de vitamina E suelta que entraron el mismo día — **el suelo no
+dependía del conservante**.
+
+⚠️ **Y la otra mitad de la regla, que es la que se salta cualquiera con prisa**:
+el `napfcheck` declara «Vitamin E natürlichen Ursprungs: 6.000 mg», que es el
+**peso** del d-α-tocoferol natural, o sea **ya nuestra unidad**. Convertirlo
+habría sido el mismo error al revés, y su cifra no se toca.
+
+⚠️ **El yodo del alga no tiene UN número, y eso es el hallazgo**: las hojas
+publicadas de ese mismo producto dicen **339, 600, 760 y 790 mg/kg**, y **dos de
+ellas son la página del propio fabricante**. No es un descuido: es lo que el repo
+ya tiene escrito en la ficha del yoduro potásico — el yodo del *Ascophyllum*
+varía hasta 100 veces entre lotes. Se toma la **más alta**, y es una decisión con
+dirección: el yodo es tope crónico (regla 2), así que sobreestimar lo que lleva
+el alga hace que el solver meta **menos gramos**. Y sus cuatro minerales pasan a
+hueco porque salían de una hoja cuya ceniza bruta (19,47 %) contradice a la del
+fabricante (11,12 %): una ceniza así no puede contener el 10,1 % de minerales que
+sumaban.
+
+El detalle entero, cifra a cifra y con la cita de cada etiqueta, en
+`ETIQUETAS_DE_LOS_SUPLEMENTOS.md`. Lo vigila el **BLOQUE 116**, que no se cree la
+ficha: la cifra de la etiqueta está transcrita en el bloque, el factor se lee
+**vivo** de `fediaf_conversiones_vitaminas.json` —que a su vez rehace
+`auditar_transcripcion_fediaf.py` contra el PDF— y la cuenta se rehace contra el
+valor que aplica el motor. Comprobado con el fallo puesto de **siete** formas.
 
 ### El catálogo, en orden alfabético — y por qué eso es una regla y no estilo
 
@@ -647,7 +760,7 @@ semáforo se queda con la vieja, el motor construye menús que el filtro final
 tira.
 
 ⚠️ **El hueco de humedad cuenta como AGUA ENTERA, y es una decisión**: quedan
-18 fichas sin humedad (suplementos en polvo), 7,4 g sobre una ración de 730.
+9 fichas sin humedad (suplementos en polvo; eran 18 hasta que se leyeron las etiquetas el 15 de septiembre), 7,4 g sobre una ración de 730.
 Dar por seca esa comida **afloja** el techo; darla por agua lo **aprieta**. Va
 escrito en `constructor.materia_seca_g_100g` y no como un `or 0` silencioso.
 
@@ -1499,7 +1612,12 @@ detrás de un pendiente que no hace falta releer cada vez, en
 `PENDIENTE_DETALLE.md` (el bloque de veterinarios señala directamente a
 `VETERINARIOS.md`, que ya lo tenía completo) — los dos con resumen de una
 línea y puntero en su sitio, para no recargar lo que se lee al empezar
-cualquier sesión. `CERRADO.md` (8 de septiembre) dice **qué está cerrado y qué no**, y por qué.
+cualquier sesión. `ETIQUETAS_DE_LOS_SUPLEMENTOS.md` (15 de septiembre) es **la revisión de las 25
+etiquetas**, cifra a cifra y con la cita de cada una: el patrón de la sal contra la
+vitamina, los seis folatos mil veces por debajo, la vitamina E que era un conservante
+y las ocho energías a cero. Ábrelo antes de tocar una ficha de suplemento. Lo vigila el
+BLOQUE 116.
+`CERRADO.md` (8 de septiembre) dice **qué está cerrado y qué no**, y por qué.
 Cerrado no es «terminado»: es que cumple **las seis condiciones a la vez** (vive
 en el repo · tiene fuente · tiene ficha de permisos · tiene un test que falla si
 se rompe · está escrito como decisión con fecha · no deja preguntas sin dueño), y
@@ -2238,7 +2356,7 @@ credencial como secreto de GitHub, esa mitad también.
 python3 pruebas_completas.py     # ~40 min, tiene que salir TODO EN VERDE
 ```
 
-Los **108 bloques** tardan unos **45 minutos** (2.387 s en la última medida; el
+Los **112 bloques** tardan unos **45 minutos** (2.387 s en la última medida; el
 «~25 min» que ponía aquí se quedó corto igual que antes se quedó corto el
 «~10 min», y antes el «~2 min»: cada vez que un bloque nuevo resuelve menús de
 verdad, esta cifra sube. Si vuelve a bajar sin motivo, es que algo no se está

@@ -208,12 +208,22 @@ cambios: fuera el tope de ×6 RER en lactancia (no es de FEDIAF y recortaba hast
 un tercio), dentro las dos razas con cifra propia (Gran Danés y Terranova), y el
 crecimiento pasa a la regla de SACN5 por edad.
 
-| | |
+| | Dónde se cumple |
 |---|---|
-| 4 · Test | **BLOQUE 54**, contra FEDIAF VII-7/VII-8b y SACN5 5-2, más el contrato de `der_casos.json` (100 casos, el mismo fichero en los dos repos) |
+| 1 · Vive en el repo | `der.py` (el cálculo), `der_casos.json` (el contrato, **el mismo fichero en los dos repos**), `niveles_de_actividad.json` (la Tabla VII-7 fila por fila) y `razas.json` (las dos razas con cifra propia de FEDIAF) |
+| 2 · Tiene fuente | FEDIAF 2025, Tablas VII-7, VII-8a y VII-8b, leídas del PDF; y SACN5 Tabla 5-2 para el crecimiento. La VII-8a se leyó **por coordenadas** y no del `.txt`, porque sus cinco bandas y sus cinco ecuaciones salen en dos columnas cruzadas |
 | 3 · Ficha de permisos | ⚠️ **no la tiene.** El DER no es un límite de patología y `permisos.py` hoy no lo cubre |
+| 4 · Test que falla si se rompe | **BLOQUE 54** (contra FEDIAF VII-7/VII-8b y SACN5 5-2), **BLOQUE 23** (el contrato de `der_casos.json` entero), **BLOQUE 93** (el endpoint, que llevaba desde el 28 de agosto devolviendo 500 sin que nadie lo viera), **BLOQUE 96** (la curva VII-8a, incluido el emparejamiento banda↔ecuación) y **BLOQUE 88** (los cinco niveles de actividad) |
+| 5 · Decisión escrita | `DECISIONES.md` **D-11**, con los tres cambios y su medida |
+| 6 · Sin preguntas sin dueño | `PREGUNTAS_ABIERTAS.md` **P-14** (llevar la curva VII-8a también al frontend) y **P-36** (el sexo en el rango de peso de la FCI), las dos con dueño |
 
-**Así que el DER está en cinco de seis.** Se dice, no se disimula.
+**Así que el DER está en cinco de seis: le falta la 3.** Se dice, no se disimula.
+
+⚠️ **Y hasta el 15 de septiembre esta tabla tenía DOS filas de las seis**, con las
+otras cuatro dadas por buenas en la prosa. Que el DER esté en cinco de seis era
+verdad; lo que no se podía hacer era **señalar dónde**, que es literalmente lo que
+pide este documento en su última línea. Lo encontró el BLOQUE 118 el día que se
+escribió.
 
 ---
 
@@ -364,10 +374,10 @@ COMPROBADO Y CERRADO. OJO CON LAS COLUMNAS EH!!!! NO QUIERO FALLOS NI ERRORES»*
 
 | | Dónde se cumple |
 |---|---|
-| 1 · Vive en el repo | `lecturas_fuentes.json` (el desglose de las 33 secciones), `fediaf_tablas.json` (las tablas una a una), `fediaf_tabla_III_3b.txt` y `fediaf_tabla_VII_14.txt` (la fuente sin tocar), `requerimientos_v2_final.json` (las 43 filas que aplica el motor) |
+| 1 · Vive en el repo | `fediaf_tabla_III_3b.txt`, `fediaf_tabla_III_3a.txt` y `fediaf_tabla_VII_14.txt` (la fuente sin tocar), `requerimientos_v2_final.json` (las 43 filas que aplica el motor), `LECTURAS.md` (lo leído y lo decidido) y `FEDIAF_COMO_LO_APLICAMOS.md` (frase de FEDIAF → lo que hace el motor → qué BLOQUE lo vigila) |
 | 2 · Tiene fuente | Es la fuente: FEDIAF Nutritional Guidelines, publicación de septiembre de 2025. Y el texto está **rehecho** con `page.get_text()`: **0 de 10.284 líneas** con las dos columnas pegadas, contra el 49,3 % de antes |
 | 3 · Ficha de permisos | No aplica y esa es la razón: los requisitos de FEDIAF son los del perro SANO y valen para cualquiera. Lo que sí lleva ficha es lo que los aprieta, y está cerrado aparte |
-| 4 · Test que falla si se rompe | **Cinco bloques, y ninguno se conforma con «lo he leído»**: el 18 (cada valor del JSON contra la transcripción), el 67 (ninguna tabla sin veredicto), el 68 (2.369 de 2.369 elementos con veredicto, 0 pendientes), el 77 (las 164 celdas de la III-3b y los 27 factores de la VII-14, rehechos desde el PDF) y el **85** (las 783 citas entrecomilladas, contra el texto de su fuente) |
+| 4 · Test que falla si se rompe | **Tres bloques, y ninguno se conforma con «lo he leído»**: el 18 (cada valor del JSON contra la transcripción), el 77 (las 164 celdas de la III-3b, los 18 máximos de la III-3a y los 27 factores de la VII-14, rehechos desde el PDF) y el **85** (las 2.043 citas entrecomilladas, contra el texto de su fuente). ⚠️ **Eran cinco y son tres** — ver la nota de abajo |
 | 5 · Decisión escrita | `HECHO.md` y `HALLAZGOS_LECTURA_FUENTES.md`, hallazgo a hallazgo, con lo que se aplicó y lo que no |
 | 6 · Sin preguntas sin dueño | Las que quedan están en `PREGUNTAS_ABIERTAS.md` con dueño, y ninguna es de lectura: son de dato (la humedad, la forma química) o de criterio clínico |
 
@@ -379,19 +389,56 @@ de la derecha. Más de un tercio de lo que se leía eran frases que FEDIAF **no
 dice**. Eso explica cómo «leído entero» podía ser verdad en esfuerzo y falso en
 resultado — y por qué ninguna cantidad de cuidado lo habría arreglado.
 
-**Y por eso el cierre no es una afirmación, son cuatro recuentos clavados:**
+**Y por eso el cierre no es una afirmación, son recuentos clavados:**
 
 | | |
 |---|---|
 | Líneas del texto con las columnas pegadas | **0** de 10.284 |
-| Elementos (cifras y frases normativas) con veredicto | **2.369** de 2.369 |
-| Tablas sin veredicto | **0** |
-| Citas encontradas literales en el texto de su fuente | **759** de 783 |
+| Celdas de la Tabla III-3b rehechas desde el PDF | **164** de 164 |
+| Máximos de la Tabla III-3a rehechos desde el PDF | **18** de 18 |
+| Factores de la Tabla VII-14 rehechos desde el PDF | **27** de 27 |
+| Citas encontradas literales en el texto de su fuente | **2.023** de 2.043 |
 
-Las **24** que faltan para 783 no son de FEDIAF: citan a Merck, al consenso
-ACVIM, a IRIS en PDF o a Purina, que no están en el repo. El auditor **lo dice**
-en vez de darlas por buenas, y ese número va clavado también, para que nadie
-pueda esconder una cita nueva ahí.
+Las **20** que faltan no son de FEDIAF: citan a Merck, al consenso ACVIM, a IRIS
+en PDF o a Purina, que no están en el repo. El auditor **lo dice** en vez de
+darlas por buenas, y ese número va clavado también, para que nadie pueda esconder
+una cita nueva ahí.
+
+---
+
+### ⚠️ ESTE CERTIFICADO SEÑALABA A PRUEBAS QUE YA NO EXISTEN, y eso es la respuesta a por qué «cerrado» no valía
+
+*(15 de septiembre de 2026.)* Elena: «**no me vale que digas que está cerrado y
+que luego sigan saliendo cosas y cosas y más cosas de una fuente que se supone
+que ya estaba totalmente estudiada**».
+
+Tiene una causa concreta y está aquí dentro. Hasta hoy, la fila 1 de esta tabla
+citaba **lecturas_fuentes.json** y **fediaf_tablas.json** (sin comillas de código a
+propósito: ya no son ficheros), y la fila 4 citaba los
+**BLOQUES 67 y 68**. **Los cuatro se borraron el 11 de septiembre**, cuatro días
+después de firmar este cierre, cuando Elena mandó fuera toda la maquinaria de
+contar lecturas: *«todos los scripts de mierda que hayas hecho fuera no los
+quiero»*. Y el borrado fue correcto — esos contadores contaban **frases con
+nota**, no cosas decididas, y decían «0 pendientes» mientras seguían saliendo
+cosas.
+
+Lo que no se hizo fue **volver aquí**. Así que durante cuatro días el documento
+cuyo único trabajo es decir qué es verdad estaba **certificando FEDIAF con dos
+ficheros y dos pruebas que no existen**. Un certificado que señala a una prueba
+borrada no es que esté desactualizado: es que **no prueba nada y no lo dice**.
+
+**Y no era el único sitio**: la tabla de ABIERTO de abajo afirmaba que «la
+humedad no está en ninguna ficha» (está en 155 de 164 desde el 14 de septiembre),
+que solo 34 fichas tienen procedencia (82 la tienen desde el barrido del 13) y
+que «ninguna ficha declara en qué forma viene cada nutriente» (doce de suplemento
+la declaran desde el 15). **Cuatro afirmaciones falsas en el documento de los
+cierres.**
+
+**Lo que se hace para que no vuelva a pasar**: el **BLOQUE 118** exige que cada
+fichero y cada BLOQUE que este documento nombra como prueba **existan de
+verdad**. Es barato, es determinista, y es exactamente el fallo que ocurrió — una
+referencia rota que no da ningún error, la misma familia que los dos BLOQUES 98
+del 13 de septiembre.
 
 ⚠️ **Lo que este cierre NO cierra, y hay que decirlo.** Los siete bloques que
 comprueban el repo contra el texto de las fuentes necesitan `canislab-fuentes`
@@ -409,12 +456,12 @@ local y no en la CI, y la batería lo dice cada vez en vez de callárselo.
 
 | | Qué falta |
 |---|---|
-| **El catálogo** | 163 fichas, 7.407 celdas, y **solo 34 con campo `fuente`**. La composición de 129 fichas no tiene procedencia escrita. Es el bloque grande |
-| **La humedad** | No está en ninguna ficha. De ella depende toda conversión desde porcentaje de materia seca. `PARA_EL_NUTRICIONISTA.md` §10.0 |
+| **El catálogo** | 164 fichas. **82 llevan ya `composicion_fuente`, celda a celda y con la fila literal** (barrido del 13 de septiembre contra BEDCA/Köber/CIQUAL/USDA, más las etiquetas de los suplementos del 15). Las otras 82 son verdura, fruta y carne cuya composición sigue sin procedencia escrita. Sigue siendo el bloque grande, pero ya no es «solo 34» |
+| ~~**La humedad**~~ | **HECHO el 14 y el 15 de septiembre**: está en **155 de 164** fichas, con su fuente y rehecha por el BLOQUE 111. Los 9 huecos que quedan son suplementos en polvo cuya etiqueta no la declara, y van declarados uno a uno. Lo que sigue abierto no es el dato sino qué hacer con él: la **P-38** |
 | **Los siete márgenes interpretados** | Donde la fuente da un solo número y el otro extremo lo pusimos nosotros. `PREGUNTAS_ABIERTAS.md` P-02 |
 | **Qué ve el dueño** | `visible_para` es lo único de la ficha que no se deriva, porque es criterio de producto. Hoy está puesto con un reparto por defecto que hay que revisar |
 | **El BCS ideal: ¿punto 5 o rango 4-5?** | Tensión DENTRO de FEDIAF: la §7.1.1 no distingue dirección y la §7.1.3 dice «the ideal BCS should therefore be between 4/9 and 5/9». Hoy un perro en BCS 4 recibe un **8,2 % más de kcal**. Medido por BCS en `PENDIENTE_DECISIONES.md` §4 |
-| **La forma química de las vitaminas y los minerales** | Las tablas de conversión están en el repo (`fediaf_conversiones_vitaminas.json` y `sacn5_fuentes_de_minerales.json`) y **ninguna ficha declara en qué forma viene cada nutriente**. Con el peor factor, el ácido pantoténico caería bajo el mínimo de FEDIAF. `DATOS_QUE_FALTAN.md` |
+| **La forma química de las vitaminas y los minerales** | ⚠️ **A MEDIAS desde el 15 de septiembre, y lo que se descubrió al hacerlo es que la frase de arriba era falsa en los dos sentidos**: las etiquetas **SÍ dicen** la forma química —la de astoral con el número E y todo, 3a700, 3a821, 3a831, 3a841— y el catálogo **no la estaba aplicando**. Doce fichas de suplemento la declaran ya y su conversión se rehace contra la Tabla VII-14 (BLOQUE 116, 62 celdas corregidas). Lo que queda: la B1 de NEKTON y de Homemadekun, la B6 de Homemadekun y la B1/B2/B6 de las V-INTEGRA, cuyas etiquetas callan la forma. `ETIQUETAS_DE_LOS_SUPLEMENTOS.md` |
 | **El frío** | SACN5 Tabla 5-3 da las cifras (+95 % en pelo corto), y la ficha no pregunta dónde duerme el perro. Falta la pregunta, no el número |
 
 ---
