@@ -1702,6 +1702,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "LZ"
+     },
+     "humedad": {
+      "valor": "75.0",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -1872,6 +1878,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "AR"
+     },
+     "humedad": {
+      "valor": "62.3",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -2470,6 +2482,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "AR"
+     },
+     "humedad": {
+      "valor": "74.4",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -2900,6 +2918,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "AR"
+     },
+     "humedad": {
+      "valor": "67.3",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -3070,6 +3094,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "AR"
+     },
+     "humedad": {
+      "valor": "86.3",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    },
@@ -4022,6 +4052,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "AR"
+     },
+     "humedad": {
+      "valor": "81.3",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -6268,6 +6304,12 @@
       "columna": "Valine",
       "unidad": "G",
       "value_type": null
+     },
+     "humedad": {
+      "valor": "79.38",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -7192,6 +7234,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "AR"
+     },
+     "humedad": {
+      "valor": "94.6",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    },
@@ -7922,6 +7970,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "AR"
+     },
+     "humedad": {
+      "valor": "90.1",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -8774,6 +8828,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "AR"
+     },
+     "humedad": {
+      "valor": "92.2",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -9698,6 +9758,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "AR"
+     },
+     "humedad": {
+      "valor": "86.7",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -9978,6 +10044,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "AR"
+     },
+     "humedad": {
+      "valor": "75.1",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -10118,6 +10190,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "AR"
+     },
+     "humedad": {
+      "valor": "89.6",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -10656,6 +10734,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "AR"
+     },
+     "humedad": {
+      "valor": "94.6",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -10788,6 +10872,12 @@
      "fibra": {
       "valor": "0.3",
       "columna": "Fiber, total dietary",
+      "unidad": "G",
+      "value_type": null
+     },
+     "humedad": {
+      "valor": "94.66",
+      "columna": "agua",
       "unidad": "G",
       "value_type": null
      }
@@ -12088,6 +12178,12 @@
       "columna": "Valine",
       "unidad": "G",
       "value_type": null
+     },
+     "humedad": {
+      "valor": "0.0",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -12240,6 +12336,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "AR"
+     },
+     "humedad": {
+      "valor": "0.0",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -14838,6 +14940,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "AR"
+     },
+     "humedad": {
+      "valor": "70.3",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -14990,6 +15098,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "AR"
+     },
+     "humedad": {
+      "valor": "76.5",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -15160,6 +15274,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "AR"
+     },
+     "humedad": {
+      "valor": "78.0",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -15312,6 +15432,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "LZ"
+     },
+     "humedad": {
+      "valor": "75.4",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -15724,6 +15850,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "LZ"
+     },
+     "humedad": {
+      "valor": "73.9",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -15876,6 +16008,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "LZ"
+     },
+     "humedad": {
+      "valor": "73.9",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -16046,6 +16184,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "AR"
+     },
+     "humedad": {
+      "valor": "81.9",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -16216,6 +16360,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "AR"
+     },
+     "humedad": {
+      "valor": "80.1",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -17128,6 +17278,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "AR"
+     },
+     "humedad": {
+      "valor": "82.0",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -17268,6 +17424,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "AR"
+     },
+     "humedad": {
+      "valor": "78.67",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -17408,6 +17570,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "AR"
+     },
+     "humedad": {
+      "valor": "73.4",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -17578,6 +17746,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "AR"
+     },
+     "humedad": {
+      "valor": "82.2",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    },
@@ -17940,6 +18114,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "AR"
+     },
+     "humedad": {
+      "valor": "80.7",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    },
@@ -18532,6 +18712,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "LZ"
+     },
+     "humedad": {
+      "valor": "86.1",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -19064,6 +19250,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "LZ"
+     },
+     "humedad": {
+      "valor": "80.4",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    },
@@ -19982,6 +20174,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "LZ"
+     },
+     "humedad": {
+      "valor": "0.1",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -20146,6 +20344,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "LZ"
+     },
+     "humedad": {
+      "valor": "0.0",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -20286,6 +20490,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "AR"
+     },
+     "humedad": {
+      "valor": "0.2",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    },
@@ -20678,6 +20888,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "AR"
+     },
+     "humedad": {
+      "valor": "1.0",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -21228,6 +21444,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "AR"
+     },
+     "humedad": {
+      "valor": "5.23",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -21398,6 +21620,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "AR"
+     },
+     "humedad": {
+      "valor": "7.3",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -21798,6 +22026,12 @@
       "columna": "Valine",
       "unidad": "G",
       "value_type": null
+     },
+     "humedad": {
+      "valor": "92.06",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -21950,6 +22184,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "BE"
+     },
+     "humedad": {
+      "valor": "83.33",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -22640,6 +22880,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "BE"
+     },
+     "humedad": {
+      "valor": "71.5",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -22780,6 +23026,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "AR"
+     },
+     "humedad": {
+      "valor": "95.6",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -22920,6 +23172,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "AR"
+     },
+     "humedad": {
+      "valor": "93.9",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    },
@@ -23210,6 +23468,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "AR"
+     },
+     "humedad": {
+      "valor": "91.4",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -23604,6 +23868,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "AR"
+     },
+     "humedad": {
+      "valor": "92.3",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -23756,6 +24026,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "AR"
+     },
+     "humedad": {
+      "valor": "90.3",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -23896,6 +24172,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "AR"
+     },
+     "humedad": {
+      "valor": "92.5",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -24446,6 +24728,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "AR"
+     },
+     "humedad": {
+      "valor": "92.8",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -24586,6 +24874,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "AR"
+     },
+     "humedad": {
+      "valor": "93.1",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -24726,6 +25020,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "AR"
+     },
+     "humedad": {
+      "valor": "95.2",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -24878,6 +25178,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "BE"
+     },
+     "humedad": {
+      "valor": "89.8",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -25416,6 +25722,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "AR"
+     },
+     "humedad": {
+      "valor": "94.8",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -25556,6 +25868,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "AR"
+     },
+     "humedad": {
+      "valor": "89.3",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -25690,6 +26008,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "AR"
+     },
+     "humedad": {
+      "valor": "91.71",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -25830,6 +26154,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "AR"
+     },
+     "humedad": {
+      "valor": "79.6",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -25970,6 +26300,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "AR"
+     },
+     "humedad": {
+      "valor": "87.6",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -26122,6 +26458,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "AR"
+     },
+     "humedad": {
+      "valor": "39.0",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -26262,6 +26604,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "AR"
+     },
+     "humedad": {
+      "valor": "16.5",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -26414,6 +26762,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "AR"
+     },
+     "humedad": {
+      "valor": "84.0",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -26554,6 +26908,12 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "AR"
+     },
+     "humedad": {
+      "valor": "88.3",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -27151,6 +27511,12 @@
       "valor": "1,2",
       "columna": "Fibres alimentaires (g/100 g)",
       "unidad": null,
+      "value_type": null
+     },
+     "humedad": {
+      "valor": "85.5",
+      "columna": "agua",
+      "unidad": "G",
       "value_type": null
      }
     }
@@ -29974,6 +30340,12 @@
       "columna": "Valine",
       "unidad": "G",
       "value_type": null
+     },
+     "humedad": {
+      "valor": "67.8",
+      "columna": "agua",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }
@@ -32195,6 +32567,12 @@
       "valor": "0",
       "columna": "Fibres alimentaires (g/100 g)",
       "unidad": null,
+      "value_type": null
+     },
+     "humedad": {
+      "valor": "70.8",
+      "columna": "agua",
+      "unidad": "G",
       "value_type": null
      }
     }

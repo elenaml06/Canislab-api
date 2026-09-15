@@ -2153,6 +2153,171 @@ calcula la app y el motor solo lo recibe, que es la duplicación declarada del
 DER).
 
 
+### P-38 · Una ración de este motor va a 5,20 kcal/g de materia seca, y los 135 límites que vienen de una tabla en % de materia seca se convirtieron suponiendo 4,0
+
+| | |
+|---|---|
+| **Dueño** | **Cris Carles** (es nutrición: si el consejo de una fuente es una concentración en el alimento o una cantidad por energía) **y Elena** (porque decide cuántos perros se quedan sin menú) |
+| **Bloquea** | **No.** Y hay que decirlo con cuidado, porque la primera versión de esta ficha ponía que sí: una cifra nueva en % de materia seca entra hoy con el mismo 23 % de holgura que las otras 135, y **eso no es motivo para dejarla fuera** — dejarla fuera es no tener límite ninguno, que es peor. Lo que sí es obligatorio es que declare su `densidad_kcal_por_g_MS: 4.0` como las demás, para que el día que esto se decida se muevan TODAS a la vez y ninguna se quede con el supuesto viejo escondido |
+| **Abierta desde** | 14 de septiembre de 2026, al cerrar la humedad del catálogo |
+
+**Lo que dice la fuente**, en la misma página en la que publica la tabla de
+conversión que usa este repo:
+
+> «These conversions assume an energy density of 16.7 kJ (4.0 kcal) ME/g DM. For
+> foods with energy densities different from this value, the recommendations
+> should be corrected for energy density.»
+> — FEDIAF 2025, §3.2.1, Tabla III-2
+
+Y encima de esa misma frase, sobre los límites legales:
+
+> «Legal maxima in EU legislation are expressed on 12% moisture content and they
+> do not account for energy density. Therefore in these guidelines they are only
+> provided on a dry matter basis.»
+
+**Lo que hace el motor hoy**: convierte con el ×2,5 de esa tabla, que es
+exactamente `10 / 4,0`. Lo hacen **135 cifras**: las 94 de `patologias.json`, las
+24 de `recomendaciones_libro.json`, las 4 de `requisitos_condicionales.json` —las
+tres declaran `densidad_kcal_por_g_MS: 4.0`— y **los 13 máximos de FEDIAF que la
+Tabla III-3b no da por 1000 kcal**, porque los publica solo en base materia seca:
+
+| | |
+|---|---|
+| **Límites legales de la UE** | vitamina D · hierro · yodo · selenio · zinc · cobre · manganeso |
+| Máximos nutricionales | calcio · fósforo · vitamina A · linoleico · lisina |
+
+**Lo que estaba sin medir, y ya no**: hasta el 14 de septiembre no se podía ni
+comprobar el supuesto, porque sin la humedad de cada alimento no hay materia
+seca. Con las 144 fichas cerradas, una ración de este motor va a
+
+> **5,20 kcal por gramo de materia seca** (de 4,05 a 6,18 en los 216 menús del
+> catálogo), no a 4,0.
+
+⚠️ Y la banda no depende de lo que falta: los 18 alimentos sin humedad —los
+suplementos en polvo, mandato 5, cuya etiqueta no la declara— pesan una mediana
+de **7,4 g sobre 730 g de ración**, así que contarlos como agua en vez de como
+materia seca mueve la mediana menos de dos décimas. La medida se sostiene con el hueco
+dentro, que es lo que hay que poder afirmar antes de usarla.
+
+Y el motivo no es un fallo de datos: una ración BARF es proteína y grasa **sin
+almidón, sin fibra y sin ceniza de relleno**, y esas tres son justo lo que baja la
+densidad de un pienso. La carne fresca va de 4,4 a 6, los aceites a 8,9 y la
+verdura a 3.
+
+**O sea que las 135 van un ~23 % flojas.** Los techos permiten un 23 % más de lo
+que la fuente quiere decir, y los suelos exigen un 23 % más de lo que pide.
+
+**Lo que cuesta, medido** (14 de septiembre, sobre los 216 menús del catálogo y
+sobre el solver):
+
+| | |
+|---|---|
+| Celdas hoy en VERDE que se pasarían de un **máximo de FEDIAF** corregido | **515** (lisina 143 —que es la excepción ya escrita y no cuenta—, **selenio 155, calcio 116, cobre 92, vitamina D 9**) |
+| Celdas hoy en verde que se pasarían de un **techo del libro** corregido | **219** (fósforo 127, calcio 47, vitamina D 43, sodio 2) |
+| ¿Sigue habiendo menú con los 13 máximos apretados un 23 %? | **8 de 8** perros de referencia (adulto 3, 20 y 40 kg; cachorro joven 10; crecimiento 18; sénior 22; lactante 22; gestante 20) |
+| ⚠️ Pero un factor fijo NO basta | los menús que salen con el factor apretado son a su vez **más densos** (4,90 a 5,87 kcal/g MS), así que el factor que de verdad les tocaría va de ×0,68 a ×0,82. Un número fijo se queda corto en unos perros y se pasa en otros — por eso la forma correcta es la del punto 2, que no usa ningún factor |
+
+⚠️ **Y NO ES SOLO LA CONVERSIÓN: SACN5 RECOMIENDA UNA DENSIDAD, Y NO LA
+CUMPLIMOS.** Encontrado el mismo día leyendo su capítulo 13:
+
+> «Active young adult dogs should be fed a food with an energy density range of
+> **3.5 to 4.5 kcal/g dry matter (DM)**. The energy density range of foods for
+> inactive/obese prone dogs should be lower (**3.0 to 3.5 kcal/g DM**).»
+> — SACN5 5.ª ed., cap.13 «Feeding Young Adult Dogs»
+
+Medido sobre los 216 menús: **3 caen dentro de la banda del perro activo, 213
+están por encima, y ninguno dentro de la del perro inactivo o propenso a
+engordar.** Eso ya no es un supuesto de conversión: es una recomendación sobre
+el alimento que el motor no cumple, y de una fuente distinta.
+
+⚠️ Pero **decir que esto es un fallo sería pasarse**, y por eso es una pregunta:
+esa banda está escrita para un pienso, donde la densidad decide el VOLUMEN que
+el perro come y por tanto si se queda saciado. Una ración BARF es agua y
+proteína, y su volumen por caloría no se parece al de un pienso. Si la banda
+aplica o no a una dieta cruda lo dice un clínico, no una cuenta — y es
+exactamente la misma pregunta que la de arriba, vista por el otro lado.
+
+**Lo que hay que decidir, y son tres cosas:**
+
+1. **Si se aplica.** La fuente lo dice y la regla del repo es que si lo dice el
+   manual se aplica. Aprieta, que es el lado seguro, y **cabe**: 8 de 8.
+2. **Cómo.** El factor no es una constante: depende de la densidad del menú, que
+   no se sabe hasta resolverlo. Pero **no hace falta ningún factor**: un límite en
+   % de materia seca es **lineal en los gramos** —`Σ nutrienteᵢ·gᵢ ≤ (L/100)·Σ
+   materia_secaᵢ·gᵢ`—, así que se puede escribir tal cual en el MILP y el supuesto
+   de los 4,0 desaparece del motor en vez de corregirse. El sitio es
+   `verificar.maximo_de()`, que ya es «EL ÚNICO SITIO» por el que leen el máximo
+   el solver, el semáforo, el analizador y `suplementar()`.
+3. **Qué pasa donde el techo corregido cae por debajo de un suelo de FEDIAF.** Ya
+   pasa: el techo del fósforo del sénior (1750) corregido da **1149**, y el mínimo
+   de FEDIAF del adulto es **1160**. Manda FEDIAF y el techo se cae —eso ya está
+   escrito y es la regla 3-ter— pero hay que decir cuántos son.
+
+⚠️ **Y lo que NO se ha hecho a propósito**: bajar ninguna cifra. Ninguna de las
+135 se toca. Lo que está en cuestión es la conversión, no el número de la fuente.
+
+Lo vigila el **BLOQUE 111**, que mide la densidad real en cada batería y falla si
+se mueve — para que el día que cambie no se siga citando un 23 % que ya no existe.
+
+
+### P-39 · Las diez piezas con hueso ponen el 29 % de las kcal de un menú, y su energía está calculada con unos factores que NRC dice expresamente que no valen para el hueso
+
+| | |
+|---|---|
+| **Dueño** | **Cris Carles** (es nutrición: qué digestibilidad tiene el colágeno del hueso en el perro) |
+| **Bloquea** | No, pero mueve el divisor de los 43 requisitos |
+| **Abierta desde** | 14 de septiembre de 2026, midiendo la humedad |
+
+**Lo que dice la fuente**, y la excepción va entre paréntesis en su propia frase:
+
+> «The resulting Atwater factors of 4 for protein, 9 for fat, and 4 kcal·g⁻¹ for
+> carbohydrate (nitrogen-free extract; NFE) still work amazingly well for
+> ingredients in homemade diets for dogs: meat, offal **(except bones and bone
+> meal)**, poultry, fish, highly purified starch products, milk products, and
+> even chocolate.»
+> — NRC 2006, cap.3
+
+Y dice de dónde sale ese 4: *«Atwater factors include a digestibility of 98
+percent for carbohydrate, 96 percent for fat, and **90 percent for protein**»*.
+La proteína del hueso es **colágeno**, y ahí es donde el supuesto se cae.
+
+**Lo que hace el motor hoy**: las diez fichas con hueso llevan su energía
+calculada con Atwater exacto. Comprobado rehaciendo la cuenta en las diez —
+`4 × proteína + 9 × grasa` da **el número de la ficha al decimal** en las diez.
+No hay término de hidratos, y eso está bien: la Tabla 1 de Köber mide materia
+seca, proteína, grasa y cenizas, y las tres últimas suman la primera (en el
+cuello de ternera, 20,3 + 7,5 + 19,7 = 47,5 contra 48,0 de materia seca). La
+ceniza es mineral, no da kcal y Atwater no la cuenta, así que **el error no está
+ahí**: está en la digestibilidad.
+
+**Lo que expone, medido sobre los 216 menús del catálogo:**
+
+| | |
+|---|---|
+| Menús con alguna pieza con hueso | **213 de 216** |
+| kcal que ponen esas piezas | **mediana 29,0 %**, máximo **48,0 %** |
+| Si su energía estuviera un 10 % alta, el DER del menú se desvía | mediana 2,9 % · peor 4,8 % |
+| Si estuviera un 20 % alta | mediana 5,8 % · peor 9,6 % |
+| Si estuviera un 30 % alta | mediana 8,7 % · peor 14,4 % |
+
+**Y la dirección importa**: si la energía del hueso está sobreestimada, el menú
+entrega MENOS kcal de las que dice, así que el perro come de menos **y** todo
+nutriente por 1000 kcal reales va más concentrado de lo que el semáforo mide.
+Es decir, aprieta contra los MÁXIMOS — la misma dirección que la P-38, y por eso
+las dos se leen juntas.
+
+**Lo que NO se puede hacer, y por eso esto es una pregunta y no un arreglo**:
+NRC dice que Atwater no vale para el hueso y **no da ningún factor alternativo**;
+tampoco lo dan FEDIAF, SACN5 ni Fascetti, ni Köber mide energía. Poner un número
+sería inventarlo, que es exactamente lo que este repo no hace — la misma regla
+que deja inertes los tres `documentado_sin_cifra` de
+`requisitos_condicionales.json`.
+
+**Lo que hace falta**: una digestibilidad de la proteína del hueso en el perro,
+o una medida de energía metabolizable de estas piezas. Con eso el arreglo es de
+una línea por ficha.
+
+
 ---
 
 ## Cerradas
