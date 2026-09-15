@@ -20529,6 +20529,131 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
 # ============================================================
+# BLOQUE 121 — EL MOTOR CALCULA EL PESO ADULTO DEL CACHORRO, NO SE LO CREE
+# ============================================================
+#
+# ⚠️ POR QUÉ EXISTE (15 de septiembre de 2026). Lo encontró Elena preguntando:
+#
+#     «lo del peso de adulto en teoría se iba a calcular con la curva de
+#      crecimiento y ya estaba aplicado, ¿no????»
+#
+# Y estaba aplicado… en el camino del DER. `der.peso_adulto_desde_curva()` --la
+# Tabla VII-8a de FEDIAF, cinco ecuaciones por banda-- la llama `calcular_der()`,
+# y a `calcular_der()` solo se entra por `/der` (que no llama nadie, porque la
+# app calcula el DER por su cuenta) y por `/analizar`. **`/menu/v2` no la
+# ejecutaba nunca**, y no podía: de sus 25 campos no recibía ni la edad ni la
+# raza.
+#
+# O sea que el número del que dependen TRES límites del cachorro --el techo de
+# calcio de 2750 de SACN5, el mínimo reforzado de la nota b de FEDIAF y el techo
+# del ratio Ca:P-- lo calculaba la app y el motor no podía comprobarlo. Es la
+# regla 6 rota donde más duele, y estaba declarado como riesgo en
+# `datos_de_la_ficha.json` sin que nadie lo cerrara.
+#
+# MEDIDO, cachorro de 20 kg a los 7 meses (el perro de Elena):
+#     sin edad ni peso adulto ..... calcio 3732 · TRES límites sin aplicar
+#     con edad (el motor deriva) ... calcio 2747 · los tres aplicados
+# 985 mg/1000 kcal menos, en el nutriente que causa enfermedad ortopédica del
+# desarrollo si sobra.
+print("\n" + "=" * 60)
+print("=== BLOQUE 121: el motor calcula el peso adulto, no se lo cree ===")
+
+_BASE121 = {"modo": "automatico", "nombres_alimentos": [], "der_objetivo": 1581.0,
+            "etapa_requisitos": "CachorroCrecimiento", "peso_perro_kg": 20.0}
+
+
+def _pide121(**extra):
+    _d = dict(_BASE121)
+    _d.update(extra)
+    return _c.post("/menu/v2", json=_d).json()
+
+
+def _calcio121(r):
+    _g = r.get("menu") or {}
+    if not _g:
+        return None
+    _kc = sum((al.get(n, {}).get("energia", 0) or 0) / 100.0 * x for n, x in _g.items())
+    _ca = sum(valor_nutriente(al.get(n, {}).get("nutrientes", {}), "calcio") / 100.0 * x
+              for n, x in _g.items())
+    return _ca / _kc * 1000.0 if _kc else None
+
+
+# 1. CON LA EDAD, EL MOTOR LO DERIVA Y LOS TRES LÍMITES SE APLICAN.
+_r121 = _pide121(edad_meses=7, raza="American Staffordshire Terrier")
+_pa121 = _r121.get("peso_adulto_derivado")
+if not _pa121 or not _pa121.get("valor"):
+    fallos.append("BLOQUE121: con la edad y la raza y SIN `peso_adulto_esperado_kg`, el motor "
+                  "no ha derivado el peso adulto. La curva vive en "
+                  "`der.peso_adulto_desde_curva` y hasta el 15 de septiembre no la ejecutaba "
+                  "nadie en el camino del menú: el número lo ponía la app y el motor se lo creía")
+else:
+    if _r121.get("limites_sin_aplicar"):
+        fallos.append(f"BLOQUE121: el motor ha derivado el peso adulto "
+                      f"({_pa121.get('valor')} kg) y sigue diciendo que hay límites de "
+                      f"crecimiento sin aplicar "
+                      f"({[x.get('limite') for x in _r121['limites_sin_aplicar']]}). Derivarlo "
+                      f"y no usarlo es peor que no derivarlo")
+    _ca121 = _calcio121(_r121)
+    if _ca121 is None:
+        fallos.append("BLOQUE121: el cachorro de raza grande con la edad puesta se queda sin menú")
+    elif _ca121 > 2750.0 * 1.005:
+        fallos.append(f"BLOQUE121: con el peso adulto derivado ({_pa121.get('valor')} kg, o sea "
+                      f"por encima de los 25 kg de SACN5) el menú sale con {_ca121:.0f} mg de "
+                      f"calcio y su techo son 2750. El peso se deriva pero no está llegando a "
+                      f"los límites")
+    # 1-bis. Y SE DICE, en los dos registros. Un número derivado que no se
+    #        anuncia es el mismo problema de origen: quien lee el menú no puede
+    #        saber si ese peso lo mandó él o lo estimó el motor.
+    for _k121 in ("dueno", "veterinario", "de_donde"):
+        if not (_pa121.get(_k121) or "").strip():
+            fallos.append(f"BLOQUE121: el peso adulto derivado no trae «{_k121}». De ese número "
+                          f"salen tres límites del cachorro: quien lee el menú tiene que poder "
+                          f"saber de dónde vino")
+    if "FEDIAF" not in (_pa121.get("de_donde") or "") and "VII-8a" not in (_pa121.get("de_donde") or ""):
+        fallos.append("BLOQUE121: el peso adulto derivado no dice que sale de la curva de "
+                      "FEDIAF. La procedencia de un número que decide un límite no es adorno")
+
+# 2. LO QUE MANDA QUIEN PIDE NO SE PISA. Puede venir de que el dueño lo sepa, de
+#    un veterinario, o de un cálculo con datos que el motor no tiene.
+_r121b = _pide121(edad_meses=7, peso_adulto_esperado_kg=45.0)
+if _r121b.get("peso_adulto_derivado"):
+    fallos.append("BLOQUE121: llega `peso_adulto_esperado_kg` Y la edad, y el motor ha derivado "
+                  "igualmente. El motor rellena el HUECO, no decide por encima de quien pide -- "
+                  "que es lo que ya hace `calcular_der` desde siempre")
+
+# 3. SIN LA EDAD, TODO SIGUE COMO ANTES Y SE DICE QUÉ NO SE PUEDE APLICAR.
+_r121c = _pide121()
+if _r121c.get("peso_adulto_derivado"):
+    fallos.append("BLOQUE121: sin edad ni peso adulto el motor se ha inventado un peso. La curva "
+                  "necesita la edad: sin ella no hay nada que derivar")
+if len(_r121c.get("limites_sin_aplicar") or []) != 3:
+    fallos.append(f"BLOQUE121: sin peso adulto tienen que decirse los TRES límites de "
+                  f"crecimiento que no se aplican y se dicen "
+                  f"{len(_r121c.get('limites_sin_aplicar') or [])}. Es lo que ya hacía antes de "
+                  f"este cambio y no puede haberse perdido")
+
+# 4. FUERA DE CRECIMIENTO NO SE DERIVA NADA.
+#
+#    ⚠️ Y LA EDAD DE ESTE CASO ESTÁ ELEGIDA A PROPÓSITO (15 de septiembre). La
+#    primera versión usaba 36 meses, y con eso esta comprobación NO PODÍA
+#    FALLAR: la curva de FEDIAF solo vale de 8 semanas a un año y a los 36 meses
+#    devuelve None ella sola, así que quitar la guarda de etapa no cambiaba
+#    nada. Comprobado midiendo la curva: 7 meses -> 26,5 · 12 -> 20,6 · 14 ->
+#    None. Con DIEZ meses la curva SÍ da número, así que lo único que impide
+#    derivarlo es la guarda, y quitarla se nota.
+_r121d = _c.post("/menu/v2", json={"modo": "automatico", "nombres_alimentos": [],
+                                   "der_objetivo": 1040.0, "etapa_requisitos": "Adulto",
+                                   "peso_perro_kg": 20.0, "edad_meses": 10}).json()
+if _r121d.get("peso_adulto_derivado"):
+    fallos.append("BLOQUE121: a un perro ADULTO se le ha derivado un «peso adulto esperado». "
+                  "La curva es de cachorros y fuera de su rango FEDIAF no da nada")
+
+print(f"  peso adulto derivado: {(_pa121 or {}).get('valor')} kg · "
+      f"calcio con él {(_calcio121(_r121) or 0):.0f} · sin él {(_calcio121(_r121c) or 0):.0f}")
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
 # BLOQUE 120 — NINGÚN DOCUMENTO ESCRIBE UN NUTRIENTE EN UNA UNIDAD IMPOSIBLE
 # ============================================================
 #

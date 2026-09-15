@@ -882,6 +882,108 @@ def _ratio_cap_raza_grande_roto(gramos, al, req, etapa, peso_adulto_esperado_kg)
 # escalar de más falla RUIDOSAMENTE -sale infactible, o sale un menú más
 # denso de lo necesario, y se ve-. Cuando un fallo es silencioso y el otro
 # visible, se elige el visible.
+# ⚠️ EL PESO ADULTO DE UN CACHORRO LO PUEDE CALCULAR EL MOTOR, Y HASTA HOY NO LO
+# HACÍA EN EL CAMINO DEL MENÚ (15 de septiembre de 2026).
+#
+# Lo encontró Elena preguntando: «lo del peso de adulto en teoría se iba a
+# calcular con la curva de crecimiento y ya estaba aplicado, ¿no?».
+#
+# La curva existe, está medida y funciona: `der.peso_adulto_desde_curva()`, la
+# Tabla VII-8a de FEDIAF, cinco ecuaciones por banda. Lo que pasa es DÓNDE vive:
+# la llama `calcular_der()`, y a `calcular_der()` solo se entra por `/der` --que
+# no llama nadie, porque la app calcula el DER por su cuenta-- y por
+# `/analizar`. **`/menu/v2` no la ejecutaba nunca**, y no podía: de sus 25 campos
+# no recibía ni la edad ni la raza. Solo recibía `peso_adulto_esperado_kg` ya
+# calculado.
+#
+# O sea que el número que decide TRES límites de un cachorro --el techo de calcio
+# de 2750 de SACN5 (por encima de 25 kg de adulto), el mínimo reforzado de la
+# nota b de FEDIAF y el techo del ratio Ca:P (por encima de 15 kg)-- se calculaba
+# en la app y el motor no podía comprobarlo. Es la regla 6 rota en el sitio donde
+# más duele, y ya estaba declarada como riesgo en `datos_de_la_ficha.json`: «el
+# motor recibe el peso adulto ya estimado y NO sabe de qué raza salió».
+#
+# ⚠️ Y LO QUE MANDA QUIEN PIDE NO SE PISA. Si `peso_adulto_esperado_kg` viene, se
+# usa tal cual: puede salir de que el dueño lo sepa, de un veterinario, o de un
+# cálculo de la app con datos que el motor no tiene. El motor solo RELLENA EL
+# HUECO, que es exactamente lo que ya hace `calcular_der` («if meses and
+# peso_actual_kg and not peso_adulto_esperado_kg»). Cambiar eso sería decidir por
+# encima de quien firma.
+#
+# ⚠️ Y SE DICE DE DÓNDE SALE. Un número derivado que no se anuncia es otra vez el
+# problema de origen: quien lea el menú tiene que poder saber si ese peso lo
+# mandó él o lo estimó el motor, porque de él salen tres límites.
+def _peso_adulto_completado(datos):
+    """(peso_adulto_kg, de_dónde, aviso). Rellena el hueco con la curva del
+    propio cachorro cuando quien pide no lo manda.
+
+    `de_dónde` es "lo mandó quien pide", "curva de crecimiento" o None.
+    `aviso` es un dict para la respuesta, o None si no hay nada que decir.
+    """
+    ya = getattr(datos, "peso_adulto_esperado_kg", None)
+    if ya:
+        return float(ya), "lo mandó quien pide", None
+    etapa = getattr(datos, "etapa_requisitos", None)
+    if etapa not in ("CachorroJoven", "CachorroCrecimiento"):
+        return None, None, None
+    meses = getattr(datos, "edad_meses", None)
+    peso = getattr(datos, "peso_perro_kg", None)
+    if not meses or not peso:
+        return None, None, None
+    # La media de la raza SOLO como semilla de la iteración, que es para lo que
+    # la usa la curva. NO acota el resultado -- eso se quitó el 12 de septiembre
+    # tras mirar cómo lo hacen WALTHAM y MyVetDiet, y está medido en
+    # `der.peso_adulto_desde_curva`.
+    semilla = None
+    fila = None
+    nombre_raza = getattr(datos, "raza", None)
+    if nombre_raza:
+        try:
+            import razas as _razas
+            fila = _razas.raza(nombre_raza)
+        except Exception:
+            fila = None
+        if fila:
+            semilla = fila.get("pesoMedio")
+    try:
+        from der import peso_adulto_desde_curva as _curva
+        estimado = _curva(float(peso), float(meses), peso_medio_raza=semilla)
+    except Exception:
+        estimado = None
+    if not estimado:
+        return None, None, None
+    aviso = {
+        "campo": "peso_adulto_esperado_kg",
+        "valor": round(float(estimado), 1),
+        "de_donde": ("Curva de crecimiento de FEDIAF (Tabla VII-8a), a partir de la edad "
+                     "y el peso de hoy"),
+        "dueno": (f"No nos habéis dicho cuánto va a pesar de adulto, así que lo hemos "
+                  f"estimado a partir de su edad y de lo que pesa ahora: unos "
+                  f"{float(estimado):.0f} kg. De ahí salen los límites de calcio que le "
+                  f"tocan mientras crece."),
+        "veterinario": (f"`peso_adulto_esperado_kg` no venía en la petición. Se ha derivado "
+                        f"con `der.peso_adulto_desde_curva` (FEDIAF Tabla VII-8a): "
+                        f"{float(estimado):.1f} kg. De él dependen el techo de calcio de "
+                        f"SACN5 (2750 por encima de 25 kg), el mínimo reforzado de la nota b "
+                        f"y el techo del ratio Ca:P (por encima de 15 kg)."),
+    }
+    # ⚠️ Y SI SE SABE LA RAZA, SE COMPRUEBA QUE CAE EN SU RANGO -- que es la
+    #    segunda cosa que `datos_de_la_ficha.json` declara como perdida. No se
+    #    RECORTA (eso se quitó a propósito el 12 de septiembre): se DICE.
+    if fila and fila.get("pesoMin") and fila.get("pesoMax"):
+        if not (float(fila["pesoMin"]) <= float(estimado) <= float(fila["pesoMax"])):
+            aviso["fuera_del_rango_de_su_raza"] = {
+                "raza": nombre_raza,
+                "rango_kg": [fila["pesoMin"], fila["pesoMax"]],
+                "veterinario": (f"La curva estima {float(estimado):.1f} kg y el estándar de "
+                                f"{nombre_raza} va de {fila['pesoMin']} a {fila['pesoMax']} kg. "
+                                f"No se recorta a propósito --la trayectoria del propio "
+                                f"cachorro informa mejor que la tabla de razas, medido el 12 de "
+                                f"septiembre-- pero conviene mirar el peso y la edad."),
+            }
+    return float(estimado), "curva de crecimiento", aviso
+
+
 def _peso_de_referencia(datos):
     """(peso_kg, de_dónde_salió). Nunca devuelve None en el peso si hay
     peso real: el último peldaño es usarlo tal cual, y decirlo."""
@@ -1755,6 +1857,18 @@ class PeticionMenu(_ConPremios):
     peso_perro_kg: Optional[float] = None
     # peso ADULTO esperado: activa el tope de calcio de raza grande en cachorros
     peso_adulto_esperado_kg: Optional[float] = None
+    # ⚠️ AÑADIDOS (15 septiembre) — LA EDAD Y LA RAZA, QUE LA FICHA YA SABE Y NO
+    # MANDABA A ESTE ENDPOINT. Sin ellas el motor no podía correr su propia curva
+    # de crecimiento y tenía que creerse el `peso_adulto_esperado_kg` que le
+    # llegara -- y de ese número salen TRES límites del cachorro. Ver
+    # `_peso_adulto_completado`, que es quien las usa: rellena el hueco cuando no
+    # viene el peso adulto, y NO pisa el que venga.
+    #
+    # Son opcionales a propósito: sin ellas todo sigue funcionando exactamente
+    # igual que antes, y lo que no se puede aplicar se dice en
+    # `limites_sin_aplicar`, que ya existía.
+    edad_meses: Optional[float] = None
+    raza: Optional[str] = None
     # ⚠️ AÑADIDO (28 agosto) — el peso de referencia para la DER efectiva.
     # En un perro con sobrepeso las kcal se calculan sobre el peso IDEAL,
     # así que la densidad de nutrientes tiene que medirse sobre el mismo
@@ -2169,9 +2283,22 @@ def endpoint_menu_v2(datos: PeticionMenu):
         # necesita saber si es un perro de trabajo. Se pone ANTES de verificar,
         # no después: si se pusiera después, un menú rechazado saldría sin el
         # aviso y el único perro al que le importa es justo el que más come.
+        # ⚠️ EL PESO ADULTO SE COMPLETA AQUÍ, ANTES DE RESOLVER (15 septiembre).
+        # `_resolver_menu_v2_interno` lo hace también --para los otros caminos
+        # que lo llaman-- y es idempotente: si ya está puesto, devuelve «lo
+        # mandó quien pide» y no hay nada que decir. Se hace además aquí porque
+        # esta es la única función con UN solo punto de salida, y el aviso tiene
+        # que viajar SALGA EL MENÚ O NO: si un cachorro se queda sin menú, saber
+        # con qué peso adulto se ha calculado es justo lo que hace falta para
+        # entender por qué.
+        _pa_v2, _pa_de_v2, _pa_aviso_v2 = _peso_adulto_completado(datos)
+        if _pa_v2 and not datos.peso_adulto_esperado_kg:
+            datos.peso_adulto_esperado_kg = _pa_v2
         _interno_v2 = _resolver_menu_v2_interno(datos)
         if isinstance(_interno_v2, dict) and datos.actividad:
             _interno_v2["actividad"] = datos.actividad
+        if isinstance(_interno_v2, dict) and _pa_aviso_v2:
+            _interno_v2["peso_adulto_derivado"] = _pa_aviso_v2
         _resp_v2 = _garantizar_verificado(
             _interno_v2,
             datos.der_objetivo, datos.etapa_requisitos, datos.peso_perro_kg,
@@ -3069,6 +3196,15 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
     ya tomadas, no parámetros que mande el frontend.
     """
     al, req = cargar_v2()
+    # ⚠️ EL PESO ADULTO, ANTES QUE NADA (15 septiembre). Se rellena SOBRE `datos`
+    # porque los sesenta sitios que lo usan leen `datos.peso_adulto_esperado_kg`
+    # directamente -- el solver, el filtro final, el mínimo de la nota b, el
+    # techo del ratio Ca:P y los techos del libro. Ponerlo aquí es la única forma
+    # de que los sesenta vean lo mismo; derivarlo en cada uno sería la
+    # duplicación que este repo lleva un mes desmontando.
+    _pa_calc, _pa_de_donde, _pa_aviso = _peso_adulto_completado(datos)
+    if _pa_calc and not datos.peso_adulto_esperado_kg:
+        datos.peso_adulto_esperado_kg = _pa_calc
     # ⚠️ AÑADIDO (5 agosto, madrugada) — CASO REAL GRAVE ENCONTRADO,
     # pedido expreso: "si generas UN SOLO menú en Personalizar y se le
     # va a dar al perro toda la semana, los límites semanales (vitamina
