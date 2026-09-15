@@ -2719,6 +2719,92 @@ donde vive ese dato.
 
 ---
 
+### P-44 · La medicación no es comida: la mete quien la receta, no nosotros
+
+| | |
+|---|---|
+| **Dueño** | **Elena** (es de producto y la propuesta es suya) y **Cris Carles** (qué se le pide a quien firma) |
+| **Estado** | **abierta** — propuesta el 15 de septiembre de 2026, sin construir |
+
+**De dónde sale.** Al decidir dónde meter la L-metionina, Elena:
+
+> «igual no debería estar en un catálogo de alimentos, que realmente es una
+> medicación… Igual en vez de meter nosotros medicaciones —porque igual luego
+> ellos eligen otra marca y la composición es distinta— **que ellos puedan meter
+> la medicación que van a usar, meter los datos de la medicación para que el
+> motor lo pueda calcular si quieren. Y si no, simplemente poner que han pautado
+> esa medicación** y si no meten los datos, no sé si eso tiene sentido…»
+
+**Sí lo tiene, y por una razón que no es de comodidad: nuestro catálogo es de
+COMIDA.** Cada ficha lleva su procedencia y la rehace un auditor contra su
+fuente. Una ficha de fármaco no puede cumplir eso, porque **el fármaco que
+recete el veterinario no es el que hayamos elegido nosotros**: el `napfcheck
+Vet-MET` (60 g de L-metionina por 100 g, en polvo) y el `VETFOOD L-Methiocid`
+(250 mg por cápsula) son el mismo principio activo con composiciones que no se
+parecen. Poner una ficha sería **elegirle la marca a quien firma** y, peor,
+contar en su ración una composición que no es la que ha recetado.
+
+### Lo que YA existe en el motor y encaja, que es medio camino
+
+| | |
+|---|---|
+| **Cinco avisos que nombran un fármaco concreto** | `mitotano_con_comida`, `bromuro_y_cloro`, `potasio_con_diureticos`, `analitica_de_taurina`, `carnitina_dosis_terapeutica`. Dos empiezan literalmente con «**ES UN AVISO DE FÁRMACO, NO UN TOPE**» |
+| **Gramos fijados por el profesional** | `POST /formular/autocompletar` acepta `gramos_por_alimento`, los respeta con 0,5 g y, si no puede, **no entrega el menú** |
+| **Lo que se come fuera de la ración ya se cuenta** | regla 3-bis: `kcal_de_premios`. Un jarabe o una pasta llevan kcal, y el mecanismo de descontarlas del DER está hecho |
+| **`dato_dudoso`** | el sitio del repo para un valor declarado que no se ha podido verificar. `verificar()` lo devuelve junto al menú |
+
+**Y dos huecos reales que esto llenaría:**
+
+1. ⚠️ **El aviso del bromuro sale hoy a quien no le toca.** `bromuro_y_cloro`
+   dispara **porque está marcada `epilepsia_idiopatica`**, no porque nadie haya
+   dicho que el perro toma bromuro. O sea que se le suelta a todo epiléptico,
+   lo tome o no. Y al revés es peor: el bromuro compite con el **cloruro de la
+   dieta**, así que en el perro que sí lo toma el cloruro de la ración pasa a ser
+   una cifra que hay que vigilar — y el motor no tiene forma de saber que ese
+   perro es ese.
+2. **La pauta firmada no guarda la medicación.** `PeticionFirmar` tiene
+   `paciente` y un `indicaciones` de texto libre, y nada estructurado. Pero
+   `VETERINARIOS.md` dice que la pauta se guarda **congelada entera** porque un
+   documento firmado tiene que seguir diciendo lo mismo dentro de un año: si el
+   fármaco interactúa con la dieta, **pertenece a ese documento**.
+
+### Lo que yo añadiría, y es lo que la propuesta no dice todavía
+
+**(a) No son «con datos / sin datos»: son DOS preguntas independientes.**
+
+| | Qué decide | Ejemplo |
+|---|---|---|
+| **¿Aporta nutrientes o kcal?** | si hay que contarlo en la ración o la ración sale mal calculada | la L-metionina, un aceite, un suplemento de zinc |
+| **¿Interactúa con la dieta?** | si hay que avisar y/o vigilar un nutriente | el bromuro con el cloruro · el mitotano con la comida · los diuréticos con el potasio |
+
+Eso contesta el «no sé si eso tiene sentido» del final: **declarar el fármaco SIN
+datos no es inútil**, porque activa la segunda columna entera, que es justo la
+que el motor ya sabe hacer y hoy dispara a ciegas.
+
+**(b) Un dato tecleado no tiene auditor, y eso hay que decirlo en el documento.**
+Si quien firma escribe la composición y se equivoca en un ×1000 —que es
+**literalmente** lo que se encontró el mismo día en seis fichas de suplemento con
+la etiqueta publicada delante— el motor se lo cree y **el menú sale verde**. El
+catálogo tiene ocho auditores contra eso; un número escrito en el momento no
+tiene ninguno. Así que lo que entre por aquí va marcado como **declarado por el
+profesional y no verificado**, y eso tiene que salir **en la pauta firmada**:
+quien firma tiene derecho a ver que ese número lo puso él y no una fuente.
+
+**(c) El límite, que no se puede cruzar:** el motor **no opina sobre la dosis del
+fármaco**. Cuenta lo que aporta a la ración y avisa de lo que ya sabe. Nada más.
+
+**(d) Y esto reclasifica la metionina** (P-43): deja de ser una ficha del catálogo
+y pasa a ser **el primer caso de uso de esta puerta**. Lo cual resuelve además lo
+de la marca sin tener que elegir ninguna.
+
+⚠️ **Lo que NO desaparece**: la puerta por rol sigue haciendo falta el día que
+haya en el catálogo cualquier ficha que el dueño no deba ver, porque hoy
+`GET /alimentos` sirve las 164 fichas **sin mirar quién pregunta** y
+`/menu/anadir` aceptaría el nombre aunque la pantalla no lo enseñara. Esconder
+sin cerrar la puerta es decorado — la lección de `/stripe/portal`.
+
+---
+
 ## Cerradas
 
 *(Cuando una pregunta se contesta, se mueve aquí con la respuesta, la fecha y
