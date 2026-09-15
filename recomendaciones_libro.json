@@ -80,6 +80,17 @@
     "Senior": {
       "de_donde": "SACN5 5a ed., cap.14 «Feeding Mature Adult Dogs», Tabla 14-2 «Key nutritional factors for foods for mature dogs»",
       "topes_por_1000kcal": {
+        "calcio": {
+          "valor": 2000.0,
+          "fuente": "SACN5 5a ed., cap.14 «Feeding Mature Adult Dogs», apartado «Other Nutritional Factor / Calcium», verificado literal 15-sep-2026",
+          "por_que": "APLICADO 15-sep-2026. ⚠️ Y LO PRIMERO QUE HAY QUE SABER ES QUE NO ESTA EN LA TABLA 14-2, aunque el pendiente que lo pedia decia que estaba «en la fila de al lado del fosforo». Se fue a mirar y la Tabla 14-2 NO TIENE FILA DE CALCIO: la cifra vive en el TEXTO del capitulo, en su apartado «Other Nutritional Factor», que es justo por lo que no la encontro el trabajo de transcribir tablas -- la misma forma de hueco que los tres requisitos condicionales de FEDIAF. Un pendiente que apunta al sitio equivocado manda a quien lo lea a mirar donde no esta. || La frase es «Foods with 0.4 to 0.8% DM calcium are recommended for mature dogs», y se aplica el TECHO: 0,8 % MS x 2500 = 2000 mg/1000 kcal. El SUELO (1000) queda por debajo del minimo de FEDIAF para adulto (1160 en dieta humeda) y no se toca: manda FEDIAF. || MEDIDO ANTES DE APLICARLO, y muerde de verdad: de los 36 menus senior del catalogo, 25 estan por encima de 2000 (llegan a 2766). Preguntandole al solver con tiempo, 21 de 21 siguen saliendo con menu en siete pesos de 3 a 55 kg, todos por debajo del techo y varios pegados a el (1996-1999), que es la senal de que el techo es el que manda y no otra cosa. || Y la MISMA frase trae una segunda cosa que NO se aplica porque no anade nada: «The calcium-phosphorus ratio should not be less than 1:1». El suelo de Ca:P que el motor ya aplica desde FEDIAF en adulto es 1,0, o sea exactamente ese. Se escribe aqui para que nadie vuelva a leer el capitulo y crea que falta.",
+          "conversion": {
+            "valor_en_la_fuente": 0.8,
+            "unidad_en_la_fuente": "%MS->mg",
+            "densidad_kcal_por_g_MS": 4.0,
+            "cita": "SACN5 5a ed., cap.14 «Feeding Mature Adult Dogs», apartado «Other Nutritional Factor / Calcium»: «Foods with 0.4 to 0.8% DM calcium are recommended for mature dogs». Extremo ALTO. Leida literal 15-sep-2026"
+          }
+        },
         "fosforo": {
           "valor": 1750.0,
           "fuente": "SACN5 5a ed., cap.14, Tabla 14-2, verificado literal 8-sep-2026",
