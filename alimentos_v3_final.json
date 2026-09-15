@@ -3311,36 +3311,23 @@
    "colina": 15,
    "cloruro": 6.16,
    "fibra": 2.8,
-   "arginina": 0,
-   "histidina": 0,
-   "isoleucina": 0,
-   "leucina": 0,
-   "lisina": 0,
-   "metionina": 0,
-   "cistina": 0,
-   "fenilalanina": 0,
-   "tirosina": 0,
-   "treonina": 0,
-   "triptofano": 0,
-   "valina": 0,
+   "arginina": 0.08776,
+   "histidina": 0.040874,
+   "isoleucina": 0.079344,
+   "leucina": 0.134645,
+   "lisina": 0.105792,
+   "metionina": 0.026448,
+   "cistina": 0.021639,
+   "fenilalanina": 0.080546,
+   "tirosina": 0.050492,
+   "treonina": 0.094973,
+   "triptofano": 0.022842,
+   "valina": 0.108197,
    "purinas": 7.5,
    "taurina": 0,
    "lcarnitina": 0
   },
-  "sin_dato": [
-   "arginina",
-   "cistina",
-   "fenilalanina",
-   "histidina",
-   "isoleucina",
-   "leucina",
-   "lisina",
-   "metionina",
-   "tirosina",
-   "treonina",
-   "triptofano",
-   "valina"
-  ],
+  "sin_dato": [],
   "purinas_bases": {
    "adenina": 2.2,
    "guanina": 4.6,
@@ -3357,14 +3344,29 @@
   "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
   "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada.",
   "fuentes_id": {
-   "bedca": "2198"
+   "bedca": "2198",
+   "usda": "169961"
   },
   "cero_verificado": {
    "vitB12": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2198 · «Judía verde, cruda» · columna «Vitamina B-12» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía.",
    "vitD": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2198 · «Judía verde, cruda» · columna «Vitamina D» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía."
   },
   "humedad_g_100g": 90.1,
-  "humedad_fuente": "bedca:2198 · Judía verde, cruda"
+  "humedad_fuente": "bedca:2198 · Judía verde, cruda",
+  "composicion_fuente": {
+   "lisina": "usda:169961 · «Beans, snap, green, raw» · columna «Lysine» · transferido por gramo de proteina: ×(2.2/1.83) → 0.105792 g · 2026-09-15",
+   "metionina": "usda:169961 · «Beans, snap, green, raw» · columna «Methionine» · transferido por gramo de proteina: ×(2.2/1.83) → 0.026448 g · 2026-09-15",
+   "cistina": "usda:169961 · «Beans, snap, green, raw» · columna «Cystine» · transferido por gramo de proteina: ×(2.2/1.83) → 0.021639 g · 2026-09-15",
+   "triptofano": "usda:169961 · «Beans, snap, green, raw» · columna «Tryptophan» · transferido por gramo de proteina: ×(2.2/1.83) → 0.022842 g · 2026-09-15",
+   "treonina": "usda:169961 · «Beans, snap, green, raw» · columna «Threonine» · transferido por gramo de proteina: ×(2.2/1.83) → 0.094973 g · 2026-09-15",
+   "isoleucina": "usda:169961 · «Beans, snap, green, raw» · columna «Isoleucine» · transferido por gramo de proteina: ×(2.2/1.83) → 0.079344 g · 2026-09-15",
+   "leucina": "usda:169961 · «Beans, snap, green, raw» · columna «Leucine» · transferido por gramo de proteina: ×(2.2/1.83) → 0.134645 g · 2026-09-15",
+   "valina": "usda:169961 · «Beans, snap, green, raw» · columna «Valine» · transferido por gramo de proteina: ×(2.2/1.83) → 0.108197 g · 2026-09-15",
+   "histidina": "usda:169961 · «Beans, snap, green, raw» · columna «Histidine» · transferido por gramo de proteina: ×(2.2/1.83) → 0.040874 g · 2026-09-15",
+   "fenilalanina": "usda:169961 · «Beans, snap, green, raw» · columna «Phenylalanine» · transferido por gramo de proteina: ×(2.2/1.83) → 0.080546 g · 2026-09-15",
+   "tirosina": "usda:169961 · «Beans, snap, green, raw» · columna «Tyrosine» · transferido por gramo de proteina: ×(2.2/1.83) → 0.050492 g · 2026-09-15",
+   "arginina": "usda:169961 · «Beans, snap, green, raw» · columna «Arginine» · transferido por gramo de proteina: ×(2.2/1.83) → 0.08776 g · 2026-09-15"
+  }
  },
  {
   "nombre": "Brócoli",
@@ -3591,36 +3593,23 @@
    "colina": 6,
    "cloruro": 9.24,
    "fibra": 1.8,
-   "arginina": 0,
-   "histidina": 0,
-   "isoleucina": 0,
-   "leucina": 0,
-   "lisina": 0,
-   "metionina": 0,
-   "cistina": 0,
-   "fenilalanina": 0,
-   "tirosina": 0,
-   "treonina": 0,
-   "triptofano": 0,
-   "valina": 0,
+   "arginina": 0.047273,
+   "histidina": 0.022323,
+   "isoleucina": 0.027576,
+   "leucina": 0.047273,
+   "lisina": 0.047273,
+   "metionina": 0.007879,
+   "cistina": 0.024949,
+   "fenilalanina": 0.065657,
+   "tirosina": 0.011818,
+   "treonina": 0.052525,
+   "triptofano": 0.015758,
+   "valina": 0.040707,
    "purinas": 5.1,
    "taurina": 0,
    "lcarnitina": 0
   },
-  "sin_dato": [
-   "arginina",
-   "cistina",
-   "fenilalanina",
-   "histidina",
-   "isoleucina",
-   "leucina",
-   "lisina",
-   "metionina",
-   "tirosina",
-   "treonina",
-   "triptofano",
-   "valina"
-  ],
+  "sin_dato": [],
   "purinas_bases": {
    "adenina": 1.9,
    "guanina": 3.0,
@@ -3636,14 +3625,29 @@
   "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
   "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada.",
   "fuentes_id": {
-   "bedca": "2409"
+   "bedca": "2409",
+   "usda": "170108"
   },
   "cero_verificado": {
    "vitB12": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2409 · «Pimiento rojo, crudo» · columna «Vitamina B-12» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía.",
    "vitD": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2409 · «Pimiento rojo, crudo» · columna «Vitamina D» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía."
   },
   "humedad_g_100g": 92.2,
-  "humedad_fuente": "bedca:2409 · Pimiento rojo, crudo"
+  "humedad_fuente": "bedca:2409 · Pimiento rojo, crudo",
+  "composicion_fuente": {
+   "lisina": "usda:170108 · «Peppers, sweet, red, raw» · columna «Lysine» · transferido por gramo de proteina: ×(1.3/0.99) → 0.047273 g · 2026-09-15",
+   "metionina": "usda:170108 · «Peppers, sweet, red, raw» · columna «Methionine» · transferido por gramo de proteina: ×(1.3/0.99) → 0.007879 g · 2026-09-15",
+   "cistina": "usda:170108 · «Peppers, sweet, red, raw» · columna «Cystine» · transferido por gramo de proteina: ×(1.3/0.99) → 0.024949 g · 2026-09-15",
+   "triptofano": "usda:170108 · «Peppers, sweet, red, raw» · columna «Tryptophan» · transferido por gramo de proteina: ×(1.3/0.99) → 0.015758 g · 2026-09-15",
+   "treonina": "usda:170108 · «Peppers, sweet, red, raw» · columna «Threonine» · transferido por gramo de proteina: ×(1.3/0.99) → 0.052525 g · 2026-09-15",
+   "isoleucina": "usda:170108 · «Peppers, sweet, red, raw» · columna «Isoleucine» · transferido por gramo de proteina: ×(1.3/0.99) → 0.027576 g · 2026-09-15",
+   "leucina": "usda:170108 · «Peppers, sweet, red, raw» · columna «Leucine» · transferido por gramo de proteina: ×(1.3/0.99) → 0.047273 g · 2026-09-15",
+   "valina": "usda:170108 · «Peppers, sweet, red, raw» · columna «Valine» · transferido por gramo de proteina: ×(1.3/0.99) → 0.040707 g · 2026-09-15",
+   "histidina": "usda:170108 · «Peppers, sweet, red, raw» · columna «Histidine» · transferido por gramo de proteina: ×(1.3/0.99) → 0.022323 g · 2026-09-15",
+   "fenilalanina": "usda:170108 · «Peppers, sweet, red, raw» · columna «Phenylalanine» · transferido por gramo de proteina: ×(1.3/0.99) → 0.065657 g · 2026-09-15",
+   "tirosina": "usda:170108 · «Peppers, sweet, red, raw» · columna «Tyrosine» · transferido por gramo de proteina: ×(1.3/0.99) → 0.011818 g · 2026-09-15",
+   "arginina": "usda:170108 · «Peppers, sweet, red, raw» · columna «Arginine» · transferido por gramo de proteina: ×(1.3/0.99) → 0.047273 g · 2026-09-15"
+  }
  },
  {
   "nombre": "Acelga",
@@ -3732,6 +3736,10 @@
    "epa": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:169991 · «Chard, swiss, raw» · columna «PUFA 20:5 n-3 (EPA)» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
    "vitB12": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2212 · «Acelga, cruda» · columna «Vitamina B-12» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía.",
    "vitD": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2212 · «Acelga, cruda» · columna «Vitamina D» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía."
+  },
+  "hueco_verificado": {
+   "cistina": "Mirado el 2026-09-15: BEDCA y CIQUAL no publican NINGUN aminoacido, y USDA -- la unica que los publica -- tiene la fila usda:169991 «Chard, swiss, raw» pero NO trae esta columna. El resto del aminograma de esta ficha SI sale de ahi. Queda incompleto, y un aminograma incompleto cuenta como CERO entero en el BLOQUE 27: eso es lo correcto, porque el motor no puede fiarse de medio aminograma.",
+   "tirosina": "Mirado el 2026-09-15: BEDCA y CIQUAL no publican NINGUN aminoacido, y USDA -- la unica que los publica -- tiene la fila usda:169991 «Chard, swiss, raw» pero NO trae esta columna. El resto del aminograma de esta ficha SI sale de ahi. Queda incompleto, y un aminograma incompleto cuenta como CERO entero en el BLOQUE 27: eso es lo correcto, porque el motor no puede fiarse de medio aminograma."
   }
  },
  {
@@ -8967,7 +8975,21 @@
    "vitD": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:1176 · «Alcachofa, cruda» · columna «Vitamina D» = 0.0 ug. `value_type` LZ, o sea una MEDIDA y no una celda vacía."
   },
   "humedad_g_100g": 83.33,
-  "humedad_fuente": "bedca:1176 · Alcachofa, cruda"
+  "humedad_fuente": "bedca:1176 · Alcachofa, cruda",
+  "hueco_verificado": {
+   "lisina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:169205 «Artichokes, (globe or french), raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
+   "metionina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:169205 «Artichokes, (globe or french), raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
+   "cistina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:169205 «Artichokes, (globe or french), raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
+   "triptofano": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:169205 «Artichokes, (globe or french), raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
+   "treonina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:169205 «Artichokes, (globe or french), raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
+   "isoleucina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:169205 «Artichokes, (globe or french), raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
+   "leucina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:169205 «Artichokes, (globe or french), raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
+   "valina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:169205 «Artichokes, (globe or french), raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
+   "histidina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:169205 «Artichokes, (globe or french), raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
+   "fenilalanina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:169205 «Artichokes, (globe or french), raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
+   "tirosina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:169205 «Artichokes, (globe or french), raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
+   "arginina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:169205 «Artichokes, (globe or french), raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026)."
+  }
  },
  {
   "nombre": "Apio",
@@ -9180,38 +9202,25 @@
    "colina": 13,
    "cloruro": 29.26,
    "fibra": 2.9,
-   "arginina": 0,
-   "histidina": 0,
-   "isoleucina": 0,
-   "leucina": 0,
-   "lisina": 0,
-   "metionina": 0,
-   "cistina": 0,
-   "fenilalanina": 0,
-   "tirosina": 0,
-   "treonina": 0,
-   "triptofano": 0,
-   "valina": 0,
+   "arginina": 0.042038,
+   "histidina": 0.023694,
+   "isoleucina": 0.042038,
+   "leucina": 0.070318,
+   "lisina": 0.050446,
+   "metionina": 0.022166,
+   "cistina": 0.016815,
+   "fenilalanina": 0.068025,
+   "tirosina": 0.025987,
+   "treonina": 0.063439,
+   "triptofano": 0.023694,
+   "valina": 0.065732,
    "purinas": 17.0,
    "taurina": 0,
    "lcarnitina": 0
   },
   "preparacion": "cocido",
   "nota_datos": "⚠️ DAR SIEMPRE COCIDO, no crudo: crudo es indigesto/duro y da riesgo de obstrucción o malestar GI. Es la excepción al BARF crudo por defecto.",
-  "sin_dato": [
-   "arginina",
-   "cistina",
-   "fenilalanina",
-   "histidina",
-   "isoleucina",
-   "leucina",
-   "lisina",
-   "metionina",
-   "tirosina",
-   "treonina",
-   "triptofano",
-   "valina"
-  ],
+  "sin_dato": [],
   "purinas_bases": {
    "adenina": 6.7,
    "guanina": 7.3,
@@ -9228,7 +9237,8 @@
   "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
   "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada.",
   "fuentes_id": {
-   "bedca": "731"
+   "bedca": "731",
+   "usda": "168482"
   },
   "cero_verificado": {
    "vitB12": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:731 · «Boniato, crudo» · columna «Vitamina B-12» = 0.0 ug. `value_type` LZ, o sea una MEDIDA y no una celda vacía.",
@@ -9236,7 +9246,21 @@
    "yodo": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:731 · «Boniato, crudo» · columna «ioduro» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía."
   },
   "humedad_g_100g": 71.5,
-  "humedad_fuente": "bedca:731 · Boniato, crudo"
+  "humedad_fuente": "bedca:731 · Boniato, crudo",
+  "composicion_fuente": {
+   "lisina": "usda:168482 · «Sweet potato, raw, unprepared» · columna «Lysine» · transferido por gramo de proteina: ×(1.2/1.57) → 0.050446 g · 2026-09-15",
+   "metionina": "usda:168482 · «Sweet potato, raw, unprepared» · columna «Methionine» · transferido por gramo de proteina: ×(1.2/1.57) → 0.022166 g · 2026-09-15",
+   "cistina": "usda:168482 · «Sweet potato, raw, unprepared» · columna «Cystine» · transferido por gramo de proteina: ×(1.2/1.57) → 0.016815 g · 2026-09-15",
+   "triptofano": "usda:168482 · «Sweet potato, raw, unprepared» · columna «Tryptophan» · transferido por gramo de proteina: ×(1.2/1.57) → 0.023694 g · 2026-09-15",
+   "treonina": "usda:168482 · «Sweet potato, raw, unprepared» · columna «Threonine» · transferido por gramo de proteina: ×(1.2/1.57) → 0.063439 g · 2026-09-15",
+   "isoleucina": "usda:168482 · «Sweet potato, raw, unprepared» · columna «Isoleucine» · transferido por gramo de proteina: ×(1.2/1.57) → 0.042038 g · 2026-09-15",
+   "leucina": "usda:168482 · «Sweet potato, raw, unprepared» · columna «Leucine» · transferido por gramo de proteina: ×(1.2/1.57) → 0.070318 g · 2026-09-15",
+   "valina": "usda:168482 · «Sweet potato, raw, unprepared» · columna «Valine» · transferido por gramo de proteina: ×(1.2/1.57) → 0.065732 g · 2026-09-15",
+   "histidina": "usda:168482 · «Sweet potato, raw, unprepared» · columna «Histidine» · transferido por gramo de proteina: ×(1.2/1.57) → 0.023694 g · 2026-09-15",
+   "fenilalanina": "usda:168482 · «Sweet potato, raw, unprepared» · columna «Phenylalanine» · transferido por gramo de proteina: ×(1.2/1.57) → 0.068025 g · 2026-09-15",
+   "tirosina": "usda:168482 · «Sweet potato, raw, unprepared» · columna «Tyrosine» · transferido por gramo de proteina: ×(1.2/1.57) → 0.025987 g · 2026-09-15",
+   "arginina": "usda:168482 · «Sweet potato, raw, unprepared» · columna «Arginine» · transferido por gramo de proteina: ×(1.2/1.57) → 0.042038 g · 2026-09-15"
+  }
  },
  {
   "nombre": "Canónigos",
@@ -9412,7 +9436,21 @@
    "linoleico": "usda:169981 · «Cardoon, raw» · columna «PUFA 18:2» = 0.041 G → 0.041 g · 2026-09-13"
   },
   "humedad_g_100g": 93.9,
-  "humedad_fuente": "bedca:2380 · Cardo"
+  "humedad_fuente": "bedca:2380 · Cardo",
+  "hueco_verificado": {
+   "lisina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:169981 «Cardoon, raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
+   "metionina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:169981 «Cardoon, raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
+   "cistina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:169981 «Cardoon, raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
+   "triptofano": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:169981 «Cardoon, raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
+   "treonina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:169981 «Cardoon, raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
+   "isoleucina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:169981 «Cardoon, raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
+   "leucina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:169981 «Cardoon, raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
+   "valina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:169981 «Cardoon, raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
+   "histidina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:169981 «Cardoon, raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
+   "fenilalanina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:169981 «Cardoon, raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
+   "tirosina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:169981 «Cardoon, raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
+   "arginina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:169981 «Cardoon, raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026)."
+  }
  },
  {
   "nombre": "Champiñón",
@@ -9451,37 +9489,25 @@
    "colina": 17,
    "cloruro": 7.7,
    "fibra": 2.5,
-   "arginina": 0,
-   "histidina": 0,
-   "isoleucina": 0,
-   "leucina": 0,
-   "lisina": 0,
-   "metionina": 0,
-   "cistina": 0,
-   "fenilalanina": 0,
-   "tirosina": 0,
-   "treonina": 0,
-   "triptofano": 0,
-   "valina": 0,
+   "arginina": 0.045437,
+   "histidina": 0.033204,
+   "isoleucina": 0.044272,
+   "leucina": 0.069903,
+   "lisina": 0.06233,
+   "metionina": 0.018058,
+   "cistina": 0.00699,
+   "fenilalanina": 0.049515,
+   "tirosina": 0.025631,
+   "treonina": 0.06233,
+   "triptofano": 0.020388,
+   "valina": 0.135146,
    "purinas": 46.9,
    "lcarnitina": 0,
    "taurina": 0
   },
   "sin_dato": [
-   "arginina",
-   "cistina",
-   "fenilalanina",
-   "histidina",
-   "isoleucina",
    "lcarnitina",
-   "leucina",
-   "lisina",
-   "metionina",
-   "taurina",
-   "tirosina",
-   "treonina",
-   "triptofano",
-   "valina"
+   "taurina"
   ],
   "purinas_bases": {
    "adenina": 18.8,
@@ -9503,10 +9529,25 @@
    "vitD": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2384 · «Champiñon» · columna «Vitamina D» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía."
   },
   "fuentes_id": {
-   "bedca": "2384"
+   "bedca": "2384",
+   "usda": "169251"
   },
   "humedad_g_100g": 91.4,
-  "humedad_fuente": "bedca:2384 · Champiñon"
+  "humedad_fuente": "bedca:2384 · Champiñon",
+  "composicion_fuente": {
+   "lisina": "usda:169251 · «Mushrooms, white, raw» · columna «Lysine» · transferido por gramo de proteina: ×(1.8/3.09) → 0.06233 g · 2026-09-15",
+   "metionina": "usda:169251 · «Mushrooms, white, raw» · columna «Methionine» · transferido por gramo de proteina: ×(1.8/3.09) → 0.018058 g · 2026-09-15",
+   "cistina": "usda:169251 · «Mushrooms, white, raw» · columna «Cystine» · transferido por gramo de proteina: ×(1.8/3.09) → 0.00699 g · 2026-09-15",
+   "triptofano": "usda:169251 · «Mushrooms, white, raw» · columna «Tryptophan» · transferido por gramo de proteina: ×(1.8/3.09) → 0.020388 g · 2026-09-15",
+   "treonina": "usda:169251 · «Mushrooms, white, raw» · columna «Threonine» · transferido por gramo de proteina: ×(1.8/3.09) → 0.06233 g · 2026-09-15",
+   "isoleucina": "usda:169251 · «Mushrooms, white, raw» · columna «Isoleucine» · transferido por gramo de proteina: ×(1.8/3.09) → 0.044272 g · 2026-09-15",
+   "leucina": "usda:169251 · «Mushrooms, white, raw» · columna «Leucine» · transferido por gramo de proteina: ×(1.8/3.09) → 0.069903 g · 2026-09-15",
+   "valina": "usda:169251 · «Mushrooms, white, raw» · columna «Valine» · transferido por gramo de proteina: ×(1.8/3.09) → 0.135146 g · 2026-09-15",
+   "histidina": "usda:169251 · «Mushrooms, white, raw» · columna «Histidine» · transferido por gramo de proteina: ×(1.8/3.09) → 0.033204 g · 2026-09-15",
+   "fenilalanina": "usda:169251 · «Mushrooms, white, raw» · columna «Phenylalanine» · transferido por gramo de proteina: ×(1.8/3.09) → 0.049515 g · 2026-09-15",
+   "tirosina": "usda:169251 · «Mushrooms, white, raw» · columna «Tyrosine» · transferido por gramo de proteina: ×(1.8/3.09) → 0.025631 g · 2026-09-15",
+   "arginina": "usda:169251 · «Mushrooms, white, raw» · columna «Arginine» · transferido por gramo de proteina: ×(1.8/3.09) → 0.045437 g · 2026-09-15"
+  }
  },
  {
   "nombre": "Coles de Bruselas",
@@ -9608,6 +9649,9 @@
    "epa": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:170383 · «Brussels sprouts, raw» · columna «PUFA 20:5 n-3 (EPA)» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
    "vitB12": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:170383 · «Brussels sprouts, raw» · columna «Vitamin B-12» = 0.0 UG. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
    "vitD": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:170383 · «Brussels sprouts, raw» · columna «Vitamin D (D2 + D3)» = 0.0 UG. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
+  },
+  "hueco_verificado": {
+   "tirosina": "Mirado el 2026-09-15: BEDCA y CIQUAL no publican NINGUN aminoacido, y USDA -- la unica que los publica -- tiene la fila usda:170383 «Brussels sprouts, raw» pero NO trae esta columna. El resto del aminograma de esta ficha SI sale de ahi. Queda incompleto, y un aminograma incompleto cuenta como CERO entero en el BLOQUE 27: eso es lo correcto, porque el motor no puede fiarse de medio aminograma."
   }
  },
  {
@@ -9647,37 +9691,24 @@
    "calcio": 48.5,
    "colina": 13.0,
    "vitD": 0.0,
-   "arginina": 0,
-   "histidina": 0,
-   "isoleucina": 0,
-   "leucina": 0,
-   "lisina": 0,
-   "metionina": 0,
-   "cistina": 0,
-   "fenilalanina": 0,
-   "tirosina": 0,
-   "treonina": 0,
-   "triptofano": 0,
-   "valina": 0,
+   "arginina": 0.072552,
+   "histidina": 0.020979,
+   "isoleucina": 0.02972,
+   "leucina": 0.04021,
+   "lisina": 0.042832,
+   "metionina": 0.012238,
+   "cistina": 0.01049,
+   "fenilalanina": 0.031469,
+   "tirosina": 0.019231,
+   "treonina": 0.034091,
+   "triptofano": 0.01049,
+   "valina": 0.041958,
    "purinas": 10.0,
    "taurina": 0,
    "lcarnitina": 0
   },
   "nota_datos": "Fusionado 4 agosto: 'Col lombarda' y 'Lombarda' eran el mismo vegetal duplicado. Promediados los dos valores.",
-  "sin_dato": [
-   "arginina",
-   "cistina",
-   "fenilalanina",
-   "histidina",
-   "isoleucina",
-   "leucina",
-   "lisina",
-   "metionina",
-   "tirosina",
-   "treonina",
-   "triptofano",
-   "valina"
-  ],
+  "sin_dato": [],
   "purinas_bases": {
    "adenina": 4.8,
    "guanina": 5.2,
@@ -9694,11 +9725,26 @@
   "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
   "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada.",
   "fuentes_id": {
-   "bedca": "2400"
+   "bedca": "2400",
+   "usda": "169977"
   },
   "fuentes_id_porque": "BEDCA 2400 «Lombarda» — E 22,2/20 · P 1,5/1,25 · G 0,18/0,24. Es el alimento correcto (lombarda cruda) pero NO es exacta: la identidad cuadra, las cifras se separan hasta un 17 %. Nuestros números no salen de esta fila.",
   "humedad_g_100g": 92.3,
-  "humedad_fuente": "bedca:2400 · Lombarda"
+  "humedad_fuente": "bedca:2400 · Lombarda",
+  "composicion_fuente": {
+   "lisina": "usda:169977 · «Cabbage, red, raw» · columna «Lysine» · transferido por gramo de proteina: ×(1.25/1.43) → 0.042832 g · 2026-09-15",
+   "metionina": "usda:169977 · «Cabbage, red, raw» · columna «Methionine» · transferido por gramo de proteina: ×(1.25/1.43) → 0.012238 g · 2026-09-15",
+   "cistina": "usda:169977 · «Cabbage, red, raw» · columna «Cystine» · transferido por gramo de proteina: ×(1.25/1.43) → 0.01049 g · 2026-09-15",
+   "triptofano": "usda:169977 · «Cabbage, red, raw» · columna «Tryptophan» · transferido por gramo de proteina: ×(1.25/1.43) → 0.01049 g · 2026-09-15",
+   "treonina": "usda:169977 · «Cabbage, red, raw» · columna «Threonine» · transferido por gramo de proteina: ×(1.25/1.43) → 0.034091 g · 2026-09-15",
+   "isoleucina": "usda:169977 · «Cabbage, red, raw» · columna «Isoleucine» · transferido por gramo de proteina: ×(1.25/1.43) → 0.02972 g · 2026-09-15",
+   "leucina": "usda:169977 · «Cabbage, red, raw» · columna «Leucine» · transferido por gramo de proteina: ×(1.25/1.43) → 0.04021 g · 2026-09-15",
+   "valina": "usda:169977 · «Cabbage, red, raw» · columna «Valine» · transferido por gramo de proteina: ×(1.25/1.43) → 0.041958 g · 2026-09-15",
+   "histidina": "usda:169977 · «Cabbage, red, raw» · columna «Histidine» · transferido por gramo de proteina: ×(1.25/1.43) → 0.020979 g · 2026-09-15",
+   "fenilalanina": "usda:169977 · «Cabbage, red, raw» · columna «Phenylalanine» · transferido por gramo de proteina: ×(1.25/1.43) → 0.031469 g · 2026-09-15",
+   "tirosina": "usda:169977 · «Cabbage, red, raw» · columna «Tyrosine» · transferido por gramo de proteina: ×(1.25/1.43) → 0.019231 g · 2026-09-15",
+   "arginina": "usda:169977 · «Cabbage, red, raw» · columna «Arginine» · transferido por gramo de proteina: ×(1.25/1.43) → 0.072552 g · 2026-09-15"
+  }
  },
  {
   "nombre": "Col rizada",
@@ -9822,36 +9868,23 @@
    "colina": 44,
    "cloruro": 36.96,
    "fibra": 2.3,
-   "arginina": 0,
-   "histidina": 0,
-   "isoleucina": 0,
-   "leucina": 0,
-   "lisina": 0,
-   "metionina": 0,
-   "cistina": 0,
-   "fenilalanina": 0,
-   "tirosina": 0,
-   "treonina": 0,
-   "triptofano": 0,
-   "valina": 0,
+   "arginina": 0.089583,
+   "histidina": 0.058333,
+   "isoleucina": 0.073958,
+   "leucina": 0.110417,
+   "lisina": 0.226042,
+   "metionina": 0.020833,
+   "cistina": 0.020833,
+   "fenilalanina": 0.067708,
+   "tirosina": 0.053125,
+   "treonina": 0.079167,
+   "triptofano": 0.020833,
+   "valina": 0.130208,
    "purinas": 33.0,
    "taurina": 0,
    "lcarnitina": 0
   },
-  "sin_dato": [
-   "arginina",
-   "cistina",
-   "fenilalanina",
-   "histidina",
-   "isoleucina",
-   "leucina",
-   "lisina",
-   "metionina",
-   "tirosina",
-   "treonina",
-   "triptofano",
-   "valina"
-  ],
+  "sin_dato": [],
   "purinas_bases": {
    "adenina": 15.2,
    "guanina": 17.5,
@@ -9874,11 +9907,26 @@
    "vitD": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:859 · «Coliflor, congelada, cruda» · columna «Vitamina D» = 0.0 ug. `value_type` LZ, o sea una MEDIDA y no una celda vacía."
   },
   "fuentes_id": {
-   "bedca": "859"
+   "bedca": "859",
+   "usda": "169986"
   },
   "fuentes_id_porque": "BEDCA 859 «Coliflor, CONGELADA, cruda» — E 18,2/18 · P 2/2 · G 0,175/0,175, exacta a seis cifras. ⚠️ LA FILA ES LA CONGELADA y nuestra ficha no lo dice: es la única de coliflor cruda que publica BEDCA (la otra es hervida). Se deja declarado en vez de esconderlo.",
   "humedad_g_100g": 92.5,
-  "humedad_fuente": "bedca:859 · Coliflor, congelada, cruda"
+  "humedad_fuente": "bedca:859 · Coliflor, congelada, cruda",
+  "composicion_fuente": {
+   "lisina": "usda:169986 · «Cauliflower, raw» · columna «Lysine» · transferido por gramo de proteina: ×(2.0/1.92) → 0.226042 g · 2026-09-15",
+   "metionina": "usda:169986 · «Cauliflower, raw» · columna «Methionine» · transferido por gramo de proteina: ×(2.0/1.92) → 0.020833 g · 2026-09-15",
+   "cistina": "usda:169986 · «Cauliflower, raw» · columna «Cystine» · transferido por gramo de proteina: ×(2.0/1.92) → 0.020833 g · 2026-09-15",
+   "triptofano": "usda:169986 · «Cauliflower, raw» · columna «Tryptophan» · transferido por gramo de proteina: ×(2.0/1.92) → 0.020833 g · 2026-09-15",
+   "treonina": "usda:169986 · «Cauliflower, raw» · columna «Threonine» · transferido por gramo de proteina: ×(2.0/1.92) → 0.079167 g · 2026-09-15",
+   "isoleucina": "usda:169986 · «Cauliflower, raw» · columna «Isoleucine» · transferido por gramo de proteina: ×(2.0/1.92) → 0.073958 g · 2026-09-15",
+   "leucina": "usda:169986 · «Cauliflower, raw» · columna «Leucine» · transferido por gramo de proteina: ×(2.0/1.92) → 0.110417 g · 2026-09-15",
+   "valina": "usda:169986 · «Cauliflower, raw» · columna «Valine» · transferido por gramo de proteina: ×(2.0/1.92) → 0.130208 g · 2026-09-15",
+   "histidina": "usda:169986 · «Cauliflower, raw» · columna «Histidine» · transferido por gramo de proteina: ×(2.0/1.92) → 0.058333 g · 2026-09-15",
+   "fenilalanina": "usda:169986 · «Cauliflower, raw» · columna «Phenylalanine» · transferido por gramo de proteina: ×(2.0/1.92) → 0.067708 g · 2026-09-15",
+   "tirosina": "usda:169986 · «Cauliflower, raw» · columna «Tyrosine» · transferido por gramo de proteina: ×(2.0/1.92) → 0.053125 g · 2026-09-15",
+   "arginina": "usda:169986 · «Cauliflower, raw» · columna «Arginine» · transferido por gramo de proteina: ×(2.0/1.92) → 0.089583 g · 2026-09-15"
+  }
  },
  {
   "nombre": "Endibia",
@@ -10006,38 +10054,25 @@
    "colina": 16,
    "cloruro": 4.62,
    "fibra": 1.7,
-   "arginina": 0,
-   "histidina": 0,
-   "isoleucina": 0,
-   "leucina": 0,
-   "lisina": 0,
-   "metionina": 0,
-   "cistina": 0,
-   "fenilalanina": 0,
-   "tirosina": 0,
-   "treonina": 0,
-   "triptofano": 0,
-   "valina": 0,
+   "arginina": 0.119955,
+   "histidina": 0.064591,
+   "isoleucina": 0.098864,
+   "leucina": 0.168727,
+   "lisina": 0.137091,
+   "metionina": 0.040864,
+   "cistina": 0.040864,
+   "fenilalanina": 0.098864,
+   "tirosina": 0.068545,
+   "treonina": 0.110727,
+   "triptofano": 0.035591,
+   "valina": 0.151591,
    "purinas": 32.85,
    "taurina": 0,
    "lcarnitina": 0
   },
   "preparacion": "cocido",
   "nota_datos": "⚠️ DAR SIEMPRE COCIDO, no crudo: crudo es indigesto/duro y da riesgo de obstrucción o malestar GI. Es la excepción al BARF crudo por defecto.",
-  "sin_dato": [
-   "arginina",
-   "cistina",
-   "fenilalanina",
-   "histidina",
-   "isoleucina",
-   "leucina",
-   "lisina",
-   "metionina",
-   "tirosina",
-   "treonina",
-   "triptofano",
-   "valina"
-  ],
+  "sin_dato": [],
   "purinas_bases": {
    "adenina": 12.2,
    "guanina": 17.7,
@@ -10054,7 +10089,8 @@
   "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
   "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada.",
   "fuentes_id": {
-   "bedca": "1179"
+   "bedca": "1179",
+   "usda": "168389"
   },
   "fuentes_id_porque": "BEDCA 1179 «Espárrago, verde» — E 25,2/25 · P 2,9/2,9 · G 0,6/0,6. ⚠️ El automático no lo encontró porque BEDCA escribe el nombre CON COMA («Espárrago, verde») y la consulta «Espárrago verde» devuelve 0 resultados.",
   "cero_verificado": {
@@ -10062,7 +10098,21 @@
    "vitD": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:1179 · «Espárrago, verde» · columna «Vitamina D» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía."
   },
   "humedad_g_100g": 92.8,
-  "humedad_fuente": "bedca:1179 · Espárrago, verde"
+  "humedad_fuente": "bedca:1179 · Espárrago, verde",
+  "composicion_fuente": {
+   "lisina": "usda:168389 · «Asparagus, raw» · columna «Lysine» · transferido por gramo de proteina: ×(2.9/2.2) → 0.137091 g · 2026-09-15",
+   "metionina": "usda:168389 · «Asparagus, raw» · columna «Methionine» · transferido por gramo de proteina: ×(2.9/2.2) → 0.040864 g · 2026-09-15",
+   "cistina": "usda:168389 · «Asparagus, raw» · columna «Cystine» · transferido por gramo de proteina: ×(2.9/2.2) → 0.040864 g · 2026-09-15",
+   "triptofano": "usda:168389 · «Asparagus, raw» · columna «Tryptophan» · transferido por gramo de proteina: ×(2.9/2.2) → 0.035591 g · 2026-09-15",
+   "treonina": "usda:168389 · «Asparagus, raw» · columna «Threonine» · transferido por gramo de proteina: ×(2.9/2.2) → 0.110727 g · 2026-09-15",
+   "isoleucina": "usda:168389 · «Asparagus, raw» · columna «Isoleucine» · transferido por gramo de proteina: ×(2.9/2.2) → 0.098864 g · 2026-09-15",
+   "leucina": "usda:168389 · «Asparagus, raw» · columna «Leucine» · transferido por gramo de proteina: ×(2.9/2.2) → 0.168727 g · 2026-09-15",
+   "valina": "usda:168389 · «Asparagus, raw» · columna «Valine» · transferido por gramo de proteina: ×(2.9/2.2) → 0.151591 g · 2026-09-15",
+   "histidina": "usda:168389 · «Asparagus, raw» · columna «Histidine» · transferido por gramo de proteina: ×(2.9/2.2) → 0.064591 g · 2026-09-15",
+   "fenilalanina": "usda:168389 · «Asparagus, raw» · columna «Phenylalanine» · transferido por gramo de proteina: ×(2.9/2.2) → 0.098864 g · 2026-09-15",
+   "tirosina": "usda:168389 · «Asparagus, raw» · columna «Tyrosine» · transferido por gramo de proteina: ×(2.9/2.2) → 0.068545 g · 2026-09-15",
+   "arginina": "usda:168389 · «Asparagus, raw» · columna «Arginine» · transferido por gramo de proteina: ×(2.9/2.2) → 0.119955 g · 2026-09-15"
+  }
  },
  {
   "nombre": "Grelo",
@@ -10172,36 +10222,23 @@
    "colina": 10,
    "cloruro": 4.62,
    "fibra": 1.5,
-   "arginina": 0,
-   "histidina": 0,
-   "isoleucina": 0,
-   "leucina": 0,
-   "lisina": 0,
-   "metionina": 0,
-   "cistina": 0,
-   "fenilalanina": 0,
-   "tirosina": 0,
-   "treonina": 0,
-   "triptofano": 0,
-   "valina": 0,
+   "arginina": 0.04939,
+   "histidina": 0.019207,
+   "isoleucina": 0.041159,
+   "leucina": 0.069512,
+   "lisina": 0.058537,
+   "metionina": 0.01372,
+   "cistina": 0.005488,
+   "fenilalanina": 0.059451,
+   "tirosina": 0.022866,
+   "treonina": 0.039329,
+   "triptofano": 0.009146,
+   "valina": 0.050305,
    "purinas": 4.7,
    "taurina": 0,
    "lcarnitina": 0
   },
-  "sin_dato": [
-   "arginina",
-   "cistina",
-   "fenilalanina",
-   "histidina",
-   "isoleucina",
-   "leucina",
-   "lisina",
-   "metionina",
-   "tirosina",
-   "treonina",
-   "triptofano",
-   "valina"
-  ],
+  "sin_dato": [],
   "purinas_bases": {
    "adenina": 1.2,
    "guanina": 3.2,
@@ -10218,14 +10255,29 @@
   "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
   "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada.",
   "fuentes_id": {
-   "bedca": "2399"
+   "bedca": "2399",
+   "usda": "169247"
   },
   "cero_verificado": {
    "vitB12": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2399 · «Lechuga» · columna «Vitamina B-12» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía.",
    "vitD": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2399 · «Lechuga» · columna «Vitamina D» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía."
   },
   "humedad_g_100g": 95.2,
-  "humedad_fuente": "bedca:2399 · Lechuga"
+  "humedad_fuente": "bedca:2399 · Lechuga",
+  "composicion_fuente": {
+   "lisina": "usda:169247 · «Lettuce, cos or romaine, raw» · columna «Lysine» · transferido por gramo de proteina: ×(1.125/1.23) → 0.058537 g · 2026-09-15",
+   "metionina": "usda:169247 · «Lettuce, cos or romaine, raw» · columna «Methionine» · transferido por gramo de proteina: ×(1.125/1.23) → 0.01372 g · 2026-09-15",
+   "cistina": "usda:169247 · «Lettuce, cos or romaine, raw» · columna «Cystine» · transferido por gramo de proteina: ×(1.125/1.23) → 0.005488 g · 2026-09-15",
+   "triptofano": "usda:169247 · «Lettuce, cos or romaine, raw» · columna «Tryptophan» · transferido por gramo de proteina: ×(1.125/1.23) → 0.009146 g · 2026-09-15",
+   "treonina": "usda:169247 · «Lettuce, cos or romaine, raw» · columna «Threonine» · transferido por gramo de proteina: ×(1.125/1.23) → 0.039329 g · 2026-09-15",
+   "isoleucina": "usda:169247 · «Lettuce, cos or romaine, raw» · columna «Isoleucine» · transferido por gramo de proteina: ×(1.125/1.23) → 0.041159 g · 2026-09-15",
+   "leucina": "usda:169247 · «Lettuce, cos or romaine, raw» · columna «Leucine» · transferido por gramo de proteina: ×(1.125/1.23) → 0.069512 g · 2026-09-15",
+   "valina": "usda:169247 · «Lettuce, cos or romaine, raw» · columna «Valine» · transferido por gramo de proteina: ×(1.125/1.23) → 0.050305 g · 2026-09-15",
+   "histidina": "usda:169247 · «Lettuce, cos or romaine, raw» · columna «Histidine» · transferido por gramo de proteina: ×(1.125/1.23) → 0.019207 g · 2026-09-15",
+   "fenilalanina": "usda:169247 · «Lettuce, cos or romaine, raw» · columna «Phenylalanine» · transferido por gramo de proteina: ×(1.125/1.23) → 0.059451 g · 2026-09-15",
+   "tirosina": "usda:169247 · «Lettuce, cos or romaine, raw» · columna «Tyrosine» · transferido por gramo de proteina: ×(1.125/1.23) → 0.022866 g · 2026-09-15",
+   "arginina": "usda:169247 · «Lettuce, cos or romaine, raw» · columna «Arginine» · transferido por gramo de proteina: ×(1.125/1.23) → 0.04939 g · 2026-09-15"
+  }
  },
  {
   "nombre": "Nabo pelado",
@@ -10530,36 +10582,23 @@
    "colina": 13,
    "cloruro": 24.64,
    "fibra": 3.1,
-   "arginina": 0,
-   "histidina": 0,
-   "isoleucina": 0,
-   "leucina": 0,
-   "lisina": 0,
-   "metionina": 0,
-   "cistina": 0,
-   "fenilalanina": 0,
-   "tirosina": 0,
-   "treonina": 0,
-   "triptofano": 0,
-   "valina": 0,
+   "arginina": 0.105469,
+   "histidina": 0.030937,
+   "isoleucina": 0.042187,
+   "leucina": 0.057656,
+   "lisina": 0.061875,
+   "metionina": 0.016875,
+   "cistina": 0.015469,
+   "fenilalanina": 0.045,
+   "tirosina": 0.026719,
+   "treonina": 0.049219,
+   "triptofano": 0.015469,
+   "valina": 0.059063,
    "purinas": 10.0,
    "taurina": 0,
    "lcarnitina": 0
   },
-  "sin_dato": [
-   "arginina",
-   "cistina",
-   "fenilalanina",
-   "histidina",
-   "isoleucina",
-   "leucina",
-   "lisina",
-   "metionina",
-   "tirosina",
-   "treonina",
-   "triptofano",
-   "valina"
-  ],
+  "sin_dato": [],
   "purinas_bases": {
    "adenina": 4.8,
    "guanina": 5.2,
@@ -10576,14 +10615,29 @@
   "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
   "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada.",
   "fuentes_id": {
-   "bedca": "2417"
+   "bedca": "2417",
+   "usda": "169975"
   },
   "cero_verificado": {
    "vitB12": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2417 · «Repollo» · columna «Vitamina B-12» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía.",
    "vitD": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2417 · «Repollo» · columna «Vitamina D» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía."
   },
   "humedad_g_100g": 89.3,
-  "humedad_fuente": "bedca:2417 · Repollo"
+  "humedad_fuente": "bedca:2417 · Repollo",
+  "composicion_fuente": {
+   "lisina": "usda:169975 · «Cabbage, raw» · columna «Lysine» · transferido por gramo de proteina: ×(1.8/1.28) → 0.061875 g · 2026-09-15",
+   "metionina": "usda:169975 · «Cabbage, raw» · columna «Methionine» · transferido por gramo de proteina: ×(1.8/1.28) → 0.016875 g · 2026-09-15",
+   "cistina": "usda:169975 · «Cabbage, raw» · columna «Cystine» · transferido por gramo de proteina: ×(1.8/1.28) → 0.015469 g · 2026-09-15",
+   "triptofano": "usda:169975 · «Cabbage, raw» · columna «Tryptophan» · transferido por gramo de proteina: ×(1.8/1.28) → 0.015469 g · 2026-09-15",
+   "treonina": "usda:169975 · «Cabbage, raw» · columna «Threonine» · transferido por gramo de proteina: ×(1.8/1.28) → 0.049219 g · 2026-09-15",
+   "isoleucina": "usda:169975 · «Cabbage, raw» · columna «Isoleucine» · transferido por gramo de proteina: ×(1.8/1.28) → 0.042187 g · 2026-09-15",
+   "leucina": "usda:169975 · «Cabbage, raw» · columna «Leucine» · transferido por gramo de proteina: ×(1.8/1.28) → 0.057656 g · 2026-09-15",
+   "valina": "usda:169975 · «Cabbage, raw» · columna «Valine» · transferido por gramo de proteina: ×(1.8/1.28) → 0.059063 g · 2026-09-15",
+   "histidina": "usda:169975 · «Cabbage, raw» · columna «Histidine» · transferido por gramo de proteina: ×(1.8/1.28) → 0.030937 g · 2026-09-15",
+   "fenilalanina": "usda:169975 · «Cabbage, raw» · columna «Phenylalanine» · transferido por gramo de proteina: ×(1.8/1.28) → 0.045 g · 2026-09-15",
+   "tirosina": "usda:169975 · «Cabbage, raw» · columna «Tyrosine» · transferido por gramo de proteina: ×(1.8/1.28) → 0.026719 g · 2026-09-15",
+   "arginina": "usda:169975 · «Cabbage, raw» · columna «Arginine» · transferido por gramo de proteina: ×(1.8/1.28) → 0.105469 g · 2026-09-15"
+  }
  },
  {
   "nombre": "Rucula",
@@ -10675,7 +10729,21 @@
    "vitD": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2418 · «Rúcula» · columna «Vitamina D» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía."
   },
   "humedad_g_100g": 91.71,
-  "humedad_fuente": "bedca:2418 · Rúcula"
+  "humedad_fuente": "bedca:2418 · Rúcula",
+  "hueco_verificado": {
+   "lisina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:169387 «Arugula, raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
+   "metionina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:169387 «Arugula, raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
+   "cistina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:169387 «Arugula, raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
+   "triptofano": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:169387 «Arugula, raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
+   "treonina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:169387 «Arugula, raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
+   "isoleucina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:169387 «Arugula, raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
+   "leucina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:169387 «Arugula, raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
+   "valina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:169387 «Arugula, raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
+   "histidina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:169387 «Arugula, raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
+   "fenilalanina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:169387 «Arugula, raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
+   "tirosina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:169387 «Arugula, raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
+   "arginina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:169387 «Arugula, raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026)."
+  }
  },
  {
   "nombre": "Tomate (puré)",
@@ -10714,38 +10782,25 @@
    "colina": 7,
    "cloruro": 369.6,
    "fibra": 2.8,
-   "arginina": 0,
-   "histidina": 0,
-   "isoleucina": 0,
-   "leucina": 0,
-   "lisina": 0,
-   "metionina": 0,
-   "cistina": 0,
-   "fenilalanina": 0,
-   "tirosina": 0,
-   "treonina": 0,
-   "triptofano": 0,
-   "valina": 0,
+   "arginina": 0.087273,
+   "histidina": 0.068182,
+   "isoleucina": 0.084545,
+   "leucina": 0.125455,
+   "lisina": 0.130909,
+   "metionina": 0.024545,
+   "cistina": 0.027273,
+   "fenilalanina": 0.092727,
+   "tirosina": 0.057273,
+   "treonina": 0.100909,
+   "triptofano": 0.03,
+   "valina": 0.09,
    "purinas": 6.6,
    "taurina": 0,
    "lcarnitina": 0
   },
   "fuente": "BEDCA",
   "nota_datos": "BEDCA, «Tomate, maduro, puré» — fibra dietética total 2,8 g/100 g (fuente 29). Es el puré, no el tomate fresco, que en BEDCA es otra ficha distinta y trae 1,1 g. La energía (73 kcal), la proteína (4,5 g) y la grasa (0,2 g) que ya teníamos coinciden exactas con la ficha del puré, así que es la buena.",
-  "sin_dato": [
-   "arginina",
-   "cistina",
-   "fenilalanina",
-   "histidina",
-   "isoleucina",
-   "leucina",
-   "lisina",
-   "metionina",
-   "tirosina",
-   "treonina",
-   "triptofano",
-   "valina"
-  ],
+  "sin_dato": [],
   "purinas_bases": {
    "adenina": 3.2,
    "guanina": 1.2,
@@ -10762,7 +10817,8 @@
   "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
   "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada.",
   "fuentes_id": {
-   "bedca": "892"
+   "bedca": "892",
+   "usda": "170460"
   },
   "fuentes_id_porque": "BEDCA 892 «Tomate, maduro, puré» — E 72,5/73 · P 4,5/4,5 · G 0,2/0,2. Exacta.",
   "cero_verificado": {
@@ -10770,7 +10826,21 @@
    "vitD": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:892 · «Tomate, maduro, puré» · columna «Vitamina D» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía."
   },
   "humedad_g_100g": 79.6,
-  "humedad_fuente": "bedca:892 · Tomate, maduro, puré"
+  "humedad_fuente": "bedca:892 · Tomate, maduro, puré",
+  "composicion_fuente": {
+   "lisina": "usda:170460 · «Tomato products, canned, puree, without salt added» · columna «Lysine» · transferido por gramo de proteina: ×(4.5/1.65) → 0.130909 g · 2026-09-15",
+   "metionina": "usda:170460 · «Tomato products, canned, puree, without salt added» · columna «Methionine» · transferido por gramo de proteina: ×(4.5/1.65) → 0.024545 g · 2026-09-15",
+   "cistina": "usda:170460 · «Tomato products, canned, puree, without salt added» · columna «Cystine» · transferido por gramo de proteina: ×(4.5/1.65) → 0.027273 g · 2026-09-15",
+   "triptofano": "usda:170460 · «Tomato products, canned, puree, without salt added» · columna «Tryptophan» · transferido por gramo de proteina: ×(4.5/1.65) → 0.03 g · 2026-09-15",
+   "treonina": "usda:170460 · «Tomato products, canned, puree, without salt added» · columna «Threonine» · transferido por gramo de proteina: ×(4.5/1.65) → 0.100909 g · 2026-09-15",
+   "isoleucina": "usda:170460 · «Tomato products, canned, puree, without salt added» · columna «Isoleucine» · transferido por gramo de proteina: ×(4.5/1.65) → 0.084545 g · 2026-09-15",
+   "leucina": "usda:170460 · «Tomato products, canned, puree, without salt added» · columna «Leucine» · transferido por gramo de proteina: ×(4.5/1.65) → 0.125455 g · 2026-09-15",
+   "valina": "usda:170460 · «Tomato products, canned, puree, without salt added» · columna «Valine» · transferido por gramo de proteina: ×(4.5/1.65) → 0.09 g · 2026-09-15",
+   "histidina": "usda:170460 · «Tomato products, canned, puree, without salt added» · columna «Histidine» · transferido por gramo de proteina: ×(4.5/1.65) → 0.068182 g · 2026-09-15",
+   "fenilalanina": "usda:170460 · «Tomato products, canned, puree, without salt added» · columna «Phenylalanine» · transferido por gramo de proteina: ×(4.5/1.65) → 0.092727 g · 2026-09-15",
+   "tirosina": "usda:170460 · «Tomato products, canned, puree, without salt added» · columna «Tyrosine» · transferido por gramo de proteina: ×(4.5/1.65) → 0.057273 g · 2026-09-15",
+   "arginina": "usda:170460 · «Tomato products, canned, puree, without salt added» · columna «Arginine» · transferido por gramo de proteina: ×(4.5/1.65) → 0.087273 g · 2026-09-15"
+  }
  },
  {
   "nombre": "Albaricoque",
@@ -10952,18 +11022,18 @@
    "colina": 6,
    "cloruro": 4.62,
    "fibra": 7.1,
-   "arginina": 0,
-   "histidina": 0,
-   "isoleucina": 0,
-   "leucina": 0,
-   "lisina": 0,
-   "metionina": 0,
-   "cistina": 0,
-   "fenilalanina": 0,
-   "tirosina": 0,
-   "treonina": 0,
-   "triptofano": 0,
-   "valina": 0,
+   "arginina": 0.138776,
+   "histidina": 0.032653,
+   "isoleucina": 0.05,
+   "leucina": 0.085714,
+   "lisina": 0.067347,
+   "metionina": 0.022449,
+   "cistina": 0.068367,
+   "fenilalanina": 0.05102,
+   "tirosina": 0.015306,
+   "treonina": 0.043878,
+   "triptofano": 0.012245,
+   "valina": 0.072449,
    "purinas": 0,
    "taurina": 0,
    "lcarnitina": 0
@@ -10972,31 +11042,34 @@
    "diabetes": "Muy alto en azúcar (~60%+ en peso seco); evitar o limitar mucho en perros diabéticos u obesos."
   },
   "sin_dato": [
-   "arginina",
-   "cistina",
-   "fenilalanina",
-   "histidina",
-   "isoleucina",
-   "leucina",
-   "lisina",
-   "metionina",
-   "purinas",
-   "tirosina",
-   "treonina",
-   "triptofano",
-   "valina"
+   "purinas"
   ],
   "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
   "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada.",
   "fuentes_id": {
-   "bedca": "2224"
+   "bedca": "2224",
+   "usda": "171726"
   },
   "cero_verificado": {
    "vitB12": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2224 · «Dátil» · columna «Vitamina B-12» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía.",
    "vitD": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2224 · «Dátil» · columna «Vitamina D» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía."
   },
   "humedad_g_100g": 16.5,
-  "humedad_fuente": "bedca:2224 · Dátil"
+  "humedad_fuente": "bedca:2224 · Dátil",
+  "composicion_fuente": {
+   "lisina": "usda:171726 · «Dates, deglet noor» · columna «Lysine» · transferido por gramo de proteina: ×(2.5/2.45) → 0.067347 g · 2026-09-15",
+   "metionina": "usda:171726 · «Dates, deglet noor» · columna «Methionine» · transferido por gramo de proteina: ×(2.5/2.45) → 0.022449 g · 2026-09-15",
+   "cistina": "usda:171726 · «Dates, deglet noor» · columna «Cystine» · transferido por gramo de proteina: ×(2.5/2.45) → 0.068367 g · 2026-09-15",
+   "triptofano": "usda:171726 · «Dates, deglet noor» · columna «Tryptophan» · transferido por gramo de proteina: ×(2.5/2.45) → 0.012245 g · 2026-09-15",
+   "treonina": "usda:171726 · «Dates, deglet noor» · columna «Threonine» · transferido por gramo de proteina: ×(2.5/2.45) → 0.043878 g · 2026-09-15",
+   "isoleucina": "usda:171726 · «Dates, deglet noor» · columna «Isoleucine» · transferido por gramo de proteina: ×(2.5/2.45) → 0.05 g · 2026-09-15",
+   "leucina": "usda:171726 · «Dates, deglet noor» · columna «Leucine» · transferido por gramo de proteina: ×(2.5/2.45) → 0.085714 g · 2026-09-15",
+   "valina": "usda:171726 · «Dates, deglet noor» · columna «Valine» · transferido por gramo de proteina: ×(2.5/2.45) → 0.072449 g · 2026-09-15",
+   "histidina": "usda:171726 · «Dates, deglet noor» · columna «Histidine» · transferido por gramo de proteina: ×(2.5/2.45) → 0.032653 g · 2026-09-15",
+   "fenilalanina": "usda:171726 · «Dates, deglet noor» · columna «Phenylalanine» · transferido por gramo de proteina: ×(2.5/2.45) → 0.05102 g · 2026-09-15",
+   "tirosina": "usda:171726 · «Dates, deglet noor» · columna «Tyrosine» · transferido por gramo de proteina: ×(2.5/2.45) → 0.015306 g · 2026-09-15",
+   "arginina": "usda:171726 · «Dates, deglet noor» · columna «Arginine» · transferido por gramo de proteina: ×(2.5/2.45) → 0.138776 g · 2026-09-15"
+  }
  },
  {
   "nombre": "Frambuesa",
@@ -11077,7 +11150,21 @@
    "yodo": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:914 · «Frambuesa, cruda» · columna «ioduro» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía."
   },
   "humedad_g_100g": 84.0,
-  "humedad_fuente": "bedca:914 · Frambuesa, cruda"
+  "humedad_fuente": "bedca:914 · Frambuesa, cruda",
+  "hueco_verificado": {
+   "lisina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:167755 «Raspberries, raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
+   "metionina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:167755 «Raspberries, raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
+   "cistina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:167755 «Raspberries, raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
+   "triptofano": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:167755 «Raspberries, raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
+   "treonina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:167755 «Raspberries, raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
+   "isoleucina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:167755 «Raspberries, raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
+   "leucina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:167755 «Raspberries, raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
+   "valina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:167755 «Raspberries, raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
+   "histidina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:167755 «Raspberries, raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
+   "fenilalanina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:167755 «Raspberries, raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
+   "tirosina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:167755 «Raspberries, raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
+   "arginina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:167755 «Raspberries, raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026)."
+  }
  },
  {
   "nombre": "Mandarina",
@@ -11254,6 +11341,9 @@
    "vitB12": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:1186 · «Mango, crudo» · columna «Vitamina B-12» = 0.0 ug. `value_type` LZ, o sea una MEDIDA y no una celda vacía.",
    "vitD": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:1186 · «Mango, crudo» · columna «Vitamina D» = 0.0 ug. `value_type` LZ, o sea una MEDIDA y no una celda vacía.",
    "yodo": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:1186 · «Mango, crudo» · columna «ioduro» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía."
+  },
+  "hueco_verificado": {
+   "cistina": "Mirado el 2026-09-15: BEDCA y CIQUAL no publican NINGUN aminoacido, y USDA -- la unica que los publica -- tiene la fila usda:169910 «Mangos, raw» pero NO trae esta columna. El resto del aminograma de esta ficha SI sale de ahi. Queda incompleto, y un aminograma incompleto cuenta como CERO entero en el BLOQUE 27: eso es lo correcto, porque el motor no puede fiarse de medio aminograma."
   }
  },
  {

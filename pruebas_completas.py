@@ -4516,6 +4516,73 @@ for _etq_b27, _der_b27, _et_b27, _peso_b27 in _CASOS_B27:
             f"requisitos. Un alimento sin aminograma cuenta como CERO: cuanta más proteína "
             f"venga de ahí, más se aleja el menú de lo que dice el semáforo, y en verde.")
 
+# ⚠️ Y LOS 216 MENÚS DEL CATÁLOGO TAMBIÉN, QUE ES DONDE ESTABA EL AGUJERO
+#    (15 de septiembre de 2026).
+#
+# Lo de arriba mide CUATRO menús que el solver genera aquí y ahora. El catálogo
+# precalculado son 216, son los que la app enseña en la vista previa, y NO los
+# miraba nadie con esta cuenta.
+#
+# Es la lección que este repo ya tiene escrita en `VERIFICACION_FILA_A_FILA.md`:
+# «un barrido cuyo resultado no se compara contra el total no es un barrido, es
+# una muestra». Y aquí la muestra decía 1 % mientras el total tenía un menú al
+# **11,16 %** -- `Grande_CachorroCrecimiento` en su variante de conejo, con 512 g
+# de BONIATO sin aminograma dentro.
+#
+# Eso es lo que hizo cerrar los aminogramas de once verduras desde USDA el mismo
+# día. Tras ello: media 0,66 % y peor 6,04 %.
+#
+# ⚠️ EL TOPE AQUÍ ES MÁS ANCHO QUE EL DE ARRIBA, Y HAY QUE DECIR POR QUÉ. Lo que
+# queda por encima del 5 % es el polvo de sangre y los multivitamínicos, que son
+# mandato 5 -- la etiqueta del fabricante -- y no publican aminograma: no hay
+# fuente a la que ir. Y la dirección es la SEGURA: un alimento sin aminograma
+# cuenta como CERO contra el mínimo, así que el menú cumple los doce
+# aminoácidos SIN contar con él. Bajar el tope a 5 aquí no arreglaría nada y
+# pondría la batería roja por un dato que no existe; subirlo a 10 dejaría de
+# avisar del caso del boniato, que sí se podía cerrar y se cerró.
+#
+# El 7 % es NUESTRO y va con su medida al lado, que es la única forma de que
+# alguien pueda discutirlo dentro de seis meses.
+_TOPE_HUECO_CATALOGO_B27 = 0.07
+try:
+    _cat_b27 = _json_b12.load(open("catalogo_menus.json", encoding="utf-8"))
+except OSError:
+    _cat_b27 = None
+    fallos.append("BLOQUE27: no está catalogo_menus.json, así que no se puede mirar la "
+                  "proteína ciega de los menús que la app enseña")
+if _cat_b27:
+    _peor_b27 = (0.0, None, [])
+    _n_b27 = 0
+    for _clave_b27, _e_b27 in _cat_b27["CATALOGO"].items():
+        _menus_b27 = [(_clave_b27, _e_b27["gramos"])] + [
+            (f"{_clave_b27}/{_v_b27.get('proteina')}", _v_b27["gramos"])
+            for _v_b27 in _cat_b27["CATALOGO_VARIANTES"].get(_clave_b27, [])]
+        for _etq2_b27, _g2_b27 in _menus_b27:
+            _n_b27 += 1
+            _pt_b27 = _ps_b27 = 0.0
+            _quien_b27 = []
+            for _n2_b27, _gr_b27 in _g2_b27.items():
+                if _n2_b27 not in al:
+                    continue
+                _p_b27 = (al[_n2_b27]["nutrientes"].get("proteina") or 0) / 100 * _gr_b27
+                _pt_b27 += _p_b27
+                if _sin_aminograma_b27(al[_n2_b27]) and _p_b27 > 0:
+                    _ps_b27 += _p_b27
+                    _quien_b27.append(_n2_b27)
+            if _pt_b27 and _ps_b27 / _pt_b27 > _peor_b27[0]:
+                _peor_b27 = (_ps_b27 / _pt_b27, _etq2_b27, sorted(_quien_b27))
+    if _peor_b27[0] > _TOPE_HUECO_CATALOGO_B27:
+        fallos.append(
+            f"BLOQUE27: en los {_n_b27} menús del catálogo, el peor tiene el "
+            f"{_peor_b27[0]*100:.1f} % de su proteína en alimentos SIN aminograma "
+            f"({_peor_b27[1]}: {_peor_b27[2]}), y el tope es el "
+            f"{_TOPE_HUECO_CATALOGO_B27*100:.0f} %. Un alimento sin aminograma cuenta como "
+            f"CERO, así que cuanta más proteína venga de ahí menos dice el semáforo sobre los "
+            f"doce aminoácidos -- y estos son los menús que la app enseña en la vista previa")
+    else:
+        print(f"  catálogo: {_n_b27} menús, la proteína sin aminograma llega como mucho al "
+              f"{_peor_b27[0]*100:.1f} % ({_peor_b27[1]})")
+
 # ⚠️ EL ÚNICO MÁXIMO DE FEDIAF QUE NO SE APLICA, Y ESTO LO VIGILA.
 #
 # La Tabla III-3b pone un solo máximo a un aminoácido: lisina 7,00 g/1000

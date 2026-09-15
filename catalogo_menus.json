@@ -587,14 +587,14 @@
    "peso_kg": 32,
    "der": 5330,
    "gramos": {
-    "Pavo pechuga sin piel": 313.32,
-    "Corazón de pollo": 1677.63,
-    "Costillas de cordero": 934.1,
-    "Bacalao": 588.28,
-    "Riñón de vaca": 83.23,
-    "Hígado de conejo": 115.75,
-    "Albahaca": 407.9,
-    "V-INTEGRA Cachorro": 24.49
+    "Conejo": 939.27,
+    "Corazón de pollo": 1144.61,
+    "Costillas de cordero": 892.99,
+    "Bacalao": 549.05,
+    "Riñón de vaca": 83.96,
+    "Hígado de vaca": 134.95,
+    "Espinaca": 411.47,
+    "V-INTEGRA Cachorro": 28.8
    },
    "semaforo": "verde",
    "correctos": 49,
@@ -3072,14 +3072,14 @@
    {
     "proteina": "Pollo",
     "gramos": {
-     "Corazón de pollo": 1775.39,
-     "Costillas de cordero": 876.3,
-     "Dorada": 1039.24,
-     "Riñón de vaca": 86.49,
-     "Hígado de vaca": 98.58,
-     "Albahaca": 405.6,
-     "Yoduro potásico (comprimidos 200 µg)": 0.95,
-     "V-INTEGRA Cachorro": 28.8
+     "Corazón de pollo": 1726.81,
+     "Costillas de cordero": 935.99,
+     "Bacalao": 641.82,
+     "Dorada": 330.88,
+     "Riñón de vaca": 85.63,
+     "Hígado de conejo": 107.99,
+     "Albahaca": 410.07,
+     "V-INTEGRA Cachorro": 23.78
     },
     "peldano": "estricto"
    },
@@ -3104,63 +3104,49 @@
    {
     "proteina": "Conejo",
     "gramos": {
-     "Conejo": 1369.26,
-     "Costillas de cordero": 567.27,
-     "Espinazo de conejo": 777.96,
-     "Bacalao": 406.8,
-     "Riñón de vaca": 27.91,
-     "Hígado de vaca": 204.83,
-     "Plátano": 81.44,
-     "Piña": 287.09,
-     "AniForte Beef Blood Powder": 9.14,
-     "Aceite de oliva": 5.0,
-     "Aceite de oliva virgen extra": 5.0,
-     "Aceite de girasol": 5.0,
-     "Aceite de linaza": 5.0,
-     "Aceite de cacahuete": 5.0,
-     "Aceite de coco": 5.0,
-     "Aceite de sésamo": 5.0,
-     "Manteca": 5.0,
-     "Semilla de lino": 5.0,
-     "Pipa de calabaza": 5.0,
-     "Pipa de girasol": 5.0,
-     "Semilla de sésamo": 5.0,
-     "astoral MultiVital BARF": 1.6,
-     "Sal común (cloruro sódico)": 1.42,
-     "V-INTEGRA Cachorro": 25.83
+     "Conejo": 1585.3,
+     "Costillas de cordero": 963.56,
+     "Trucha": 229.57,
+     "Riñón de vaca": 130.89,
+     "Hígado de vaca": 195.57,
+     "Coles de Bruselas": 1665.03,
+     "Oleum Canis Aceite de Salmón": 14.72,
+     "AniForte Aceite de Salmón": 14.72,
+     "Sal común (cloruro sódico)": 1.41,
+     "Yoduro potásico (comprimidos 200 µg)": 1.18,
+     "V-INTEGRA Cachorro": 23.14
     },
-    "peldano": "proporcion_minima_y_un_suplemento_mas"
+    "peldano": "tope_maximo_de_visceras_higado_y_verdura"
    },
    {
     "proteina": "Salmón",
     "gramos": {
-     "Pavo pechuga sin piel": 591.56,
-     "Conejo": 284.92,
-     "Corazón de pollo": 1491.63,
-     "Costillas de cordero": 908.65,
-     "Riñón de vaca": 80.53,
-     "Hígado de pollo": 236.81,
-     "Albahaca": 392.61,
-     "Aceite de hígado de bacalao": 1.22,
-     "Yoduro potásico (comprimidos 200 µg)": 1.12,
-     "V-INTEGRA Cachorro": 27.23
+     "Pavo pechuga sin piel": 588.43,
+     "Conejo": 236.99,
+     "Corazón de pollo": 1496.91,
+     "Costillas de cordero": 915.91,
+     "Riñón de vaca": 128.44,
+     "Hígado de pollo": 237.62,
+     "Albahaca": 396.03,
+     "Aceite de hígado de bacalao": 1.17,
+     "Yoduro potásico (comprimidos 200 µg)": 1.16,
+     "V-INTEGRA Cachorro": 26.52
     },
-    "peldano": "estricto"
+    "peldano": "proporcion_minima_de_todas_las_categorias"
    },
    {
     "proteina": "Merluza",
     "gramos": {
-     "Pavo pechuga sin piel": 661.91,
-     "Corazón de pollo": 1757.22,
-     "Costillas de cordero": 841.81,
-     "Merluza": 325.52,
-     "Riñón de vaca": 84.18,
-     "Hígado de pollo": 84.18,
-     "Albahaca": 412.57,
-     "Yoduro potásico (comprimidos 200 µg)": 0.95,
-     "V-INTEGRA Cachorro": 28.33
+     "Pavo pechuga sin piel": 684.29,
+     "Corazón de pollo": 1620.87,
+     "Costillas de cordero": 845.98,
+     "Merluza": 507.61,
+     "Hígado de vaca": 114.64,
+     "Albahaca": 414.61,
+     "Yoduro potásico (comprimidos 200 µg)": 0.88,
+     "V-INTEGRA Cachorro": 28.8
     },
-    "peldano": "estricto"
+    "peldano": "proporcion_minima_visceras_higado_verdura"
    }
   ],
   "Gigante_CachorroJoven": [
@@ -3607,17 +3593,17 @@
    {
     "proteina": "Pollo",
     "gramos": {
-     "Pollo con piel (sin hueso)": 368.17,
-     "Corazón de pollo": 3152.09,
-     "Molleja de pollo": 93.39,
-     "Carcasa de pollo": 475.32,
-     "Carcasa de conejo": 303.61,
-     "Bacalao": 991.24,
-     "Dorada": 807.58,
-     "Hígado de vaca": 16.15,
-     "Albahaca": 669.3,
+     "Pollo con piel (sin hueso)": 539.19,
+     "Pollo pechuga sin piel": 113.73,
+     "Corazón de pollo": 3021.77,
+     "Carcasa de pollo": 449.31,
+     "Carcasa de conejo": 318.46,
+     "Bacalao": 940.54,
+     "Dorada": 741.57,
+     "Hígado de vaca": 29.83,
+     "Espinaca": 660.04,
      "AniForte Beef Blood Powder": 16.5,
-     "V-INTEGRA Cachorro": 33.57
+     "V-INTEGRA Cachorro": 35.91
     },
     "peldano": "proporcion_minima_de_todas_las_categorias"
    },
@@ -3663,22 +3649,19 @@
    {
     "proteina": "Salmón",
     "gramos": {
-     "Pollo con piel (sin hueso)": 286.37,
-     "Conejo": 1776.54,
-     "Lengua de ternera": 1579.21,
-     "Carcasa de pollo": 654.91,
+     "Conejo": 1642.3,
+     "Corazón de pollo": 633.0,
+     "Corazón de vaca": 1879.77,
+     "Carcasa de pollo": 810.23,
      "Costillas de cordero": 602.78,
-     "Riñón de vaca": 241.11,
-     "Pulmón de cordero": 33.13,
-     "Hígado de vaca": 350.44,
-     "Albahaca": 607.02,
-     "Aceite de girasol": 4.77,
-     "Aceite de hígado de bacalao": 2.8,
-     "astoral MultiVital BARF": 2.42,
-     "Yoduro potásico (comprimidos 200 µg)": 1.61,
-     "V-INTEGRA Cachorro": 29.98
+     "Hígado de vaca": 27.99,
+     "Albahaca": 1399.01,
+     "AniForte Beef Blood Powder": 16.5,
+     "Oleum Canis Aceite de Salmón": 12.71,
+     "Yoduro potásico (comprimidos 200 µg)": 2.11,
+     "V-INTEGRA Cachorro": 34.29
     },
-    "peldano": "proporcion_minima_y_un_suplemento_mas"
+    "peldano": "tope_maximo_de_visceras_higado_y_verdura"
    },
    {
     "proteina": "Merluza",
