@@ -578,6 +578,96 @@ alimentos con tiaminasa o mercurio contra topes de 30 a 226 kcal. El EPA+DHA va
 a 0,056-0,091 g/kg^0,75 contra 0,364. O sea: **red de seguridad, no un cambio de
 menús** — exactamente lo que ya decía la nota del 9 de septiembre sobre los otros
 tres.
+### Los siete máximos LEGALES de la UE van sobre MATERIA SECA, y es la fuente quien lo dice
+
+*(15 de septiembre de 2026.)* Elena, al ver medida la densidad real de una
+ración: «pues corrige por densidad no??», y después la frase que decidió el
+alcance: «**haz lo que diga FEDIAF tal como lo diga FEDIAF, pero comprueba bien
+en la fuente antes de hacer nada**».
+
+⚠️ **Y comprobarlo cambió la respuesta tres veces, así que vale la pena leer
+las tres.** FEDIAF dice **dos cosas distintas** en su §3.2.1 y es fácil
+mezclarlas — yo las mezclé, y de la primera lectura salía una corrección tres
+veces más grande de lo que es y con la mitad al revés.
+
+**Lo que hay que mirar es la Tabla III-3b, la de «por 1000 kcal»:**
+
+| Máximo | ¿trae cifra por 1000 kcal? | Qué hace el motor |
+|---|---|---|
+| Calcio (6,25 / 4,00 / 4,50) · fósforo (4,00) · vitamina A (100 000) · vitamina D **(N)** (800) · lisina (7,00) · linoleico (16,25) | **sí** | aplica **el número impreso de FEDIAF**. Nada que corregir |
+| Cobre · yodo · hierro · manganeso · selenio · zinc · y el **(L)** de la vitamina D | **NO — la celda está vacía, solo pone «(L)»** | lo convertíamos **nosotros** con el ×2,5 |
+
+Y de esos siete —que son **exactamente los siete límites legales de la UE**—
+FEDIAF escribe, en la misma sección:
+
+> «Legal maxima in EU legislation are expressed on 12% moisture content and
+> **they do not account for energy density**. Therefore in these guidelines
+> **they are only provided on a dry matter basis**.»
+
+O sea que el número por 1000 kcal que aplicaba el motor **no existe en la
+fuente**: lo habíamos hecho con el ×2,5 de su Tabla III-2, que es justo la
+conversión de la que la nota al pie dice
+
+> «These conversions assume an energy density of 16.7 kJ (4.0 kcal) ME/g DM.
+> For foods with energy densities different from this value, the
+> recommendations should be corrected for energy density.»
+
+Una ración de este motor va a **5,0-6,0 kcal/g de materia seca** (medido el 14
+de septiembre al cerrar la humedad de las 144 fichas), no a 4,0. **Los siete
+iban un ~23 % flojos.**
+
+**La forma es lineal, así que el supuesto DESAPARECE del motor en vez de
+corregirse** — no hace falta ninguna media ni ningún factor:
+
+```
+Σ (nutriente_i × gramos_i)  ≤  L_ms × Σ (materia_seca_i × gramos_i)
+```
+
+La materia seca del menú está **dentro** de la ecuación, así que el solver la
+resuelve a la vez que decide los gramos. Va en `motor_completo` **y** en
+`verificar` con la misma cuenta, que es la lección del 8 de septiembre: si el
+semáforo se queda con la vieja, el motor construye menús que el filtro final
+tira.
+
+⚠️ **El hueco de humedad cuenta como AGUA ENTERA, y es una decisión**: quedan
+18 fichas sin humedad (suplementos en polvo), 7,4 g sobre una ración de 730.
+Dar por seca esa comida **afloja** el techo; darla por agua lo **aprieta**. Va
+escrito en `constructor.materia_seca_g_100g` y no como un `or 0` silencioso.
+
+**Lo medido:**
+
+| | |
+|---|---|
+| Las siete cifras rehechas contra la Tabla III-3a | **exactas**: cobre 2,80 · zinc 22,70 · hierro 68,18 · yodo 1,10 · selenio 56,80 mg/100 g MS · manganeso 17,00 · vitamina D 227,00 IU |
+| Perros de referencia con menú verde | **10 de 10**, de 3 a 40 kg y en las seis etapas |
+| Dónde queda el selenio | pegado al **100 %** del techo nuevo — la señal de que el límite manda |
+| ⚠️ Menús precalculados que se pasaban de un límite **LEGAL** | **212 de 216** (selenio 206, cobre 101, vitamina D 28, zinc 1) |
+
+Por eso hubo que **regenerar el catálogo entero**: esos menús son los que la app
+enseña en la vista previa.
+
+⚠️ **Y LO QUE **NO** SE TOCA ES LA MITAD QUE CASI ME LLEVO POR DELANTE.** Mi
+segunda lectura decía que la nota vale para toda la tabla, que **los mínimos
+también son el ×2,5** y que corregirlos los bajaría un 23 %. **Es falso**:
+FEDIAF publica los mínimos por 1000 kcal en la propia Tabla III-3b, anclados a
+la ingesta diaria —«*Recommended minimum values are based on an average daily
+energy intake of either 95 kcal/kg0.75 or 110 kcal/kg0.75*»—, y el motor usa
+**esos** números. No hay ninguna conversión nuestra que corregir ahí. Si llego a
+aplicarlo, el motor habría pedido un 23 % menos de **todos** los nutrientes.
+
+**La regla que queda**: antes de corregir una cifra por un supuesto, mirar si la
+fuente publica esa cifra en la unidad en la que la usamos. Si la publica, el
+supuesto no está en juego. Si la celda está vacía, el número es nuestro.
+
+Lo vigila el **BLOQUE 113**, con cinco comprobaciones y las dos direcciones: que
+los siete vayan sobre materia seca, que los seis que FEDIAF sí imprime por 1000
+kcal **no** se toquen, que solver y semáforo digan lo mismo, que ningún menú del
+catálogo se pase, y que **con la fila desconectada el menú vuelva a pasarse** —
+sin esa última el bloque saldría verde sin vigilar nada. La conversión se rehace
+contra la cifra **impresa** de la fuente, no contra la del motor: eso sería el
+fichero contra sí mismo. Está sin cerrar la otra mitad, los 122 límites que no
+son de FEDIAF: `PREGUNTAS_ABIERTAS.md` **P-38**.
+
 ### El toy con patología no se quedaba sin menú: se quedaba sin RELOJ
 
 *(15 de septiembre de 2026.)* Elena, del toy de su prueba: el menú no salía en
