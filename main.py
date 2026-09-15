@@ -2583,7 +2583,40 @@ def _escalera_de_relajacion(hay_comida_de_verdad=True):
         for c, (mn, mx) in MARGENES_V2.items()
     }
     peldanos = [
-        (MARGENES_V2, 2, None),
+        # ⚠️ UN SOLO SUPLEMENTO PRIMERO, Y SUBIR A DOS SOLO SI NO HAY MENÚ
+        #    (15 de septiembre de 2026). Lo pidió Elena, y el motivo no es
+        #    nutricional sino de bolsillo:
+        #
+        #        «vamos a intentar siempre que los menús tengan un solo
+        #         suplemento. Si es imposible que salgan con un suplemento,
+        #         entonces subimos a dos. Pero vamos a intentar, si puede haber
+        #         solo un suplemento, que haya solo uno, porque son cosas caras,
+        #         que la gente no quiere estar comprando eso.»
+        #
+        #    Hasta hoy el peldaño estricto ya permitía DOS, así que el motor
+        #    nunca intentaba con uno: medido, **8 de 8 menús de referencia salían
+        #    con dos botes**, y en 7 de esos 8 el segundo era la vitamina E.
+        #
+        #    ⚠️ Y ESTO ES FORMA, NO NUTRICIÓN (regla 3): cuántos botes compra
+        #    alguien es criterio NUESTRO, no de FEDIAF, así que no puede dejar a
+        #    un perro sin comer. Por eso va como PELDAÑO y no como tope: si con
+        #    uno no sale, se baja al de dos y **se dice en cuál se paró**, igual
+        #    que con las proporciones del BARF.
+        #
+        #    MEDIDO antes de ponerlo, seis perros de referencia por el solver:
+        #
+        #      | suelo de vitamina E | con 1 bote | con 2 botes |
+        #      |---------------------|------------|-------------|
+        #      | ENCENDIDO (hoy)     | 1 de 6     | 6 de 6      |
+        #      | apagado             | 7 de 8     | 7 de 8      |
+        #
+        #    O sea que con el suelo encendido este peldaño casi siempre se caerá
+        #    al siguiente —y no se pierde ni un menú, que es lo que importa— y
+        #    con el suelo apagado se queda en uno. Las dos cosas son la MISMA
+        #    decisión, y por eso este peldaño se pone ahora: deja que la del
+        #    suelo se tome aparte sin bloquear nada.
+        (MARGENES_V2, 1, None),
+        (MARGENES_V2, 2, "hasta_dos_suplementos"),
         (sin_minimo_secundarias, 2, "proporcion_minima_visceras_higado_verdura"),
         (sin_ningun_minimo, 2, "proporcion_minima_de_todas_las_categorias"),
         (sin_ningun_minimo, 3, "proporcion_minima_y_un_suplemento_mas"),
@@ -2678,14 +2711,41 @@ def _escalera_de_relajacion(hay_comida_de_verdad=True):
 # HTTP tiene que poder escribirse.
 PELDANO_ESTRICTO = "estricto"
 
+
+def _suplementos_del_peldano_estricto():
+    """Cuántos botes deja el PRIMER peldaño, leído de la escalera y no copiado.
+
+    ⚠️ CASO REAL, ENCONTRADO EL 15 DE SEPTIEMBRE DE 2026 A LOS DIEZ MINUTOS DE
+    PONER EL PELDAÑO DE UN SOLO SUPLEMENTO. Elena pidió que el motor intentara
+    siempre con un bote y subiera a dos solo si no hay menú. Se añadió el
+    peldaño... y la medida seguía dando **2 botes diciendo «peldaño estricto»**.
+
+    La causa: había un `max_suplementos=2` ESCRITO A MANO en la vía rápida del
+    catálogo y otro en el `else` del peldaño pedido. O sea que la escalera decía
+    una cosa y dos sitios hacían otra, y el menú salía afirmando un peldaño que
+    no era el suyo -- que es peor que no tener el peldaño, porque `/relajacion`
+    existe precisamente para que quien firma pueda afirmar en cuál salió.
+
+    Es la familia de fallo de las once tuplas del BLOQUE 117 y la de las seis
+    categorías de Personalizar: un número copiado a mano no da error cuando se
+    queda desfasado, se queda quieto.
+    """
+    esc = _escalera_de_relajacion(True)
+    return esc[0][1] if esc else 2
+
+
 # Que suelta cada uno, dicho para quien lo va a elegir. Sin esto el selector
 # ofreceria "proporcion_minima_visceras_higado_verdura", que es el nombre de
 # una variable, no una opcion.
 PELDANOS_EN_CRISTIANO = {
     PELDANO_ESTRICTO: (
-        "Proporciones BARF completas",
+        "Proporciones BARF completas y UN solo suplemento",
         "Carne, hueso, vísceras, hígado y verdura dentro de sus rangos habituales, "
-        "y hasta 2 suplementos."),
+        "y un único bote de suplemento."),
+    "hasta_dos_suplementos": (
+        "Proporciones BARF completas, y hasta 2 suplementos",
+        "Las proporciones no se tocan: lo único que sube es el número de botes, de uno "
+        "a dos, porque con uno solo no salían todos los nutrientes."),
     "proporcion_minima_visceras_higado_verdura": (
         "Sin mínimo de vísceras, hígado y verdura",
         "Pueden quedarse a cero si no hacen falta. Sus topes máximos siguen puestos, "
@@ -3439,7 +3499,9 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
                 ok_rapido, gramos_rapido = resolver_v2(
                     datos.der_objetivo, datos.etapa_requisitos, al, req,
                     datos.peso_perro_kg, dosis_maxima_fabricante,
-                    margenes_categoria=MARGENES_V2, max_suplementos=2, forzar=base, time_limit=tiempo_de_un_intento(),
+                    margenes_categoria=MARGENES_V2,
+                    max_suplementos=_suplementos_del_peldano_estricto(),
+                    forzar=base, time_limit=tiempo_de_un_intento(),
                     presupuesto_semanal_restante=datos.presupuesto_semanal_restante,
                     # ⚠️ AÑADIDO (28 agosto): esta vía era la única de las
                     # cuatro que llaman al motor que NO le pasaba el peso
@@ -3684,7 +3746,8 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
     _peldano_pedido = _peldano_por_clave(getattr(datos, "peldano", None),
                                          _hay_comida_para_peldano)
     _margenes_base = _peldano_pedido[0] if _peldano_pedido else MARGENES_V2
-    _supl_base = _peldano_pedido[1] if _peldano_pedido else 2
+    _supl_base = (_peldano_pedido[1] if _peldano_pedido
+                  else _suplementos_del_peldano_estricto())
 
     aviso_extra_alimentos = None
     if datos.modo == "personalizar" and forzar:
