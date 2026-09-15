@@ -8,7 +8,8 @@ partida; lo que se puede defender ante un veterinario es ESTO: "cubre 26 de
 """
 import sys, os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from constructor import perfil_nutricional, tabla_imputacion_maximos, valor_nutriente
+from constructor import (perfil_nutricional, tabla_imputacion_maximos, valor_nutriente,
+                         materia_seca_g_100g)
 # ⚠️ Los requisitos que NO son un número fijo (9 septiembre). El semáforo y el
 # solver llaman a LAS MISMAS funciones de este módulo: si cada uno hiciera su
 # propia cuenta acabarían discrepando, que es exactamente lo que pasó con los
@@ -203,6 +204,80 @@ def maximo_de(r, nombre_req, etapa):
     if nombre_req in MAXIMOS_NO_APLICADOS:
         return None
     return _num(r.get(f"max{etapa}")) or _num(r.get("maxAdulto"))
+
+
+# ⚠️ LOS SIETE MÁXIMOS QUE FEDIAF SOLO PUBLICA SOBRE MATERIA SECA
+#    (15 de septiembre de 2026).
+#
+# Elena: «haz lo que diga FEDIAF tal como lo diga FEDIAF, pero comprueba bien
+# en la fuente antes de hacer nada». Comprobado, y la fuente dice DOS cosas
+# distintas en su §3.2.1 que es fácil mezclar — yo las mezclé en la primera
+# lectura y la conclusión salía tres veces más grande de lo que es.
+#
+# LO PRIMERO, que es lo que se aplica aquí:
+#
+#     «Legal maxima in EU legislation are expressed on 12% moisture content and
+#      they do not account for energy density. Therefore in these guidelines
+#      they are only provided on a dry matter basis.»
+#
+# Y se comprueba mirando la Tabla III-3b, la de «por 1000 kcal»: la celda de
+# máximo de cobre, yodo, hierro, manganeso, selenio y zinc está **VACÍA**, solo
+# pone «(L)». Lo mismo el máximo LEGAL de la vitamina D. **Son siete, y son
+# exactamente los siete límites legales de la UE.** No hay número por 1000 kcal
+# que usar: el que aplicaba el motor lo habíamos hecho nosotros, multiplicando
+# el %MS por 2,5 con la Tabla III-2.
+#
+# LO SEGUNDO, que es la nota que hay al pie de esa misma Tabla III-2:
+#
+#     «These conversions assume an energy density of 16.7 kJ (4.0 kcal) ME/g DM.
+#      For foods with energy densities different from this value, the
+#      recommendations should be corrected for energy density.»
+#
+# Una ración de este motor va a **5,0 a 6,0 kcal/g de materia seca** —medido el
+# 14 de septiembre al cerrar la humedad de las 144 fichas—, no a 4,0. O sea que
+# esos siete techos iban un ~23 % flojos.
+#
+# ⚠️ Y LO QUE **NO** SE TOCA, que es la mitad que casi me llevo por delante:
+# LOS MÍNIMOS. FEDIAF los publica por 1000 kcal en la propia Tabla III-3b,
+# anclados a la ingesta diaria («Recommended minimum values are based on an
+# average daily energy intake of either 95 kcal/kg0.75 or 110 kcal/kg0.75»), y
+# el motor usa ESOS números, no una conversión nuestra. Ahí no hay nada que
+# corregir. Y los seis máximos NUTRICIONALES que FEDIAF sí publica por 1000
+# kcal —calcio 6,25/4,00/4,50 · fósforo 4,00 · vitamina A 100 000 · vitamina D
+# (N) 800 · lisina 7,00 · linoleico 16,25— tampoco: el motor ya aplica el
+# número impreso de FEDIAF. Comprobado celda a celda contra
+# `fediaf_tabla_III_3b.txt`.
+#
+# MEDIDO ANTES DE APLICARLO, iterando hasta el punto fijo (apretar el techo
+# cambia el menú y el menú cambia su densidad) y con el hueco de humedad
+# contado como agua entera, que es el lado que más aprieta: **10 de 10 perros
+# de referencia siguen con menú**, de 3 a 40 kg y en las seis etapas, con
+# factores de 0,66 a 0,80.
+DENSIDAD_QUE_SUPONE_FEDIAF = 4.0   # kcal de EM por gramo de materia seca
+
+
+def maximo_por_g_de_materia_seca(r, nombre_req, etapa):
+    """El techo en la unidad en la que FEDIAF lo publica: por gramo de MS.
+
+    Devuelve None para todo lo que NO sea uno de los siete límites legales de
+    la UE -- esos sí tienen su cifra por 1000 kcal impresa por FEDIAF y se
+    siguen aplicando así.
+
+    La cuenta DESHACE exactamente la conversión que hicimos nosotros, y por eso
+    se escribe con la densidad supuesta a la vista en vez de con un 0,004
+    suelto: el valor guardado es `%MS x 2,5` (= %MS x 10 / 4,0), así que
+    `por 1000 kcal x 4,0 / 1000` devuelve el %MS/10, que es la unidad del
+    nutriente por gramo de materia seca. Un número que no se puede rehacer no
+    se puede auditar -- la lección de `auditar_conversiones.py`.
+    """
+    if nombre_req in MAXIMOS_NO_APLICADOS:
+        return None
+    if (r or {}).get("maximo_origen") != "legal_UE":
+        return None
+    mx = maximo_de(r, nombre_req, etapa)
+    if mx is None:
+        return None
+    return mx * DENSIDAD_QUE_SUPONE_FEDIAF / 1000.0
 
 
 # ⚠️ LOS MINIMOS SUBEN CUANDO SE COME MENOS (28 agosto). Es la ecuacion
@@ -608,6 +683,21 @@ def verificar(menu, alimentos, req, der, etapa="Adulto", peso_referencia_kg=None
     perfil_max = perfil_nutricional(menu, alimentos,
                                     tabla_maximos=tabla_imputacion_maximos(alimentos))
     escala = der / 1000.0
+    # ⚠️ LA MATERIA SECA DEL MENÚ, para los siete límites legales de la UE
+    # (15 de septiembre). FEDIAF los publica SOLO sobre materia seca -- la celda
+    # por 1000 kcal de su Tabla III-3b está vacía en los seis oligoelementos y
+    # en el máximo legal de la vitamina D --, así que comprobarlos contra un
+    # número por 1000 kcal es comprobarlos contra una conversión NUESTRA. Ver
+    # `maximo_por_g_de_materia_seca`, arriba, con las dos citas.
+    #
+    # Va aquí, al lado de `escala`, porque es su hermana: una convierte a las
+    # kcal del menú y la otra a su materia seca. Y la calcula el SEMÁFORO además
+    # del solver a propósito -- es la lección del 8 de septiembre: cuando cada
+    # uno aplicaba los suelos de patología a su manera, el motor construía menús
+    # enteros para que el filtro final los tirara.
+    materia_seca_total = sum(
+        g * materia_seca_g_100g(alimentos.get(nombre_al) or {}) / 100.0
+        for nombre_al, g in (menu or {}).items())
 
     # Si quien llama no manda el peso, no se escala nada y todo queda
     # exactamente como estaba. El escalado es aditivo, nunca una sorpresa.
@@ -662,18 +752,41 @@ def verificar(menu, alimentos, req, der, etapa="Adulto", peso_referencia_kg=None
         if maximo is not None:
             # contra el techo, el perfil que no regala huecos
             tiene_max = perfil_max.get(clave, tiene)
-            if tiene_max > maximo * escala * 1.001:
+            # ⚠️ Y EL TECHO EN LA UNIDAD EN QUE LO PUBLICA LA FUENTE (15
+            # septiembre). Para los siete límites legales de la UE el tope
+            # absoluto NO es `maximo x escala` -- eso usa el ×2,5 que hicimos
+            # nosotros, con los 4,0 kcal/g de materia seca que FEDIAF dice que
+            # hay que corregir --, sino el límite por gramo de materia seca por
+            # la materia seca que de verdad lleva este menú.
+            _por_g_ms = maximo_por_g_de_materia_seca(r, nombre, etapa)
+            if _por_g_ms is not None:
+                _tope_abs = _por_g_ms * materia_seca_total
+                _de_donde = "materia seca (FEDIAF §3.2.1: los máximos legales "
+                _de_donde += "solo se dan en base materia seca)"
+            else:
+                _tope_abs = maximo * escala
+                _de_donde = "por 1000 kcal (la cifra que FEDIAF publica)"
+            if tiene_max > _tope_abs * 1.001:
                 se_pasa.append({"nutriente": nombre, "clave": clave,
                                 "tiene": round(tiene_max, 2),
                                 "declarado": round(perfil.get(clave, 0.0), 2),
-                                "maximo": round(maximo * escala, 2),
-                                "veces": round(tiene_max / (maximo * escala), 2),
+                                "maximo": round(_tope_abs, 2),
+                                "base_del_maximo": _de_donde,
+                                "veces": round(tiene_max / _tope_abs, 2) if _tope_abs else None,
                                 "con_huecos_imputados": bool(
                                     perfil_max.get("_imputados", {}).get(clave))})
                 continue
         correctos.append(nombre)
         _mn = round(minimo * escala, 2) if minimo is not None else None
-        _mx = round(maximo * escala, 2) if maximo is not None else None
+        # el techo que se ENSEÑA tiene que ser el que se APLICA: para los siete
+        # legales es el de materia seca. Enseñar uno y aplicar otro es
+        # exactamente lo que hace que nadie se fíe de la ficha.
+        if maximo is None:
+            _mx = None
+        else:
+            _pgms = maximo_por_g_de_materia_seca(r, nombre, etapa)
+            _mx = round((_pgms * materia_seca_total) if _pgms is not None
+                        else (maximo * escala), 2)
         dentro.append({
             "nutriente": nombre, "clave": clave, "tiene": round(tiene, 2),
             "minimo": _mn, "maximo": _mx,

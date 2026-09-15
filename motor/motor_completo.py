@@ -32,9 +32,11 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import numpy as np
 from scipy.optimize import milp, LinearConstraint, Bounds
 from verificar import (MAPA, _num, EQUIVALENCIA, maximo_de, minimo_de,
+                       maximo_por_g_de_materia_seca,
                        der_efectiva_de)
 from constructor import (valor_nutriente, valor_plausible_de,
-                         tabla_imputacion_maximos, valor_para_maximo)
+                         tabla_imputacion_maximos, valor_para_maximo,
+                         materia_seca_g_100g)
 
 # ⚠️ AÑADIDO (5 agosto, noche): copia local de especie_de() (la misma
 # lógica que ya usan especies.py y el frontend) -- se define aquí en
@@ -1923,6 +1925,66 @@ def _resolver_una_vez(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn
                 if coef:
                     fila_rel[idx[n]] = coef
             _fila("fediaf_relativo", fila_rel, -np.inf, 0.0)
+
+        # ⚠️ Y LOS SIETE LÍMITES LEGALES DE LA UE, SOBRE MATERIA SECA -- QUE ES
+        #    LA ÚNICA FORMA EN QUE FEDIAF LOS PUBLICA (15 de septiembre de 2026).
+        #
+        # Elena: «haz lo que diga FEDIAF tal como lo diga FEDIAF, pero comprueba
+        # bien en la fuente antes de hacer nada». Comprobado, §3.2.1, literal:
+        #
+        #   «Legal maxima in EU legislation are expressed on 12% moisture content
+        #    and they do not account for energy density. Therefore in these
+        #    guidelines they are only provided on a dry matter basis.»
+        #
+        # Y se ve en la propia Tabla III-3b: la celda de máximo de cobre, yodo,
+        # hierro, manganeso, selenio y zinc está VACÍA -- solo pone «(L)» --, y
+        # lo mismo el máximo legal de la vitamina D. Son SIETE. El número por
+        # 1000 kcal que aplicaba el motor lo habíamos hecho NOSOTROS con el ×2,5
+        # de su Tabla III-2, que es justo la conversión de la que la nota al pie
+        # dice «These conversions assume an energy density of 16.7 kJ (4.0 kcal)
+        # ME/g DM. For foods with energy densities different from this value, the
+        # recommendations should be corrected for energy density».
+        #
+        # Una ración de este motor va a 5,0-6,0 kcal/g de materia seca, no a 4,0.
+        #
+        # ⚠️ SE AÑADE, NO SE SUSTITUYE, y eso no es pereza: `mx` puede venir de
+        # un tope de PATOLOGÍA o de uno de seguridad crónica, y esos SÍ son por
+        # 1000 kcal y tienen que seguir escritos así. Las dos filas juntas son
+        # el `min()` de las dos cosas, que es lo correcto. La de arriba, cuando
+        # manda el máximo de FEDIAF, queda más floja y no ata nada.
+        #
+        # La forma es lineal y por eso no hace falta ninguna densidad ni ninguna
+        # media -- el supuesto de los 4,0 DESAPARECE del motor en vez de
+        # corregirse:
+        #     suma(nut_i * g_i)  <=  L_ms * suma(materia_seca_i * g_i)
+        #   → suma((nut_i - L_ms * materia_seca_i) * g_i)  <=  0
+        #
+        # MEDIDO antes de aplicarlo, iterando hasta el punto fijo (apretar el
+        # techo cambia el menú y el menú cambia su densidad) y con el hueco de
+        # humedad contado como AGUA ENTERA, que es el lado que más aprieta:
+        # 10 de 10 perros de referencia siguen con menú, de 3 a 40 kg y en las
+        # seis etapas, con factores de 0,66 a 0,80.
+        _ms_max = maximo_por_g_de_materia_seca(r, nombre_req, et)
+        if _ms_max is not None:
+            fila_ms = fila_vacia()
+            for n in nombres:
+                v_nut = fila_techo[idx[n]]      # valor/100, con el hueco imputado
+                # gramos de materia seca por GRAMO de alimento. El hueco cuenta
+                # como agua -- ver `materia_seca_g_100g`: contra un techo, dar
+                # por seca la comida que no sabemos lo AFLOJA.
+                ms_n = materia_seca_g_100g(alimentos[n]) / 100.0
+                coef = v_nut - _ms_max * ms_n
+                if coef:
+                    fila_ms[idx[n]] = coef
+            # El mismo margen de redondeo que el techo absoluto de aquí arriba,
+            # y por el mismo motivo: el solver resuelve EXACTO en el límite y
+            # luego los gramos se redondean a 2 decimales, así que el error es
+            # ABSOLUTO. Sin esto, un menú pegado al techo sale del solver y lo
+            # tira el semáforo -- que es el fallo de la vitamina D del 9 de
+            # septiembre, con otra cara.
+            _positivos = sorted((c for c in fila_ms if c > 0), reverse=True)
+            _colchon = PASO_DE_REDONDEO_G * sum(_positivos[:FUENTES_QUE_PUEDEN_COINCIDIR])
+            _fila("fediaf_maximo_legal_materia_seca", fila_ms, -np.inf, -_colchon)
 
         # ⚠️ AÑADIDO (8 septiembre) — EL ESPEJO DE LA FILA DE ARRIBA, PARA LOS
         # SUELOS POR PATOLOGÍA. CASO REAL MEDIDO, y es el mismo fallo del 21 de

@@ -469,6 +469,50 @@ def valor_nutriente(nutrientes: dict, clave: str) -> float:
         return 0.0
 
 
+# ⚠️ LA MATERIA SECA DE UN ALIMENTO, Y POR QUÉ UN HUECO CUENTA COMO AGUA
+#    (15 de septiembre de 2026).
+#
+# Los SIETE límites legales de la UE —vitamina D, hierro, yodo, selenio, zinc,
+# cobre y manganeso— FEDIAF **solo los publica sobre materia seca**, y lo dice
+# en su §3.2.1 con todas las letras: «Legal maxima in EU legislation are
+# expressed on 12% moisture content and THEY DO NOT ACCOUNT FOR ENERGY DENSITY.
+# Therefore in these guidelines THEY ARE ONLY PROVIDED ON A DRY MATTER BASIS.»
+# En su Tabla III-3b, la de «por 1000 kcal», la celda del máximo de esos siete
+# está VACÍA: solo pone «(L)».
+#
+# Así que el número por 1000 kcal que aplicaba el motor era NUESTRO, hecho con
+# el ×2,5 de la Tabla III-2 — que es exactamente la conversión de la que FEDIAF
+# dice, dos párrafos más abajo, «These conversions assume an energy density of
+# 16.7 kJ (4.0 kcal) ME/g DM. For foods with energy densities different from
+# this value, the recommendations should be corrected for energy density».
+# Una ración de este motor va a 5,0-6,0 kcal/g de materia seca (medido el 14 de
+# septiembre al cerrar la humedad del catálogo), no a 4,0.
+#
+# ⚠️ EL HUECO CUENTA COMO AGUA ENTERA, Y ESO ES UNA DECISIÓN, no una omisión.
+# Quedan 18 fichas sin humedad, todas suplementos en polvo cuya etiqueta no la
+# declara, y pesan una mediana de 7,4 g sobre una ración de 730 g. En un límite
+# de la forma `nutriente <= L x materia_seca`, dar por seca esa comida AFLOJA el
+# techo y darla por agua lo APRIETA. Se cuenta como agua, que es el lado
+# seguro, y se dice aquí en vez de dejarlo como un `or 0` silencioso.
+#
+# Lo mismo NO vale para un SUELO, y por eso esta función solo se usa en techos:
+# contar como agua lo que no lo es, contra un mínimo, exigiría de más.
+def materia_seca_g_100g(alimento: dict) -> float:
+    """Gramos de materia seca por 100 g de alimento tal cual se da.
+
+    El hueco cuenta como agua (0 g de materia seca): ver el comentario de
+    arriba. Solo se usa contra TECHOS.
+    """
+    h = (alimento or {}).get("humedad_g_100g")
+    if h is None:
+        return 0.0
+    try:
+        h = float(h)
+    except (TypeError, ValueError):
+        return 0.0
+    return max(0.0, 100.0 - h)
+
+
 def valor_plausible_de(alimento: dict, clave: str):
     """El valor PLAUSIBLE de un nutriente marcado como dudoso, o None.
 
