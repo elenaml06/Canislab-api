@@ -659,6 +659,50 @@ aplicarlo, el motor habría pedido un 23 % menos de **todos** los nutrientes.
 fuente publica esa cifra en la unidad en la que la usamos. Si la publica, el
 supuesto no está en juego. Si la celda está vacía, el número es nuestro.
 
+⚠️ **Y AL REGENERAR EL CATÁLOGO SALIÓ ALGO QUE NO ESTABA ESCRITO EN NINGÚN
+SITIO: LA ESCALERA PUEDE HACER FALTA PARA METER MENOS, NO MÁS.** 18 de los 216
+menús no se regeneraban, y la primera lectura —«necesitan más tiempo»— era
+falsa. Elena: «*hay que ver por qué no salen e intentar que todos cumplan en el
+1er peldaño*».
+
+Medido, resolviendo cada uno en el peldaño 0 **sin** el techo nuevo (donde sí
+salen verdes) y midiendo ese menú contra el techo nuevo:
+
+| Menú | Lo que se pasa (100 % = justo en el límite) |
+|---|---|
+| Mediano_CachorroJoven/Ternera | **selenio 144 %** · cobre 125 % |
+| Toy_CachorroCrecimiento | **selenio 133 %** · cobre 95 % |
+| Mini_CachorroJoven/Merluza | **cobre 129 %** · selenio 120 % |
+| Toy_Senior/Salmón | **vitamina D 125 %** · selenio 97 % |
+
+Los tres que aprietan son **selenio, cobre y vitamina D**. Y el peldaño 0
+**obliga** a un mínimo de vísceras (2 %) y de hígado (2 %) — y el hígado es de
+donde sale casi todo el cobre, y las vísceras y el pescado el selenio. O sea que
+**en el peldaño estricto el motor está forzado a meter justo lo que se pasa del
+máximo legal**. Por eso salen en cuanto se baja un escalón: el peldaño 1 se
+llama, literalmente, `proporcion_minima_visceras_higado_verdura`.
+
+Hasta hoy la escalera estaba descrita como lo que se suelta **para que quepa
+algo más**. Aquí se suelta **para poder meter menos hígado**, y eso es la misma
+regla 3 leída al derecho: lo que cede es la FORMA, que es criterio nuestro, y
+nunca la nutrición ni un límite legal.
+
+⚠️ **Y bajar ese mínimo NO es la salida, y está medido** — que es justo lo que
+había que comprobar antes de tocar un número nuestro para que cuadren 18 menús:
+
+| Mínimo de hígado y vísceras en el peldaño 0 | Salen en el peldaño 0 |
+|---|---|
+| **2,0 %** (hoy) | 1 de 18 |
+| 1,0 % | 3 de 18 |
+| 0,5 % | 3 de 18 |
+| **0 %, quitado del todo** | **7 de 18** |
+
+Quitándolo entero siguen sin salir 11. No es ese número: cada uno choca con una
+cosa distinta — unos necesitan **menos** hígado y otros **más** vísceras o **un
+suplemento más**, que son los peldaños 3, 4 y 5. **No hay un solo cambio de
+proporciones que los meta a todos en el 0**, y forzarlo sería inventarse unas
+proporciones BARF a la medida de 18 menús.
+
 Lo vigila el **BLOQUE 113**, con cinco comprobaciones y las dos direcciones: que
 los siete vayan sobre materia seca, que los seis que FEDIAF sí imprime por 1000
 kcal **no** se toquen, que solver y semáforo digan lo mismo, que ningún menú del
