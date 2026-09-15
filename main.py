@@ -154,7 +154,12 @@ def _seguridad_completa(gramos, al, der, etapa, patologias=None, peso_perro_kg=N
     # revalidar), así que con ponerlo en esta función sale en los ocho
     # sitios sin tocar la app ni añadir una clave nueva que alguien tenga
     # que acordarse de leer.
-    _topes, _pct, avisos_por_la_etapa, _suelos = topes_de_patologias(patologias, etapa)
+    # ⚠️ `para_el_dueno=True`: esta lista sale por `problemas_seguridad`, que es
+    # el canal del dueño (ver la cabecera de esta función). Sin eso, el aviso de
+    # crecimiento salía en su registro TÉCNICO -- con nombres de nutrientes,
+    # «techos» y «suelos», y hasta el nombre de una función del motor.
+    _topes, _pct, avisos_por_la_etapa, _suelos = topes_de_patologias(
+        patologias, etapa, para_el_dueno=True)
     problemas += avisos_por_la_etapa
     # ⚠️ AÑADIDO (13 septiembre) — EL AVISO QUE HAY QUE LEER ANTES DE COMPRAR,
     # y nace de una frase de Elena que describe el fallo entero:

@@ -2218,6 +2218,27 @@ def _dice_que_bajo_b13(texto, nutriente):
     return bool(_re_b13.search(_BAJAR_B13 + r"[^.]{0,40}" + nutriente, texto))
 
 
+# ⚠️ Y LA MISMA LECCIÓN, OTRA VEZ, EL 15 DE SEPTIEMBRE. Aquí quedaba UNA frase
+# literal —«plan dietético individual»— y se puso roja al escribir el registro
+# del DUEÑO para el crecimiento renal, que dice lo mismo con otras palabras:
+# «necesita un plan hecho a medida por un veterinario nutricionista». Otra vez
+# una prueba de redacción acusando al motor de algo que sí hace. Se comprueba el
+# HECHO —que manda a hacer un plan con un profesional— y con el MISMO criterio
+# en las dos direcciones, que es lo que impide que colarlo por el lado negativo
+# se vuelva gratis.
+_PLAN_CON_PROFESIONAL_B13 = (r"plan[^.]{0,80}(?:veterinari|nutricionista)"
+                             r"|(?:veterinari|nutricionista)[^.]{0,80}plan")
+
+
+def _manda_a_un_plan_b13(texto):
+    """¿El texto dice que esto lo tiene que planificar un profesional?"""
+    return bool(_re_b13.search(_PLAN_CON_PROFESIONAL_B13, texto))
+
+
+def _plan_b13():
+    return ("plan",)
+
+
 def _baja_b13(nutriente):
     # (el sufijo `_b13` no es manía: este fichero son 12.000 líneas en un solo
     # ámbito, y un nombre corto como `_baja` es una mina para el bloque 60
@@ -2227,19 +2248,25 @@ def _baja_b13(nutriente):
 
 def _lo_dice_b13(texto, que):
     if isinstance(que, tuple):
+        if que[0] == "plan":
+            return _manda_a_un_plan_b13(texto)
         return _dice_que_bajo_b13(texto, que[1])
     return que in texto
 
 
 def _como_se_lee_b13(que):
-    return f"que se le ha bajado el/la {que[1]}" if isinstance(que, tuple) else f"«{que}»"
+    if isinstance(que, tuple):
+        if que[0] == "plan":
+            return "que esto lo tiene que planificar un profesional"
+        return f"que se le ha bajado el/la {que[1]}"
+    return f"«{que}»"
 
 
 for _pat_t, _et_t, _debe_decir, _no_puede_decir in [
     (["pancreatitis"], "CachorroJoven",       "no ha podido bajar la grasa", _baja_b13("grasa")),
-    (["renal"],        "CachorroCrecimiento", "plan dietético individual",   _baja_b13("fósforo")),
+    (["renal"],        "CachorroCrecimiento", _plan_b13(),                   _baja_b13("fósforo")),
     (["pancreatitis"], "Adulto",              _baja_b13("grasa"),                "no ha podido bajar"),
-    (["renal"],        "Adulto",              _baja_b13("fósforo"),              "plan dietético individual"),
+    (["renal"],        "Adulto",              _baja_b13("fósforo"),              _plan_b13()),
 ]:
     # ⚠️ LOS DOS REGISTROS, no solo el del dueño (13 septiembre, noche). Desde
     # hoy `avisos_de_patologias` devuelve el texto llano a quien no es
@@ -7096,7 +7123,20 @@ def _tirada_b48():
 
 try:
     _midiendo_b48, _peor_b48, _mudas_b48 = [], [], []
-    for _k_b48 in range(3):
+    # ⚠️ CUATRO RONDAS Y SE COMPARAN LOS MÁXIMOS, no las sumas (15 de
+    # septiembre). Con `sum(midiendo) <= sum(peor)` esto se puso ROJO dentro de
+    # la batería completa con [2, 1, 3] contra [2, 2, 2]: las sumas empatan a 6
+    # y una sola ronda con mala suerte lo tira. En aislado salía verde 3 de 3.
+    # O sea, otra vez una prueba midiendo lo cargada que está la máquina -- la
+    # familia que este fichero ya tiene escrita tres veces.
+    #
+    # Lo que el bloque quiere afirmar es que MEDIR da ventaja sobre SUPONER el
+    # peor caso, y eso es cierto de los MÁXIMOS: cuántos menús caben depende de
+    # lo que tarde cada ronda, que varía, pero la versión que mide nunca puede
+    # estimar MÁS que el peor caso -- lo dice su propio `min(peor_caso, ...)` --
+    # así que en su mejor tirada tiene que llegar más lejos. Si alguien volviera
+    # a decidir por el tope, los dos máximos serían el mismo.
+    for _k_b48 in range(4):
         _api._PEOR_CASO_SIEMPRE_SOLO_PRUEBAS = False
         _cuantos, _resp = _tirada_b48()
         _midiendo_b48.append(_cuantos)
@@ -7113,13 +7153,15 @@ finally:
 # Medir lo que cuesta no puede dar MENOS menús que suponer el peor caso: la
 # estimación medida nunca es mayor que el peor caso, así que nunca corta
 # antes. Si sale igual o peor, es que ha dejado de medirse.
-if sum(_midiendo_b48) <= sum(_peor_b48):
+if max(_midiendo_b48) <= max(_peor_b48):
     fallos.append(
-        f"BLOQUE48: midiendo lo que cuesta cada ronda salen {_midiendo_b48} menús y "
-        f"suponiendo el peor caso {_peor_b48} -- o sea que medir no está dando NINGUNA "
-        f"ventaja. La estimación medida nunca puede ser mayor que el peor caso, así que "
-        f"esto solo pasa si se ha vuelto a decidir por el tope. (Se comparan las dos en la "
-        f"misma máquina y seguidas, así que la carga afecta a las dos igual.)")
+        f"BLOQUE48: en su MEJOR tirada, midiendo lo que cuesta cada ronda salen "
+        f"{max(_midiendo_b48)} menús ({_midiendo_b48}) y suponiendo el peor caso "
+        f"{max(_peor_b48)} ({_peor_b48}) -- o sea que medir no está dando NINGUNA ventaja. "
+        f"La estimación medida nunca puede ser mayor que el peor caso (lo dice el "
+        f"`min(peor_caso, ...)` de `coste_estimado_de_la_proxima_ronda`), así que esto solo "
+        f"pasa si se ha vuelto a decidir por el tope. (Se comparan las dos en la misma "
+        f"máquina y seguidas, así que la carga afecta a las dos igual.)")
 if _mudas_b48:
     fallos.append(
         f"BLOQUE48: han salido menos menús de los 3 pedidos ({_mudas_b48}) y la respuesta NO "
@@ -17437,6 +17479,89 @@ for _c107b, _m107b, _t107b in _sucios107b[:6]:
     fallos.append(f"BLOQUE107: el aviso que lee el DUEÑO al marcar «{_c107b}» nombra "
                   f"«{_m107b}»: «{_t107b}…». Esa es la pantalla de alguien que solo quiere dar "
                   f"de comer a su perro")
+
+# ⚠️ Y LA TERCERA PUERTA, QUE ES LA QUE SE ESCAPÓ (15 de septiembre).
+#
+# CASO REAL, encontrado barriendo el motor DESPLEGADO con ocho perros y diez
+# patologías -- no leyendo el repo. Lo que le salía al dueño de un cachorro con
+# artrosis, por `problemas_seguridad`, era esto:
+#
+#   «este menú NO lleva puesto NADA de la artrosis: ni los techos de fósforo y
+#    sodio, ni los suelos de EPA, L-carnitina y vitamina E. || ⚠️ Y una
+#    corrección, porque este texto llegó a decir lo contrario: …
+#    `topes_de_patologias()` no separa unos de otros…»
+#
+# O sea: nombres de nutrientes, «techos» y «suelos», y una nota MÍA sobre un
+# fallo del código con el nombre de una función dentro. Y la artrosis TENÍA su
+# `dueno_crecimiento` escrito desde el 13 de septiembre: lo que fallaba es que
+# `topes_de_patologias` no sabía que existen dos registros y metía el técnico.
+#
+# Este bloque miraba `avisos_patologia` y `GET /vocabulario`, que son las dos
+# puertas que ya se conocían. `problemas_seguridad` es una TERCERA, y es la que
+# la app pinta en los ocho caminos. Es la lección del BLOQUE 64 otra vez: un
+# texto se vigila por la puerta POR LA QUE SALE, no por dónde está escrito.
+#
+# Aquí se le pregunta a la MISMA función que llama `_seguridad_completa`, con
+# el mismo `para_el_dueno=True`, y se mira lo que devuelve.
+from motor_completo import topes_de_patologias as _topes107c
+_ETAPAS107C = ("CachorroJoven", "CachorroCrecimiento", "Lactante")
+_sucios107c, _mirados107c = [], 0
+for _k107c, _v107c in sorted(_crudo107n.items()):
+    _av107c = _v107c.get("avisos") or {}
+    if not _av107c.get("crecimiento"):
+        continue
+    for _e107c in _ETAPAS107C:
+        _, _, _avs107c, _ = _topes107c([_k107c], _e107c, para_el_dueno=True)
+        for _t107c in _avs107c:
+            _mirados107c += 1
+            _mal107c = [_x for _x in _JERGA107 if _x in _t107c]
+            _mal107c += [_x for _x in _NUTRIENTES_QUE_NO_DICEN_NADA_107
+                         if _x.lower() in _t107c.lower()]
+            _mal107c += [_x for _x in _SUELTAS_107 if _re107b.search(_x, _t107c)]
+            # y las marcas de que esto es una nota interna y no un aviso
+            _mal107c += [_x for _x in ("`", ".py", ".md", "PENDIENTE", "topes_de_patologias",
+                                       "solo_en_adulto", "auditoría", "el código")
+                         if _x in _t107c]
+            if _mal107c:
+                _sucios107c.append((_k107c, _e107c, sorted(set(_mal107c))[:4], _t107c[:120]))
+            break
+for _k107c, _e107c, _m107c, _t107c in _sucios107c[:6]:
+    fallos.append(f"BLOQUE107: el aviso de crecimiento que le sale al DUEÑO de «{_k107c}» por "
+                  f"`problemas_seguridad` ({_e107c}) trae {_m107c}: «{_t107c}…». Ese canal es el "
+                  f"del dueño -- lo dice la cabecera de `_seguridad_completa` -- y ahí no entra "
+                  f"ni el nombre de un nutriente ni una nota interna del repo")
+# Y las DOS PUERTAS también aquí: el técnico tiene que seguir diciendo lo suyo.
+#
+# ⚠️ LA PRIMERA VERSIÓN DE ESTA MITAD NO PODÍA FALLAR, y está comprobado: comparaba
+# lo que devuelve `topes_de_patologias(..., para_el_dueno=False)` contra el
+# `crecimiento` del JSON, o sea el fichero contra sí mismo. Copiándole encima al
+# técnico el texto del dueño, los dos cambiaban a la vez y el bloque seguía verde.
+# Es la lección del BLOQUE 109: una comprobación que no puede fallar es peor que
+# no tenerla, porque parece que alguien mira.
+#
+# Se ancla en TRES palabras que son justo las que el registro del dueño quita. Si
+# el técnico las pierde, es que se le ha puesto el llano encima -- que no es
+# limpiar el canal del dueño, es perder la cifra.
+_ANCLAS107C = {"artrosis": "vitamina E", "pancreatitis": "1000 kcal", "oxalato": "magnesio"}
+_vet107c = 0
+for _k107c, _v107c in sorted(_crudo107n.items()):
+    _av107c = _v107c.get("avisos") or {}
+    if not _av107c.get("crecimiento"):
+        continue
+    _vet107c += 1
+    _, _, _avs107d, _ = _topes107c([_k107c], "CachorroJoven", para_el_dueno=False)
+    if not _avs107d:
+        continue
+    _debe107c = _ANCLAS107C.get(_k107c)
+    if _debe107c and _debe107c not in _avs107d[0]:
+        fallos.append(f"BLOQUE107: el aviso de crecimiento del VETERINARIO de «{_k107c}» ya no "
+                      f"dice «{_debe107c}». Parece que se le ha copiado encima el registro del "
+                      f"dueño: lo que se le quita al dueño se mueve, no se borra")
+    if _av107c.get("dueno_crecimiento") and _avs107d[0] == _av107c["dueno_crecimiento"]:
+        fallos.append(f"BLOQUE107: pidiendo el registro del VETERINARIO, «{_k107c}» devuelve "
+                      f"palabra por palabra el texto del DUEÑO. Son dos registros, no uno")
+print(f"  {_mirados107c} avisos de crecimiento servidos al dueño · {_vet107c} con su registro "
+      f"técnico intacto")
 
 # Y LO QUE NO SE VE DESDE FUERA: que las dos listas de avisos sueltos vayan
 # EMPAREJADAS. `avisos_extra_dueno` es la misma lista en el mismo orden con el
