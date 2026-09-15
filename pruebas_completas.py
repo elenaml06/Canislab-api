@@ -17649,21 +17649,41 @@ if _men101.get("factible"):
     #    el intento apretado volvería a ser factible y esto lo cazaría — que es
     #    lo que el bloque quería vigilar de verdad.
     if _ca_1000_101 > _esperado_subido101 * 1.005:
+        # ⚠️ Y SE PREGUNTA POR LA ESCALERA ENTERA, NO POR UN PELDAÑO (15 de
+        #    septiembre, por la noche). La versión de esta misma tarde preguntaba
+        #    solo con `MARGENES_V2` y dos suplementos, salía infactible, y daba
+        #    por bueno que el techo se soltara. Lo destapó Elena: «no me creo que
+        #    en un menú con premios Cairo no pueda cumplir con el techo de calcio
+        #    estricto».
+        #
+        #    Y tenía razón: con el techo APRETADO, los peldaños 0, 1 y 2 salen
+        #    infactibles demostrados y **el 3 da menú, con el calcio en 2816**.
+        #    O sea que el menú que cumple existía y no se buscaba, porque
+        #    `resolver()` soltaba el techo DENTRO del peldaño 0 y la escalera no
+        #    bajaba nunca. Preguntar por un solo peldaño reproducía ese mismo
+        #    error de orden dentro de la prueba, y por eso la daba por buena.
         from motor_completo import _resolver_una_vez as _una_vez101
-        _est_ap101 = {}
-        _ok_ap101, _ = _una_vez101(
-            1581.0, "CachorroCrecimiento", _al101, _req101, 20.0,
-            dosis_maxima_fabricante, margenes_categoria=_api101.MARGENES_V2,
-            max_suplementos=2, peso_adulto_esperado_kg=31.0,
-            kcal_de_premios=1581.0 * 0.10, time_limit=40.0, semilla_aleatoria=1,
-            estado_del_solver=_est_ap101, apretar_el_techo_del_libro=True)
+        _ok_ap101, _est_ap101 = False, {}
+        _peldano_ap101 = None
+        for _m101, _s101, _q101 in _api101._escalera_de_relajacion():
+            _est_ap101 = {}
+            _ok_ap101, _ = _una_vez101(
+                1581.0, "CachorroCrecimiento", _al101, _req101, 20.0,
+                dosis_maxima_fabricante, margenes_categoria=_m101,
+                max_suplementos=_s101, peso_adulto_esperado_kg=31.0,
+                kcal_de_premios=1581.0 * 0.10, time_limit=40.0, semilla_aleatoria=1,
+                estado_del_solver=_est_ap101, apretar_el_techo_del_libro=True)
+            if _ok_ap101:
+                _peldano_ap101 = _q101 or "estricto"
+                break
         if _ok_ap101:
             fallos.append(f"BLOQUE101: el menú sale con {_ca_1000_101:.0f} mg de calcio, el techo "
-                          f"que se le puso era {_esperado_subido101:.0f}, y preguntándole al "
-                          f"solver CON el techo apretado SÍ hay menú. Entonces no es que no "
-                          f"quepa: es que el techo que sube no le está llegando al solver, y el "
-                          f"menú se aleja del consejo del libro más de lo que la aritmética "
-                          f"obliga")
+                          f"que se le puso era {_esperado_subido101:.0f}, y recorriendo la "
+                          f"escalera CON el techo apretado SÍ hay menú en el peldaño "
+                          f"«{_peldano_ap101}». Entonces no es que no quepa: es que se está "
+                          f"soltando el techo del libro ANTES de bajar de peldaño, y eso es la "
+                          f"regla 3 al revés -- lo que cede es la FORMA (criterio nuestro), no "
+                          f"un consejo de la fuente")
         elif _est_ap101.get("status") != 2:
             fallos.append(f"BLOQUE101: el menú se pasa del techo subido ({_ca_1000_101:.0f} "
                           f"contra {_esperado_subido101:.0f}) y el intento apretado no sale "

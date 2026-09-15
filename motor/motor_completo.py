@@ -636,13 +636,44 @@ def resolver(*args, **kwargs):
     devuelve `_imposible` (aritmética demostrada) o si no había ningún techo que
     subir, reintentar sería pagar el doble de reloj para llegar al mismo sitio
     -- y el reloj es lo que dejó sin menú al toy de 1,5 kg en el BLOQUE 43.
+
+    ⚠️ Y EL QUE LLAMA PUEDE PEDIR QUE NO SE SUELTE TODAVÍA (15 de septiembre de
+    2026). Lo destapó Elena: «no me creo que en un menú con premios Cairo no
+    pueda cumplir con el techo de calcio estricto». Tenía razón.
+
+    EL FALLO ERA DE ORDEN, y es la regla 3 leída al revés. Este envoltorio
+    soltaba el techo DENTRO del mismo peldaño: el peldaño 0 salía infactible con
+    el techo puesto, se soltaba ahí mismo, el peldaño 0 pasaba a ser factible y
+    la escalera **no bajaba nunca**. Así que se tiraba un consejo de la fuente
+    para no tocar las proporciones de BARF -- que son criterio NUESTRO. La regla
+    3 dice justo lo contrario: lo que cede es la FORMA, nunca la nutrición.
+
+    MEDIDO con Cairo (cachorro de raza grande, premios al 10 %, ventana de
+    calcio 2778-2833, o sea un 2 % de sitio), peldaño a peldaño con el techo
+    APRETADO y 60 s cada uno:
+
+        peldaño 0 estricto ............................ infactible demostrado
+        peldaño 1 dos suplementos ..................... infactible demostrado
+        peldaño 2 sin mínimo de vísceras e hígado ..... infactible demostrado
+        peldaño 3 sin ningún mínimo de categoría ...... MENÚ, calcio 2816
+
+    O sea que el menú que cumple el techo EXISTÍA y no se buscaba. Hoy el motor
+    entrega 3569 en el peldaño 0 con el techo soltado; con el orden correcto
+    entrega 2816 en el peldaño 3 cumpliéndolo. **753 mg de calcio menos al día**
+    en el nutriente que causa enfermedad ortopédica del desarrollo si sobra.
+
+    Con `soltar_el_techo_si_no_cabe=False` este envoltorio NO hace el plan B:
+    devuelve «no hay menú» y deja que la escalera de `main` baje un peldaño. La
+    escalera lo pone a True en su última pasada, que es cuando ya se ha
+    comprobado que no cabe en ninguna forma de ración.
     """
+    _soltar = kwargs.pop("soltar_el_techo_si_no_cabe", True)
     _subidos = {}
     kwargs_1 = dict(kwargs)
     kwargs_1["_techos_subidos_fuera"] = _subidos
     ok, gramos = _resolver_una_vez(*args, **kwargs_1)
-    if not ok and _subidos.get("se_ha_subido") and not (
-            isinstance(gramos, dict) and gramos.get("_imposible")):
+    if (_soltar and not ok and _subidos.get("se_ha_subido") and not (
+            isinstance(gramos, dict) and gramos.get("_imposible"))):
         kwargs_2 = dict(kwargs)
         kwargs_2["apretar_el_techo_del_libro"] = False
         ok, gramos = _resolver_una_vez(*args, **kwargs_2)

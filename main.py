@@ -3701,7 +3701,8 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
     # menú se siga generando igual (con aviso), en vez de fallar del
     # todo.
     def _intentar_generacion(forzar_este, restringir_a_elegidos_este,
-                             margenes=None, max_supl=None, soltar=None):
+                             margenes=None, max_supl=None, soltar=None,
+                             soltar_techo_libro=True):
         """Un intento completo: llamada + reintentos para mejorar a
         verde mientras quede presupuesto de tiempo -- misma lógica que
         ya existía, solo que reutilizable para los tres niveles.
@@ -3724,6 +3725,7 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
             max_suplementos=(max_supl if max_supl is not None else _supl_base),
             time_limit=tiempo_de_un_intento(),
             estado_del_solver=_estado_solver,
+            soltar_el_techo_si_no_cabe=soltar_techo_libro,
             forzar=forzar_este, preferir=preferir,
             patologias=datos.patologias, restringir_especie=datos.restringir_especie,
             peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
@@ -3760,6 +3762,7 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
                 excluidos=excluidos or None,
                 margenes_categoria=(margenes if margenes is not None else MARGENES_V2),
                 max_suplementos=max_supl, time_limit=tiempo_de_un_intento(),
+                soltar_el_techo_si_no_cabe=soltar_techo_libro,
                 forzar=forzar_este, preferir=preferir,
                 patologias=datos.patologias, restringir_especie=datos.restringir_especie,
                 peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
@@ -3873,6 +3876,7 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
                 categorias_excluidas=datos.categorias_excluidas,
                 presupuesto_semanal_restante=datos.presupuesto_semanal_restante,
                 estado_del_solver=_estado_solver,
+                soltar_el_techo_si_no_cabe=soltar_techo_libro,
                 kcal_de_premios=_kcal_de_premios(datos),
             )
             ficha_i = (verificar_v2(gramos_i, al, req, datos.der_objetivo, datos.etapa_requisitos)
@@ -3901,12 +3905,14 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
 
     if restriccion:
         # NIVEL 1: solo lo elegido a mano en carne/pescado/hueso, nada más
-        ok, gramos, ficha_intento = _intentar_generacion(forzar, restriccion)
+        ok, gramos, ficha_intento = _intentar_generacion(forzar, restriccion,
+                                                         soltar_techo_libro=False)
         if not ok:
             # NIVEL 2: se afloja la restricción de especie, pero se
             # sigue forzando que lo elegido esté presente -- el motor
             # puede añadir OTRA especie más si de verdad hace falta
-            ok, gramos, ficha_intento = _intentar_generacion(forzar, None)
+            ok, gramos, ficha_intento = _intentar_generacion(forzar, None,
+                                                             soltar_techo_libro=False)
             if ok:
                 # ⚠️ aviso solo si de verdad se añadió algo que el
                 # usuario no pidió en esas categorías -- comparando
@@ -3921,7 +3927,8 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
                         "también se ha añadido: " + ", ".join(anadidos) + "."
                     )
     else:
-        ok, gramos, ficha_intento = _intentar_generacion(forzar, None)
+        ok, gramos, ficha_intento = _intentar_generacion(forzar, None,
+                                                         soltar_techo_libro=False)
 
     if not ok and datos.modo == "personalizar":
         # igual que hacía /menu (el viejo): si forzar lo elegido a mano
@@ -3988,9 +3995,46 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
             if tiempo_restante() <= 1.5:
                 break  # sin tiempo: mejor no factible que un timeout de Render
             ok, gramos, ficha_intento = _intentar_generacion(
-                forzar, None, margenes=margenes_peldano, max_supl=supl_peldano)
+                forzar, None, margenes=margenes_peldano, max_supl=supl_peldano,
+                soltar_techo_libro=False)
             if ok:
                 relajaciones.append(que_se_suelta)
+                break
+
+    # ⚠️ Y SOLO AHORA SE SUELTA EL TECHO DEL LIBRO — LA ESCALERA VA PRIMERO
+    # (15 de septiembre de 2026). Lo destapó Elena: «no me creo que en un menú
+    # con premios Cairo no pueda cumplir con el techo de calcio estricto».
+    #
+    # Tenía razón. Hasta hoy `resolver()` soltaba el techo DENTRO del mismo
+    # peldaño: el 0 salía infactible con el techo puesto, se soltaba ahí mismo,
+    # el 0 pasaba a ser factible y la escalera NO BAJABA NUNCA. Así que se
+    # tiraba un consejo de la fuente para no tocar las proporciones de BARF,
+    # que son criterio NUESTRO. La regla 3 dice lo contrario: lo que cede es la
+    # FORMA, nunca la nutrición.
+    #
+    # MEDIDO con Cairo (raza grande, premios al 10 %, ventana de calcio
+    # 2778-2833, un 2 % de sitio), con el techo APRETADO y 60 s por peldaño:
+    #     peldaño 0, 1 y 2 .... infactible DEMOSTRADO
+    #     peldaño 3 ........... MENÚ, calcio 2816
+    # O sea que el menú que cumple el techo EXISTÍA y no se buscaba. Antes se
+    # entregaba 3569 en el peldaño 0 con el techo soltado; ahora 2816 en el 3
+    # cumpliéndolo. **753 mg de calcio menos al día** en el nutriente que causa
+    # enfermedad ortopédica del desarrollo si sobra.
+    #
+    # ⚠️ Y NO CUESTA RELOJ A CASI NADIE: el flag solo cambia algo cuando hay un
+    # techo del libro SUBIDO, que es el cachorro de raza grande con premios. Para
+    # los demás `se_ha_subido` es falso y este segundo recorrido no llega a
+    # hacerse, porque el primero ya dio menú.
+    if not ok and not _peldano_pedido:
+        for margenes_peldano, supl_peldano, que_se_suelta in _escalera_de_relajacion(hay_comida):
+            if tiempo_restante() <= 1.5:
+                break
+            ok, gramos, ficha_intento = _intentar_generacion(
+                forzar, None, margenes=margenes_peldano, max_supl=supl_peldano,
+                soltar_techo_libro=True)
+            if ok:
+                if que_se_suelta:
+                    relajaciones.append(que_se_suelta)
                 break
 
     if not ok:
