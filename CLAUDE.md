@@ -81,7 +81,17 @@ con alguna, casi siempre el error está en el cambio.
    UI/kg tal cual (~494 UI/kg MS ≈ 83 mg/1000 kcal), y el grupo de 293 no dio
    efecto**. O sea que el 400 de la tabla no es la dosis del estudio: cae
    entre la que funcionó y la que no. Detalle en `LECTURAS.md`. Es la vitamina E del perro sano (67,1
-   mg/1000 kcal). Por la mañana del 11 de septiembre Elena lo encendió con la
+   mg/1000 kcal).
+   ⚠️ **Y LAS TRES CIFRAS DE VITAMINA E QUE CONVIVEN HAY QUE TENERLAS JUNTAS, porque
+   confundirlas es lo que hace creer que esto «lo manda FEDIAF»** (15 de septiembre):
+   el **mínimo de FEDIAF** son **6,968 mg/1000 kcal** (Tabla III-3b, 10,40 UI ÷ 1,49) y
+   se aplica SIEMPRE; este **suelo del libro** son **67,1 mg/1000 kcal**, o sea **diez
+   veces** el anterior, y es una **recomendación** de SACN5 «for improved antioxidant
+   performance», no un requisito; y el **techo del libro** son **167,75 mg/1000 kcal**
+   (Fascetti cap.14, extremo estricto de «1000-2000 IU/kg diet»), que es el único techo
+   que tiene el nutriente porque **FEDIAF no pone máximo de vitamina E en ninguna
+   etapa**. Entre el suelo y el techo hay 2,5 veces de sitio. Por la mañana del 11 de
+   septiembre Elena lo encendió con la
    regla correcta —«la norma es la norma»: si la fuente lo dice, se aplica— y por
    la tarde lo apagó para poder entregar: «apágalo y fusiona todo, ya
    preguntaremos lo de la vitamina E». Lo segundo es el **orden**, no la norma:

@@ -20396,6 +20396,118 @@ if _faltan_fin:
         f"batería no ha pasado por ellos -- casi siempre porque se añadieron DESPUÉS del "
         f"`sys.exit()` del final. Un guardia inerte es peor que no tenerlo: sale verde igual")
 
+# ============================================================
+# BLOQUE 119 — LAS CIFRAS DE `CLAUDE.md`, CONTRA EL MOTOR VIVO (Y SU UNIDAD)
+# ============================================================
+#
+# ⚠️ POR QUÉ EXISTE (15 de septiembre de 2026). Elena, al ver que le había dado
+# una cifra con la unidad equivocada:
+#
+#     «pero y por qué haces esas cosas???? A saber qué más habrás hecho mal»
+#
+# Y la pregunta tiene una respuesta concreta: hasta hoy, **nada comprobaba las
+# cifras de `CLAUDE.md`**. `PARA_EL_NUTRICIONISTA.md` tiene el BLOQUE 65
+# anclando 25 números contra el valor vivo desde el 9 de septiembre, y se puso
+# justamente porque ese documento se escribe a mano y el motor cambia debajo.
+# `CLAUDE.md` se escribe igual de a mano, es LO PRIMERO que se lee, y no tenía
+# nada.
+#
+# EL FALLO QUE LO MOTIVÓ, que es pequeño y por eso enseña bien: la fila que
+# lista los siete máximos legales rehechos contra la Tabla III-3a los metía a
+# los siete bajo un «mg/100 g MS» común, y el selenio va en **µg**. O sea 568
+# mg/kg de materia seca en vez de 0,568 mg/kg: MIL VECES. El JSON siempre lo
+# tuvo bien (`56.80 (L)d µg/100 g MS`) y el motor nunca aplicó una cifra mala
+# -- el solver lee el JSON, no el resumen --, así que no salió ni un menú malo.
+# Lo que se rompió es otra cosa y también importa: **el documento que se lee
+# para entender el motor decía algo falso**, y quien lo leyera (yo mismo, media
+# hora después) se lo creería.
+#
+# ⚠️ Y COMPRUEBA LA UNIDAD, NO SOLO EL NÚMERO, que es la diferencia con el
+# BLOQUE 65. Un «56,80» suelto cuadra igual escrito en mg que en µg; lo que no
+# cuadra es la CANTIDAD que representa. Por eso cada ancla trae su unidad y el
+# valor se rehace hasta esa unidad desde el motor.
+#
+# ⚠️ Y NO INTENTA LEER EL MARKDOWN. Extraer cifras de la prosa con expresiones
+# regulares sería una segunda forma de equivocarse, y además `CLAUDE.md` cita a
+# propósito números viejos («antes ponía 4124», «el 8 de septiembre se escribió
+# ×25») que no son afirmaciones sobre el motor de hoy. Lo que se hace es lo
+# mismo que el BLOQUE 65: se ancla **la frase** y se exige que siga estando Y
+# que su cifra siga cuadrando. Si la frase desaparece, también falla -- un
+# ancla que ya no vigila nada no avisa a nadie.
+print("\n" + "=" * 60)
+print("=== BLOQUE 119: las cifras de CLAUDE.md, contra el motor vivo ===")
+
+import verificar as _ver119
+import recomendaciones as _rec119
+import seguridad as _seg119
+
+_TXT119 = open("CLAUDE.md", encoding="utf-8").read()
+_REQ119 = {f["nutriente"]: f for f in _json_b99.load(open("requerimientos_v2_final.json", encoding="utf-8"))}
+_LIB119 = _json_b99.load(open("recomendaciones_libro.json", encoding="utf-8"))["por_etapa"]
+
+
+def _legal_por_100g_ms_119(nut):
+    """El máximo legal en la unidad de la Tabla III-3a: por 100 g de MS."""
+    return _ver119.maximo_por_g_de_materia_seca(_REQ119[nut], nut, "Adulto") * 100.0
+
+
+# (frase que tiene que seguir en CLAUDE.md, cifra que afirma, valor vivo, unidad)
+_ANCLAS_119 = [
+    # --- los siete máximos legales, en la unidad de su tabla ---------------
+    ("cobre 2,80",   2.80,  _legal_por_100g_ms_119("Cobre"),      "mg/100 g MS"),
+    ("zinc 22,70",   22.70, _legal_por_100g_ms_119("Zinc"),       "mg/100 g MS"),
+    ("hierro 68,18", 68.18, _legal_por_100g_ms_119("Hierro"),     "mg/100 g MS"),
+    ("yodo 1,10",    1.10,  _legal_por_100g_ms_119("Yodo") / 1000.0, "mg/100 g MS"),
+    ("manganeso 17,00", 17.00, _legal_por_100g_ms_119("Manganeso"), "mg/100 g MS"),
+    # ⚠️ ESTE ES EL QUE ESTABA MAL, y por eso la frase anclada incluye la
+    #    unidad: si alguien vuelve a escribir «selenio 56,80 mg», el ancla no
+    #    aparece y el bloque falla.
+    ("selenio 56,80 µg**/100 g MS", 56.80, _legal_por_100g_ms_119("Selenio"), "µg/100 g MS"),
+    ("vitamina D 227,00 IU/100 g MS", 227.0,
+     _legal_por_100g_ms_119("Vitamina_D") / 0.025, "IU/100 g MS"),
+    # --- lo que decide si un menú se entrega -------------------------------
+    ("4,00 g/1000 kcal", 4.00,
+     _ver119.maximo_de(_REQ119["Fósforo"], "Fósforo", "Adulto") / 1000.0, "g/1000 kcal"),
+    ("67,1 mg/1000 kcal", 67.1,
+     _LIB119["Adulto"]["suelos_por_1000kcal"]["vitE"]["valor"], "mg/1000 kcal"),
+    ("2750 los dos", 2750.0,
+     _rec119.topes_de_la_etapa("CachorroCrecimiento",
+                               peso_adulto_esperado_kg=55.0)["calcio"], "mg/1000 kcal"),
+    ("calcio 4250 y", 4250.0,
+     _rec119.topes_de_la_etapa("CachorroCrecimiento")["calcio"], "mg/1000 kcal"),
+    ("fósforo 3250", 3250.0,
+     _rec119.topes_de_la_etapa("CachorroCrecimiento")["fosforo"], "mg/1000 kcal"),
+    ("20 µg/1000 kcal", 20.0, _seg119.TOPE_VITD_KCAL, "µg/1000 kcal"),
+    ("6,968 mg/1000 kcal", 6.968,
+     _ver119.minimo_de(_REQ119["Vitamina_E"], "Vitamina_E", "Adulto"), "mg/1000 kcal"),
+    ("167,75 mg/1000 kcal", 167.75,
+     _LIB119["Adulto"]["topes_por_1000kcal"]["vitE"]["valor"], "mg/1000 kcal"),
+]
+
+_sin_ancla119, _descuadran119 = [], []
+for _frase119, _dicho119, _vivo119, _unidad119 in _ANCLAS_119:
+    if _frase119 not in _TXT119:
+        _sin_ancla119.append(_frase119)
+        continue
+    if _vivo119 is None or abs(float(_vivo119) - _dicho119) > max(0.005, abs(_dicho119) * 0.002):
+        _descuadran119.append((_frase119, _dicho119, _vivo119, _unidad119))
+
+if _sin_ancla119:
+    fallos.append(f"BLOQUE119: {len(_sin_ancla119)} frase(s) ancladas ya no están en CLAUDE.md "
+                  f"({_sin_ancla119[:3]}). O la cifra se ha reescrito -- y entonces hay que "
+                  f"reanclar aquí en el MISMO commit -- o el ancla ha dejado de vigilar nada, "
+                  f"que es peor: un ancla muerta no avisa a nadie")
+for _f119, _d119, _v119, _u119 in _descuadran119:
+    fallos.append(f"BLOQUE119: CLAUDE.md dice «{_f119}» y el motor aplica "
+                  f"{float(_v119):.4f} {_u119}. El documento que se lee para entender el motor "
+                  f"está afirmando algo que el motor no hace. ⚠️ Y si la diferencia es un factor "
+                  f"1000, mira la UNIDAD antes que la cifra: es la trampa de UNIDADES.md, y ya "
+                  f"pasó el 15 de septiembre con el selenio escrito en mg en vez de µg")
+
+print(f"  {len(_ANCLAS_119)} cifras de CLAUDE.md rehechas contra el motor vivo, con su unidad")
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
 _tiempos_por_bloque.sort(reverse=True)
 _gastado = sum(t for t, _ in _tiempos_por_bloque)
 print("\nDÓNDE SE VA EL TIEMPO — los diez bloques más caros:")
