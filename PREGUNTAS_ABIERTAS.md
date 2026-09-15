@@ -2208,7 +2208,8 @@ los **mínimos**. Mi primera lectura decía que corregir por densidad los bajar�
 un 23 % y que eso era «lo que dice la fuente al pie de la letra». **Es falso**:
 FEDIAF publica los mínimos por 1000 kcal en la Tabla III-3b, anclados a la
 ingesta diaria (*«Recommended minimum values are based on an average daily energy
-intake of either 95 kcal/kg0.75 or 110 kcal/kg0.75»*), y el motor usa esos
+intake of either 95 kcal/kg0.75 (398 kJ/kg0.75) or 110 kcal/kg0.75 (460 kJ/
+kg0.75) for dogs»*), y el motor usa esos
 números. No hay ninguna conversión nuestra que corregir ahí. Lo mismo los seis
 máximos nutricionales que sí vienen impresos por 1000 kcal — calcio 6,25/4,00/
 4,50 · fósforo 4,00 · vitamina A 100 000 · vitamina D (N) 800 · lisina 7,00 ·
@@ -2428,6 +2429,50 @@ que deja inertes los tres `documentado_sin_cifra` de
 **Lo que hace falta**: una digestibilidad de la proteína del hueso en el perro,
 o una medida de energía metabolizable de estas piezas. Con eso el arreglo es de
 una línea por ficha.
+
+⚠️ **BUSCADO A FONDO EL 15 DE SEPTIEMBRE, ABRIENDO LAS CUATRO FUENTES, y sigue
+sin haber número — pero la búsqueda deja tres cosas que no estaban escritas.**
+
+**1 · NRC dice dónde está el dato, y no es ninguna de nuestras fuentes.** En el
+mismo capítulo 3, dos párrafos antes de la frase que excluye el hueso:
+
+> «For diets that consist of usual ingredients, data on digestibility of
+> nutrients or ME from tabular values may be used (**see Meyer and Zentek,
+> 2001**). […] While this approach does not take into account interactions among
+> nutrients and effects of processing, it has been used successfully for
+> **homemade** and semi-purified experimental diets (Kienzle, 1995).»
+
+O sea que NRC **sí** considera resuelto el problema para una dieta casera — pero
+remitiendo a una tabla de EM por ingrediente que está en *Meyer & Zentek,
+Ernährung des Hundes* (2001), que no está en el repo. **Ése es el documento que
+cierra esta pregunta**, y hasta ahora no sabíamos ni que existía.
+
+**2 · Y la otra ecuación de NRC tampoco sirve, comprobado.** Su Tabla 3-1 trae
+una segunda vía —la de los alimentos preparados: GE por bomba calorimétrica o
+`5,7×proteína + 9,4×grasa + 4,1×(NFE+fibra)`, y una digestibilidad energética
+que sale de `91,2 − 1,43 × %fibra bruta`—. **No vale para el hueso**: esa
+digestibilidad se predice desde la FIBRA BRUTA, y un hueso no tiene. Queda
+descartada, que es mejor que dejarla como posibilidad sin mirar.
+
+**3 · Fascetti da el MECANISMO y dice que el crudo es el peor caso.** Cap.11,
+literal:
+
+> «some protein sources have inherently low digestibility due to antinutritional
+> factors (e.g. legumes) or **dimensional features such as numerous cross-links
+> (e.g. collagen)**. In those cases, **processing methods such as heating are
+> necessary to improve digestibility**.»
+
+La proteína del hueso y del cartílago **es** colágeno, y una ración BARF va
+cruda. O sea que no solo es menos digestible que el 90 % que supone Atwater:
+está en el extremo en el que la fuente dice que haría falta cocinarla para
+subirla. Eso confirma la DIRECCIÓN del error —la energía del hueso está
+sobreestimada— sin dar la magnitud.
+
+**Y lo que se ha comprobado que NO existe**: FEDIAF solo da un método *in vivo*
+(§6.1.2, prueba de alimentación con seis perros y recogida de heces y orina), y
+**Köber 2017 no mide energía** — su Tabla 1 trae materia seca, proteína bruta,
+grasa bruta, cenizas, calcio y fósforo, y nada más. Las cuatro fuentes del repo
+están miradas y ninguna tiene el número.
 
 
 ---

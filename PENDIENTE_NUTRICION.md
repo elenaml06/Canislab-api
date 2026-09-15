@@ -1219,6 +1219,26 @@ fuente que `Bases.md` fija para el hueso precisamente porque BEDCA no lo trae. Y
 el motor lo cuenta como calcio **disponible**, igual que el de cualquier otra
 ficha.
 
+⚠️ **Y EL PROPIO KÖBER LO DICE, Y ESTA FICHA NO LO RECOGÍA** (encontrado el 15
+de septiembre leyendo su resumen entero, no solo su Tabla 1). Literal:
+
+> *«Even though no statements about mineral digestibility can be given here,
+> when evaluating the suitability of these components as Ca sources, it also has
+> to be taken into account that **Ca and P from bones were shown to have a lower
+> apparent digestibility in dogs than other mineral sources³**»*
+> — Köber et al. 2017, ESVCN Proceedings
+
+O sea que la fuente **de la que sale nuestro calcio del hueso** avisa, en su
+propio resumen, de que ese calcio se absorbe PEOR que el de otras fuentes. No es
+una sospecha nuestra: es una advertencia de la fuente que estábamos usando sin
+leerla entera.
+
+Y trae **la referencia que faltaba**: su nota 3 es **Siedler & Dobenecker
+(2015), ESVCN Proceedings p. 128**. Ése es el documento que puede cuantificarlo,
+y hasta hoy esta ficha decía «no está medida» sin decir dónde mirarlo. Va a
+`DATOS_QUE_FALTAN.md` con esa forma: no es un dato de composición, es un estudio
+que hay que conseguir.
+
 **Qué falta.** Köber da el CONTENIDO. La frase de arriba dice que la ABSORCIÓN
 del hueso molido no está cuantificada. No es un error de dato: es una
 incertidumbre conocida sobre un número que decide menús — y el calcio es de los

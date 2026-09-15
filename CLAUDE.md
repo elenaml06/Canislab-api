@@ -651,7 +651,8 @@ segunda lectura decía que la nota vale para toda la tabla, que **los mínimos
 también son el ×2,5** y que corregirlos los bajaría un 23 %. **Es falso**:
 FEDIAF publica los mínimos por 1000 kcal en la propia Tabla III-3b, anclados a
 la ingesta diaria —«*Recommended minimum values are based on an average daily
-energy intake of either 95 kcal/kg0.75 or 110 kcal/kg0.75*»—, y el motor usa
+energy intake of either 95 kcal/kg0.75 (398 kJ/kg0.75) or 110 kcal/kg0.75
+(460 kJ/kg0.75) for dogs*»—, y el motor usa
 **esos** números. No hay ninguna conversión nuestra que corregir ahí. Si llego a
 aplicarlo, el motor habría pedido un 23 % menos de **todos** los nutrientes.
 
