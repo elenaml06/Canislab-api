@@ -83,8 +83,7 @@
             "max_potasio": 2000.0,
             "max_proteina": 62.5,
             "max_sodio": 750.0,
-            "min_omega3_total": 1.0,
-            "min_vitE": 67.1
+            "min_omega3_total": 1.0
           }
         },
         {
@@ -96,7 +95,7 @@
           }
         }
       ],
-      "nota": "⚠️ Esta pregunta es MAS GRUESA que la que pide la fuente. Lo que decide el numero es el ESTADIO IRIS (o la creatinina), y la app pregunta «leve-moderada o moderada-grave». Las dos respuestas aplican el MISMO techo de fosforo (1200): lo que cambia es que `renal_avanzada` no es formulable, o sea que se para en seco en vez de dar menu. Falta lo que dice `quien_formula_cada_patologia.json`: por debajo del estadio 2 la fuente NO respalda apretar el fosforo, y para eso haria falta una clave `renal_iris1` con su cifra SACADA DE LA FUENTE. No se inventa aqui.",
+      "nota": "⚠️ Esta pregunta es MAS GRUESA que la que pide la fuente. Lo que decide el numero es el ESTADIO IRIS (o la creatinina), y la app pregunta «leve-moderada o moderada-grave». Las dos respuestas aplican el MISMO techo de fosforo (1200): lo que cambia es que `renal_avanzada` no es formulable, o sea que se para en seco en vez de dar menu. Falta lo que dice `quien_formula_cada_patologia.json`: por debajo del estadio 2 la fuente NO respalda apretar el fosforo, y para eso haria falta una clave `renal_iris1` con su cifra SACADA DE LA FUENTE. No se inventa aqui. || ⚠️ Y DESDE EL 15-sep-2026 ESTA RESPUESTA YA NO APLICA EL SUELO DE VITAMINA E (67,1 mg/1000 kcal, Tabla 37-9). No se ha bajado: se ha movido a `limites_escritos_que_el_solver_no_aplica` de `patologias.json` con su medida, porque llegar a esa cifra obliga a meter DOS multivitaminicos --en el catalogo no hay vitamina E suelta-- y dos ya no caben debajo de los siete maximos LEGALES de la UE. Medido en el perro de referencia: sin el suelo la renal si da menu y llega a 34,5 mg/1000 kcal con el ZINC AL 99,0 % de su techo legal. Las otras tres patologias que piden la misma cifra --artrosis, obesidad y hepatopatia-- la siguen aplicando.",
       "umbrales_de_la_fuente": {
         "_que_es": "Los numeros que DEFINEN la respuesta, para que quien contesta sepa contra que. No cambian ninguna cifra del motor: son los umbrales con los que un veterinario decide el estadio. Entran el 12-sep-2026, al leer enteras las IRIS Guidelines 2026 -- hasta ese dia la nota de abajo decia que el estadio lo decide la fuente y los umbrales no estaban escritos en ninguna parte del repo.",
         "fuente": "IRIS Staging of CKD (Modified 2026), tabla de la seccion 1. Leida literal 12-sep-2026",
