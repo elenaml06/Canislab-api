@@ -2754,8 +2754,27 @@ def endpoint_menu_semana(datos: PeticionMenu, numero_de_menus: int = 1):
             datos.der_objetivo, datos.peso_perro_kg)
         especies_usadas = []
 
+        # ⚠️ Y LA SEMANA NO PUEDE MULTIPLICAR EL PRESUPUESTO POR SIETE (15
+        # septiembre). Este bucle llama N veces a `_resolver_menu_v2_interno`
+        # sin pasarle `presupuesto_segundos`, así que cada menú se llevaba el
+        # presupuesto ENTERO: con los 24 s de antes eran 168 s en el peor caso,
+        # y con los 40 de ahora serían 280 -- por encima de los 100 s que
+        # Render documenta como máximo. No es un riesgo que traiga el cambio de
+        # arriba: ya estaba, y por eso se cierra aquí en vez de dejarlo escrito.
+        #
+        # Se reparte un total, como ya hace `/menu/varios-perros`, con un suelo
+        # por menú para que el último no reciba un presupuesto inútil. Medido:
+        # una semana de adulto sano tardó 41,4 s contra producción, que es lo
+        # que de verdad cuesta -- el techo solo muerde en los casos difíciles.
+        PRESUPUESTO_SEGUNDOS_SEMANA = 70.0
+        SEGUNDOS_MINIMOS_POR_MENU_SEMANA = 6.0
+        _t_inicio_semana = time.time()
+
         for i in range(n):
             dias_este = dias_por_menu[i]
+            _queda_semana = PRESUPUESTO_SEGUNDOS_SEMANA - (time.time() - _t_inicio_semana)
+            _presupuesto_segundos_este = max(
+                SEGUNDOS_MINIMOS_POR_MENU_SEMANA, _queda_semana / max(1, n - i))
             dias_restantes_incluido_este = sum(dias_por_menu[i:])
             presupuesto_para_este = _presupuesto_para_menu_actual(
                 presupuesto_restante, dias_restantes_incluido_este)
@@ -2776,6 +2795,7 @@ def endpoint_menu_semana(datos: PeticionMenu, numero_de_menus: int = 1):
             # se pide conservar y se obliga a cambiar.
             datos_este = datos.model_copy(update={
                 "presupuesto_semanal_restante": presupuesto_para_este,
+                "presupuesto_segundos": _presupuesto_segundos_este,
                 "evitar_especies": list(datos.evitar_especies or [])
                                    + ([] if preferir_este else especies_usadas),
                 "preferir_alimentos": preferir_este or None,
@@ -2931,7 +2951,37 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
     # la probabilidad de fallo total. No elimina el problema del todo
     # (sigue siendo un caso genuinamente difícil), pero lo mitiga de
     # forma medible sin arriesgar el límite de tiempo de Render.
-    PRESUPUESTO_SEGUNDOS = 24.0
+    # ⚠️ SUBIDO DE 24 A 40 (15 septiembre) — Y LO QUE CAMBIA NO ES UN NÚMERO,
+    # ES LA PREMISA DE ARRIBA, QUE ERA FALSA.
+    #
+    # Todo este presupuesto se puso el 5 de agosto sobre la frase «Render (plan
+    # gratis) corta la conexión a los 30s». MEDIDO EL 15 DE SEPTIEMBRE CONTRA LA
+    # API DESPLEGADA: una llamada a `/menu/semana` tardó 41,4 s y Render la
+    # contestó sin cortar nada. O sea que los 24 s no eran el límite de Render:
+    # eran un límite NUESTRO puesto sobre un dato que no se volvió a comprobar.
+    #
+    # Y estaba dejando perros sin comer. CASO REAL DE ELENA: el toy de 1,5 kg
+    # con `artrosis`, 0 de 3 contra producción, siempre con «el cálculo está
+    # tardando más de lo normal». El menú existe -- la escalera entera cuesta
+    # 6,4 s aquí, y Render va ~4,5 veces más lento (medido: el mismo toy sin
+    # patología tarda 5,0 s aquí y 22,5 s allí), o sea 29 s contra 24.
+    #
+    # ⚠️ Y SUBIRLO NO HACE QUE NADIE ESPERE MÁS, que es lo que hay que saber
+    # antes de tocarlo: esto es un TECHO, no un coste. El solver vuelve en
+    # cuanto tiene menú. Medido con el arreglo del reintento puesto, 10
+    # peticiones por celda, en esta máquina:
+    #
+    #                          presupuesto 8s    12s      16s
+    #   toy 1,5 kg artrosis     10/10 (6,1s)  10/10(6,4s) 10/10(6,2s)
+    #   cachorro 10kg 3 alerg   10/10 (2,4s)  10/10(2,7s) 10/10(2,5s)
+    #
+    # El tiempo real no se mueve. Lo único que cambia es que el caso difícil
+    # deja de morir a un peldaño de la respuesta.
+    #
+    # 40 s deja 60 de margen sobre los 100 s que Render documenta como tiempo
+    # máximo de petición, y son ~8,9 s de esta máquina, por encima de los 8 s
+    # donde las dos filas de arriba ya salen 10 de 10.
+    PRESUPUESTO_SEGUNDOS = 40.0
     # Quien orquesta varias generaciones dentro de una misma petición
     # (ver /menu/varios-perros) reparte el tiempo. Solo puede apretar.
     if datos.presupuesto_segundos is not None:
@@ -3438,12 +3488,51 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
         # Render, 6-10 veces más lento, eso es la diferencia entre dar menú y
         # contestar «está tardando más de lo normal» -- que es lo que pasaba.
         #
-        # Se mira SOLO el status 2. Si el solver devolvió una solución que
-        # rechazó la red de seguridad de las categorías (status 0 y `ok_i`
-        # falso), reintentar SÍ sirve: ahí otra semilla da otro menú.
+        # ⚠️ Y TAMPOCO SE REINTENTA LO QUE SE QUEDÓ SIN RELOJ (15 septiembre).
+        # AQUÍ EL COMENTARIO DECÍA UNA COSA Y EL CÓDIGO HACÍA OTRA, y eso es lo
+        # que había que arreglar antes que el número.
+        #
+        # El párrafo de arriba dice, desde el 10 de septiembre, «Se mira SOLO el
+        # status 2. Si el solver devolvió una solución que rechazó la red de
+        # seguridad de las categorías (status 0 y `ok_i` falso), reintentar SÍ
+        # sirve». Esa es la intención y es la correcta. Pero la condición
+        # escrita era `not infactible_demostrado`, que es MÁS ANCHA: deja pasar
+        # también el **status 1**, que es «se me acabó el reloj». Y reintentar
+        # eso con el MISMO reloj se vuelve a acabar igual.
+        #
+        # CASO REAL DE ELENA, reproducido: el toy de 1,5 kg con `artrosis` no
+        # sacaba menú en producción. Traza con el presupuesto apretado a 6 s:
+        #     +0,0s  0,1s  status=2   peldaño 0, infactible DEMOSTRADO
+        #     +0,1s  0,1s  status=2   peldaño 1, infactible DEMOSTRADO
+        #     +0,1s  2,4s  status=1   peldaño 2, se le acabó el reloj
+        #     +2,6s  2,4s  status=1   el MISMO peldaño 2, otra vez
+        #     +5,0s  1,1s  status=1   y otra
+        #     TOTAL 6,1s -> «el cálculo está tardando más de lo normal»
+        # 5,8 s de 6 en un peldaño sin menú, y el peldaño 3 -- que tiene uno, en
+        # 3,5 s -- sin pisar.
+        #
+        # MEDIDO, con el presupuesto apretado a mano para no depender de lo
+        # rápida que sea la máquina (como hace el BLOQUE 43), 15 peticiones por
+        # celda, contra los DOS casos: el toy y el cachorro de 10 kg con tres
+        # alergias, que es el que puso este bucle el 24 de agosto:
+        #
+        #                                antes   con status==0
+        #     toy 1,5 kg artrosis, 4 s    0/15       8/15
+        #     toy 1,5 kg estruvita, 6 s  15/15      15/15
+        #     cachorro 10 kg 3 alerg, 4s  4/15       5/15
+        #
+        # Mejor o igual en los tres. Y con el presupuesto de verdad (40 s, ~8,9
+        # de esta máquina) los dos casos difíciles salen 10 de 10.
+        #
+        # ⚠️ SE PROBÓ TAMBIÉN A DARLE MÁS TIEMPO A CADA PELDAÑO (el 70 % de lo
+        # que queda) y NO VALE, porque los dos casos tiran en direcciones
+        # opuestas: al cachorro le sube a 15/15 porque su menú está EN el
+        # peldaño y solo le falta reloj, y al toy le BAJA a 2/15 porque el suyo
+        # está más abajo y el peldaño de arriba se come el presupuesto. Queda
+        # escrito para que no se vuelva a intentar sin medir las dos filas.
         _reintentos_infactible = 0
         while (not ok_i and _reintentos_infactible < 2
-               and not _estado_solver.get("infactible_demostrado")
+               and _estado_solver.get("status") == 0
                and time.time() - t_inicio_total < PRESUPUESTO_SEGUNDOS):
             _reintentos_infactible += 1
             ok_i, gramos_i = resolver_v2(

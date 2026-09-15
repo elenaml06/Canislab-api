@@ -578,6 +578,118 @@ alimentos con tiaminasa o mercurio contra topes de 30 a 226 kcal. El EPA+DHA va
 a 0,056-0,091 g/kg^0,75 contra 0,364. O sea: **red de seguridad, no un cambio de
 menús** — exactamente lo que ya decía la nota del 9 de septiembre sobre los otros
 tres.
+### El toy con patología no se quedaba sin menú: se quedaba sin RELOJ
+
+*(15 de septiembre de 2026.)* Elena, del toy de su prueba: el menú no salía en
+cuanto se marcaba una patología. Reproducido **contra producción**, tres tiradas
+por caso: `artrosis` **0 de 3** y `estruvita` **1 de 3**, siempre con «el cálculo
+está tardando más de lo normal para este perro. Inténtalo de nuevo en un
+momento» — un mensaje que además **promete algo que no iba a pasar**, porque
+reintentar fallaba igual.
+
+⚠️ **Y lo primero que hubo que descartar es que fuera nutrición**, porque era la
+sospecha razonable. **No lo es, y no hay fuente que diga otra cosa**: ni FEDIAF
+ni SACN5 dan un perfil distinto por tamaño — los 43 requisitos son
+**concentraciones por 1000 kcal**, iguales para un chihuahua y para un mastín.
+Lo único que cambia en un toy es aritmética, y ya estaba escrito: con 175
+kcal/día el escalado de FEDIAF (§7.2.5) **sube los mínimos**, los máximos **no
+se mueven** porque son concentración, y la ventana se estrecha. Tampoco es algo
+que un veterinario pueda «ajustar»: el formulador solo deja **apretar**.
+
+**El menú existe.** Preguntándole al solver con tiempo de sobra, peldaño a
+peldaño, para el toy de 1,5 kg con artrosis:
+
+| | tarda | |
+|---|---|---|
+| peldaño 0 | 0,1 s | infactible **demostrado** |
+| peldaño 1 | 0,1 s | infactible demostrado |
+| peldaño 2 | **2,7 s** | infactible demostrado |
+| peldaño 3 | **3,5 s** | **menú** |
+
+Seis segundos y medio de trabajo. Y Render va **~4,5 veces más lento** que el
+equipo de desarrollo — medido con el mismo perro sin patología: 5,0 s aquí,
+22,5 s allí. O sea 29 s contra un presupuesto de 24.
+
+**Pero el presupuesto no se iba en eso.** Traza con el presupuesto apretado a
+6 s, que es como el BLOQUE 43 imita a Render:
+
+```
++0,0s  0,1s  status=2   peldaño 0, infactible demostrado
++0,1s  0,1s  status=2   peldaño 1, infactible demostrado
++0,1s  2,4s  status=1   peldaño 2, se le acabó el reloj
++2,6s  2,4s  status=1   el MISMO peldaño 2, otra vez
++5,0s  1,1s  status=1   y otra
+TOTAL 6,1s -> «está tardando más de lo normal»
+```
+
+**5,8 s de 6 en un peldaño que no tiene menú, y el que sí lo tiene sin pisar.**
+
+⚠️ **Y la causa es que el comentario decía una cosa y el código hacía otra.** El
+bucle de reintentos de `_intentar_generacion` lleva escrito desde el 10 de
+septiembre «*Se mira SOLO el status 2. Si el solver devolvió una solución que
+rechazó la red de seguridad de las categorías (status 0 y `ok_i` falso),
+reintentar SÍ sirve*». Esa es la intención y es la correcta. La condición escrita
+era `not infactible_demostrado`, que es **más ancha**: deja pasar también el
+**status 1**, «se me acabó el reloj» — y reintentar eso con el mismo reloj se
+vuelve a acabar igual. Ganó la implementación, como siempre.
+
+**Se arreglan DOS cosas, y las dos están medidas.**
+
+**1 · No se reintenta lo que se quedó sin reloj.** La condición pasa a ser
+`status == 0`. Medido con el presupuesto apretado a mano —para no depender de lo
+rápida que sea la máquina, que es la trampa que este fichero tiene documentada
+cuatro veces—, 15 peticiones por celda, contra los **dos** casos: el toy y el
+**cachorro de 10 kg con tres alergias**, que es el perro por el que se puso ese
+bucle el 24 de agosto.
+
+| | antes | con `status == 0` |
+|---|---|---|
+| toy 1,5 kg artrosis, 4 s | **0/15** | **8/15** |
+| toy 1,5 kg estruvita, 6 s | 15/15 | 15/15 |
+| cachorro 10 kg 3 alergias, 4 s | 4/15 | 5/15 |
+
+⚠️ **Y se probó a darle más tiempo a cada peldaño (el 70 % de lo que queda) y NO
+VALE**, porque los dos casos tiran en direcciones opuestas y eso es lo que costó
+una vuelta atrás: al cachorro le sube a **15/15** porque su menú está **EN** el
+peldaño y solo le falta reloj, y al toy le **baja a 2/15** porque el suyo está
+más abajo y el peldaño de arriba se come el presupuesto. Queda escrito para que
+no se vuelva a intentar sin medir las dos filas.
+
+**2 · El presupuesto sube de 24 a 40 s, porque la premisa era falsa.** Los 24 s
+se pusieron el 5 de agosto sobre la frase «Render (plan gratis) corta la conexión
+a los 30s». **MEDIDO CONTRA LA API DESPLEGADA: una llamada a `/menu/semana`
+tardó 41,4 s y Render la contestó sin cortar nada.** O sea que los 24 s no eran
+el límite de Render: eran un límite **nuestro** puesto sobre un dato que nadie
+volvió a comprobar, y estaba dejando perros sin comer.
+
+⚠️ **Y subirlo no hace que nadie espere más**, que es lo que hay que saber antes
+de tocarlo: esto es un **techo, no un coste** — el solver vuelve en cuanto tiene
+menú. Medido, 10 peticiones por celda:
+
+| presupuesto | 8 s | 12 s | 16 s |
+|---|---|---|---|
+| toy 1,5 kg artrosis | 10/10 (6,1 s) | 10/10 (6,4 s) | 10/10 (6,2 s) |
+| cachorro 10 kg 3 alergias | 10/10 (2,4 s) | 10/10 (2,7 s) | 10/10 (2,5 s) |
+
+El tiempo real no se mueve. Lo único que cambia es que el caso difícil deja de
+morir a un peldaño de la respuesta. Con el presupuesto de verdad puesto, el toy
+de 1,5 kg sale **6 de 6** con artrosis, estruvita y dermatosis por zinc.
+
+⚠️ **Y subirlo obligaba a cerrar un agujero que ya estaba abierto**:
+`/menu/semana` llama N veces al motor **sin pasarle presupuesto de tiempo**, así
+que cada menú se llevaba el entero — con 24 s eran 168 s en el peor caso, y con
+40 serían **280**, por encima de los 100 s que Render documenta como máximo. Eso
+no es un mensaje que se pueda leer: es un corte de conexión. Ahora la semana
+reparte un total (`PRESUPUESTO_SEGUNDOS_SEMANA`, 70 s) con un suelo por menú,
+igual que ya hacía `/menu/varios-perros`. **No es un riesgo que traiga el cambio:
+ya estaba, y por eso se cierra en vez de dejarlo escrito.**
+
+Lo vigila el **BLOQUE 112**, y sus dos mitades son deterministas —no miden el
+reloj de la máquina—: cuenta llamada a llamada que ningún peldaño se vuelva a
+pedir después de un `status 1`, y que `/menu/semana` le pase un techo a cada
+menú. Comprobado con el fallo puesto de las dos formas. El total de la semana lo
+**lee del fuente** de `main.py` en vez de copiarlo, que es la lección de siempre.
+
 ### ⚠️ Y HABÍA UNA TERCERA PUERTA, que es por donde se escapó la jerga
 
 *(15 de septiembre de 2026.)* Los dos barridos anteriores dejaron el canal del

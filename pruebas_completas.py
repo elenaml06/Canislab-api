@@ -8257,6 +8257,18 @@ _CIFRAS_B57 = [
      "SACN5 Tabla 13-3, «Phosphorus (%) 0.4 to 0.8» en las dos columnas. Techo"),
     ("Adulto", None, "sodio", 1000.0, 0.4,
      "SACN5 Tabla 13-3, «Sodium (%) 0.2 to 0.4» en las dos columnas. Techo"),
+    # ⚠️ Y ESTA NO ESTA EN LA TABLA 14-2, aunque sus dos vecinas de aqui si.
+    # La Tabla 14-2 NO TIENE FILA DE CALCIO: la cifra vive en el TEXTO del
+    # capitulo, en su apartado «Other Nutritional Factor». Es la misma forma de
+    # hueco que los tres requisitos condicionales de FEDIAF -- lo que no tiene
+    # forma de fila no lo encuentra el trabajo de transcribir tablas -- y el
+    # pendiente que la pedia decia que estaba «en la fila de al lado del
+    # fosforo», o sea que mandaba a mirar donde no esta.
+    ("Senior", None, "calcio", 2000.0, 0.8,
+     "SACN5 cap.14 «Feeding Mature Adult Dogs», apartado «Other Nutritional "
+     "Factor / Calcium», TEXTO y no Tabla 14-2: «Foods with 0.4 to 0.8% DM "
+     "calcium are recommended for mature dogs». Techo. El suelo (1000) queda "
+     "por debajo del minimo de FEDIAF (1160) y no se aplica: manda FEDIAF"),
     ("Senior", None, "fosforo", 1750.0, 0.7,
      "SACN5 Tabla 14-2, «Phosphorus (%) 0.3 to 0.7». Techo. Mas estricto que el "
      "del adulto joven, y el capitulo dice por que: el perro maduro tiene mas "
@@ -18503,6 +18515,151 @@ else:
                       f"medida de arriba deja de poder afirmarse: con tanto peso sin saber, la "
                       f"banda entre contarlo como agua o como materia seca decide el resultado")
 
+
+
+# ============================================================
+# BLOQUE 112 — el reloj no se gasta donde no hay menú
+# ============================================================
+#
+# ⚠️ POR QUÉ (15 septiembre). CASO REAL DE ELENA, contra producción: el toy de
+# 1,5 kg con `artrosis` no sacaba menú, 0 de 3, siempre con «el cálculo está
+# tardando más de lo normal para este perro. Inténtalo de nuevo en un momento»
+# -- que encima promete algo que no iba a pasar, porque reintentar fallaba igual.
+#
+# Y el menú EXISTÍA. Preguntándole al solver con tiempo de sobra, peldaño a
+# peldaño: 0 y 1 infactibles demostrados en 0,1 s, el 2 infactible demostrado en
+# 2,7 s, y el 3 CON MENÚ en 3,5 s. Seis segundos y medio de trabajo.
+#
+# Lo que pasaba es que el presupuesto no se gastaba en eso: se gastaba en
+# REINTENTAR el peldaño 2, al que se le había acabado el reloj. El bucle de
+# reintentos de `_intentar_generacion` se saltaba lo demostrado imposible
+# (status 2) pero NO lo que se quedó sin reloj (status 1) -- aunque su propio
+# comentario decía, desde el 10 de septiembre, que se miraba «SOLO el status 2».
+# Comentario e implementación decían cosas distintas, y ganó la implementación.
+#
+# ESTE BLOQUE VIGILA LAS DOS COSAS QUE SE ARREGLARON, y las dos son
+# deterministas -- no miden el reloj de la máquina, que es la trampa que este
+# fichero ya tiene documentada cuatro veces:
+#
+#   1. Que un peldaño al que se le acabó el reloj NO se vuelva a pedir. Se
+#      cuenta llamada a llamada, mirando el `status` que devolvió la anterior.
+#   2. Que `/menu/semana` le PASE un presupuesto de tiempo a cada menú. Sin eso
+#      cada uno se lleva el presupuesto entero y una semana son 7 x 40 = 280 s,
+#      por encima de los 100 s que Render documenta como máximo de petición.
+print("\n=== BLOQUE 112: el reloj no se gasta donde no hay menu ===")
+
+import time as _t112
+import main as _M112
+
+# --- 1. no se reintenta un peldaño que se quedó sin reloj -------------------
+#
+# Se aprieta el presupuesto a mano para que los peldaños de en medio NO lleguen
+# a demostrarse -- que es justo la situación de Render, donde el motor va más
+# lento que aquí. Lo que se comprueba no es cuánto tarda, sino QUÉ se vuelve a
+# pedir: eso no depende de la máquina.
+_llamadas112 = []            # (margenes, max_supl, status de ESTA llamada)
+_orig112 = _M112.resolver_v2
+
+def _espia112(*a, **k):
+    _est = k.get("estado_del_solver")
+    _r = _orig112(*a, **k)
+    _llamadas112.append((id(k.get("margenes_categoria")), k.get("max_suplementos"),
+                         (_est or {}).get("status")))
+    return _r
+
+_M112.resolver_v2 = _espia112
+try:
+    _peticion112 = {"der_objetivo": 175, "etapa_requisitos": "Adulto",
+                    "peso_perro_kg": 1.5, "modo": "automatico",
+                    "nombres_alimentos": [], "patologias": ["artrosis"],
+                    "presupuesto_segundos": 6.0}
+    _M112.PeticionMenu(**_peticion112)          # que el modelo lo acepte
+    _cli112 = _TestClient112 = None
+    from fastapi.testclient import TestClient as _TC112
+    _cli112 = _TC112(_M112.app)
+    _cli112.post("/menu/v2", json=_peticion112)
+finally:
+    _M112.resolver_v2 = _orig112
+
+# Un peldaño se identifica por (qué márgenes, cuántos suplementos). Se busca una
+# llamada a un peldaño cuya llamada ANTERIOR al mismo peldaño hubiera devuelto
+# status 1: eso es exactamente el reintento que se quitó.
+_ultimo_status_112 = {}
+_reintentos_sin_reloj_112 = 0
+for _clave112 in _llamadas112:
+    _peldano112 = _clave112[:2]
+    if _ultimo_status_112.get(_peldano112) == 1:
+        _reintentos_sin_reloj_112 += 1
+    _ultimo_status_112[_peldano112] = _clave112[2]
+
+if not _llamadas112:
+    fallos.append("BLOQUE112: el espía no vio ni una llamada al solver. O la petición "
+                  "no llegó al motor o `resolver_v2` dejó de ser el nombre por el que "
+                  "pasa todo -- en cualquiera de los dos casos este bloque no vigila nada")
+elif _reintentos_sin_reloj_112:
+    fallos.append(
+        f"BLOQUE112: {_reintentos_sin_reloj_112} vez/veces se ha vuelto a pedir un peldaño "
+        f"cuya llamada anterior devolvió status 1 (se le acabó el reloj). Reintentar eso con "
+        f"el mismo reloj se vuelve a acabar igual, y mientras tanto el peldaño que SÍ tiene "
+        f"menú no se pisa -- es el fallo del toy de 1,5 kg con artrosis del 15 de septiembre. "
+        f"Mirar el bucle `_reintentos_infactible` de `_intentar_generacion`: la condición "
+        f"tiene que ser `status == 0`, no `not infactible_demostrado`")
+else:
+    print(f"  {len(_llamadas112)} llamadas al solver, 0 reintentos de un peldaño sin reloj")
+
+# --- 2. la semana reparte el tiempo, no lo multiplica -----------------------
+#
+# ⚠️ ESTA MITAD ES LA QUE MÁS CALLA: sin ella nada falla, nada se ve en
+# pantalla, y la semana de un perro difícil se va por encima del máximo de
+# Render -- que es un corte de conexión, no un mensaje.
+# ⚠️ El total se LEE del fuente de `main.py`, no se copia aquí: dos sitios con
+# el mismo número se desincronizan, que es la lección que este repo tiene
+# escrita para el DER, para las categorías y para los peldaños.
+import re as _re112
+_m112 = _re112.search(r"PRESUPUESTO_SEGUNDOS_SEMANA\s*=\s*([\d.]+)",
+                      open("main.py", encoding="utf-8").read())
+if not _m112:
+    fallos.append("BLOQUE112: no está `PRESUPUESTO_SEGUNDOS_SEMANA` en main.py. Sin un total "
+                  "para la semana, cada menú se lleva el presupuesto entero")
+_TOTAL_SEMANA_112 = float(_m112.group(1)) if _m112 else 1e9
+
+_presupuestos112 = []
+_orig_interno112 = _M112._resolver_menu_v2_interno
+
+def _espia_semana112(datos, *a, **k):
+    _presupuestos112.append(getattr(datos, "presupuesto_segundos", None))
+    return _orig_interno112(datos, *a, **k)
+
+_M112._resolver_menu_v2_interno = _espia_semana112
+try:
+    _cli112.post("/menu/semana?numero_de_menus=7",
+                 json={"der_objetivo": 1100, "etapa_requisitos": "Adulto",
+                       "peso_perro_kg": 22.0, "modo": "automatico",
+                       "nombres_alimentos": []})
+finally:
+    _M112._resolver_menu_v2_interno = _orig_interno112
+
+_sin_techo112 = [p for p in _presupuestos112 if p is None]
+if not _presupuestos112:
+    fallos.append("BLOQUE112: `/menu/semana` no ha llamado a `_resolver_menu_v2_interno` "
+                  "ni una vez. Este bloque no vigila nada")
+elif _sin_techo112:
+    fallos.append(
+        f"BLOQUE112: {len(_sin_techo112)} de los {len(_presupuestos112)} menús de "
+        f"`/menu/semana` van SIN presupuesto de tiempo, así que cada uno se lleva el "
+        f"presupuesto entero del menú suelto (40 s). Siete menús así son 280 s, por encima "
+        f"de los 100 s que Render documenta como máximo de petición -- y eso no es un "
+        f"mensaje que se pueda leer, es un corte de conexión")
+elif max(_presupuestos112) > _TOTAL_SEMANA_112:
+    fallos.append(
+        f"BLOQUE112: un menú de `/menu/semana` recibe {max(_presupuestos112):.0f} s, más que "
+        f"el total de la semana entera ({_TOTAL_SEMANA_112:.0f} s). El reparto existe para "
+        f"acotar lo que puede tardar la petición, no para decorarlo: con un techo por menú "
+        f"mayor que el total, siete menús vuelven a poder salirse del máximo de Render")
+else:
+    print(f"  /menu/semana: {len(_presupuestos112)} menús, presupuestos de "
+          f"{min(_presupuestos112):.0f} a {max(_presupuestos112):.0f} s, "
+          f"suman {sum(_presupuestos112):.0f} s")
 
 
 _cerrar_el_ultimo_bloque()
