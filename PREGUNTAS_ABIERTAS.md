@@ -2932,6 +2932,70 @@ entero. Lo vigila el **BLOQUE 57**.
 
 ---
 
+### P-46 · La rotación de proteína no llega al cachorro, y hacerla dura cambia los menús de todos
+
+| | |
+|---|---|
+| **Dueño** | **Elena** — es de producto: rotar tiene un precio y hay que decidir si se paga |
+| **¿Bloquea?** | No. Es variedad, no nutrición: el menú que sale está verde y cumple los 43 requisitos |
+| **Abierta desde** | 15 de septiembre de 2026 |
+
+**Qué pasa.** Pidiendo tres menús seguidos para el mismo perro, el adulto cambia
+de proteína y el cachorro **no**: repite pollo las tres veces.
+
+| perro | las tres proteínas |
+|---|---|
+| cachorro joven 12 kg | Pollo · Pollo · Pollo |
+| cachorro tardío 15 kg | Pollo · Pollo · Pollo |
+| cachorro tardío 6 kg | Pollo · Pollo · Pollo |
+| adulto 24,5 kg | Gallina · Ternera · Gallina |
+| adulto 8,2 kg | Gallina · Ternera · Gallina |
+
+**Y no es ninguna de las tres explicaciones fáciles**, las tres medidas el mismo
+día:
+
+1. **No es que no pueda.** Excluyendo pollo y gallina de verdad, los tres
+   cachorros sacan menú (ternera, pavo), 3 de 3. El menú alternativo existe.
+2. **No es la cifra de la penalización.** `PENALIZACION_DE_ROTACION` está en 6,0
+   (medida ese día: con 2,0 repetían 3 de 6 casas de adultos, con 4,0 ninguna).
+   Subida a 12, 20 y 40 el cachorro **sigue repitiendo** — a 40 cambia uno de
+   tres. Y 40 estaría por encima de los **12,0** de `PENALIZACION_DE_ENCARGO`,
+   que es la línea que no se cruza: repetir proteína es un defecto de variedad,
+   no encontrar el alimento es no comer.
+3. **No es el margen de optimalidad del solver.** Apretando `mip_rel_gap` de
+   0,30 a 0,02 sigue repitiendo.
+
+**La causa, entonces:** la rotación vive en el **objetivo**, y para un cachorro
+el menú con pollo es tanto mejor que la preferencia no lo voltea. En
+crecimiento los mínimos son más altos y la ventana más estrecha, y la carcasa de
+pollo es la forma barata de cerrar el calcio.
+
+### La salida, y por qué no la decide el asistente
+
+Hacer la rotación **dura con plan B**: prohibir como principal la especie del
+menú anterior y, si no hay menú, soltarlo y **decirlo**. Es exactamente el
+mecanismo que ya tiene el techo del libro (`resolver()` prueba apretado y suelta
+si sale infactible), y ya está medido que el menú sin pollo existe, así que
+nadie se quedaría sin comer.
+
+**Lo que hay que decidir es el precio**, y es tuyo:
+
+- ¿Prefieres que un cachorro coma pollo tres semanas seguidas, o un menú
+  posiblemente **más caro y con más ingredientes**?
+- La rotación dura afectaría **también a los adultos**, que hoy ya rotan: les
+  quitaría la opción de volver a una proteína buena al tercer menú (hoy hacen
+  Gallina → Ternera → Gallina, que es rotación real y perfectamente razonable).
+- Y hay un caso donde repetir es lo correcto: un perro con muchas alergias puede
+  tener **una sola** proteína viable. Ahí el plan B tendría que soltar y decirlo,
+  no dejarle sin menú.
+
+**Mientras tanto** el BLOQUE 11 exige que **el adulto rote** —eso sí está
+garantizado, 6 de 6 casas medidas— e **imprime** el caso del cachorro con su
+medida en vez de acusar al motor de tener «el mecanismo apagado», que es falso:
+el mecanismo está puesto y la especie a evitar le llega al solver.
+
+---
+
 ## Cerradas
 
 *(Cuando una pregunta se contesta, se mueve aquí con la respuesta, la fecha y

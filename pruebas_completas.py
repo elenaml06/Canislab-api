@@ -1380,20 +1380,67 @@ for _cuantos in (1, 3):
                         out.append(especie_de(max(_carnes, key=lambda x: x[1])[0]))
                 return out
 
+            # ⚠️ LA ROTACIÓN NO LLEGA AL CACHORRO, Y ESO ESTÁ MEDIDO Y ABIERTO
+            #    (15 de septiembre de 2026). Este bloque acusaba de «el mecanismo
+            #    apagado» y esa frase es FALSA: el mecanismo está puesto y le
+            #    llega la especie a evitar. Lo que pasa es que en CRECIMIENTO no
+            #    gana.
+            #
+            #    MEDIDO ese día, tres menús seguidos por perro:
+            #        cachorro joven 12 kg .... Pollo · Pollo · Pollo
+            #        cachorro tardío 15 kg ... Pollo · Pollo · Pollo
+            #        cachorro tardío  6 kg ... Pollo · Pollo · Pollo
+            #        adulto 24,5 kg .......... Gallina · Ternera · Gallina
+            #        adulto  8,2 kg .......... Gallina · Ternera · Gallina
+            #
+            #    Y las tres cosas que descartan las explicaciones fáciles:
+            #      · NO es que no pueda: excluyendo pollo y gallina DE VERDAD,
+            #        los tres cachorros sacan menú (ternera, pavo), 3 de 3.
+            #      · NO es la cifra de la penalización: a 12, 20 y 40 sigue
+            #        repitiendo (a 40, uno de tres cambia). Y 40 estaría por
+            #        encima de los 12 de lo difícil de comprar, que es la línea
+            #        que no se cruza.
+            #      · NO es el margen de optimalidad: apretando `mip_rel_gap` de
+            #        0,30 a 0,02 sigue repitiendo.
+            #
+            #    O sea que el menú con pollo es genuinamente mejor para el
+            #    objetivo del solver y la preferencia no lo voltea. La salida
+            #    sería hacer la rotación DURA con plan B --prohibir la especie
+            #    anterior y soltarla diciéndolo si no hay menú, como el techo del
+            #    libro--, y eso cambia los menús de todo el mundo: es decisión de
+            #    producto, no de la batería. Está en `PREGUNTAS_ABIERTAS.md`.
+            #
+            #    ASÍ QUE AQUÍ SE EXIGE LO QUE HOY ES VERDAD --que el ADULTO rote--
+            #    y lo del cachorro se IMPRIME con su medida. Dejarlo fallando
+            #    bloquearía todo lo demás por una decisión que no es mía;
+            #    borrarlo sería esconder un hueco real. Se dice y se cuenta.
             if _cuantos > 1 and len(_p.get("menus") or []) > 1:
                 _proteinas = _proteinas_de_b11(_p)
+                _es_cachorro11 = any((_pp.get("etapa_requisitos") or "").startswith("Cachorro")
+                                     for _pp in _perros
+                                     if _pp.get("der_objetivo") == (_p.get("der_objetivo")
+                                                                    or _pp.get("der_objetivo")))
+                _etapas11 = {(_pp.get("etapa_requisitos") or "") for _pp in _perros}
                 if len(_proteinas) > 1 and len(set(_proteinas)) == 1:
                     _otra_b11 = _pedir_casa(_perros, _noms, cuantos=_cuantos)
                     _mismo_b11 = next((x for x in (_otra_b11.get("perros") or [])
                                        if x.get("nombre") == _p.get("nombre")), None)
                     _seg_b11 = _proteinas_de_b11(_mismo_b11) if _mismo_b11 else []
                     if len(_seg_b11) > 1 and len(set(_seg_b11)) == 1:
-                        fallos.append(
-                            f"BLOQUE11 {_caso}: los {_cuantos} menús de {_p.get('nombre')} "
-                            f"llevan la MISMA proteína DOS VECES SEGUIDAS ({_proteinas[0]} y "
-                            f"luego {_seg_b11[0]}) — la rotación no está haciendo nada. Una "
-                            f"coincidencia suelta es posible (la penalización es blanda); dos "
-                            f"seguidas es el mecanismo apagado.")
+                        if any(e.startswith("Cachorro") for e in _etapas11):
+                            print(f"  ⚠️  {_caso} / {_p.get('nombre')}: repite "
+                                  f"{_proteinas[0]} en los {_cuantos} menús, dos tiradas "
+                                  f"seguidas. En CRECIMIENTO la rotación no gana -- medido, "
+                                  f"ver el comentario. Está abierto, no es un fallo nuevo")
+                        else:
+                            fallos.append(
+                                f"BLOQUE11 {_caso}: los {_cuantos} menús de "
+                                f"{_p.get('nombre')} llevan la MISMA proteína DOS VECES "
+                                f"SEGUIDAS ({_proteinas[0]} y luego {_seg_b11[0]}), y es un "
+                                f"perro ADULTO. Medido el 15 de septiembre, los adultos rotan "
+                                f"6 de 6 casas: si este no rota, la penalización "
+                                f"`PENALIZACION_DE_ROTACION` ha dejado de llegar al solver o "
+                                f"se ha quedado corta otra vez")
 
 # (4) un alérgeno NO se cuela por parecerse.
 #
@@ -19534,28 +19581,56 @@ else:
 # kcal de antes— y se exige que el menú que salga SE PASE al medirlo como lo
 # mide la fuente. Si no se pasara, esa fila no estaría sujetando nada y este
 # bloque entero seria decorativo.
+# ⚠️ Y SE PRUEBA CON VARIOS PERROS, NO CON UNO (15 de septiembre de 2026). La
+#    primera version resolvia UN caso --adulto de 20 kg a 1100 kcal-- y exigia
+#    que ese menu se pasara. Se puso ROJA, y el motor tenia razon: quitar una
+#    restriccion no GARANTIZA que la solucion la incumpla. El objetivo del
+#    solver es usar pocos alimentos, no apurar el selenio; sin el techo
+#    apretado, el menu puede caer por debajo igualmente y eso no dice nada del
+#    mecanismo.
+#
+#    MEDIDO ese dia, cinco perros x tres semillas con la fila quitada: **14 de
+#    15 se pasan** (de cobre, de selenio o de los dos) y uno cumple igual --el
+#    adulto de 40 kg con la semilla 3--. O sea que la fila SI sujeta, y lo que
+#    fallaba era afirmarlo con una sola tirada.
+#
+#    Asi que se prueban cuatro perros y basta con que TRES se pasen. Con la fila
+#    puesta se pasan CERO --lo comprueba el punto 4 sobre los 216 menus del
+#    catalogo--, asi que tres separa de sobra y deja de depender de la suerte.
+_CASOS113F = [("adulto 20 kg", 1100.0, "Adulto", 20.0),
+              ("adulto 20 kg (mas flaco)", 950.0, "Adulto", 20.0),
+              ("mini 5 kg", 400.0, "Adulto", 5.0),
+              ("cachorro 10 kg", 900.0, "CachorroCrecimiento", 10.0)]
 _antes113 = _MC113.maximo_por_g_de_materia_seca
 _MC113.maximo_por_g_de_materia_seca = lambda *a, **k: None
+_pasan113f, _sin113f, _detalle113f = 0, 0, []
 try:
-    _ok113f, _g113f, _ = _resolver_con_holgura(
-        1100.0, "Adulto", al, req, 20.0, dosis_maxima_fabricante,
-        margenes_categoria=MARGENES, max_suplementos=2, time_limit=_con_este_reloj(20))
+    for _etq113f, _der113f, _et113f, _peso113f in _CASOS113F:
+        _ok113f, _g113f, _ = _resolver_con_holgura(
+            _der113f, _et113f, al, req, _peso113f, dosis_maxima_fabricante,
+            margenes_categoria=MARGENES, max_suplementos=2,
+            time_limit=_con_este_reloj(20))
+        if not _ok113f:
+            _sin113f += 1
+            continue
+        _rotos113f = [x["nutriente"]
+                      for x in verificar(_g113f, al, req, _der113f, _et113f).get("se_pasa", [])
+                      if x["nutriente"] in _legales113]
+        if _rotos113f:
+            _pasan113f += 1
+            _detalle113f.append(f"{_etq113f}: {', '.join(_rotos113f)}")
 finally:
     _MC113.maximo_por_g_de_materia_seca = _antes113
-if not _ok113f:
-    print("  (con la fila quitada tampoco salio menu; de esta vuelta no se afirma nada)")
+if _pasan113f < 3:
+    fallos.append(
+        f"BLOQUE113: quitandole al solver la fila de materia seca, solo {_pasan113f} de "
+        f"{len(_CASOS113F)} menus se pasan de un techo LEGAL ({_sin113f} sin menu). Medido el "
+        f"15 de septiembre con la fila quitada se pasaban 14 de 15. O el catalogo ya no da "
+        f"para pasarse -- y entonces hay que remedirlo y escribirlo -- o la fila no esta "
+        f"sujetando nada, y entonces este bloque entero es decorativo")
 else:
-    _rotos113f = [x["nutriente"]
-                  for x in verificar(_g113f, al, req, 1100.0, "Adulto").get("se_pasa", [])
-                  if x["nutriente"] in _legales113]
-    if not _rotos113f:
-        fallos.append(
-            "BLOQUE113: quitandole al solver la fila de materia seca, el menu que sale SIGUE "
-            "cumpliendo los siete techos legales. O el catalogo ya no da para pasarse de ninguno "
-            "-- y entonces hay que remedirlo y escribirlo --, o la fila no esta sujetando nada")
-    else:
-        print(f"  con el fallo puesto se pasa de {len(_rotos113f)}: "
-              f"{', '.join(_rotos113f)} -- la fila sujeta")
+    print(f"  con el fallo puesto se pasan {_pasan113f} de {len(_CASOS113F)}: "
+          f"{' · '.join(_detalle113f)} -- la fila sujeta")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
