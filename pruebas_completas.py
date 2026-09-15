@@ -19694,6 +19694,25 @@ _ETIQUETA_SUELTA_116 = {
     ("Beaphar Aceite de Germen de Trigo (vitamina E)", "energia"): (
         900, "100 g de grasa × 9 kcal/g (Atwater), igual que los demás aceites del catálogo"),
 }
+# ⚠️ Y `fuentes_id` ES UN DICCIONARIO, SIEMPRE (15 de septiembre de 2026).
+#
+# CASO REAL, MIO Y DE ESTA MAÑANA: las dos fichas de vitamina E entraron con
+# `fuentes_id: "etiqueta:beaphar_11218"` -- una CADENA donde las otras 162 fichas
+# llevan `{fuente: id}`. No dio error en ningún sitio: se descubrió porque
+# `auditar_composicion.py --instantanea` reventó con
+# «'str' object has no attribute 'items'» a las 154 fichas de recorrido, o sea
+# HORAS después, y ese script no lo ejecuta la batería.
+#
+# Un campo con dos formas distintas no falla: falla quien lo lee, y lo hace lejos.
+_malF116id = [f"{_n116}: fuentes_id es {type(_f116.get('fuentes_id')).__name__}, no un dict"
+              for _n116, _f116 in sorted(_cat116.items())
+              if _f116.get("fuentes_id") is not None
+              and not isinstance(_f116.get("fuentes_id"), dict)]
+if _malF116id:
+    fallos.append(f"BLOQUE116: {len(_malF116id)} fichas con `fuentes_id` que no es un "
+                  f"diccionario {{fuente: id}}. Quien lo lee revienta lejos del sitio donde se "
+                  f"escribió: " + " · ".join(_malF116id[:5]))
+
 _malS116 = []
 for (_n116, _c116), (_v116, _cita116) in sorted(_ETIQUETA_SUELTA_116.items()):
     _f116 = _cat116.get(_n116)

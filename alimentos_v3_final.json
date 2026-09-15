@@ -14981,7 +14981,9 @@
    "cita": "FEDIAF 2025, Tabla VII-14 «Conversion factors - Vitamin source to activity»"
   },
   "nota_datos": "AÑADIDA EL 15-sep-2026, a peticion de Elena, porque en el catalogo NO HABIA ningun suplemento de vitamina E suelto y eso dejaba sin aplicar el suelo de 67,1 mg/1000 kcal que SACN5 pide a cuatro patologias y el techo del perro sano de sus capitulos 13 y 14. || QUE ES: aceite de germen de trigo enriquecido, producto PARA ANIMALES (perro y pajaro), de una marca que se vende en Espana. || ⚠️ LA FORMA QUIMICA NO LA DICE LA ETIQUETA: pone «Vitamina E 5900 UI/kg» sin decir si es d-alfa-tocoferol natural o dl-alfa-tocoferil acetato. Por eso el numero se convierte por ACTIVIDAD (UI), que es lo unico que la etiqueta garantiza, y con el factor natural, que da el resultado mas bajo. || ⚠️ LOS ACIDOS GRASOS SE QUEDAN EN HUECO a proposito: ver `hueco_verificado`.",
-  "fuentes_id": "etiqueta:beaphar_11218",
+  "fuentes_id": {
+   "etiqueta": "beaphar_11218"
+  },
   "fuentes_id_porque": "No tiene fila en BEDCA, CIQUAL ni USDA: es un producto de marca con vitamina E anadida, o sea mandato 5 (la etiqueta del fabricante) de `fuentes_de_composicion.json`.",
   "humedad_fuente": "Cota por composicion: la etiqueta declara grasa bruta 100 %, asi que no queda masa para agua. Es el mismo argumento con el que se cerro la humedad de los cinco aceites del catalogo el 14-sep-2026."
  },
@@ -15109,7 +15111,9 @@
    "cita": "Etiqueta MARNYS VITAHELP Vitamina E liquida 30 ml"
   },
   "nota_datos": "AÑADIDA EL 15-sep-2026 junto con la de Beaphar, y por el mismo motivo. || QUE ES: vitamina E NATURAL (D-alfa-tocoferol, que es la forma sobre la que esta escrito el 67,1 de SACN5) disuelta en aceite de oliva virgen extra. Es SEIS VECES mas concentrada que la de Beaphar, asi que para llegar al suelo hacen falta ~2,4 g en vez de ~16. || ⚠️ Y HAY QUE DECIR LO QUE ES: la etiqueta del fabricante es de un complemento HUMANO -- da la dosis para niños, adultos y embarazo --, y lo que lo pone aqui es que una tienda canina espanola lo vende para perros y gatos. No es un producto veterinario. Se anade porque es el unico que da vitamina E SOLA en forma natural y con etiqueta comprobable; que un veterinario quiera usarlo o no es decision suya.",
-  "fuentes_id": "etiqueta:marnys_vitahelp_vitamina_e_liquida",
+  "fuentes_id": {
+   "etiqueta": "marnys_vitahelp_vitamina_e_liquida"
+  },
   "fuentes_id_porque": "Producto de marca con vitamina E anadida: mandato 5 (la etiqueta del fabricante) de `fuentes_de_composicion.json`.",
   "humedad_fuente": "Cota por composicion: es aceite. Mismo argumento que los cinco aceites del catalogo."
  }
