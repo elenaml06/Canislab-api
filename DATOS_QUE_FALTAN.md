@@ -1171,13 +1171,34 @@ Para un perro de 1,5 kg con 200 kcal, llegar a 13,4 mg de vitamina E total sin g
 las dos plazas de suplemento en ello es lo que no sale.
 
 **Qué se desbloquea con esa ficha**: que el suelo del perro sano deje de costar
-menús. Está **ENCENDIDO** desde el 11 de septiembre por decisión de Elena, y con la
-batería en rojo mientras siga así: el perro con ocho especies fuera se queda sin menú
-(adulto, cachorro y toy), y al toy de 1,5 kg le cuesta tanto que el solver no lo saca
-en 1 s ni en 20 intentos. Las otras 15 combinaciones de alergias y exclusiones siguen
-saliendo, y al toy lo salva la escalera por la vía de la API. Y de paso deja de
-depender de un multivitamínico completo el cumplir una recomendación de un solo
-nutriente.
+menús. ⚠️ **Corrección del 15 de septiembre, porque aquí ponía lo contrario**: NO está
+encendido. Elena lo encendió la mañana del 11 de septiembre («la norma es la norma») y
+lo apagó esa misma tarde para poder entregar («apágalo y fusiona todo, ya
+preguntaremos lo de la vitamina E») — lo segundo es el ORDEN, no la norma, porque con
+él encendido el perro con ocho especies fuera se queda sin menú (adulto, cachorro y
+toy), la batería sale roja en los BLOQUES 9 y 43, y eso estaba reteniendo 150 commits
+que no tienen nada que ver. Las otras 15 combinaciones de alergias y exclusiones
+siguen saliendo, y al toy lo salva la escalera por la vía de la API. Y de paso, con la
+ficha, deja de depender de un multivitamínico completo el cumplir una recomendación de
+un solo nutriente.
+
+⚠️⚠️ **Y EL 15 DE SEPTIEMBRE ESTE HUECO SE LLEVÓ POR DELANTE UNA PATOLOGÍA, QUE ES LO
+QUE LO SUBE DE PRIORIDAD.** La **insuficiencia renal crónica** ha tenido que apagar su
+suelo de vitamina E —la misma cifra, 67,1, de la Tabla 37-9 de SACN5— y pasa a
+`limites_escritos_que_el_solver_no_aplica`. El motivo es exactamente el de arriba con
+una vuelta más: llegar a 67,1 obliga a meter **dos** multivitamínicos, y dos ya no
+caben debajo de los **siete máximos LEGALES de la UE**, que desde ese día van sobre
+materia seca como los publica FEDIAF (§3.2.1). Medido en el perro de referencia
+(adulto de 20 kg, DER 950): sin el suelo, la renal sí da menú y llega a **34,5
+mg/1000 kcal** con el **zinc al 99,0 % de su techo legal** y el selenio al 93,5 %.
+Subir la vitamina E se paga en zinc, y el zinc es ley. Las otras tres que piden esa
+cifra —artrosis, obesidad y hepatopatía— **sí la siguen aplicando**, bajando de peldaño
+hasta donde caben dos multivitamínicos: en las tres cabe y en la renal no, medido una
+por una.
+
+O sea que hoy esta ficha no es solo «para que el perro sano cumpla una
+recomendación»: es lo que le devolvería a un **perro renal** el antioxidante que su
+propia tabla le pide.
 
 ### ⚠️ Y HAY UNA SEGUNDA COSA QUE FALTA, MEDIDA EL 11 DE SEPTIEMBRE: LA FORMA DE LA QUE YA HAY
 

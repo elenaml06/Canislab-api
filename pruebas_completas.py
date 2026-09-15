@@ -19164,6 +19164,101 @@ print(f"  las {len(_cats114)} categorias del catalogo tienen su nombre llano")
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
+# ============================================================
+# BLOQUE 115 — EL SUELO SE MIDE CONTRA LAS KCAL DE VERDAD, NO CONTRA LAS PEDIDAS
+# ============================================================
+#
+# ⚠️ CASO REAL, encontrado regenerando el catálogo el 15 de septiembre de 2026:
+# `Toy_CachorroCrecimiento` —un cachorro de 2,33 kg, DER 288— **no salía verde
+# ni dándole 400 s**. Y el solver SÍ encontraba menú, en el primer peldaño y en
+# 3 s: lo que pasaba es que el semáforo lo dejaba en ÁMBAR, con el hierro al
+# 99 % y el manganeso al 99 %.
+#
+# La causa es la de siempre, la unidad. El suelo de FEDIAF se convertía a
+# absoluto con las kcal PEDIDAS (`der_racion`) y el menú que devuelve el solver
+# puede traer hasta un 3 % MÁS (`tolerancia_kcal`). Más kcal con el mismo
+# nutriente = menos concentración, y los requisitos se miden **por 1000 kcal de
+# la dieta REAL**. El margen del suelo era del 1,5 %, o sea la mitad de lo que
+# puede moverse el denominador: medido, ese menú salía a 297 kcal contra 288
+# pedidas (+3,1 %) y los dos nutrientes que iban pegados al mínimo se caían.
+#
+# ⚠️ Y LO QUE ESTO ENSEÑA ES LA ASIMETRÍA: el TECHO tenía su fila relativa desde
+# el 21 de agosto —«suma(nut_i·g_i) <= (mx/1000)·suma(kcal_i·g_i)», con su
+# comentario largo explicando exactamente este argumento— y el SUELO no la tenía.
+# El mismo razonamiento, con el signo cambiado, llevaba tres semanas escrito a
+# doce líneas de distancia.
+#
+# LO QUE VIGILA ESTE BLOQUE NO ES LA FILA: es el INVARIANTE. Todo menú que
+# devuelva el solver tiene que cumplir cada mínimo de FEDIAF medido contra SUS
+# PROPIAS kcal. Así da igual cómo se implemente mañana.
+print("\n=== BLOQUE 115: el suelo se mide contra las kcal de verdad ===")
+
+from verificar import minimo_de as _mind115
+
+# Perros donde la ventana está apretada: los pequeños, donde los mínimos escalan
+# hacia arriba (FEDIAF §7.2.5) y los máximos no se mueven.
+_CASOS115 = [
+    ("toy 2,33 kg crecimiento", 288.0, "CachorroCrecimiento", 2.33, 3.0),
+    ("toy 1,5 kg adulto",       175.0, "Adulto",              1.5,  None),
+    ("mini 6 kg adulto",        450.0, "Adulto",              6.0,  None),
+    ("cachorro 10 kg",          900.0, "CachorroJoven",      10.0, 20.0),
+    ("adulto 20 kg",           1100.0, "Adulto",             20.0,  None),
+]
+_mirados115, _malos115, _desvios115 = 0, [], []
+for _etq115, _der115, _eta115, _peso115, _adulto115 in _CASOS115:
+    for _vuelta115 in range(3):
+        _ok115, _g115, _tarde115 = _resolver_con_holgura(
+            _der115, _eta115, al, req, _peso115, dosis_maxima_fabricante,
+            margenes_categoria=MARGENES, max_suplementos=2,
+            peso_adulto_esperado_kg=_adulto115, time_limit=_con_este_reloj(20))
+        if not _ok115:
+            fallos.append(f"BLOQUE115: no sale menu para {_etq115} ni con tiempo de sobra")
+            break
+        _mirados115 += 1
+        # LAS KCAL DE VERDAD DEL MENU, no las pedidas. Es la diferencia entera.
+        _real115 = sum(al[_n]["energia"] * _x / 100.0 for _n, _x in _g115.items())
+        _desvios115.append(_real115 / _der115 - 1.0)
+        _f115 = verificar(_g115, al, req, _real115, _eta115)
+        if _f115.get("faltan"):
+            _malos115.append(
+                f"{_etq115}: {_real115:.0f} kcal de verdad contra {_der115:.0f} pedidas "
+                f"({_real115/_der115*100-100:+.1f} %), y se queda corto en "
+                + ", ".join(f"{x['nutriente']} al {x.get('cubre_pct')} %"
+                            for x in _f115["faltan"][:4]))
+if _malos115:
+    fallos.append(
+        f"BLOQUE115: {len(_malos115)} de {_mirados115} menus del solver NO cumplen un minimo de "
+        f"FEDIAF al medirlos contra SUS PROPIAS kcal: " + " · ".join(_malos115[:3])
+        + ". El solver escribe el suelo con las kcal PEDIDAS y el menu sale con otras -- es la "
+        f"misma asimetria que tuvo el techo hasta el 21 de agosto")
+else:
+    print(f"  {_mirados115} menus, desvio de kcal de {min(_desvios115)*100:+.1f} % a "
+          f"{max(_desvios115)*100:+.1f} %, y ninguno se queda corto medido contra las suyas")
+
+# ── Y LA OTRA MITAD: QUE EL TECHO SIGA MIRANDO LO MISMO ─────────────────────
+#
+# Añadir una fila al suelo no puede haber aflojado el techo. Se comprueba sobre
+# los mismos menus, con la misma vara: sus propias kcal.
+_pasados115 = []
+for _etq115, _der115, _eta115, _peso115, _adulto115 in _CASOS115[:3]:
+    _ok115, _g115, _ = _resolver_con_holgura(
+        _der115, _eta115, al, req, _peso115, dosis_maxima_fabricante,
+        margenes_categoria=MARGENES, max_suplementos=2,
+        peso_adulto_esperado_kg=_adulto115, time_limit=_con_este_reloj(20))
+    if not _ok115:
+        continue
+    _real115 = sum(al[_n]["energia"] * _x / 100.0 for _n, _x in _g115.items())
+    for _x115 in verificar(_g115, al, req, _real115, _eta115).get("se_pasa", []):
+        _pasados115.append(f"{_etq115}/{_x115['nutriente']} x{_x115.get('veces')}")
+if _pasados115:
+    fallos.append(f"BLOQUE115: {len(_pasados115)} menus se pasan de un maximo medido contra sus "
+                  f"propias kcal: {', '.join(_pasados115[:4])}")
+else:
+    print("  y ninguno se pasa de un maximo medido con la misma vara")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
 _cerrar_el_ultimo_bloque()
 
 # ⚠️ ¿SE HAN EJECUTADO TODOS LOS BLOQUES QUE HAY ESCRITOS? (14 de septiembre).

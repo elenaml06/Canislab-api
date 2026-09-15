@@ -89,6 +89,28 @@ las tiene que tomar una persona, no yo.
       factor de conversión de arriba: si la forma del suplemento resulta ser el
       acetato sintético, el suelo son **100 mg/1000 kcal** y no 67,1.
 
+      ⚠️⚠️ **Y EL 15 DE SEPTIEMBRE LA MISMA FALTA DE DATO SE LLEVÓ POR DELANTE
+      UNA PATOLOGÍA, QUE ES LO QUE SUBE ESTO DE PRIORIDAD.** Hasta ese día el
+      hueco solo apagaba el suelo del perro SANO. Ahora también ha obligado a
+      apagar el de la **insuficiencia renal crónica** — la misma cifra, 67,1, de
+      la Tabla 37-9 de SACN5 —, porque llegar a ella obliga a meter **dos**
+      multivitamínicos y dos ya no caben debajo de los **siete máximos LEGALES
+      de la UE**, que desde ese día van sobre materia seca como los publica
+      FEDIAF. Medido en el perro de referencia (adulto de 20 kg, DER 950): sin
+      el suelo la renal sí da menú y llega a **34,5 mg/1000 kcal** con el
+      **zinc al 99,0 % de su techo legal** y el selenio al 93,5 %. Subir la
+      vitamina E se paga en zinc, y el zinc es ley.
+
+      Las otras tres que piden esa cifra —**artrosis, obesidad y
+      hepatopatía**— **sí siguen aplicándola**: en las tres cabe, bajando de
+      peldaño hasta donde entran dos multivitamínicos. Está medido una por una,
+      y por eso no se unifica.
+
+      O sea que hoy la ficha que falta no es solo «para que el perro sano
+      cumpla una recomendación»: es lo que le devolvería a un **perro renal** el
+      antioxidante que su propia tabla le pide. Sigue en `DATOS_QUE_FALTAN.md`
+      y **el dato no lo relleno yo**.
+
       Nota para no repetir una confusión: de los cuatro fallos que daba el
       suelo, el del BLOQUE 15 («le metió comida sin pedirlo y sin avisar»)
       **no era suyo** y está arreglado — era el perro que se amolda, que

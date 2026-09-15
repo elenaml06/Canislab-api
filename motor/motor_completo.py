@@ -788,7 +788,33 @@ def _resolver_una_vez(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn
     from exclusiones import filtrar
 
     if cuantos_max is None:
-        from modos import CUANTOS_MAX as cuantos_max
+        from modos import CUANTOS_MAX as _cuantos_max_base
+        cuantos_max = dict(_cuantos_max_base)
+        # ⚠️ DOS MULTIVITAMÍNICOS EN EL MISMO CUENCO SON **FORMA**, Y LA FORMA
+        #    SE RELAJA CON LA ESCALERA (15 de septiembre de 2026).
+        #
+        # El tope de 1 se puso ese mismo día porque Elena vio un menú con dos
+        # multivitamínicos distintos, que no es comida: nadie compra dos botes
+        # del mismo producto para el mismo plato. Pero es criterio NUESTRO, no
+        # de FEDIAF — o sea, regla 3 del CLAUDE.md — y un criterio nuestro no
+        # puede dejar a un perro sin comer.
+        #
+        # CASO REAL, cazado por el BLOQUE 61 el mismo día: **«obesidad» dejó de
+        # dar menú a ningún peso**. La causa es de DATOS y ya está escrita dos
+        # veces en el repo: SACN5 pide 67,1 mg/1000 kcal de vitamina E a cuatro
+        # patologías y **en el catálogo no hay un suplemento de vitamina E
+        # suelto** — solo los nueve multivitamínicos. Llegar a esa cifra con uno
+        # solo no se puede, así que atarlo a uno hacía infactible la patología
+        # entera. Medido: con el tope, `obesidad` no sale en ningún peldaño;
+        # sin él, sale.
+        #
+        # Así que el tope vale donde vale la forma —los peldaños estrictos— y se
+        # suelta exactamente en los mismos que ya dejan meter MÁS suplementos.
+        # No hace falta un peldaño nuevo ni un cuarto elemento en la escalera:
+        # `max_suplementos` ya dice en cuál estamos, y subirlo a 3 es justo la
+        # señal de «no hay menú con lo habitual».
+        if max_suplementos >= 3 and cuantos_max.get("Multivitamínico") == 1:
+            cuantos_max["Multivitamínico"] = 2
 
     # ⚠️ AÑADIDO 5 agosto: "Extras" (aceites, huevos, semillas) NO estaba
     # en esta lista, así que ni siquiera entraban como candidatos — el
@@ -1925,6 +1951,53 @@ def _resolver_una_vez(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn
                 if coef:
                     fila_rel[idx[n]] = coef
             _fila("fediaf_relativo", fila_rel, -np.inf, 0.0)
+
+        # ⚠️ Y EL SUELO TAMBIÉN SOBRE LAS KCAL DE VERDAD (15 de septiembre de
+        #    2026). El techo lleva su fila relativa desde el 21 de agosto y el
+        #    SUELO no la tenía, y esa asimetría dejaba menús en ámbar.
+        #
+        # CASO REAL, encontrado regenerando el catálogo: `Toy_CachorroCrecimiento`
+        # (un cachorro de 2,33 kg, DER 288) no salía verde ni con 400 s. El
+        # solver SÍ encontraba menú en el primer peldaño, en 3 s, y el semáforo
+        # lo dejaba en ÁMBAR con el hierro al 99 % y el manganeso al 99 %.
+        #
+        # La causa es la de siempre, la unidad: el suelo se convierte a absoluto
+        # con las kcal PEDIDAS (`der_racion`) y el menú que sale puede tener
+        # hasta un 3 % MÁS (`tolerancia_kcal`). Más kcal con el mismo nutriente
+        # = menos concentración, y los requisitos de FEDIAF se miden por 1000
+        # kcal de la dieta REAL. El margen del suelo era del 1,5 %, o sea la
+        # mitad de lo que puede moverse el denominador: medido en ese cachorro,
+        # el menú salía a 297 kcal contra 288 pedidas (+3,1 %) y los dos
+        # nutrientes que iban pegados al mínimo se caían por debajo.
+        #
+        # Es EXACTAMENTE el mismo argumento que ya está escrito doce líneas más
+        # arriba para el techo, con el signo cambiado, y la fila es la misma:
+        #     suma(nut_i * g_i)  >=  (mn/1000) * suma(kcal_i * g_i)
+        #   → suma((nut_i - (mn/1000) * kcal_i) * g_i)  >=  0
+        #
+        # Se deja TAMBIÉN la fila absoluta a propósito, igual que arriba: cuando
+        # el menú sale con MENOS kcal de las pedidas, la absoluta es la
+        # estricta. Teniendo las dos, siempre manda la que más aprieta.
+        #
+        # EL MARGEN ES DEL 1 % y no del 1,5 %: aquí el redondeo de los gramos
+        # mueve el numerador y el denominador a la vez, así que un cociente
+        # aguanta mucho mejor que una cantidad absoluta. `verificar()` tolera
+        # hasta el 99,5 %, o sea que con el 1 % hay el doble de sitio.
+        #
+        # Y CON EL VECTOR DEL SUELO (`fila_suelo`), no con el del techo: es la
+        # regla de «cada cota con su vector» de aquí arriba — el hueco cuenta
+        # CERO contra un mínimo, porque dar por cubierto un requisito con un
+        # número que nadie ha medido es justo lo que sacó menús al 28 %.
+        if mn is not None:
+            _mn_rel = mn * 1.01
+            fila_rel_min = fila_vacia()
+            for n in nombres:
+                _v_nut_min = fila_suelo[idx[n]]      # ya es valor/100
+                _kcal_n_min = (alimentos[n].get("energia", 0) or 0.0) / 100.0
+                _coef_min = _v_nut_min - (_mn_rel / 1000.0) * _kcal_n_min
+                if _coef_min:
+                    fila_rel_min[idx[n]] = _coef_min
+            _fila("fediaf_relativo_minimo", fila_rel_min, 0.0, np.inf)
 
         # ⚠️ Y LOS SIETE LÍMITES LEGALES DE LA UE, SOBRE MATERIA SECA -- QUE ES
         #    LA ÚNICA FORMA EN QUE FEDIAF LOS PUBLICA (15 de septiembre de 2026).

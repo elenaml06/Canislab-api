@@ -730,6 +730,91 @@ contra la cifra **impresa** de la fuente, no contra la del motor: eso sería el
 fichero contra sí mismo. Está sin cerrar la otra mitad, los 122 límites que no
 son de FEDIAF: `PREGUNTAS_ABIERTAS.md` **P-38**.
 
+### Dos multivitamínicos son FORMA, y la vitamina E de la renal no cabe
+
+*(15 de septiembre de 2026.)* El tope de **un solo multivitamínico** por menú se
+puso ese mismo día, porque Elena vio un cuenco con dos, y eso no es comida:
+nadie compra dos botes del mismo producto para el mismo plato. Pero es criterio
+**nuestro**, no de FEDIAF, o sea **regla 3** — y un criterio nuestro no puede
+dejar a un perro sin comer.
+
+**Lo cazó el BLOQUE 61 el mismo día**: `obesidad` y `renal`, las dos marcadas
+`formulable: true`, dejaron de dar menú **a ningún peso**. Y el bloque dice
+exactamente qué hacer: «o el límite que no cabe se mueve a
+`limites_escritos_que_el_solver_no_aplica` con su medida, o la patología no es
+formulable y hay que decirlo. Lo que no vale es ofrecerla y no darla».
+
+**La causa es de DATOS y ya estaba escrita dos veces en el repo**: SACN5 pide
+**67,1 mg/1000 kcal de vitamina E** a cuatro patologías (renal, artrosis,
+obesidad y hepatopatía) y **en el catálogo no hay un suplemento de vitamina E
+suelto** — solo los nueve multivitamínicos. Llegar a esa cifra obliga a meter
+**dos**, y atarlo a uno hacía infactibles esas patologías.
+
+**Dos arreglos, y cada uno en su sitio:**
+
+1. **El tope de multivitamínico se suelta en la escalera** — pasa a 2 en los
+   mismos peldaños que ya dejan meter más suplementos (`max_suplementos >= 3`).
+   No hace falta un peldaño nuevo: subir a 3 suplementos ES la señal de «no hay
+   menú con lo habitual». Con eso vuelven `obesidad`, `artrosis` y
+   `hepatopatía`, las tres con 2 multivitamínicos y bajando de peldaño, que se
+   dice. El perro sano sigue saliendo con **uno** en el peldaño estricto.
+2. **La `renal` no vuelve ni así, y su cifra se mueve, NO se baja.** Medido
+   sobre el perro de referencia del BLOQUE 61 (adulto de 20 kg, DER 950): sin
+   ese suelo la renal **sí** da menú, y ese menú llega a **34,5 mg/1000 kcal**
+   de vitamina E —la mitad de lo que pide SACN5— con el **zinc ya al 99,0 % de
+   su techo LEGAL** y el selenio al 93,5 %. O sea que no hay sitio para el
+   segundo multivitamínico: **subir la vitamina E se paga en zinc, y el zinc es
+   ley**. Va a `limites_escritos_que_el_solver_no_aplica` con esa medida, con su
+   cita y con su conversión intactas, y se pregunta.
+
+⚠️ **Que tres la apliquen y una no NO es incoherencia**: es que en las tres cabe
+y en la cuarta no, medido una por una. Uniformar bajando la cifra sería
+inventársela; uniformar quitándola de las cuatro sería tirar un límite que sí
+cabe.
+
+**Cómo se cierra**: con una **ficha de vitamina E suelta** en el catálogo. Es el
+**mismo dato** que falta para encender el suelo de vitamina E del perro SANO
+(apagado desde el 11 de septiembre por lo mismo). El día que entre, se vuelve a
+poner `aplicado_por_el_solver: true` y la batería tiene que salir verde: esa es
+la comprobación de que el problema era el catálogo y no la cifra.
+
+### El techo se medía contra las kcal de verdad y el suelo no
+
+*(15 de septiembre de 2026.)* Encontrado regenerando el catálogo:
+**`Toy_CachorroCrecimiento`** —un cachorro de 2,33 kg, DER 288— **no salía
+verde ni dándole 400 s**. Y el menú existía: el solver lo encontraba en el
+primer peldaño y en 3 s. Lo que pasaba es que el semáforo lo dejaba en **ámbar,
+con el hierro al 99 % y el manganeso al 99 %**.
+
+**La causa es la unidad, otra vez.** El suelo de FEDIAF se convertía a absoluto
+con las kcal **PEDIDAS** (`der_racion`) y el menú que devuelve el solver puede
+traer hasta un **3 % más** (`tolerancia_kcal`). Más kcal con el mismo nutriente
+es menos concentración, y los requisitos se miden **por 1000 kcal de la dieta
+REAL**. El margen del suelo era del **1,5 %**, o sea la mitad de lo que puede
+moverse el denominador: medido, ese menú salía a **297 kcal contra 288 pedidas**
+(+3,1 %) y los dos nutrientes que iban pegados al mínimo se caían por debajo.
+
+⚠️ **Y lo que esto enseña es la ASIMETRÍA.** El **techo** tenía su fila relativa
+**desde el 21 de agosto** —`Σ nut·g ≤ (mx/1000)·Σ kcal·g`, con su comentario
+largo explicando exactamente este argumento— y el **suelo no la tenía**. El
+mismo razonamiento, con el signo cambiado, llevaba tres semanas escrito a doce
+líneas de distancia. La regla que deja: **cuando una cota se escribe contra un
+denominador que puede moverse, las DOS cotas necesitan la misma fila** — si solo
+una la tiene, la otra falla justo en los perros donde la ventana está apretada,
+que son los pequeños.
+
+El margen de la fila nueva es del **1 %** y no del 1,5 %: aquí el redondeo de
+los gramos mueve el numerador y el denominador a la vez, así que un cociente
+aguanta mucho mejor que una cantidad absoluta, y `verificar()` tolera hasta el
+99,5 %. La fila **absoluta se queda también**, igual que en el techo: cuando el
+menú sale con MENOS kcal de las pedidas, la absoluta es la estricta, y teniendo
+las dos siempre manda la que más aprieta.
+
+Medido: ese cachorro pasa de **0 de 4 verde** a **4 de 4**. Lo vigila el
+**BLOQUE 115**, y lo que exige no es la fila sino el **invariante** —que todo
+menú del solver cumpla cada mínimo medido contra SUS PROPIAS kcal—, para que
+siga sirviendo si mañana se implementa de otra forma.
+
 ### Quitar un suplemento y ver aparecer a su primo, sin una palabra
 
 *(15 de septiembre de 2026.)* Elena, usando la app: «**he hecho un menu en

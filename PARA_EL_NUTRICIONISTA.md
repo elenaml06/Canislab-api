@@ -1411,6 +1411,20 @@ ahí lo que falta no es maquinaria sino una decisión: las fuentes van de <1:1
 
 ### 8.1 · Los 73, verificados uno a uno contra su capítulo
 
+⚠️ **Y UNA DE ESAS FILAS DEJÓ DE APLICARSE EL 15 DE SEPTIEMBRE, Y LA CIFRA NO SE HA
+BAJADO**: la **vitamina E de la insuficiencia renal crónica** (67,1 mg/1000 kcal,
+Tabla 37-9). Llegar a ella obliga a meter **dos multivitamínicos** —en el catálogo no
+hay vitamina E suelta— y dos ya no caben debajo de los **siete máximos LEGALES de la
+UE**, que desde ese día van sobre **materia seca**, que es la única forma en que
+FEDIAF los publica. Medido en el perro de referencia (adulto de 20 kg, DER 950): sin
+ese suelo la renal **sí** da menú y llega a **34,5 mg/1000 kcal** con el **zinc al
+99,0 % de su techo legal** y el selenio al 93,5 %. Subir la vitamina E se paga en
+zinc, y el zinc es ley. Está en `limites_escritos_que_el_solver_no_aplica` con esa
+medida. **Las otras tres que piden la misma cifra —artrosis, obesidad y hepatopatía—
+la siguen aplicando**: en las tres cabe, bajando de peldaño, y en la renal no; medido
+una por una.
+
+
 **Verificado el 8 de septiembre abriendo cada capítulo de SACN5 y leyendo la
 tabla citada, fila a fila y no solo la fila del nutriente que ya teníamos.** El
 motivo clínico completo de cada cifra —con la cita literal, la conversión y el
@@ -1490,7 +1504,7 @@ moverse sin que salte.
 | Insuficiencia renal crónica | potasio | ≤ | **2000.0 mg** | 1450 | sin máximo | SACN5 cap.37 «Chronic Kidney Disease», Tabla 37-9 |
 | Insuficiencia renal crónica | proteina | ≤ | **62.5 g** | 52.1 | sin máximo | Reglamento (UE) 2020/354, Anexo parte B, entrada 10 |
 | Insuficiencia renal crónica | sodio | ≤ | **750.0 mg** | 290 | 3750 | SACN5 cap.37 «Chronic Kidney Disease», Tabla 37-9 |
-| Insuficiencia renal crónica | vitE | ≥ | **67.1 mg** | 6.968 | sin máximo | SACN5 Tabla 37-9 |
+| Insuficiencia renal crónica | vitE | ≥ | **67.1 mg** · *escrito y NO aplicado desde el 15 sep* | 6.968 | sin máximo | SACN5 Tabla 37-9 |
 | Insuficiencia renal crónica, moderada-grave (equivalente a IRIS 3-4) | fosforo | ≤ | **1200.0 mg** | 1160 | sin máximo | Igual que renal (Freeman LM, dvm360 2009; WSAVA; IRIS; SACN5 cap.37 Tabla 37-9) |
 | Sobrecrecimiento bacteriano en el intestino delgado (SIBO) | grasa | ≤ | **37.5 g** | 13.75 | sin máximo | SACN5 cap.60 «Small intestinal bacterial overgrowth», Tabla 60-1 |
 | Urolitos de fosfato cálcico | fosforo | ≤ | **1500.0 mg** | 1160 | sin máximo | SACN5 cap.41 «Canine Calcium Phosphate Urolithiasis», Tabla 41-6 |
