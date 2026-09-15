@@ -2538,21 +2538,37 @@ else:
     # suelo de 1 g y el resto el mínimo de su categoría --, así que buscarlos
     # a pelo daba un fallo donde no lo había. Lo que no puede pasar sigue
     # siendo lo mismo: que una categoría que se PESA esté entre las exentas.
-    _i_exentos = _src_b14.find("CATEGORIAS_QUE_SE_DOSIFICAN = (", _i_b14)
-    _exentos_b14 = (_src_b14[_i_exentos:_src_b14.find(")", _i_exentos)]
-                    if _i_exentos > 0 else "")
-    if not _exentos_b14:
-        fallos.append("BLOQUE14: no se encuentra la lista de categorías exentas del suelo. "
-                      "Escribirla al revés ('todo menos Extras') es lo que dejó sin suelo a "
-                      "toda la comida durante semanas.")
-    for _cat_comida in ("Carne muscular", "Hueso carnoso", "Pescados y mariscos",
-                        "Vísceras", "Hígado", "Verduras y frutas", "Extras"):
-        if f'"{_cat_comida}"' in _exentos_b14:
+    # ⚠️ SE LE PREGUNTA A LA LISTA, NO SE BUSCA EN EL TEXTO DEL FUENTE
+    #    (15 de septiembre de 2026). Esto leía `CATEGORIAS_QUE_SE_DOSIFICAN = (`
+    #    del fuente con un `find`, y se puso rojo el día que esa lista dejó de
+    #    escribirse a mano y pasó a DERIVARSE de `CAT_SUPLEMENTO` — que es justo
+    #    la mejora del BLOQUE 117, la que quitó once copias del mismo conjunto.
+    #
+    #    O sea: un bloque comprobando la FORMA («que la línea esté escrita así»)
+    #    acusaba al motor de romper algo que había mejorado. Es la lección del
+    #    BLOQUE 13 otra vez. Lo que hay que comprobar es EL HECHO, y el hecho se
+    #    le pregunta al módulo: que ninguna categoría que se PESA esté exenta del
+    #    suelo, y que las que se dosifican sí lo estén.
+    from motor_completo import CAT_SUPLEMENTO as _exentos_b14
+    _SE_PESAN_b14 = ("Carne muscular", "Hueso carnoso", "Pescados y mariscos",
+                     "Vísceras", "Hígado", "Verduras y frutas", "Extras")
+    for _cat_comida in _SE_PESAN_b14:
+        if _cat_comida in _exentos_b14:
             fallos.append(
                 f"BLOQUE14: '{_cat_comida}' aparece en la exención del suelo de 1 g. "
                 f"Eso se pesa en una báscula de cocina, así que tiene que cumplir el "
                 f"suelo; lo único exento son los suplementos que se dosifican con el "
                 f"cacito o el comprimido del bote.")
+    # Y la otra dirección: la exención no puede quedarse vacía ni perder los
+    # suplementos, porque entonces el motor le pediría 1 g a un bote que se
+    # dosifica con cacito — que es el fallo de las costillas al revés.
+    if not _exentos_b14:
+        fallos.append("BLOQUE14: la lista de categorías exentas del suelo está VACÍA. "
+                      "Escribirla al revés ('todo menos Extras') es lo que dejó sin suelo a "
+                      "toda la comida durante semanas.")
+    elif "Multivitamínico" not in _exentos_b14:
+        fallos.append("BLOQUE14: el multivitamínico ya no está exento del suelo de 1 g, y se "
+                      "dosifica con cacito: pedirle un gramo es pedirle una cucharada.")
     if "CATEGORIAS_QUE_SE_DOSIFICAN" not in _src_b14[_i_b14:_i_b14 + 400]:
         fallos.append(
             "BLOQUE14: la exención del suelo ya no nombra las categorías que se "
