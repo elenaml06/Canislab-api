@@ -2614,7 +2614,7 @@ pidió Cris. Pero solo una de las dos se puede meter hoy:
 
 | | Qué declara | ¿Entra? |
 |---|---|---|
-| **napfcheck Vet-MET** | «L-Methionin: **600.000 mg**» por kg = **60 g/100 g**. Es POLVO, así que la cifra entra directa. Analíticos completos (proteína 40,4 % · grasa 2,1 % · fibra bruta 15,2 % · ceniza 1,8 %) y dosis («täglich bis zu 2 g je 5 kg Körpergewicht»). Y es **la misma marca** del `napfcheck Novomineral proLEBER` que ya está en el catálogo | **Sí** |
+| **napfcheck Vet-MET** | «L-Methionin: **600.000 mg**» por kg = **60 g/100 g**. Es POLVO, así que la cifra entra directa. Analíticos completos (proteína 40,4 % · grasa 2,1 % · fibra bruta 15,2 % · ceniza 1,8 %) y dosis (hasta 2 g al día por cada 5 kg de peso). Y es **la misma marca** del `napfcheck Novomineral proLEBER` que ya está en el catálogo | **Sí** |
 | **VETFOOD L-Methiocid** | «L-metionina (500 mg/2 kapsułki)» = 250 mg por cápsula, y analíticos por 100 g (proteína 59,8 % · fibra 1,4 % · grasa 3,8 % · ceniza 2,7 % · **azufre 7,6 %** · almidón 14,1 %) | **No**, y por un dato concreto: **no publica lo que pesa la cápsula**, así que 250 mg/cápsula no se puede pasar a mg/100 g. El azufre solo da una **cota**: la L-metionina es 21,49 % de azufre por fórmula, así que 7,6 / 0,2149 ≤ **35,4 g/100 g** — y encima esa cota es floja porque el hidrolizado de ave que lleva dentro también aporta azufre. Una cota no es una cifra |
 
 **Lo medido, que es lo que hace falta para decidir:**

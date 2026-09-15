@@ -876,9 +876,51 @@ if _TOPE_SUELTO not in [p[2] for p in _api._escalera_de_relajacion(True)]:
 if _TOPE_SUELTO in [p[2] for p in _api._escalera_de_relajacion(False)]:
     fallos.append("BLOQUE9 escalera: sin carne ni hueso el peldaño de los máximos NO "
                   "puede existir — es el que inventa menús sin comida")
-if _api._hay_comida_de_verdad(al, [], ["Carne muscular"]):
-    fallos.append("BLOQUE9 escalera: excluir la carne muscular tiene que contar como "
-                  "que no queda comida de verdad")
+# ⚠️ ESTA COMPROBACIÓN PEDÍA MÁS DE LO QUE SU PROPIO MOTIVO JUSTIFICA, Y SE
+#    QUEDÓ DESACTUALIZADA EL MISMO DÍA (15 de septiembre de 2026). Exigía que
+#    excluir SOLO la carne muscular contara ya como «no queda comida de verdad»
+#    —la regla era ALL, las dos categorías— y ese día `_hay_comida_de_verdad`
+#    pasó a ANY, porque exigir las dos dejaba al cachorro de 10 kg sin hueso y
+#    con tres alergias SIN MENÚ, 0 de 10, teniendo menú.
+#
+#    Y lo que este bloque protege NO es el booleano: es que el último peldaño
+#    —el que suelta los TECHOS de vísceras, hígado y verdura— no pueda montar
+#    una ración de hígado y calabaza. Eso depende de que quede AL MENOS UNA de
+#    las dos con su SUELO mordiendo, porque un suelo sobre una categoría vacía
+#    se cumple solo. MEDIDO contra la API el mismo día, adulto de 20 kg:
+#
+#      · fuera «Carne muscular»  -> SÍ hay menú: 48 % pescado · 19 % hueso ·
+#        28 % verdura. El hueso conserva su suelo y la ración es una ración.
+#      · fuera «Hueso carnoso»   -> SÍ hay menú, y en el peldaño ESTRICTO:
+#        82 % carne muscular.
+#      · fuera LAS DOS           -> `factible: false`. La guarda sigue en pie,
+#        y ése es el caso de agosto que la motivó («sin carne, hueso ni
+#        pescado»), no el de una sola.
+#
+#    Así que se comprueba el INVARIANTE y no el booleano: con las dos fuera no
+#    hay comida de verdad, con una fuera sí, y —lo que de verdad protege— el
+#    menú que sale con una fuera TIENE que llevar la otra.
+if _api._hay_comida_de_verdad(al, [], ["Carne muscular", "Hueso carnoso"]):
+    fallos.append("BLOQUE9 escalera: sin carne NI hueso tiene que contar como que no "
+                  "queda comida de verdad — es el peldaño que inventa menús sin comida")
+for _fuera9 in (["Carne muscular"], ["Hueso carnoso"]):
+    _queda9 = "Hueso carnoso" if _fuera9 == ["Carne muscular"] else "Carne muscular"
+    if not _api._hay_comida_de_verdad(al, [], _fuera9):
+        fallos.append(f"BLOQUE9 escalera: con {_fuera9[0]} fuera queda la otra categoría "
+                      f"con su suelo, así que SÍ hay comida de verdad")
+        continue
+    # Y el invariante de verdad: el menú que salga tiene que llevar la que queda.
+    _r9x = _c.post("/menu/v2", json={
+        "nombres_alimentos": [], "der_objetivo": 950.0, "etapa_requisitos": "Adulto",
+        "peso_perro_kg": 20.0, "peso_objetivo_kg": 20.0, "modo": "automatico",
+        "categorias_excluidas": _fuera9}).json()
+    _m9x = _r9x.get("menu") or {}
+    if not _m9x:
+        fallos.append(f"BLOQUE9 escalera: con {_fuera9[0]} fuera no sale menú, y sí existe")
+    elif not any(al.get(_n9, {}).get("categoria") == _queda9 for _n9 in _m9x):
+        fallos.append(f"BLOQUE9 escalera: con {_fuera9[0]} fuera, el menú NO lleva "
+                      f"{_queda9}. Entonces su suelo no está mordiendo y el peldaño de "
+                      f"los máximos puede inventar comida")
 if not _api._hay_comida_de_verdad(al, [], []):
     fallos.append("BLOQUE9 escalera: sin nada excluido sí queda comida de verdad")
 
