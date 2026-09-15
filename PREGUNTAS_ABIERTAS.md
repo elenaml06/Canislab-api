@@ -2604,6 +2604,121 @@ Elena, no mía.
 
 ---
 
+### ⚠️ ACTUALIZADA EL MISMO DÍA: Elena pasa DOS productos, y uno resuelve la mitad de la pregunta
+
+Elena: «¿Y estas? **VETFOOD L-Methiocid** … **napfcheck Vet-MET**».
+
+**Las dos son L-metionina, no DL.** O sea que la mitad clínica de esta pregunta
+—«¿vale la forma DL?»— **deja de hacer falta**: hay producto con la forma que
+pidió Cris. Pero solo una de las dos se puede meter hoy:
+
+| | Qué declara | ¿Entra? |
+|---|---|---|
+| **napfcheck Vet-MET** | «L-Methionin: **600.000 mg**» por kg = **60 g/100 g**. Es POLVO, así que la cifra entra directa. Analíticos completos (proteína 40,4 % · grasa 2,1 % · fibra bruta 15,2 % · ceniza 1,8 %) y dosis («täglich bis zu 2 g je 5 kg Körpergewicht»). Y es **la misma marca** del `napfcheck Novomineral proLEBER` que ya está en el catálogo | **Sí** |
+| **VETFOOD L-Methiocid** | «L-metionina (500 mg/2 kapsułki)» = 250 mg por cápsula, y analíticos por 100 g (proteína 59,8 % · fibra 1,4 % · grasa 3,8 % · ceniza 2,7 % · **azufre 7,6 %** · almidón 14,1 %) | **No**, y por un dato concreto: **no publica lo que pesa la cápsula**, así que 250 mg/cápsula no se puede pasar a mg/100 g. El azufre solo da una **cota**: la L-metionina es 21,49 % de azufre por fórmula, así que 7,6 / 0,2149 ≤ **35,4 g/100 g** — y encima esa cota es floja porque el hidrolizado de ave que lleva dentro también aporta azufre. Una cota no es una cifra |
+
+**Lo medido, que es lo que hace falta para decidir:**
+
+| | |
+|---|---|
+| Mínimo de FEDIAF, metionina adulto | **1,16 g/1000 kcal** → un perro de 20 kg a 950 kcal necesita **1,10 g/día** |
+| Lo que hace falta de `napfcheck Vet-MET` para cubrirlo | **1,8 g de producto** |
+| El alimento del catálogo con más metionina | langostino, 0,709 g/100 g — harían falta **155 g** |
+| **Dosis MÁXIMA de la etiqueta** para ese mismo perro | **8 g/día = 4,8 g de metionina**, o sea **4,4 veces el requisito del día entero** |
+
+### ⚠️ Y AQUÍ ESTÁ LO QUE SIGUE ABIERTO, QUE YA NO ES LA FORMA SINO EL TECHO
+
+**Estos productos no son correctores de una carencia: son ACIDIFICANTES
+URINARIOS.** El propio napfcheck lo dice —«Methionin Ergänzung zur *Ansäuerung
+des Urins*»— y su dosis se ajusta **midiendo el pH de la orina**. El VETFOOD
+igual: struvita, una cápsula cada 12 h, hasta 6 meses.
+
+Eso deja **dos** cosas que decide Cris y no yo:
+
+1. **¿Hasta dónde puede subir la metionina en un perro sano?** Porque **FEDIAF no
+   pone máximo** —la celda de `maxAdulto` está vacía—, así que si el solver se
+   fuera al tope del fabricante **el semáforo no lo pararía**. Y NRC 2006 avisa
+   justo de eso: «*Biourge et al. (2002) reported methionine toxicosis in six
+   hunting dogs*» —ataxia, temblores, vómitos y convulsiones en el cachorro de 6
+   meses— y concluye que «*it would appear that the SUL for DL-methionine is well
+   below 47 g·kg–1 diet containing 4 kcal ME·g–1*».
+2. **¿En qué patologías NO debe entrar nunca?** Acidificar la orina es lo que se
+   busca en la **estruvita** y es **lo contrario** de lo que le conviene a un
+   perro con **oxalato** o con **urato**. Hoy el catálogo no tiene forma de decir
+   «este alimento sí para esta patología y no para aquella», así que meterlo sin
+   contestar esto es dejar que el motor se lo pueda dar a cualquiera.
+
+### ⚠️ Y AL MEDIRLO, LA PREGUNTA CAMBIA DE SITIO: EL MOTOR NO SE QUEDA CORTO DE METIONINA
+
+Antes de meter una ficha había que comprobar lo que esta pregunta llevaba
+dándose por hecho desde que la escribió Cris. **Medido sobre los 214 menús del
+catálogo**, contra el mínimo de FEDIAF de cada etapa:
+
+| | El más justo | Mediana | Por debajo del mínimo |
+|---|---|---|---|
+| **Metionina** | **157 %** (Gigante_Adulto/Salmón) | 319 % | **0 de 214** |
+| **Metionina + cistina** | **126 %** (Pequeño_Adulto/Ternera) | 238 % | **0 de 214** |
+
+O sea: **ningún menú de este motor sale carente de metionina, y el más justo va
+un 26 % por encima del mínimo.** Y no es casualidad ni suerte: la metionina y la
+suma metionina+cistina son **dos de los 43 requisitos** que el MILP impone como
+restricción dura desde el 28 de agosto, así que un menú corto **no se entrega**.
+
+**Lo que dijo Cris sigue siendo verdad de lo que ella ve** —formulando a mano, una
+ración casera se queda corta de metionina con facilidad— pero **no es verdad de
+este motor**, y esa diferencia es justo la que había que medir antes de meter un
+producto.
+
+**Consecuencia, y es la que ordena el resto:** la ficha de L-metionina **no hace
+falta para cubrir el requisito**. Hace falta para otra cosa distinta y legítima —
+que un veterinario pueda **acidificar la orina** de un perro con estruvita—, y eso
+la manda al **formulador del profesional**, no al automático.
+
+⚠️ Y meterla en el automático sería activamente malo: el solver no la necesita, así
+que si la usara sería **porque le sale barata en nutrición por gramo**, que es
+exactamente el fallo de la albahaca del 14 de septiembre. Un acidificante urinario
+no se le da a un perro sano porque salga eficiente.
+
+### ✅ Y ELENA LO CIERRA EL MISMO DÍA, CON UN CRITERIO MÁS FUERTE QUE EL MÍO
+
+> «Hombre, pero **la dosis de eso la tiene que pautar un veterinario**, ¿no? No
+> lo tendría que calcular el motor… O sea, eso es algo que un veterinario receta
+> al perro, y que el veterinario tiene que tener acceso a ello **para ponerlo
+> dentro del menú y ver cómo cuadran los nutrientes**, pero ya está. Él es el que
+> pauta cuánto tiene que tomar.»
+
+Eso es más estricto que lo que yo había escrito, y con razón. Yo proponía «solo
+formulador, con el tope del fabricante» — pero **un tope del fabricante sigue
+siendo el solver eligiendo los gramos**. Lo que dice Elena es que la cantidad **no
+es del motor en absoluto**: la pone quien firma, y el motor solo la cuenta para
+cuadrar el resto de la ración alrededor.
+
+**Y eso NO hay que construirlo: ya está.** `POST /formular/autocompletar` acepta
+`gramos_por_alimento`, los respeta con 0,5 g de margen, y —lo que lo hace servir—
+**si no puede respetarlos NO entrega el menú**: devuelve `factible: false` con
+`gramos_fijos_movidos` y la alternativa aparte, porque desde el 29 de agosto está
+escrito que «*si se han movido, no es un sí*». O sea que la promesa «tus gramos no
+se tocan» se cumple o se dice.
+
+**Lo que hace falta, entonces, es solo esto:**
+
+| | |
+|---|---|
+| Que la ficha exista en el catálogo, con su etiqueta | para que el veterinario pueda escribirla y el motor sepa qué lleva dentro |
+| Que **NO** entre en `accesibles.py` | que es la lista blanca del automático. Lo que no está ahí, el solver no lo usa nunca por su cuenta — es el mecanismo que ya deja fuera a los nueve aceites, a los huevos y al cerebro de ternera |
+
+Con las dos cosas, el techo de seguridad **deja de ser una pregunta del motor**:
+el solver nunca elige esa cantidad, así que no hay nada que topar. Queda como lo
+que es —una dosis clínica— y quien la pone es quien puede medir el pH de la orina.
+
+**Lo único que sigue abierto para Cris** es lo segundo del bloque anterior, y es
+de aviso y no de cifra: que la ficha diga **para qué es y para qué no** —acidificar
+la orina se busca en la estruvita y es lo contrario de lo que conviene en oxalato
+y en urato—, porque el formulador se lo enseña a un profesional pero la ficha es
+donde vive ese dato.
+
+---
+
 ## Cerradas
 
 *(Cuando una pregunta se contesta, se mueve aquí con la respuesta, la fecha y
