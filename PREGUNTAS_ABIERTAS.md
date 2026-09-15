@@ -2256,6 +2256,42 @@ exactamente la misma pregunta que la de arriba, vista por el otro lado.
 ⚠️ **Y lo que NO se ha hecho a propósito**: bajar ninguna cifra. Ninguna de las
 135 se toca. Lo que está en cuestión es la conversión, no el número de la fuente.
 
+⚠️ **MEDIDO EL 15 DE SEPTIEMBRE, Y CAMBIA LA RESPUESTA AL PUNTO 2: HECHO BIEN,
+NO CABE.** El 14 se midió con un **factor fijo** del 23 % y salían **8 de 8**
+perros con menú. Pero un factor fijo no es la corrección: la corrección es la del
+punto 2 —el límite escrito sobre la materia seca del propio menú—, y eso es un
+**punto fijo**, porque apretar el límite cambia el menú y el menú cambia su
+densidad. Iterando hasta ese punto fijo sobre once perros de referencia:
+
+| | |
+|---|---|
+| Perros que **pierden el menú** | **3 de 11** — adulto 3 kg, sénior 22 kg y cachorro joven 10 kg |
+| El factor que de verdad les toca | **0,728 · 0,678 · 0,696** — más apretado que el 0,77 del factor fijo, que es por lo que aquel salía 8 de 8 |
+
+**Y lo que aprieta NO es FEDIAF: son los techos del LIBRO.** Soltando **un solo**
+límite corregido y dejando los demás apretados:
+
+| Perro | Vuelve a salir soltando |
+|---|---|
+| Adulto 3 kg | **fósforo** *o* **sodio** (los dos, techos de SACN5 Tabla 13-3) |
+| Cachorro joven 10 kg | **fósforo** (techo de SACN5 Tabla 17-1) |
+| Sénior 22 kg | ninguno solo — hacen falta varios |
+
+Eso importa **más que el recuento**, porque cambia de qué clase de límite estamos
+hablando. Ninguno de los 13 máximos de FEDIAF —los siete legales de la UE entre
+ellos— es el que deja al perro sin comer: el que aprieta es una **recomendación de
+un libro de texto**, que es justo la clase que ya cede cuando choca (regla 3-ter
+de `CLAUDE.md`: *un techo del LIBRO cede ante un suelo de FEDIAF, y se dice*).
+
+Así que la decisión de Elena no es «¿corregimos o no?» sino **«¿los techos del
+libro se corrigen también, o se quedan con su conversión de 4,0?»**, y hay
+argumento para lo segundo: esos techos se leyeron de una tabla escrita para un
+**pienso**, donde 4,0 kcal/g MS es la densidad de verdad — corregirlos es
+aplicarles una densidad que su propia tabla no contempla. Los máximos de FEDIAF
+no tienen esa salida: su nota dice expresamente que hay que corregir.
+
+**No se ha aplicado nada.** Está medido y escrito, que es la regla.
+
 Lo vigila el **BLOQUE 111**, que mide la densidad real en cada batería y falla si
 se mueve — para que el día que cambie no se siga citando un 23 % que ya no existe.
 

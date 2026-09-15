@@ -1686,3 +1686,65 @@ vitamina A de la ración, y la vitamina A tiene **máximo en FEDIAF**. No se ha 
 cifra —manda BEDCA, que es el mandato 1— pero ahora la ficha **declara también el id de
 BEDCA**, que no tenía: sin él esos 10250 no se comparaban con ninguna fuente que los
 publique. Está en `PREGUNTAS_PARA_ELENA.md`.
+
+---
+
+## Dos razas de las que la ficha ofrece solo PARTE de sus tamaños (15 de septiembre de 2026)
+
+Nace de una pregunta de Elena: «*hay ciertas razas que tienen distintos tamaños,
+eso se recoge en razas? Es decir, por ejemplo, un perro salchicha puede ser toy,
+mini, estándar… ¿hay todas esas opciones para seleccionar la correcta para tu
+perro?*».
+
+**La respuesta general es que sí**: las variedades de tamaño viven en
+`razas.json` como razas con nombre propio, no como una opción aparte — Caniche
+Toy · Enano · Mediano · Grande, Schnauzer Miniatura · Estándar · Gigante, Spitz
+Alemán Pequeño · Mediano · Grande (más el Pomerania y el Keeshond, que son las
+otras dos del mismo estándar), Bull Terrier y Bull Terrier Miniatura, Pinscher
+Alemán y Pinscher Miniatura.
+
+**Pero faltan dos**, comprobadas contra el estándar oficial de la FCI:
+
+| Raza | Lo que dice la FCI | Lo que tiene `razas.json` |
+|---|---|---|
+| **Teckel / Dachshund** (FCI 148) | **tres** tamaños | Estándar y Miniatura. **Falta el Kaninchen** |
+| **Xoloitzcuintle** (FCI 234) | **tres** tamaños | solo Estándar. **Faltan Intermedio y Miniatura** |
+
+Citas literales, de la versión española del estándar:
+
+> «Dachshund Kaninchen (para la caza del conejo): Machos: 27 cm – hasta 32 cm ·
+> Hembras: 25 cm – hasta 30 cm»
+> — FCI, estándar nº 148, apartado TAMAÑO
+
+> «Existen tres tamaños para machos y hembras. • Variedad estándar: mayores de 46
+> a 60 cm… • Variedad intermedia: mayores de 36 a 45 cm. • Variedad miniatura: 25
+> a 35 cm.»
+> — FCI, estándar nº 234, apartado TAMAÑO
+
+⚠️ **Y AQUÍ EL DATO QUE FALTA NO ES EL TAMAÑO: ES EL PESO, Y LA FCI NO LO DA.**
+Los dos estándares definen sus variedades por **una medida que no es el peso** —
+el Teckel por **perímetro torácico** («*El perímetro torácico medido con una edad
+mínima de 15 meses…*») y el Xolo por **altura a la cruz**. O sea que añadir las
+filas exige inventarse una horquilla de peso, que es exactamente lo que este
+fichero existe para no hacer. **No lo rellena el asistente.**
+
+Es el mismo caso que las 185 razas sin fuente publicada, con un matiz peor: en
+aquellas la cifra ya estaba y lo que falta es de dónde sale; aquí no hay ni
+cifra ni fila.
+
+**Cuánto importa, medido**: desde el 12 de septiembre el rango de la raza **ya no
+recorta las kcal** de un cachorro — lo decide su propia trayectoria. Así que una
+variedad que falta no mueve ninguna ración: mueve el **peso de respaldo** cuando
+no hay ni edad ni peso, y lo que se le **enseña** al dueño. Quien tenga un Teckel
+de conejo elige hoy «Dachshund Miniatura» y ve 4-5 kg cuando su perro anda por
+3-3,5.
+
+**Y se ha barrido el resto, para no contestar con dos casos sueltos.** De las 65
+razas de `razas.json` que citan su número de estándar, se bajaron y leyeron 34 y
+**ninguna más define varios tamaños**. El barrido mira **solo el apartado
+TAMAÑO/PESO** y solo variedades de tamaño: las «variedades de pelo» y «de manto»
+son el pelaje y no cuentan — la primera versión las daba por buenas y acusaba al
+Pastor Alemán y al Fox Terrier. ⚠️ Y la segunda versión **tampoco veía al
+Teckel**, que es el caso que motivó todo esto, porque miraba línea a línea y el
+estándar escribe «Dachshund Standard:» en una línea y su medida en la siguiente.
+Comprobado con los dos casos conocidos: el barrido bueno los pilla los dos.

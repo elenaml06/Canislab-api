@@ -1647,6 +1647,26 @@ está en `identificadores_informe.json`. **Se regenera con
 
 ---
 
+## ~~§20 · El ratio omega-6:omega-3 lo elige el veterinario, y cada patología enseña el rango de su fuente~~ · **HECHO el 13 de septiembre de 2026**
+
+⚠️ **CORREGIDO EL 15 DE SEPTIEMBRE: los tres puntos de «lo que falta» de abajo
+están los tres hechos**, y se comprobaron contra el motor vivo, no contra este
+documento:
+
+| Lo que pedía | Dónde está hoy |
+|---|---|
+| 1 · la clave `omega6_total`, con su trampa de unidades | `constructor.NUTRIENTES_COMPUESTOS`, con `UNIDAD_DE_CADA_PARTE` al lado para que el g + mg se pueda **rehacer** en vez de creerse. Lo rehace el BLOQUE 106 |
+| 2 · que `objetivos_del_profesional` acepte ratios | `main.RATIOS_QUE_SE_PUEDEN_FIJAR` + `_ratios_dentro_de_fediaf`. `{"ratios": {"omega6_total:omega3_total": {"min": 1, "max": 7}}}` |
+| 3 · el rango de la fuente por patología, servido | `GET /vocabulario`, en `objetivos_del_profesional.ratios.lista[].rangos_por_patologia`, para los tres ratios |
+
+**Es la cuarta pregunta zombi del mismo día.** Las otras tres son los puntos de
+la relectura de SACN5 caps. 50-70, arriba en este mismo fichero. Un pendiente
+cerrado que sigue escrito como abierto no es inofensivo: este fichero es el
+índice de lo que queda.
+
+Lo que sigue es el razonamiento tal como se escribió, que es lo que explica por
+qué el ratio **no se aplica solo** — y eso sigue en pie.
+
 ## §20 · El ratio omega-6:omega-3 lo elige el veterinario, y cada patología enseña el rango de su fuente
 
 **Decidido el 13 de septiembre de 2026.** Elena, al ver que el ratio aparece en
@@ -1672,7 +1692,7 @@ Lo que falta es la puerta, no el mecanismo.
 - El rango de cada patología ya está **escrito con su cita**, en
   `limites_escritos_que_el_solver_no_aplica` de renal, artrosis y cáncer.
 
-### Lo que falta, y en este orden
+### ~~Lo que falta, y en este orden~~ · los tres, hechos el 13 de septiembre (ver la tabla de arriba)
 
 1. **La clave `omega6_total`**, que no existe. `omega3_total` es derivada
    (linolénico + EPA + DHA) y esta es su espejo: linoleico + araquidónico.
