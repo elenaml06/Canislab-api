@@ -784,7 +784,7 @@ escrito en `constructor.materia_seca_g_100g` y no como un `or 0` silencioso.
 
 | | |
 |---|---|
-| Las siete cifras rehechas contra la Tabla III-3a | **exactas**: cobre 2,80 · zinc 22,70 · hierro 68,18 · yodo 1,10 · selenio 56,80 mg/100 g MS · manganeso 17,00 · vitamina D 227,00 IU |
+| Las siete cifras rehechas contra la Tabla III-3a | **exactas**, y ⚠️ **OJO CON LA UNIDAD DEL SELENIO, QUE NO ES LA DE LOS DEMÁS**: cobre 2,80 · zinc 22,70 · hierro 68,18 · yodo 1,10 · manganeso 17,00 **mg**/100 g MS · **selenio 56,80 µg**/100 g MS · vitamina D 227,00 IU/100 g MS. Esta fila los tuvo los siete bajo un «mg/100 g MS» común hasta el 15 de septiembre, y para el selenio eso es **mil veces de más** — 568 mg/kg en vez de 0,568 mg/kg, que es el límite legal de verdad. La ficha del JSON siempre lo tuvo bien (`56.80 (L)d µg/100 g MS`); lo que estaba mal era este resumen, o sea justo lo que se lee para entenderlo. Es la trampa de `UNIDADES.md` otra vez, en el documento que la explica |
 | Perros de referencia con menú verde | **10 de 10**, de 3 a 40 kg y en las seis etapas |
 | Dónde queda el selenio | pegado al **100 %** del techo nuevo — la señal de que el límite manda |
 | ⚠️ Menús precalculados que se pasaban de un límite **LEGAL** | **212 de 216** (selenio 206, cobre 101, vitamina D 28, zinc 1) |
