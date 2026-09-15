@@ -9016,8 +9016,18 @@ for _et57, _nut57 in (("Adulto", "vitE"), ("Senior", "vitE")):
                       f"commit")
     else:
         _pq57 = _f57.get("por_que") or ""
+        # ⚠️ SON CUATRO DECISIONES, NO DOS (15 de septiembre de 2026). Las dos
+        #    del 11 de septiembre --encenderlo por la manana, apagarlo por la
+        #    tarde-- y las dos del 15 --encenderlo al entrar en el catalogo las
+        #    dos fichas de vitamina E suelta que faltaban, y volver a apagarlo
+        #    al ver lo que costaba en PRODUCTO: dos botes siempre en adulto y
+        #    senior. Cada vez que se toca esta marca hay que anadir la decision,
+        #    nunca sustituir la anterior: la cuarta no anula a la tercera igual
+        #    que la segunda no anulaba a la primera.
         for _marca57 in ("ENCENDIDO EL 11-sep-2026", "APAGADO OTRA VEZ EL 11-sep-2026",
-                         "seis fallos", "NO HAY UN SUPLEMENTO DE VITAMINA E SUELTO"):
+                         "seis fallos", "NO HAY UN SUPLEMENTO DE VITAMINA E SUELTO",
+                         "APAGADO OTRA VEZ EL 15-sep-2026", "Jewell", "445",
+                         "Adrian (Ecocan)"):
             if _marca57 not in _pq57:
                 fallos.append(f"BLOQUE57: el `por_que` del suelo {_et57}.{_nut57} ya no dice "
                               f"«{_marca57}». Lo que costo aplicarlo y por que se apago son las "

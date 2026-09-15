@@ -2805,6 +2805,137 @@ sin cerrar la puerta es decorado — la lección de `/stripe/portal`.
 
 ---
 
+### P-45 · El suelo de vitamina E del perro SANO: ¿67,1 mg/1000 kcal, o el mínimo de FEDIAF?
+
+| | |
+|---|---|
+| **Dueño** | **Adrián (Ecocan)** — es criterio clínico. Elena, 15 de septiembre: «lo dejamos como pregunta para el nutricionista, que en este caso va a ser Adrián, Ecocan» |
+| **¿Bloquea?** | No. El motor aplica el mínimo de FEDIAF, que es el requisito, y se cumple siempre |
+| **Abierta desde** | 15 de septiembre de 2026 |
+| **Estado** | **abierta** — la cifra está escrita y apagada en `recomendaciones_libro.json`, con sus medidas |
+
+**La pregunta, en una línea:** al perro adulto y sénior **sin ninguna patología**,
+¿se le exige la vitamina E del **requisito** (~7 mg/1000 kcal) o la que el libro
+recomienda **«for improved antioxidant performance»** (67,1 mg/1000 kcal, casi
+diez veces)?
+
+### Las cuatro cifras, y que las tres primeras coinciden
+
+| Fuente | Qué es | mg/1000 kcal |
+|---|---|---|
+| **FEDIAF 2025**, Tabla III-3b (10,40 UI) | requisito, y es lo que el motor aplica | **6,968** |
+| **NRC 2006**, *recommended allowance* | requisito | **7,5** |
+| **AAFCO**, mínimo del perfil (50 UI/kg MS) | requisito legal EE. UU. | ~**8,4** |
+| **SACN5 5ª ed.**, Tabla 13-3 (≥400 UI/kg MS) | **recomendación** del libro | **67,1** |
+
+Las tres referencias de requisito se parecen entre sí. La cuarta está un orden de
+magnitud por encima **y no dice ser un requisito** — el propio capítulo 13 lo
+separa: *«The requirement for vitamin E for foods (DM) for adult dogs is 30 mg/kg
+(NRC, 2006)»*, y los 400 UI son *«for improved antioxidant performance»*.
+
+### ⚠️ Lo que se leyó del estudio original, que es lo que hace falta para decidir
+
+SACN5 apoya ese 400 en un solo trabajo y lo cita sin dar el detalle. Leído
+entero: **Jewell DE, Toll PW, Wedekind KJ, Zicker SC, «Effect of increasing
+dietary antioxidants on concentrations of vitamin E and total alkenals in serum
+of dogs and cats», *Vet Ther* 2000;1(4):264-72 (PMID 19757574)**. Literal:
+
+> «The total analyzed dietary vitamin E levels for the canine treatment groups
+> were **293, 445, and 598 IU vitamin E/kg of food, as fed**.»
+
+> «The **thresholds for significant reduction of serum alkenal concentrations**
+> in dogs and cats **were 445 and 540 IU vitamin E/kg of food**, respectively,
+> on an as-fed basis.»
+
+Tres cosas que cambian cómo se lee el 400, y las tres son para Adrián:
+
+1. **El 400 de la tabla no es el número del estudio.** El efecto se demostró a
+   **445 UI/kg tal cual** —en pienso seco, ~494 UI/kg MS, o sea ~83 mg/1000
+   kcal— y el grupo de **293 no dio efecto significativo**. Nuestro 67,1 (=400
+   UI/kg MS) queda **por debajo de la única dosis que funcionó** y muy por
+   encima del requisito. Está en tierra de nadie.
+2. **Lo medido es un biomarcador en suero** —alcanales, o sea peroxidación
+   lipídica—, no un resultado clínico. 40 perros adultos sanos, 6 semanas.
+3. **Era un estudio de pienso SECO** (Hill's). Una ración BARF fresca no es el
+   mismo escenario oxidativo. ⚠️ Y la relación clásica vitamina E:PUFA, remedida
+   el 15 de septiembre sobre el catálogo regenerado: **min 0,53 · mediana 3,24 ·
+   máx 29,53 mg/g, y 8 de 214 menús por debajo de 0,6** (el repo decía «0 de 216,
+   el peor a 1,53» y eso caducó ese mismo día, al dejar a cero la vitamina E de
+   las cinco V-INTEGRA por ser un antioxidante tecnológico). ⚠️ Y **no está claro
+   si ese 0,6 es mg o UI**: AAFCO lo enuncia como *«a diet containing 50 IU of
+   vitamin E will have a ratio greater than 0.6:1 when the PUFA content is 83
+   grams or less»*, o sea UI/g, que son 0,40 mg/g. Esto es parte de la pregunta
+   3 de abajo.
+
+### Lo que cuesta aplicarlo, medido
+
+No es que no quepa: **cabe**. Desde el 15 de septiembre hay en el catálogo dos
+fichas de vitamina E suelta (aceite de germen de trigo de Beaphar y vitamina E
+líquida de MARNYS), y con ellas los perros de referencia sacan menú. Lo que
+cuesta es de **producto**:
+
+| Con el suelo encendido, peldaño `estricto` (**un solo bote**) | |
+|---|---|
+| toy 3 kg · mini 10 kg · mediano 22 kg · grande 40 kg · sénior 8 kg · sénior 28 kg | **0 de 6 sacan menú** |
+| Los 6, permitiendo el segundo bote | menú, y el segundo bote es **siempre** una vitamina E suelta |
+| cachorro 10 kg · cachorro 25 kg | menú con un bote — pero solo porque este suelo está escrito únicamente en Adulto y Sénior |
+
+**Y con un bote no se puede, por las etiquetas:** ningún multivitamínico del
+catálogo aporta 67,1 dentro de la dosis que marca su fabricante. El mejor,
+Homemadekun, da 45,7 mg a un perro de 10 kg; el napfcheck 18,0; los seis
+V-INTEGRA y el Nutratop llevan **0** desde que se les quitó el conservante (ver
+`ETIQUETAS_DE_LOS_SUPLEMENTOS.md`).
+
+Seguridad: ninguna en juego. El techo seguro son 1000-2000 UI/kg MS (NRC, vía
+Fascetti cap.14) y el motor aplica **167,75 mg/1000 kcal** — el suelo está 2,5
+veces por debajo.
+
+### Por qué está apagado hoy, y qué se descartó
+
+Elena, el 15 de septiembre, leyendo el aviso que tendría que ver el dueño si el
+suelo cediera y se dijera:
+
+> «no tiene sentido que un usuario vea ese mensaje, porque no tiene ni puta idea
+> de qué le estás hablando»
+
+Se descartó, entonces, la salida que estaba propuesta: que el **suelo** del libro
+cediera y se dijera, como ya ceden los **techos** del libro ante un suelo de
+FEDIAF (`techos_del_libro_que_no_se_aplican`). Técnicamente se puede; lo que no
+se puede es el texto — el canal del dueño no admite «la vitamina E se quedó en 35
+en vez de 67», que es la regla COMIDA-NO-NUTRIENTES del 14 de septiembre. Y
+decírselo solo al profesional dejaría al dueño con dos botes sin saber por qué.
+
+**Lo que se hace mientras tanto:** el suelo queda `aplicado_por_el_solver: false`
+en Adulto y Sénior, con la cifra, la fuente, la conversión y todas las medidas
+intactas, y con la maquinaria viva — el **BLOQUE 57** lo enciende a mano y exige
+que el solver y el filtro final lo apliquen. El día que Adrián conteste se pone a
+`true` y ya está.
+
+### Lo que hay que preguntarle exactamente
+
+1. Para un perro **sano**, adulto o sénior, con una ración **fresca** tipo BARF:
+   ¿tiene sentido clínico exigir ~10 veces el requisito de vitamina E, sabiendo
+   que el número sale de un biomarcador en pienso seco y que el propio estudio no
+   vio efecto por debajo de 445 UI/kg?
+2. Si la respuesta es que sí: ¿**67,1** (el 400 de la tabla) o **~83** (el 494
+   UI/kg MS que es el umbral real del estudio)? Aplicar el 400 es aplicar una
+   cifra que el estudio no demostró.
+3. ¿Cambia la respuesta según el **PUFA** de la ración? FEDIAF dice en su §3.3
+   que la vitamina E sube con los PUFA y **no da cifra para el perro** — está
+   escrito como `documentado_sin_cifra` en `requisitos_condicionales.json`. Si
+   Adrián da una regla (por ejemplo la de AAFCO, +0,6 UI por gramo de PUFA por
+   encima de 83 g/kg), eso sustituiría a un suelo plano y sería **mejor**, porque
+   ataría la cifra a la ración de cada perro en vez de a una media.
+4. Y la de al lado: **P-42**, el mismo nutriente en el perro **renal**, hoy en
+   `limites_escritos_que_el_solver_no_aplica`. Son la misma pregunta con dos
+   poblaciones, y conviene que las conteste la misma persona.
+
+**Dónde está todo:** `recomendaciones_libro.json` →
+`por_etapa.Adulto.suelos_por_1000kcal.vitE` (y `Senior`), con el `por_que`
+entero. Lo vigila el **BLOQUE 57**.
+
+---
+
 ## Cerradas
 
 *(Cuando una pregunta se contesta, se mueve aquí con la respuesta, la fecha y

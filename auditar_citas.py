@@ -469,7 +469,20 @@ _EN_EL_REPO = ("fediaf", "sacn5", "small animal clinical nutrition", "nrc",
                # nombra siempre, y con solo el nombre largo se auditaban 3 de
                # sus 11 citas. Se busca por palabra entera, asi que no casa
                # dentro de otra.
-               "fci")
+               "fci",
+               # ⚠️ JEWELL (15 de septiembre de 2026). Es el unico estudio del
+               # que sale el suelo de vitamina E de 400 UI/kg MS que SACN5
+               # recomienda al perro sano, o sea la cifra de la P-45. SACN5 lo
+               # cita SIN dar el detalle, y el detalle es justo lo que decide:
+               # el umbral que el estudio demostro son 445 UI/kg tal cual, no
+               # 400. Su resumen vive en ESTE repo
+               # (`jewell_2000_vet_ther_resumen.txt`, bajado de la API de
+               # PubMed), asi que sus citas se comprueban literales en vez de
+               # irse a la casilla de «no se puede comprobar aqui». Sin esta
+               # clave el parrafo se atribuia a SACN5 -- que es la otra fuente
+               # que nombra -- y las dos citas salian acusadas de no aparecer
+               # en SACN5, que es verdad y no es el punto.
+               "jewell")
 # ⚠️ «purina institute» Y NO «purina» A SECAS (12 de septiembre). La marca se
 # llama igual que el nutriente en español y en ingles («purinas», «purine»), asi
 # que con la clave corta cualquier parrafo sobre purinas se atribuia a la marca y
