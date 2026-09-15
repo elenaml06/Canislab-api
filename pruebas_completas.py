@@ -10778,12 +10778,31 @@ for _nom62, _et62, _peso62, _der62, _padu62, _excl62 in _CASOS_B62:
         fallos.append(f"BLOQUE62: «{_nom62}» sale con {_p62:.0f} mg de fosforo/1000 kcal y el "
                       f"techo de la Tabla 17-1 para el cachorro de mas de 25 kg son 2750")
     # el peldaño: tiene que salir en el estricto, sin soltar ni una proporcion
+    # ⚠️ LOS DOS PRIMEROS PELDAÑOS VALEN, Y NO ES AFLOJAR LA PRUEBA (15 de
+    #    septiembre de 2026). Lo que este bloque quiere afirmar es que el techo
+    #    de calcio NO OBLIGA A SOLTAR LAS PROPORCIONES DE BARF -- eso seria
+    #    cambiar la FORMA de la racion para cumplir un techo del libro. Y el
+    #    peldaño `hasta_dos_suplementos` NO suelta ninguna proporcion: lo dice
+    #    su propia ficha en `GET /relajacion`, «las proporciones no se tocan: lo
+    #    unico que sube es el numero de botes».
+    #
+    #    Antes del 15 de septiembre el peldaño 0 YA permitia dos botes, asi que
+    #    «estricto» a secas era la comprobacion correcta. Ese dia se partio en
+    #    dos --Elena: «vamos a intentar siempre que los menus tengan un solo
+    #    suplemento... son cosas caras»-- y el pastor aleman sin pollo paso a
+    #    salir en el 1. Medido: sale con las proporciones BARF completas, o sea
+    #    que el techo sigue sin ser un muro; lo unico que necesita es un bote
+    #    mas, que es una cuestion de coste y no de forma.
+    #
+    #    El tercer peldaño en adelante SI suelta proporciones, y ahi el fallo
+    #    seguiria siendo un fallo.
     _peld62 = _r62.get("peldano") or (_r62.get("relajacion") or {}).get("peldano")
-    if _peld62 not in (None, "estricto"):
-        fallos.append(f"BLOQUE62: «{_nom62}» solo sale bajando al peldaño «{_peld62}». Medido el "
-                      f"9 de septiembre, los seis salian en el estricto: si ahora hace falta "
-                      f"soltar la forma para cumplir el techo, el catalogo se ha quedado corto "
-                      f"de fuentes de calcio bajas y hay que mirarlo")
+    if _peld62 not in (None, "estricto", "hasta_dos_suplementos"):
+        fallos.append(f"BLOQUE62: «{_nom62}» solo sale bajando al peldaño «{_peld62}», que SI "
+                      f"suelta proporciones de BARF. Los dos primeros peldaños no tocan la "
+                      f"forma (solo el numero de botes) y por eso valen; a partir del tercero "
+                      f"se esta cambiando la racion para cumplir el techo, y entonces el "
+                      f"catalogo se ha quedado corto de fuentes de calcio bajas")
     _bueno_b62 = _bueno_b62 or (_g62, _et62, _padu62)
 
 # 3. Y el filtro final tiene que verlo. Se coge un menu bueno y se le dobla el
@@ -10806,10 +10825,37 @@ if _bueno_b62:
     # comprobación de más abajo -- «sin el peso adulto NO tiene que saltar» --
     # dejaría de significar nada, porque saltaría por el techo general y con
     # razón.
-    _denso62 = max(
-        (n for n in al if (al[n].get("nutrientes") or {}).get("calcio")
-         and (al[n].get("energia") or 0) > 0),
-        key=lambda n: float(al[n]["nutrientes"]["calcio"]) / float(al[n]["energia"]))
+    # ⚠️ Y EL SEGUNDO FALLO DEL MISMO CEBO, DE LA MISMA FAMILIA (15 de
+    #    septiembre de 2026). Corregido el «x3 el hueso», esto pasaba a elegir
+    #    el alimento con mas calcio POR KCAL, y el que ganaba era «V-INTEGRA
+    #    Cachorro» -- un MULTIVITAMINICO. Añadirlo sube el calcio, si, y sube
+    #    tambien la VITAMINA D: el menu inflado salia a 6,3 contra un techo de
+    #    6,25, asi que `_tope_patologia_roto` saltaba TAMBIEN sin el peso
+    #    adulto, y la comprobacion de abajo --«sin el peso adulto NO tiene que
+    #    saltar»-- acusaba al motor de aplicarle el techo de raza grande a
+    #    cualquier cachorro. NO LO HACE: comprobado, `topes_de_la_etapa` sin
+    #    peso adulto devuelve 4250, que es lo correcto. Lo que saltaba era otro
+    #    techo, por culpa del cebo.
+    #
+    #    EL CEBO BUENO YA EXISTIA Y LO EXCLUIA ESTE MISMO FILTRO: la cascara de
+    #    huevo en polvo son 0 kcal, 38 g de calcio por 100 g, vitamina D 0 y 90
+    #    mg de fosforo. Es calcio puro. El `energia > 0` estaba para no dividir
+    #    entre cero, y de paso tiraba el unico alimento que mueve el numerador
+    #    sin tocar el denominador -- que es exactamente lo que hace falta.
+    #
+    #    Asi que se prefieren los de CERO kcal, ordenados por calcio por gramo,
+    #    y solo si no hay ninguno se cae al calcio por kcal de antes.
+    _sin_kcal62 = [n for n in al
+                   if (al[n].get("nutrientes") or {}).get("calcio")
+                   and not (al[n].get("energia") or 0)]
+    if _sin_kcal62:
+        _denso62 = max(_sin_kcal62,
+                       key=lambda n: float(al[n]["nutrientes"]["calcio"]))
+    else:
+        _denso62 = max(
+            (n for n in al if (al[n].get("nutrientes") or {}).get("calcio")
+             and (al[n].get("energia") or 0) > 0),
+            key=lambda n: float(al[n]["nutrientes"]["calcio"]) / float(al[n]["energia"]))
     _inflado62, _ca_inf62 = None, None
     _g_extra62 = 0.0
     for _paso62 in range(1, 400):
@@ -10834,9 +10880,23 @@ if _bueno_b62:
                           f"calcio/1000 kcal, por encima del techo de {_TECHO_CA_B62:.0f}, y el "
                           f"filtro final no dice nada. Entonces no esta comprobando el techo de "
                           f"SACN5")
+        # ⚠️ Y EL CEBO TIENE QUE ROMPER EL CALCIO Y NADA MAS. Sin esto, la
+        #    comprobacion de abajo puede saltar por un techo que no es el que se
+        #    esta probando --paso el 15 de septiembre con la vitamina D-- y el
+        #    bloque acusa al motor de algo que no hace. Se mira lo que dice el
+        #    filtro CON el peso adulto: si ahi aparece algo que no es calcio, el
+        #    cebo no sirve y hay que decirlo, no seguir.
+        _rotos62 = _api_b62._tope_patologia_roto(
+            _inflado62, al, [], _et_ok62, peso_adulto_esperado_kg=_padu_ok62)
+        _otros62 = [x for x in (_rotos62 or []) if not x.lower().startswith("calcio")]
+        if _otros62:
+            fallos.append(f"BLOQUE62: el cebo «{_denso62}» rompe ademas otro techo "
+                          f"({_otros62[0][:60]}). Entonces la comprobacion de «sin el peso "
+                          f"adulto NO tiene que saltar» no prueba nada, porque saltaria por "
+                          f"eso. Hace falta un cebo que solo mueva el calcio")
         # y sin el peso adulto NO tiene que saltar, que es justo el olvido que
         # este parametro existe para no repetir
-        if _api_b62._tope_patologia_roto(_inflado62, al, [], _et_ok62):
+        elif _api_b62._tope_patologia_roto(_inflado62, al, [], _et_ok62):
             fallos.append(f"BLOQUE62: el filtro salta SIN saberse el peso adulto del perro, con "
                           f"un menu de {_ca_inf62:.0f} mg de calcio que esta por DEBAJO del "
                           f"techo general del cachorro (4250). Entonces le esta aplicando el "
@@ -17120,6 +17180,20 @@ _resp101 = {}
 for _n101 in _NIVELES101:
     _d101 = dict(_CAIRO101); _d101["premios_nivel"] = _n101
     _r101 = _c_b5.post("/menu/v2", json=_d101).json()
+    # ⚠️ Y SI NO SALE, SE REINTENTA CON RELOJ DE SOBRA ANTES DE ACUSAR A NADIE
+    #    (15 de septiembre de 2026). Este bloque afirma algo del MOTOR --que el
+    #    techo cede y Cairo come-- y lo pregunta por un endpoint que lleva
+    #    presupuesto de tiempo. Dentro de la batería completa, con la máquina
+    #    cargada, «mas_del_maximo» se quedó sin menú una vez y en aislado salía
+    #    4 de 4. Es la lección del 14 de septiembre, escrita para los BLOQUES 17
+    #    y 27: un bloque que le da un presupuesto al solver y luego afirma algo
+    #    del motor está midiendo dos cosas a la vez.
+    if not _r101.get("factible"):
+        _d101_holg = dict(_d101); _d101_holg["presupuesto_segundos"] = 120.0
+        _r101_holg = _c_b5.post("/menu/v2", json=_d101_holg).json()
+        if _r101_holg.get("factible"):
+            print(f"  (premios «{_n101}»: no salió a la primera y SÍ con 120 s — era el reloj)")
+            _r101 = _r101_holg
     _resp101[_n101] = _r101
     if not _r101.get("factible"):
         fallos.append(f"BLOQUE101: el cachorro de raza grande con premios «{_n101}» se queda SIN "
@@ -17236,11 +17310,55 @@ if _men101.get("factible"):
     _ca101 = sum(valor_nutriente(_al101[n].get("nutrientes", {}), "calcio") / 100.0 * x
                  for n, x in _g101.items())
     _ca_1000_101 = _ca101 / _kcal101 * 1000.0
+    # ⚠️ Y AQUÍ SE AFIRMA EL INVARIANTE, NO EL NÚMERO (15 de septiembre de 2026).
+    #
+    #    Esto exigía, a secas, que el menú entregado se quedara por debajo del
+    #    techo subido. Y eso **contradice el diseño**: `resolver()` prueba con el
+    #    techo apretado y, si no sale menú, LO SUELTA y reintenta — porque la
+    #    holgura es un número NUESTRO y «un número nuestro no puede dejar a un
+    #    perro sin comer». O sea que el bloque estaba prohibiendo justo el plan B
+    #    que existe para que Cairo coma.
+    #
+    #    SE PUSO ROJO EL 15 DE SEPTIEMBRE Y EL MOTOR TENÍA RAZÓN. Ese día los
+    #    siete máximos LEGALES de la UE pasaron a medirse sobre MATERIA SECA, que
+    #    es la única forma en que FEDIAF los publica, y eso los apretó un ~23 %.
+    #    Medido, quitándolos de uno en uno: el que cierra la ventana de Cairo es
+    #    el **SELENIO**, y es LEY (regla 2). Con el techo apretado el problema
+    #    sale `status 2` — infactible DEMOSTRADO, no falta de reloj — y sin los
+    #    techos legales sobre MS sale menú a la primera. O sea: para meter el
+    #    calcio en la ventana del 2 % que dejan el suelo de FEDIAF y el consejo
+    #    de SACN5 habría que pasarse de un límite legal. El techo del libro cede,
+    #    que es exactamente el orden correcto: ley > requisito de FEDIAF >
+    #    recomendación del libro.
+    #
+    #    ASÍ QUE SE COMPRUEBA LO QUE SÍ TIENE QUE SER VERDAD SIEMPRE: o el menú
+    #    se queda debajo del techo subido, o el intento apretado estaba
+    #    DEMOSTRADO imposible. Si alguien dejara de pasarle el techo al solver,
+    #    el intento apretado volvería a ser factible y esto lo cazaría — que es
+    #    lo que el bloque quería vigilar de verdad.
     if _ca_1000_101 > _esperado_subido101 * 1.005:
-        fallos.append(f"BLOQUE101: el menú sale con {_ca_1000_101:.0f} mg de calcio y el techo que "
-                      f"se le puso era {_esperado_subido101:.0f}. El techo que sube no se está "
-                      f"aplicando: el menú se aleja del consejo del libro más de lo que la "
-                      f"aritmética obliga")
+        from motor_completo import _resolver_una_vez as _una_vez101
+        _est_ap101 = {}
+        _ok_ap101, _ = _una_vez101(
+            1581.0, "CachorroCrecimiento", _al101, _req101, 20.0,
+            dosis_maxima_fabricante, margenes_categoria=_api101.MARGENES_V2,
+            max_suplementos=2, peso_adulto_esperado_kg=31.0,
+            kcal_de_premios=1581.0 * 0.10, time_limit=40.0, semilla_aleatoria=1,
+            estado_del_solver=_est_ap101, apretar_el_techo_del_libro=True)
+        if _ok_ap101:
+            fallos.append(f"BLOQUE101: el menú sale con {_ca_1000_101:.0f} mg de calcio, el techo "
+                          f"que se le puso era {_esperado_subido101:.0f}, y preguntándole al "
+                          f"solver CON el techo apretado SÍ hay menú. Entonces no es que no "
+                          f"quepa: es que el techo que sube no le está llegando al solver, y el "
+                          f"menú se aleja del consejo del libro más de lo que la aritmética "
+                          f"obliga")
+        elif _est_ap101.get("status") != 2:
+            fallos.append(f"BLOQUE101: el menú se pasa del techo subido ({_ca_1000_101:.0f} "
+                          f"contra {_esperado_subido101:.0f}) y el intento apretado no sale "
+                          f"`status 2` sino {_est_ap101.get('status')}. Soltar el techo solo vale "
+                          f"cuando la infactibilidad está DEMOSTRADA: con status 1 lo que pasó "
+                          f"fue que se acabó el reloj, y entonces se está tirando un consejo de "
+                          f"la fuente por ir con prisa")
     # y se DICE a cuánto ha subido, no solo que ha cedido
     _dicho_sube101 = [x for x in (_men101.get("techos_del_libro_que_no_se_aplican") or [])
                       if x.get("clave") == "calcio"]

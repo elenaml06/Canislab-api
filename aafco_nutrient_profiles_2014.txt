@@ -1,0 +1,2548 @@
+FUENTE DE TEXTO -- AAFCO Dog and Cat Food Nutrient Profiles (revision 2014)
+==========================================================================
+
+QUE ES ESTE FICHERO, Y POR QUE ESTA EN ESTE REPO
+------------------------------------------------
+Es el texto completo del Apendice A del AAFCO Official Publication, «Revised
+AAFCO Nutrient Profiles», tal cual sale del PDF publico con `page.get_text()`.
+O sea que SE PUEDE REHACER: es la misma clase de fichero que
+`fediaf_tabla_III_3b.txt` y `fci_estandares_peso.txt`, y lo contrario de
+`aaha_2021_tablas_transcritas.txt`, que es a mano.
+
+Esta aqui porque `auditar_citas.py` indexa los `.txt` de la raiz, y sin el una
+cita de AAFCO no se podia comprobar. Y hacia falta: el 15 de septiembre de 2026
+se escribio en `LECTURAS.md` una cita de AAFCO sacada de un RESUMEN DE BUSQUEDA
+y no del documento, y estaba MAL COPIADA -- decia «will have a ratio greater
+than 0.6:1» donde AAFCO escribe «will have a ratio of > 0.6:1». La cazo el
+BLOQUE 85 el mismo dia, que es exactamente para lo que existe.
+
+AAFCO NO es una de las cuatro fuentes del motor y aqui no manda nada: si
+contradice a FEDIAF, gana FEDIAF. Vive aqui para poder CITARLA con seguridad
+cuando se la usa como tercera opinion -- que es lo que es en la P-45.
+
+Bajado el 15 de septiembre de 2026 de:
+https://www.aafco.org/wp-content/uploads/2023/01/Pet_Food_Report_Annual_2014-Appendix_A-Revised_AAFCO_Nutrient_Profiles-Final_092214.pdf
+
+TEXTO, SIN TOCAR UNA PALABRA
+----------------------------
+
+
+
+----- pagina 1 -----
+
+APPENDIX A 
+ 
+    1 
+ 
+AAFCO METHODS FOR SUBSTANTIATING 
+NUTRITIONAL ADEQUACY OF DOG AND CAT FOODS 
+ 
+This section contains the minimum testing methods for the substantiation of 
+nutritional adequacy claims, calorie content claims, and procedures for 
+establishing pet food product families referenced in AAFCO Model Pet Food and 
+Specialty Pet Food Regulations PF2, 4, 7, 8, 9 and/or 10.  These methods represent 
+minimum requirements.  Companies may choose, or may need, to perform 
+additional testing to substantiate their claims. 
+ 
+AAFCO Dog and Cat Food Nutrient Profiles 
+ 
+Introduction 
+ 
+The original Canine and Feline Nutrition Expert Subcommittees convened in 1990 
+were charged by the chair of the AAFCO Pet Food Committee to establish practical 
+nutrient profiles for both dog and cat foods based on commonly used ingredients. 
+These subcommittees established the "AAFCO Dog Food Nutrient Profiles" and the 
+"AAFCO Cat Food Nutrient Profiles" that appeared in the Official Publication of the 
+AAFCO in 1992 and 1993, respectively.  The profiles were reviewed in 1994/95 and 
+updates to the maximum concentrations for vitamin A in dog foods were implemented 
+in 1996. 
+The National Research Council (NRC) in 2006 updated its published Nutrient 
+Requirements of Dogs and Nutrient Requirements of Cats in a single publication that 
+combined recommendations for both species.1  In 2007 the AAFCO Pet Food 
+Committee again formed Canine and Feline Nutrition Expert Subcommittees and 
+charged these subcommittees with the task of revising the AAFCO Nutrient Profiles in 
+consideration of the information in the 2006 NRC Nutrient Requirements of Dogs and 
+Cats (2006 NRC).  In addition, the subcommittees considered information in the NRC 
+Mineral Tolerance of Animals Second Revised Edition, 2005 (2005 Mineral Tolerance 
+of Animals).2  Finally, the subcommittees also reviewed and considered the 
+recommended nutrient concentrations for dog and cat food products as published in 
+February 2008 by the European Pet Food Industry Federation (Federation Europeenne 
+de l’Industrie des Alimentis pour Animaux Familiers (FEDIAF)), titled F.E.D.I.A.F. 
+Nutritional Guidelines for Complete and Complementary Pet Food for Cats and Dogs, 
+(FEDIAF Guidelines) that are roughly the European-equivalent to the AAFCO Dog 
+and Cat Food Nutrient Profiles.3  
+The AAFCO Dog and Cat Food Nutrient Profiles were designed to establish 
+practical minimum and some maximum nutrient concentrations for dog and cat foods, 
+formulated 
+from 
+commonly 
+used, 
+non-purified, 
+complex 
+ingredients. 
+The 
+concentrations differ from minimum nutrient requirements traditionally developed by 
+the NRC Committee on Animal Nutrition.  Many of the NRC minimum nutrient 
+requirements are based on research with purified diets and/or highly bioavailable 
+nutrient sources that are not practical to use in commercial dog and cat foods. 
+Therefore, unlike the previous NRC publications Nutrient Requirements of Dogs in 
+19854 and Nutrient Requirements of Cats in 1986,5 the Nutrient Requirements of Dogs 
+and Cats in 2006 contained two additional listings of nutrient concentrations for 
+adequate intake and recommended allowance (RA) in addition to minimum 
+requirements.  The concentrations for RA’s of nutrients in the 2006 NRC are at least 
+equal to, or greater than, concentrations for adequate intakes and minimum 
+requirements, respectively, and are defined as “the concentration or amount of a 
+nutrient in a diet formulated to support a given physiological state.” When appropriate, 
+
+
+----- pagina 2 -----
+
+APPENDIX A 
+ 
+    2 
+the RA takes into consideration the bioavailability of the nutrient. Thus, the Canine and 
+Feline Nutrition Expert Subcommittees of 2007 primarily used the RA in the 2006 
+Nutrient Requirements of Dogs and Cats in evaluating whether revision was needed to 
+one or more of the minimum recommended concentrations in the profiles. Values for 
+specific nutrient concentrations were added or modified where indicated and supported 
+by recent scientific publications, practical experience, or unpublished data. 
+The AAFCO Dog and Cat Food Nutrient Profiles have been criticized and faulted 
+for not explicitly indicating the apparent nutrient digestibility, sometimes called 
+nutrient availability or bioavailability, required to make the listed concentrations 
+adequate for meeting the animal’s daily requirements.  When a minimum requirement 
+has been established for a particular nutrient, the expected apparent digestibility to 
+meet the minimum requirement for that nutrient at the recommended concentration 
+listed in an AAFCO Nutrient Profile can be calculated using the formula:  
+ 
+((minimum requirement) x (its apparent digestibility in the diet(s) used to establish the 
+minimum requirement) / (recommended concentration in the AAFCO Profile)) x 100.   
+ 
+In the above formula, the minimum requirement is expressed in the same units as 
+in the AAFCO Nutrient Profile and digestibility is expressed in decimal equivalents. 
+As an example, the NRC lists the minimum crude protein requirement for puppies to 
+be met by formulas containing 18% crude protein on a dry matter basis with the 
+digestibility of the protein sources estimated to be near 100%. The 2012 AAFCO Dog 
+Food Nutrient Profile for Growth and Reproduction recommends the minimum crude 
+protein concentration of dry matter to be 22.5%.  Therefore, the expected apparent 
+digestibility for crude protein in a diet formulated to meet the AAFCO Dog Food 
+Nutrient Profile for Growth and Reproduction is at least 80% [(18 x (1.00)/22.5) x 
+100].   
+For nutrients known to be essential, but that lack sufficient data to establish a 
+minimum requirement, the typical digestibility for the nutrient in ingredients and food 
+matrices similar to those used to establish the apparent amount to fulfill the animal’s 
+need for the nutrient should be ensured.  The 2006 Nutrient Requirements of Dogs and 
+Cats discusses average or typical apparent digestibility for such nutrients when 
+explaining how a RA was set.  As an example, for adult dogs there is no established 
+minimum requirement for iron, although iron is considered essential for adult dogs.  In 
+setting the RA of 30 mg/kg in dietary dry matter for adult maintenance, the NRC 
+subcommittee considered the apparent digestibility of iron to be 20%.  However, the 
+explanatory text in the publication notes that measured apparent digestibility of iron in 
+the scientific literature has ranged from close to 100% to less than 10%, and is affected 
+by numerous factors such as the specific source of iron, the concentration of other 
+specific minerals or other ingredients in the diet, as well as the iron status of the 
+animal. 
+The specific example for iron can be generalized to most essential minerals, and 
+demonstrates the impossibility that any list of concentrations can invariably ensure that 
+all nutrient requirements are fulfilled in all diet formulas without additional 
+considerations.  As stated for the previous editions of the AAFCO Dog and Cat Food 
+Nutrient Profiles, formulating a product according to the Profiles is only one part of a 
+nutritionally sound, scientific development that must consider all other aspects of the 
+product.  The fact that a dog or cat food is formulated to meet a specific AAFCO 
+Profile should not deter or discourage the manufacturer from conducting appropriate 
+feeding trials to further confirm and ensure the diet is nutritionally adequate for its 
+intended use. 
+
+
+----- pagina 3 -----
+
+APPENDIX A 
+ 
+    3 
+Indications regarding expected nutrient availability from some ingredient sources 
+are given in footnotes.  It is important to read the footnotes to the tables as they contain 
+information critical to many of the recommended concentrations. Additionally, 
+manufacturers must make allowances to nutrient concentrations prior to processing to 
+account for losses during processing and subsequent storage.  The recommended 
+concentrations in the Profiles are those expected to be present at the time the formula is 
+consumed by the animal. 
+The established profiles are the “AAFCO Dog Food Nutrient Profiles” and 
+“AAFCO Cat Food Nutrient Profiles” as the terms are applied in AAFCO model pet 
+food regulations referring to nutritional adequacy.  Under these model regulations, dog 
+and cat foods substantiated for nutritional adequacy by reference to the AAFCO Dog 
+and Cat Food Nutrient Profiles for a designated life stage(s) must be formulated to 
+contain at least the minimum concentrations of nutrients specified in the Profiles, and, 
+for some nutrients, not more than any maximum concentration listed for that specific 
+nutrient in the Profiles as shown in this section. Products with their nutritional 
+adequacy substantiated by AAFCO Feeding Protocols are not mandated to meet the 
+minimum or maximum concentrations listed in the Profiles.  Additionally, snacks, 
+treats or products intended for intermittent or supplemental feeding only are not 
+mandated to meet the concentrations in the Profiles unless their labeling references the 
+Profiles. 
+The AAFCO Dog and Cat Food Nutrient Profiles and the AAFCO Feeding 
+Protocols are the only methods recognized by AAFCO for substantiating the nutritional 
+adequacy of "complete and balanced" dog or cat foods.  If a product is substantiated by 
+a feeding trial and does not meet the AAFCO Dog or Cat Food Nutrient Profiles, the 
+label cannot reference the Profiles.  An unqualified reference to an AAFCO Dog or Cat 
+Food Nutrient Profile is an implied guarantee that the product contains the minimum 
+concentrations for all nutrients in the profile and no more than any maximum 
+concentration listed for a specific nutrient in the profile. 
+Minimum and some maximum nutrient concentrations were established in the 
+Profiles for two categories; growth and reproduction (gestation/lactation), and adult 
+maintenance.  Maximum nutrient concentrations were established for nutrients where 
+the potential for overuse or toxicity is of concern and likely to occur if attention is not 
+paid to the concentrations of those nutrients.  The absence of a maximum concentration 
+should not be interpreted to mean that nutrients without a specific maximum content 
+are safe at any concentration.  Rather, it reflects the lack of information in dogs and 
+cats on toxic concentrations of that nutrient.  Establishing a maximum concentration 
+implies safety below that concentration for long term consumption and to set a 
+maximum arbitrarily might prove worse than no maximum at all. 
+The nutrient concentrations are expressed on a dry matter (DM) basis and at a 
+specified caloric density.  Diets should be corrected for caloric density as indicated 
+below.  Reference to the concentrations of nutrients on a product label in the 
+guaranteed analysis must be expressed in the same units and order as given in the 
+AAFCO Dog or Cat Food Nutrient Profiles.  For the purposes of determining 
+metabolizable energy (ME), use the methods specified in Model Regulation PF9. 
+  
+ 
+AAFCO DOG FOOD NUTRIENT PROFILES 
+BASED ON DRY MATTER a 
+ 
+Nutrients 
+Units 
+DM 
+Basis 
+Growth & 
+Reproduction 
+Minimum 
+Adult 
+Maintenance 
+Minimumb 
+Maximum 
+
+
+----- pagina 4 -----
+
+APPENDIX A 
+ 
+    4 
+Crude Protein 
+% 
+22.5 
+18.0 
+ 
+ Arginine 
+% 
+1.0 
+0.51 
+ 
+ Histidine 
+% 
+0.44 
+0.19 
+ 
+ Isoleucine 
+% 
+0.71 
+0.38 
+ 
+ Leucine 
+% 
+1.29 
+0.68 
+ 
+ Lysine 
+% 
+0.90 
+0.63 
+ 
+   Methionine 
+% 
+0.35 
+0.33 
+ 
+ Methionine-cystine 
+% 
+0.70 
+0.65 
+ 
+   Phenylalanine 
+% 
+0.83 
+0.45 
+ 
+ Phenylalanine-
+tyrosine 
+% 
+1.30 
+0.74 
+ 
+ Threonine 
+% 
+1.04 
+0.48 
+ 
+ Trytophan 
+% 
+0.20 
+0.16 
+ 
+ Valine 
+% 
+0.68 
+0.49 
+ 
+ 
+ 
+ 
+ 
+ 
+Crude Fat c 
+% 
+8.5 
+5.5 
+ 
+ Linoleic acid 
+% 
+1.3 
+1.1 
+ 
+   alpha-Linolenic acid 
+% 
+0.08 
+NDd 
+ 
+   Eicosapentaenoic + 
+Docosahexaenoic 
+acid 
+ 
+ 
+% 
+ 
+ 
+0.05 
+ 
+ 
+NDd 
+ 
+(Linoleic + 
+Arachidonic):(alpha-
+Linolenic + 
+Eicosapentaenoic +  
+Docosahexaenoic) 
+acid Ratio 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+30:1 
+ 
+ 
+ 
+ 
+ 
+Minerals 
+ 
+ 
+ 
+ 
+ Calcium 
+% 
+1.2 
+0.5 
+2.5 (1.8)e 
+ Phosphorus 
+% 
+1.0 
+0.4 
+1.6 
+Ca:P ratio 
+ 
+1:1 
+1:1 
+2:1 
+ Potassium 
+% 
+0.6 
+0.6 
+ 
+ Sodium 
+% 
+0.3 
+0.08 
+ 
+ Chloride 
+% 
+0.45 
+0.12 
+ 
+ Magnesium 
+% 
+0.06 
+0.06 
+ 
+ Iron f 
+mg/kg 
+88 
+40 
+ 
+ Copper g 
+mg/kg 
+12.4 
+7.3 
+ 
+ Manganese 
+mg/kg 
+7.2 
+5.0 
+ 
+ Zinc 
+mg/kg 
+100 
+80 
+ 
+ Iodine 
+mg/kg 
+1.0 
+1.0 
+11 
+ Selenium 
+mg/kg 
+0.35 
+0.35 
+2 
+ 
+ 
+ 
+ 
+ 
+Vitamins & Other 
+ 
+ 
+ 
+ 
+ Vitamin A 
+IU/kg 
+5000 
+5000 
+250000 
+ Vitamin D 
+IU/kg 
+500 
+500 
+3000 
+ Vitamin E h 
+IU/kg 
+50 
+50 
+ 
+ Thiamine i 
+mg/kg 
+2.25 
+2.25 
+ 
+ Riboflavin 
+mg/kg 
+5.2 
+5.2 
+ 
+ Pantothenic acid 
+mg/kg 
+12 
+12 
+ 
+
+
+----- pagina 5 -----
+
+APPENDIX A 
+ 
+    5 
+ Niacin 
+mg/kg 
+13.6 
+13.6 
+ 
+ Pyridoxine 
+mg/kg 
+1.5 
+1.5 
+ 
+ Folic acid 
+mg/kg 
+0.216 
+0.216 
+ 
+ Vitamin B12 
+mg/kg 
+0.028 
+0.028 
+ 
+ Choline 
+mg/kg 
+1360 
+1360 
+ 
+ 
+a Presumes a caloric density of 4000 kcal ME/kg, as determined in accordance with 
+Regulation PF9. Formulations greater than 4000 kcal ME/kg should be corrected for 
+energy density; formulations less than 4000 kcal ME/kg should not be corrected for 
+energy. Formulations of low-energy density should not be considered adequate for 
+reproductive needs based on comparison to the Profiles alone. 
+b Recommended concentrations for maintenance of body weight at an average caloric 
+intake for dogs of a given optimum weight. 
+c Although a true requirement for crude fat per se has not been established, the 
+minimum concentration was based on recognition of crude fat as a source of 
+essential fatty acids, as a carrier of fat-soluble vitamins, to enhance palatability, and 
+to supply an adequate caloric density.  
+d ND – Not Determined.  While a minimum requirement has not been determined, 
+sufficient amounts of omega-3 fatty acids are necessary to meet the maximum 
+omega-6:omega-3 fatty acid ratio. 
+e The maximum of 1.8% is applicable to formulas that may be fed to large size 
+puppies (those weighing 70 pounds or greater as mature lean adults).  For other life 
+stages, including non-large size growth formulas, the maximum calcium is 2.5% 
+DM. 
+f Average apparent digestibility for iron associated with recommended minimums is 
+20% of that consumed.  Because of very poor apparent digestibility, iron from 
+carbonate or oxide sources that are added to the diet should not be considered in 
+determining the minimum nutrient concentration for iron. 
+g Because of very poor apparent digestibility, copper from oxide sources that are 
+added to the diet should not be considered in determining the minimum nutrient 
+concentration for copper. 
+h It is recommended that the ratio of IU of vitamin E to grams of polyunsaturated fatty 
+acids (PUFA) be > 0.6:1.  A diet containing 50 IU of vitamin E will have a ratio of > 
+0.6:1 when the PUFA content is 83 grams or less.  Diets containing more than 83 
+grams of PUFA should contain an additional 0.6 IU of vitamin E for every gram of 
+PUFA. 
+i Because processing may destroy up to 90% of the thiamine in the diet, allowances in 
+formulation should be made to ensure the minimum nutrient concentration for 
+thiamine is met after processing. 
+ 
+AAFCO DOG FOOD NUTRIENT PROFILES 
+BASED ON CALORIE CONTENT 
+ 
+Nutrients 
+Units 
+per 
+1000 
+kcal 
+ME 
+Growth & 
+Reproduction 
+Minimum 
+Adult 
+Maintenance 
+Minimuma 
+Maximum 
+Crude Protein 
+g 
+56.3 
+45.0 
+ 
+ Arginine 
+g 
+2.50 
+1.28 
+ 
+ Histidine 
+g 
+1.10 
+0.48 
+ 
+ Isoleucine 
+g 
+1.78 
+0.95 
+ 
+
+
+----- pagina 6 -----
+
+APPENDIX A 
+ 
+    6 
+ Leucine 
+g 
+3.23 
+1.70 
+ 
+ Lysine 
+g 
+2.25 
+1.58 
+ 
+   Methionine 
+g 
+0.88 
+0.83 
+ 
+ Methionine-cystine 
+g 
+1.75 
+1.63 
+ 
+   Phenylalanine 
+g 
+2.08 
+1.13 
+ 
+ Phenylalanine-tyrosine 
+g 
+3.25 
+1.85 
+ 
+ Threonine 
+g 
+2.60 
+1.20 
+ 
+ Tryptophan 
+g 
+0.50 
+0.40 
+ 
+ Valine 
+g 
+1.70 
+1.23 
+ 
+ 
+ 
+ 
+ 
+ 
+Crude Fat b 
+g 
+21.3 
+13.8 
+ 
+ Linoleic acid 
+g 
+3.3 
+2.8 
+ 
+   alpha-Linolenic 
+g 
+0.2 
+NDc 
+ 
+   Eicosapentaenoic + 
+Docosahexaenoic acid 
+ 
+g 
+ 
+0.1 
+ 
+NDc 
+ 
+(Linoleic+Arachidonic):(alpha-
+Linolenic+Eicosapentaenoic+ 
+Docosahexaenoic) acid Ratio 
+ 
+ 
+ 
+ 
+ 
+30:1 
+ 
+ 
+ 
+ 
+ 
+Minerals 
+ 
+ 
+ 
+ 
+ Calcium 
+g 
+3.0 
+1.25 
+6.25 (4.5)d 
+ Phosphorus 
+g 
+2.5 
+1.00 
+4.0 
+   Ca:P Ratio 
+ 
+1:1 
+1:1 
+2:1 
+ Potassium 
+g 
+1.5 
+1.5 
+ 
+ Sodium 
+g 
+0.80 
+0.20 
+ 
+ Chloride 
+g 
+1.10 
+0.30 
+ 
+ Magnesium 
+g 
+0.15 
+0.15 
+ 
+ Iron e 
+mg 
+22 
+10 
+ 
+ Copper f 
+mg 
+3.1 
+1.83 
+ 
+ Manganese 
+mg 
+1.8 
+1.25 
+ 
+ Zinc 
+mg 
+25 
+20 
+ 
+ Iodine 
+mg 
+0.25 
+0.25 
+2.75 
+ Selenium 
+mg 
+0.09 
+0.08 
+0.5 
+ 
+ 
+ 
+ 
+ 
+Vitamins & Others 
+ 
+ 
+ 
+ 
+ Vitamin A 
+IU 
+1250 
+1250 
+62500 
+ Vitamin D 
+IU 
+125 
+125 
+750 
+ Vitamin E g 
+IU 
+12.5 
+12.5 
+ 
+ Thiamine h 
+mg 
+0.56 
+0.56 
+ 
+ Riboflavin 
+mg 
+1.3 
+1.3 
+ 
+ Pantothenic acid 
+mg 
+3.0 
+3.0 
+ 
+ Niacin 
+mg 
+3.4 
+3.4 
+ 
+ Pyridoxine 
+mg 
+0.38 
+0.38 
+ 
+ Folic acid 
+mg 
+0.054 
+0.054 
+ 
+ Vitamin B12 
+mg 
+0.007 
+0.007 
+ 
+ Choline 
+mg 
+340 
+340 
+ 
+a Recommended concentrations for maintenance of body weight at an average caloric 
+intake for dogs of a given optimum weight. 
+b Although a true requirement for crude fat per se has not been established, the 
+minimum concentration was based on recognition of crude fat as a source of 
+
+
+----- pagina 7 -----
+
+APPENDIX A 
+ 
+    7 
+essential fatty acids, as a carrier of fat-soluble vitamins, to enhance palatability, and 
+to supply an adequate caloric density. 
+c ND – Not Determined.  While a minimum requirement has not been determined, 
+sufficient amounts of omega-3 fatty acids are necessary to meet the maximum 
+omega-6:omega-3 fatty acid ratio. 
+d Maximum of 4.5 g Ca/1000 kcal ME is applicable to formulas; that may be fed to 
+large size puppies (those weighing 70 pounds or greater as mature lean adults).  For 
+other life stages, including non-large breed growth formulas, the maximum calcium 
+is 6.25 g Ca/1000 kcal ME. 
+e  Average apparent digestibility for iron associated with recommended minimums is 
+20% of that consumed.  Because of very poor apparent digestibility, iron from 
+carbonate or oxide sources that are added to the diet should not be considered in 
+determining the minimum nutrient concentration for iron. 
+f Because of very poor apparent digestibility, copper from oxide sources that are 
+added to the diet should not be considered in determining the minimum nutrient 
+concentration for copper. 
+g It is recommended that the ratio of IU of vitamin E to grams of polyunsaturated fatty 
+acids (PUFA) be > 0.6:1.  A diet containing 50 IU of vitamin E will have a ratio of > 
+0.6:1 when the PUFA content is 83 grams or less.  Diets containing more than 83 
+grams of PUFA should contain an additional 0.6 IU of vitamin E for every gram of 
+PUFA. 
+h  Because processing may destroy up to 90% of the thiamine in the diet, allowances in 
+formulation should be made to ensure the minimum nutrient concentration for 
+thiamine is met after processing. 
+ 
+CHANGES TO AND RATIONALE FOR NUTRIENT CONCENTRATIONS - 
+DOG FOODS 
+ 
+CALORIC DENSITY 
+The 2007 AAFCO Canine Nutrition Expert Subcommittee (CNES) chose to set the 
+presumed caloric density for dog food products at 4000 kcal metabolizable energy 
+(ME) per kilogram (kg) dry matter (DM) for both the nutrient concentrations per kg 
+DM and the nutrient amounts per 1000 kcal ME in order to be consistent with the 
+presumed caloric density used in the 2006 Nutrient Requirements of Dogs and Cats1 
+and in the current AAFCO Cat Food Nutrient Profiles.  Prior to the 2012 revisions to 
+the Profiles, the presumed caloric density for dog foods was set at 3500 kcal ME/kg 
+DM for nutrient concentrations per kg DM and at 4500 kcal ME/kg DM for nutrient 
+amounts per 1000 kcal ME, although mathematical conversion between the two tables 
+was accomplished using 3500 kcal/kg DM as the caloric density.  The presumed 
+caloric density is not a minimum or a maximum content that a product must meet to 
+reference the profile, but it does dictate the factor used to convert between expressions 
+of nutrient content per kg DM versus per 1000 kcal ME and the minimum 
+concentrations of required nutrients in complete and balanced products.  Because the 
+denominator for converting from concentrations per kg DM to amounts per 1000 kcal 
+ME has increased from 3.5 to 4.0, values in the per 1000 kcal ME table in some 
+instances may appear less than corresponding values listed prior to 2012 even though 
+DM concentrations may not have changed or even increased slightly.  Corrections to 
+amounts of nutrients in formulations differing in caloric density from the presumed 
+value of 4000 kcal ME/kg DM are discussed below. 
+ 
+PROTEIN 
+The minimum concentration of protein for growth and reproduction was increased 
+slightly from 22% to 22.5% DM consistent with the RA for growth established by the 
+
+
+----- pagina 8 -----
+
+APPENDIX A 
+ 
+    8 
+2006 NRC.1  The minimum concentration in the AAFCO Dog Food Nutrient Profile 
+for Adult Maintenance was not changed from the previous value of 18%. 
+The CNES established minimum recommended amounts for the essential amino 
+acids methionine and phenylalanine consistent with the RA proposed by the NRC in 
+addition to the previous minimum recommended amounts of methionine plus cystine 
+and phenylalanine plus tyrosine.  The CNES felt it prudent to include specific 
+minimums for methionine and phenylalanine because although some, or all, of the 
+requirement for cystine and tyrosine can be met from excess methionine and 
+phenylalanine, respectively, the reverse is not true.  Some of the previous 
+recommendations for dietary concentrations of essential amino acids in the Dog Food 
+Nutrient Profile for Adult Maintenance (i.e., histidine, lysine, threonine and 
+tryptophan) were greater than the corresponding RA in the 2006 NRC and the CNES 
+elected to retain the previously recommended amounts for these amino acids in the 
+current Dog Food Nutrient Profile for Adult Maintenance.   
+Minimum concentrations of some essential amino acids in the Dog Food Nutrient 
+Profile for Growth and Reproduction were increased, usually to match the NRC RA for 
+growth (i.e., arginine, leucine, methionine, methionine-cystine, phenylalanine-tyrosine 
+and valine).  Although the NRC RA for total crude protein during lactation is 
+essentially identical to the RA for growth (22.0% versus 22.5%), several of the RA for 
+essential amino acids during lactation are greater than the RA for growth.  In some 
+cases (i.e., histidine, isoleucine, lysine, phenylalanine, and threonine) the difference 
+was small and the CNES elected to set the recommended amount in the Growth and 
+Reproduction Profile at the larger NRC RA for lactation.  For other essential amino 
+acids (i.e., leucine and valine) the RA proposed by the NRC for lactation is 
+substantially more than the RA for growth, and in the case of leucine and valine the 
+concentrations are equal to, or greater than, the corresponding RA for the cat during 
+lactation, an obligate carnivore with protein requirements generally greater than those 
+for the dog.  The NRC ad hoc committee indicated that it set the RA based on, “lowest 
+concentrations of each of the essential amino acids from digestible protein in 
+commercial dry expanded diets that have been shown to sustain normal gestation and 
+lactation for bitches.”1  The CNES chose not to increase the recommended 
+concentrations for leucine and valine to those of the NRC RA for lactation based on 
+lack of documented problems with the previous concentrations in the AAFCO Dog 
+Food Nutrient Profile for Growth and Reproduction and the relative disparity in the RA 
+between canine versus feline protein requirements.  The CNES did not elect to change 
+the tryptophan concentration in the Dog Food Nutrient Profile for Growth and 
+Reproduction for two reasons.  The CNES had access to feeding studies and a 
+publication showing that the minimum requirement for tryptophan in Labrador 
+retriever puppies was less than the current concentration in AAFCO Dog Food Nutrient 
+Profile for Growth and Reproduction and that the tryptophan concentration of 0.2% 
+DM already provided approximately a 25% safety margin.6  The CNES was also aware 
+that it was nearly impossible to formulate a product at the minimum protein 
+concentration to contain more than 0.2% tryptophan on a DM basis from typical 
+ingredients without including crystalline tryptophan in the formula. 
+Insufficient data were available to demonstrate detrimental effects of high protein 
+intake in the normal dog to allow for any definitive maximum concentrations for 
+protein or amino acids to be established.  The CNES is aware of the findings regarding 
+excess lysine at some concentration between 2.0% and 4.0% lysine/kg DM to produce 
+depression in growth of puppies and clinical signs associated with arginine deficiency 
+when arginine is present at 0.4% DM, and that FEDIAF has established a concentration 
+of 2.8% lysine in DM as a maximum.3,7  However, this information was available prior 
+to the establishment of the original AAFCO Nutrient Profiles and did not result in a 
+
+
+----- pagina 9 -----
+
+APPENDIX A 
+ 
+    9 
+maximum lysine content being established by the 1990 Expert Subcommittee.  
+Furthermore, the 2007 CNES notes that the minimum recommended arginine content 
+for growth and reproduction is 2.5 times the concentration of 0.4% arginine/kg DM 
+required to produce the noted adverse effects in combination with lysine at more than 
+2.0%/kg DM. 
+ 
+FAT/FATTY ACIDS 
+The CNES increased the minimum recommended amount for total fat in the 
+AAFCO Dog Food Nutrient Profiles by 0.5% to 8.5% for Growth and Reproduction 
+and 5.5% for Adult Maintenance.  These concentrations are consistent with the RA for 
+total fat in the 2006 NRC and the FEDIAF Guidelines.  The CNES also increased the 
+minimum recommended linoleic acid concentration in the Growth and Reproduction 
+Profile from 1.0% to 1.3% and in the Adult Maintenance Profile from 1.0% to 1.1%, 
+again consistent with the RA in the 2006 NRC.  The CNES did not set a minimum 
+recommended concentration for arachidonic acid in either profile, but did establish 
+minimum recommended concentrations for some fatty acids in the n-3 (omega-3) 
+series in the Growth and Reproduction Profile, specifically, alpha-linolenic acid at 
+0.08%, and the combination of eicosapentaenoic plus docosahexaenoic acids at 0.05%, 
+of DM.  Because the scientific evidence to date indicates that these n-3 fatty acids are 
+needed for the development of the nervous and visual systems during fetal and 
+neonatal life stages, the CNES did not feel there was scientific justification for setting 
+minimum recommended concentrations for n-3 fatty acids for adult maintenance.  A 
+recommendation in a comment to list quantities of alpha-linolenic acid and 
+eicosapentaenoic plus docosahexaenoic acids for adult maintenance as being not 
+determined (ND) was accepted by the AAFCO Pet Food Committee. 
+The CNES did not establish maximum concentrations for fat or fatty acids despite 
+the NRC listing a safe upper limit (SUL) for total crude fat, linoleic acid, and the 
+combination of eicosapentaenoic plus docosahexaenoic acids.  The CNES felt it likely 
+that insufficiencies in other nutrients will occur in a conventional formula before an 
+inclusion of 33% crude fat in DM is reached.  Also, although some differences in 
+delayed hypersensitivity reactions were noted in studies cited by the NRC as the basis 
+for setting the SUL for eicosapentaenoic plus docosahexaenoic acids, the 2007 CNES 
+noted that those differences are not unequivocally undesirable or detrimental.8,9  The 
+CNES did elect to set a maximum for the ratio of the sum of linoleic plus arachidonic 
+acids to the sum of alpha-linolenic, eicosapentaenoic, and docosahexaenoic acids at 
+30:1 given the modulating effects of n-3 fatty acids on n-6 metabolism and the 
+predominant contribution of these fatty acids to the n-6 and n-3 fatty acid contents, 
+respectively, in conventional dog food formulas. 
+ 
+CALCIUM & PHOSPHORUS 
+The CNES decreased the recommended minimum concentration of calcium and 
+phosphorus in the Adult Maintenance Profile by 0.1% to 0.5% and 0.4%, respectively.  
+The current recommended minimum concentrations are 0.1% more than the RA for 
+calcium and phosphorus on a DM basis for adult maintenance in the 2006 NRC but 
+consistent with the concentrations in the FEDIAF Guidelines.  The CNES 
+recommended that the calcium and phosphorus in growth formulas for the large breed 
+or large size dogs (those breeds typically attaining lean adult body weights of 70 
+pounds or more) be allowed to decrease to 0.9% and 0.75%, respectively, while still 
+being judged to meet the Growth and Reproduction Nutrient Profile.  However, based 
+on comments and a publication10 demonstrating that some diets containing 0.88% to 
+1.04% Ca on a DM basis (2.2 to 2.6 g Ca/1000 kcal ME) when fed to medium or large 
+breed puppies produced inhibited growth in 10-week growth studies compared to diets 
+
+
+----- pagina 10 -----
+
+APPENDIX A 
+ 
+    10 
+containing between 1.3 to 1.8% Ca, the AAFCO Pet Food Committee elected to keep 
+the minimum recommended calcium and phosphorus concentrations in the Growth and 
+Reproduction Nutrient Profile at 1.2% and 1.0%, respectively, for all dog food 
+products that substantiate nutritional adequacy based on being formulated to meet the 
+nutrient content of the Dog Food Nutrient Profile for Growth and Reproduction. 
+Because of concerns for excess calcium to produce detrimental effects in growing 
+dogs of large and giant breeds,11-13 the 2007 CNES deemed that additional restriction to 
+the maximum limit for calcium was warranted for large size growth formulations and 
+lowered the maximum calcium concentration to 1.8% DM for these products.  The 
+CNES did not believe it necessary to decrease the previous maximum calcium 
+concentration of 2.5% for adult dogs or growing dogs of small or moderate size breeds, 
+and retained the maximum of 2.5% for the adult maintenance products as well as 
+gestation/lactation products and growth products for small and moderate size breeds of 
+dogs.  The AAFCO Pet Food Committee discussed and considered the proposal at 
+length for having two maximum calcium concentrations applicable to different 
+products.  The Pet Food Committee notes that unless a product’s labeling restricts the 
+product to specific breeds, products bearing an All Life Stages claim based on the 
+product being formulated to meet the AAFCO Dog Food Nutrient Profile for Growth 
+and Reproduction should not contain more than 1.8% calcium on a DM basis. The 
+CNES retained the maximum phosphorus concentration of 1.6% DM for both profiles, 
+as well as the minimum and maximum values of 1:1 and 2:1, respectively, for the 
+calcium to phosphorus ratio. 
+ 
+OTHER MACROMINERALS 
+POTASSIUM 
+The 2007 CNES elected to retain the recommended minimum potassium 
+concentration at 0.6% DM for both Profiles.  Although the RA in the 2006 NRC and 
+some concentrations in the FEDIAF Guidelines are less than 0.6% DM for potassium, 
+the CNES felt that the potassium concentration did not warrant changing especially 
+given that potential toxicosis of potassium was not a practical concern.  Thus, a 
+maximum concentration for potassium was not established. 
+SODIUM & CHLORIDE 
+The 2007 CNES did not change the minimum recommendation for sodium or 
+chloride in the Growth and Reproduction Nutrient Profile as the values are slightly 
+above the 2006 NRC RA.  The 2007 CNES made an editorial increase in the 
+recommended minimum concentrations for sodium and chloride in the Adult 
+Maintenance Nutrient Profile to match the 2006 NRC RA.  For sodium the increase 
+was from 0.06% to 0.08% DM and for chloride from 0.09 to 0.12% DM.  The 
+recommended minimum concentrations for sodium and chloride in both dog food 
+nutrient profiles continue to reflect the 1:1.5 sodium to chloride ratio of salt previously 
+used by the 1990 CNES to justify recommended chloride concentrations.  As noted by 
+the 1990 CNES, because palatability and food consumption would decline due to 
+excess sodium before adverse health effects were observed, setting a maximum 
+concentration for sodium was not of practical concern. 
+MAGNESIUM 
+The 2007 CNES increased the minimum recommended concentration for 
+magnesium from 0.04 to 0.06% in Adult Maintenance and Growth and Reproduction 
+Nutrient Profiles to match the 2006 NRC RA for adult maintenance and peak lactation, 
+respectively.  The 2007 CNES deleted the maximum recommended concentration for 
+magnesium due to lack of data specific to dogs in both the 2006 NRC and the 2005 
+Mineral Tolerances of Animals.  The only comment regarding maximum magnesium 
+
+
+----- pagina 11 -----
+
+APPENDIX A 
+ 
+    11 
+content in the 2006 NRC was that a SUL for magnesium in the diets of dogs was 
+greater than 1.7% DM. 
+ 
+MICROMINERALS 
+IRON 
+The 2007 CNES made an editorial change to the minimum concentration for iron 
+in the Growth and Reproduction Nutrient Profile to make the concentration consistent 
+with a presumed caloric density of 4000 kcal ME/kg DM which makes the 
+recommended concentration consistent with the RA from the 2006 NRC and the 
+FEDIAF Guidelines for same life stages.  The 2007 CNES decreased the 
+recommendation for adult maintenance from 80 to 40 mg/kg DM based on 
+considerations that the RA of the 2006 NRC was 30 mg/kg DM and the FEDIAF 
+Guidelines concentration was 36 mg/kg DM.  The 2007 CNES deleted the maximum 
+concentration for iron based on one scientific and one practical regulatory 
+consideration.  First, the 2006 NRC indicated that appropriate data for setting a SUL 
+for iron in dog foods are not available.  The previous maximum concentration was 
+stated to be based on tolerance data in swine.  The 2005 Mineral Tolerance of Animals 
+indicated that the listed tolerance of 3000 mg/kg DM for swine needed to be confirmed 
+by long-term studies and all other tolerances for iron listed in that publication are 6 
+times less than 3000 mg/kg DM.  Second, the implied safety of a maximum 
+concentration presumes some amount of apparent digestibility and, as noted above, the 
+apparent digestibility of iron in any given diet or combination of ingredients can vary 
+from less than 10% to near 100%.  Some sources of iron are considered unavailable 
+and used for their technical effects (i.e., color) on the product and not for their nutrient 
+contribution of iron to the animal.  Such unavailable sources will still contribute iron to 
+an analytical result for determining product content, and thus a maximum 
+concentration set for available sources of iron might prohibit use of unavailable sources 
+for coloring, whereas a maximum concentration set for unavailable colorants might 
+permit use of unsafe amounts of available sources on the basis of analytical content.  
+Thus, the 2007 CNES elected to delete the previous maximum of 3000 mg/kg DM and 
+not list any other value as a maximum for iron.  Manufacturers should note that iron is 
+toxic at some amount greater than the recommended quantities, but the exact amount is 
+unknown for dogs. 
+COPPER 
+The minimum concentration for copper in the Adult Maintenance Nutrient Profile 
+was not changed from the previous amount of 7.3 mg/kg DM, the concentration being 
+consistent with that of the FEDIAF Guidelines and slightly more than the 2006 NRC 
+RA of 6.0 mg/kg.  The 2007 CNES increased the minimum recommended 
+concentration in the Growth and Reproduction Nutrient Profile to 12.4 mg/kg DM, 
+consistent with the 2006 NRC RA for peak lactation and slightly more than FEDIAF 
+Guidelines and the NRC RA for growth.  Because of poor bioavailability, the use of 
+copper oxide as a nutritional source is excluded.14  The 2007 CNES deleted the copper 
+maximum concentration for many of the same science-based reasons cited above for 
+deleting the maximum for iron content.  
+MANGANESE 
+The minimum concentration for manganese in the Adult Maintenance Nutrient 
+Profile was not changed from the previous amount of 5.0 mg/kg DM, the amount being 
+slightly more than the 2006 NRC RA of 4.8 and slightly less than the FEDIAF 
+Guidelines of 5.6 mg/kg DM.  The 2007 CNES increased the minimum recommended 
+concentration in the Growth and Reproduction Nutrient Profile to 7.2 mg/kg DM, 
+consistent with the 2006 NRC RA for peak lactation and slightly more than FEDIAF 
+Guidelines concentrations and NRC RA for growth. 
+
+
+----- pagina 12 -----
+
+APPENDIX A 
+ 
+    12 
+ZINC 
+The 2006 NRC RA for zinc in growth, reproduction, and adult maintenance 
+formulations was less than the previous concentration in the Dog Food Nutrient 
+Profiles of 120 mg/kg DM and the 2007 CNES decreased the recommended minimum 
+concentration to 100 mg/kg DM in the Growth and Reproduction Nutrient Profile and 
+to 80 mg/kg DM in the Adult Maintenance Nutrient Profile consistent with the 2006 
+NRC RA and FEDIAF Guidelines concentrations.  Both the 2005 Mineral Tolerance of 
+Animals and the 2006 Nutrient Requirements of Dogs and Cats state there is not 
+enough data available to set a tolerance or SUL for zinc in dog foods.  The 2007 CNES 
+elected to delete the previous maximum concentration of 1000 mg/kg DM that was 
+based on the maximum tolerance concentration recommended for swine rations.  The 
+CNES noted that the swine tolerance of 1000 mg/kg DM was the greatest 
+concentration for any tolerance for zinc listed in the 2005 Mineral Tolerance of 
+Animals. 
+IODINE 
+The 2006 NRC RA for iodine in dog foods is 0.88 mg/kg DM.  The FEDIAF 
+Guideline concentrations range from 0.9 to 1.5 mg/kg DM.  In considering the basis for 
+these various recommended concentrations the 2007 CNES felt a recommended 
+minimum concentration of 1.0 mg/kg to be prudent and adequate to support adult 
+maintenance as well as growth and reproduction.   
+The 2007 CNES revised the maximum concentration for iodine based on the 
+following considerations.  Although neither the 2005 Mineral Tolerances for Animals 
+nor the 2006 Nutrient Requirements of Dogs and Cats established a tolerance or SUL 
+for iodine in diets for dogs, both publications cite data that indicate a commercial 
+formulation containing 5.6 mg iodine/kg diet had adverse effects on thyroid 
+function.15,16  FEDIAF also notes these studies, but faulted the studies for using a diet 
+deficient in calcium, phosphorus and potassium, and fed in excessive quantities.  The 
+2008 FEDIAF Guidelines indicate a maximum concentration for iodine of 11 mg/kg 
+DM when other minerals are within acceptable concentrations and the products are fed 
+in appropriate quantities.  The tolerances for iodine in the 2005 Mineral Tolerances of 
+Animals that have been established for various species range from 5 mg/kg DM in diets 
+for horses to 400 mg/kg DM in diets for swine.  Given that the NRC tolerance for 
+horses is 10 times less than the general maximum concentration of 50 mg iodine/kg 
+DM recommended by AAFCO, the 2007 CNES felt the value of 50 mg/kg DM to no 
+longer be appropriate for setting a maximum concentration for iodine in dog foods.  
+The 2007 CNES acknowledges that additional studies may allow further refinement of 
+a maximum amount of iodine in foods for dogs, but until such data are available the 
+CNES felt it prudent to adopt the FEDIAF position and set 11 mg iodine per kg DM as 
+the maximum concentration of iodine in dog foods. 
+SELENIUM 
+The recommended minimum concentration of selenium was increased to 0.35 
+mg/kg DM in Adult Maintenance and Growth and Reproduction Nutrient Profiles 
+consistent with the 2006 NRC RA for selenium.  The 2007 CNES notes there is a 
+difference between added selenium and total selenium content.  The approval of food 
+additives for addition of selenium to animal feeds limits the total amount of selenium 
+that may be added to feed to 0.3 mg/kg from all approved sources on an as-fed basis  
+(90% DM feeds), roughly equivalent to 0.333 mg/kg on a DM basis.  The 
+recommended minimum concentration of 0.35 mg selenium/kg DM in dog foods is the 
+sum of selenium from all ingredients in the product, both approved food additives used 
+specifically to add selenium to the product, as well as selenium contained as a 
+constituent of other ingredients.  As there is generally more than 0.05 mg selenium/kg 
+DM in ingredients used to supply protein and fat to typical pet food formulations, the 
+
+
+----- pagina 13 -----
+
+APPENDIX A 
+ 
+    13 
+2007 CNES believes the limitation of 0.3 mg selenium/kg DM from approved 
+selenium additives will not hinder a manufacturer’s ability to meet the minimum 
+recommended concentration of 0.35 mg selenium/kg DM. 
+Both the 2006 NRC and the 2005 Mineral Tolerance of Animals state no data are 
+available upon which to establish a SUL or tolerance for selenium in diets for dogs.  
+Both NRC publications cite the fifth edition of Trace Elements in Human and Animal 
+Nutrition published in 1986 for information indicating a dietary concentration of 5 
+mg/kg DM resulted in toxicity in dogs.17  The 2007 CNES acknowledges the NRC has 
+indicated in the years since the publication of the first edition of Mineral Tolerance of 
+Domestic Animals set a tolerance of 2.0 mg of selenium per kg DM for all species in 
+1980 that the value has been challenged as an underestimate of the true tolerance for 
+several species, and that during 1980 to 2005 greater tolerances for selenium have been 
+established for some species.  Although the true tolerance for dogs may be greater than 
+2, but less than 5, mg selenium/kg DM, the 2007 CNES believes it to be prudent to 
+retain the maximum concentration for selenium at 2.0 mg/kg DM until such time as 
+empirical data permit a greater and more definitive maximum to be established. 
+ 
+VITAMINS 
+The 2007 CNES did not believe there were data sufficient to change any of the 
+recommended minimum concentrations for the fat soluble vitamins or the maximum 
+concentration for vitamin A.  The 2007 CNES decreased the maximum vitamin D 
+concentration in consideration of the SUL and maximums set by the 2006 NRC and 
+FEDIAF Guidelines based on the studies conducted by Tryfondidou et al.18,19  The 
+maximum vitamin D concentration was reduced to 3000 IU/kg DM (750 IU/1000 kcal 
+ME) which is 6 times the recommended minimum concentration and 1000 IU/kg less 
+than the amount shown to produce disruption of endochondrial ossification in growing 
+Great Dane puppies.  The 2007 CNES noted that the 2006 Nutrient Requirements of 
+Dogs and Cats had not established a SUL for vitamin E based on there being no 
+information on vitamin E toxicity in dogs, and so deleted the maximum concentration 
+for vitamin E in the Dog Food Nutrient Profiles.  The 2007 CNES increased the 
+minimum concentrations of thiamine, riboflavin and pyridoxine consistent with the RA 
+of the 2006 NRC.  For pantothenic acid, niacin, folic acid, vitamin B12 and choline, the 
+2007 CNES elected to set the recommended concentrations in the AAFCO Dog Food 
+Nutrient Profiles equal to the 2006 NRC adequate intake (AI) recommendation based 
+on indications that the AI already provided a margin of safety above the minimum 
+requirements for these compounds. 
+ 
+ 
+AAFCO CAT FOOD NUTRIENT PROFILES 
+BASED ON DRY MATTER a 
+ 
+Nutrients 
+Units 
+DM 
+Basis 
+Growth & 
+Reproduction 
+Minimum 
+Adult 
+Maintenance 
+Minimumb 
+Maximum 
+Crude Protein 
+% 
+30.0 
+26.0 
+ 
+ Arginine 
+% 
+1.24 
+1.04 
+ 
+ Histidine 
+% 
+0.33 
+0.31 
+ 
+ Isoleucine 
+% 
+0.56 
+0.52 
+ 
+ Leucine 
+% 
+1.28 
+1.24 
+ 
+ Lysine 
+% 
+1.20 
+0.83 
+ 
+ Methionine 
+% 
+0.62 
+0. 20 
+1.5 
+ Methionine-cystine 
+% 
+1.10 
+0.40 
+ 
+
+
+----- pagina 14 -----
+
+APPENDIX A 
+ 
+    14 
+ Phenylalanine 
+% 
+0.52 
+0.42 
+ 
+ Phenylalanine-
+tyrosine 
+% 
+1.92 
+1.53 
+ 
+ Threonine 
+% 
+0.73 
+0.73 
+ 
+ Tryptophan 
+% 
+0.25 
+0.16 
+1.7 
+ Valine 
+% 
+0.64 
+0.62 
+ 
+ 
+ 
+ 
+ 
+ 
+Crude Fat c 
+% 
+9.0 
+9.0 
+ 
+ Linoleic acid 
+% 
+0.6 
+0.6 
+ 
+   alpha-Linolenic acid 
+% 
+0.02 
+NDd  
+ 
+ Arachidonic acid 
+% 
+0.02 
+0.02 
+ 
+   Eicosapentaenoic + 
+Docosahexaenoic 
+acid 
+ 
+ 
+% 
+ 
+ 
+0.012 
+ 
+ 
+NDd  
+ 
+ 
+ 
+ 
+ 
+ 
+Minerals 
+ 
+ 
+ 
+ 
+ Calcium 
+% 
+1.0 
+0.6 
+ 
+ Phosphorus 
+% 
+0.8 
+0.5 
+ 
+ Potassium 
+% 
+0.6 
+0.6 
+ 
+ Sodium 
+% 
+0.2 
+0.2 
+ 
+ Chloride 
+% 
+0.3 
+0.3 
+ 
+ Magnesium e 
+% 
+0.08 
+0.04 
+ 
+ Iron f 
+mg/kg 
+80 
+80 
+ 
+ Copper (extruded) g 
+mg/kg 
+15 
+5 
+ 
+ Copper (canned) g 
+mg/kg 
+8.4 
+5 
+ 
+ Manganese 
+mg/kg 
+7.6 
+7.6 
+ 
+ Zinc 
+mg/kg 
+75 
+75 
+ 
+ Iodine 
+mg/kg 
+1.8 
+0.6 
+ 
+ Selenium 
+mg/kg 
+0.3 
+0.3 
+ 
+ 
+ 
+ 
+ 
+ 
+Vitamins & Others 
+ 
+ 
+ 
+ 
+ Vitamin A 
+IU/kg 
+6668 
+3332 
+333300 
+ Vitamin D 
+IU/kg 
+280 
+280 
+30080 
+ Vitamin E h 
+IU/kg 
+40 
+40 
+ 
+ Vitamin K i 
+mg/kg 
+0.1 
+0.1 
+ 
+ Thiamine j 
+mg/kg 
+5.6 
+5.6 
+ 
+ Riboflavin 
+mg/kg 
+4.0 
+4.0 
+ 
+ Pantothenic acid 
+mg/kg 
+5.75 
+5.75 
+ 
+ Niacin 
+mg/kg 
+60 
+60 
+ 
+ Pyridoxine 
+mg/kg 
+4.0 
+4.0 
+ 
+ Folic acid 
+mg/kg 
+0.8 
+0.8 
+ 
+ Biotin k 
+mg/kg 
+0.07 
+0.07 
+ 
+ Vitamin B12 
+mg/kg 
+0.020 
+0.020 
+ 
+ Choline 
+mg/kg 
+2400 
+2400 
+ 
+ Taurine (extruded) 
+% 
+0.10 
+0.10 
+ 
+ Taurine (canned) 
+% 
+0.20 
+0.20 
+ 
+ 
+a Presumes an energy density of 4000 kcal ME/kg as determined in accordance with 
+Regulation PF9. Formulations greater than 4000 kcal ME/kg should be corrected for 
+energy density; formulations less than 4000 kcal ME/kg should not be corrected for 
+
+
+----- pagina 15 -----
+
+APPENDIX A 
+ 
+    15 
+energy. Formulations of low-energy density should not be considered adequate for 
+growth or reproductive needs based on comparison to the Profiles alone. 
+b Recommended concentrations for maintenance of body weight at an average caloric 
+intake for cats of a given optimal weight. 
+c Although a true requirement for crude fat per se has not been established, the 
+minimum concentration was based on recognition of crude fat as a source of 
+essential fatty acids, as a carrier of fat-soluble vitamins, to enhance palatability, and 
+to supply an adequate caloric density. 
+d ND – Not Determined. 
+e If the mean urine pH of cats fed ad libitum is not below 6.4, the risk of struvite 
+urolithiasis increases as the magnesium content of the diet increases. 
+f Because of very poor bioavailability, iron from carbonate or oxide sources that are 
+added to the diet should not be considered in determining the minimum nutrient 
+concentration. 
+g Because of very poor bioavailability, copper from oxide sources that are added to the 
+diet should not be considered in determining the minimum nutrient concentration.  
+h Add 10 IU Vitamin E above the minimum concentration for each gram of fish oil per 
+kilogram of diet.  
+i Vitamin K does not need to be added unless the diet contains more than 25% fish on 
+a dry matter basis. 
+j Because processing and specific ingredients may destroy up to 90% of the thiamine 
+in the diet, allowances in formulation should be made to ensure the minimum 
+nutrient concentration is met after processing. 
+k Biotin does not need to be added unless the diet contains antimicrobial or anti-
+vitamin compounds. 
+ 
+AAFCO CAT FOOD NUTRIENT PROFILES 
+BASED ON CALORIE CONTENT 
+ 
+Nutrients 
+Units per 
+1000 
+kcal ME 
+Growth & 
+Reproduction 
+Minimum 
+Adult      
+Maintenance 
+Minimuma 
+Maximum 
+Crude Protein 
+g 
+75 
+65 
+ 
+ Arginine 
+g 
+3.10 
+2.60 
+ 
+ Histidine 
+g 
+0.83 
+0.78 
+ 
+ Isoleucine 
+g 
+1.40 
+1.30 
+ 
+ Leucine 
+g 
+3.20 
+3.10 
+ 
+ Lysine 
+g 
+3.00 
+2.08 
+ 
+ Methionine 
+g 
+1.55 
+0.5 
+3.75 
+ Methionine-cystine 
+g 
+2.75 
+1.00 
+ 
+ Phenylalanine 
+g 
+1.30 
+1.05 
+ 
+ Phenylalanine-
+tyrosine 
+g 
+4.80 
+3.83 
+ 
+ Threonine 
+g 
+1.83 
+1.83 
+ 
+ Tryptophan 
+g 
+0.63 
+0.40 
+4.25 
+ Valine 
+g 
+1.55 
+1.55 
+ 
+ 
+ 
+ 
+ 
+ 
+Crude Fat b 
+g 
+22.5 
+22.5 
+ 
+ Linoleic acid 
+g 
+1.40 
+1.40 
+ 
+   alpha-Linolenic acid 
+g 
+0.05 
+NDc 
+ 
+ Arachidonic acid 
+g 
+0.05 
+0.05 
+ 
+
+
+----- pagina 16 -----
+
+APPENDIX A 
+ 
+    16 
+   Eicosapentaenoic + 
+Docosahexaenoic 
+acid 
+ 
+ 
+g 
+ 
+ 
+0.03 
+ 
+ 
+NDc 
+ 
+ 
+ 
+ 
+ 
+ 
+Minerals 
+ 
+ 
+ 
+ 
+ Calcium 
+g 
+2.5 
+1.5 
+ 
+ Phosphorus 
+g 
+2.0 
+1.25 
+ 
+ Potassium 
+g 
+1.5 
+1.5 
+ 
+ Sodium 
+g 
+0.5 
+0.5 
+ 
+ Chloride 
+g 
+0.75 
+0.75 
+ 
+ Magnesium d 
+g 
+0.20 
+0.10 
+ 
+ Iron e 
+mg 
+20.0 
+20.0 
+ 
+ Copper (extruded) f 
+mg 
+3.75 
+1.25 
+ 
+ Copper (canned) f 
+mg 
+2.10 
+1.25 
+ 
+ Manganese 
+mg 
+1.90 
+1.90 
+ 
+ Zinc 
+mg 
+18.8 
+18.8 
+ 
+ Iodine 
+mg 
+0.45 
+0.15 
+ 
+ Selenium 
+mg 
+0.075 
+0.075 
+ 
+ 
+ 
+ 
+ 
+ 
+Vitamins & Others 
+ 
+ 
+ 
+ 
+ Vitamin A 
+IU 
+1667 
+833 
+83325 
+ Vitamin D 
+IU 
+70 
+70 
+7520 
+ Vitamin E g 
+IU 
+10 
+10 
+ 
+ Vitamin K h 
+mg 
+0.025 
+0.025 
+ 
+ Thiamine i 
+mg 
+1.40 
+1.40 
+ 
+ Riboflavin 
+mg 
+1.00 
+1.00 
+ 
+ Pantothenic acid 
+mg 
+1.44  
+1.44 
+ 
+ Niacin 
+mg 
+15 
+15 
+ 
+ Pyridoxine 
+mg 
+1.0 
+1.0 
+ 
+ Folic acid 
+mg 
+0.20 
+0.20 
+ 
+ Biotin j 
+mg 
+0.018 
+0.018 
+ 
+ Vitamin B12 
+mg 
+0.005 
+0.005 
+ 
+ Choline  
+mg 
+600 
+600 
+ 
+ Taurine (extruded) 
+g 
+0.25 
+0.25 
+ 
+ Taurine (canned) 
+g 
+0.50 
+0.50 
+ 
+a Recommended concentrations for maintenance of body weight at an average caloric 
+intake for cats of a given optimal weight. 
+b Although a true requirement for crude fat per se has not been established, the 
+minimum concentration was based on recognition of crude fat as a source of 
+essential fatty acids, as a carrier of fat-soluble vitamins, to enhance palatability, and 
+to supply an adequate caloric density.  
+c ND – Not Determined. 
+d If the mean urine pH of cats fed ad libitum is not below 6.4, the risk of struvite 
+urolithiasis increases as the magnesium content of the diet increases. 
+e Because of very poor bioavailability, iron from carbonate or oxide sources that are 
+added to the diet should not be considered in determining the minimum nutrient 
+concentration. 
+f Because of very poor bioavailability, copper from oxide sources that are added to the 
+diet should not be considered in determining the minimum nutrient concentration.  
+g Add 10 IU Vitamin E above the minimum concentration for each gram of fish oil per 
+kilogram of diet.  
+
+
+----- pagina 17 -----
+
+APPENDIX A 
+ 
+    17 
+h Vitamin K does not need to be added unless the diet contains more than 25% fish on 
+a dry matter basis. 
+i Because processing and specific ingredients may destroy up to 90% of the thiamine 
+in the diet, allowances in formulation should be made to ensure the minimum 
+nutrient concentration is met after processing. 
+j Biotin does not need to be added unless the diet contains antimicrobial or anti-
+vitamin compounds. 
+ 
+CHANGES TO AND RATIONALE FOR NUTRIENT CONCENTRATIONS - 
+CAT FOODS 
+ 
+CALORIC DENSITY 
+The 2007 AAFCO Feline Nutrition Expert Subcommittee (FNES) retained the 
+presumed caloric density for cat food products at 4000 kcal ME/kg DM for both the 
+nutrient concentrations per kg DM and the nutrient amounts per 1000 kcal ME.  As 
+discussed below and in the footnotes to the Tables of the AAFCO Cat Food Nutrient 
+Profiles, products with a caloric density greater than 4000 kcal ME/kg should have 
+nutrient concentrations corrected for energy density.  Nutrient concentrations in 
+products with energy densities less than 4000 kcal ME/kg should not be corrected. 
+ 
+PROTEIN 
+The 2007 FNES did not change the minimum concentrations of crude protein in 
+the Cat Food Nutrient Profiles, the current values being equal to or greater than the 
+corresponding 2006 NRC RA and FEDIAF Guidelines.1,3  The FNES made 
+modifications to concentrations for some essential amino acids to bring the 
+recommended concentrations in line with the RA in the 2006 NRC and the FEDIAF 
+Guidelines.  Minor increases between 0.02 to 0.04% in amounts of histidine, isoleucine 
+and leucine were made in the Growth and Reproduction Profile.  The amount for 
+methionine and methionine plus cystine was decreased for adult maintenance.  
+Significant increases were made to the recommended phenylalanine and phenylalanine 
+plus tyrosine concentrations to bring the recommendations in line with the RA in the 
+2006 NRC which are based on studies establishing the requirements for maximum 
+nitrogen retention and black hair color.20,21 
+Because of work showing an adverse effect of high concentrations of methionine, 
+the maximum concentration of 1.5% was retained.22  The FNES also set a maximum of 
+1.7% for tryptophan based on the work of Herwill and the recommendations in the 
+2006 NRC and FEDIAF Guidelines.1,3,23   
+ 
+FAT/FATTY ACIDS 
+The 2007 FNES retained the minimum recommended concentrations of crude fat 
+at 9% DM and at 0.02% for arachidonic acid. The minimum concentration for linoleic 
+acid was increased to 0.6% in both Cat Food Nutrient Profiles consistent with the 
+corresponding 2006 NRC RA and FEDIAF Guidelines.  Similar to the CNES, the 
+FNES established minimum recommended concentrations for some fatty acids in the n-
+3 (omega-3) series in the Growth and Reproduction Profile, specifically, alpha-
+linolenic acid at 0.02%, and the combination of eicosapentaenoic plus docosahexaenoic 
+acids at 0.012%, of DM.  The FNES notes that the NRC1 stated no requirement for 
+alpha-linolenic acid in adult cats had been demonstrated and that although a theoretical 
+argument could be made for the adult cat to require eicosapentaenoic plus 
+docosahexaenoic acids on a similar order of magnitude as arachidonic acid given the 
+low delta-6 desaturase activity in the species, no objective data were available to 
+support the establishment of any required concentrations.  Although the FNES did not 
+
+
+----- pagina 18 -----
+
+APPENDIX A 
+ 
+    18 
+feel there was scientific justification for setting minimum recommended concentrations 
+for n-3 fatty acids for adult cats, a recommendation in a comment to list quantities of 
+alpha-linolenic acid and eicosapentaenoic plus docosahexaenoic acids for adult 
+maintenance as being not determined (ND) was accepted by the AAFCO Pet Food 
+Committee. 
+ 
+MINERALS 
+The 2007 FNES increased the recommended concentrations for copper in canned 
+formulas in the Growth and Reproduction Nutrient Profile and for iodine and selenium 
+in both Cat Food Nutrient Profiles.  The recommended copper concentration in canned 
+products for growth and reproduction was increased from 5.0 to 8.4 mg/kg DM to 
+match the 2006 NRC RA for gestation and lactation. 
+For iodine the 2007 FNES increased the recommended concentration in the 
+Growth and Reproduction Nutrient Profile to match the 2006 NRC RA and the 
+FEDIAF Guidelines.  The recommended concentration of iodine for adult maintenance 
+was increased based on the work of Wedekind et al. and corresponds to the amount 
+recommended in the FEDIAF Guidelines.24 
+The 2007 FNES increased the recommended concentrations for selenium in the 
+Cat Food Nutrient Profiles from 0.1 to 0.3 mg/kg to match the recommendations of the 
+2006 NRC RA and the FEDIAF Guidelines.  The 2007 FNES elected to delete the 
+maximum recommended amount of zinc from the Cat Food Nutrient Profiles noting 
+that the 2006 NRC indicated the safe upper limit of zinc for cats was > 600 mg/kg DM 
+for at least short periods of time and that the swine tolerance of 1000 mg/kg DM was 
+the greatest concentration for any tolerance for zinc listed in the 2005 Mineral 
+Tolerance of Animals.  The FNES retained the recommended concentrations set by the 
+1990 FNES for all other minerals in the Cat Food Nutrient Profiles. 
+ 
+VITAMINS & OTHERS 
+The 2007 FNES decreased the recommended minimum concentrations for 
+vitamins A and D in the Cat Food Nutrient Profiles based on the 2006 NRC RA.  The 
+2007 FNES increased the maximum concentration for vitamin D in the Cat Food 
+Nutrient Profiles based on the work of Sih et al. and the SUL in the 2006 NRC.25 
+The 2007 FNES increased the recommended concentration of vitamin E to more 
+closely coincide with the recommendations of the 2006 NRC and the FEDIAF 
+Guidelines.  The recommended concentration of vitamin K in diets containing 25% or 
+more DM derived from fish was unchanged from previous values consistent with the 
+FEDIAF Guidelines. 
+Recommended concentrations of thiamine and pantothenic acid in the Cat Food 
+Nutrient Profiles were increased to match the 2006 NRC RA.  The recommended 
+concentrations of the remaining water soluble vitamins and for taurine were unchanged 
+from the previous values, several being equal or greater than the 2006 NRC RA 
+(riboflavin, niacin, pyridoxine, folic acid and taurine) with previous recommended 
+concentrations for biotin, vitamin B12 and choline being between the 2006 NRC AI 
+and RA. 
+ 
+REFERENCES 
+1 National Research Council. Nutrient Requirements of Dogs and Cats. 
+Washington, DC: National Academy Press, 2006.  
+2 National Research Council. Mineral Tolerance of Animals Second Revised 
+Edition, 2005. Washington, DC: National Academy Press, 2005. 
+
+
+----- pagina 19 -----
+
+APPENDIX A 
+ 
+    19 
+3 Federation Europeenne de l’Industrie des Alimentis pour Animaux Familiers 
+F.E.D.I.A.F. Nutritional Guidelines for Complete and Complementary Pet Food for 
+Cats and Dogs, 2008. 
+4 National Research Council. Nutrient Requirements of Dogs. Washington, DC: 
+National Academy Press, 1985. 
+5 National Research Council. Nutrient Requirements of Cats. Washington, DC: 
+National Academy Press, 1986. 
+6 Czarnecki-Maulden, GL and ER Skoch. Is the tryptophan requirement valid for 
+growing dogs fed canned food?  FASEB J 15 (4): A266, 2001.  
+7 Czarnecki-Maulden GL, Hirakawa DA, Baker DH. Antagonism of arginine by 
+excess dietary lysine in the growing dog.  J Nutr 1985; 115:743-752. 
+8 Hall JA, Wander RC, Gradin JL, Du S-H, Jewell DE.  Effect of dietary n-6-to-n-3 
+fatty acid ratio on complete blood and total white blood cell counts, and T-cell 
+subpopulations in aged dogs.  Am J Vet Res 1999; 60:319-327. 
+9 Wander RC, Hall JA, Gradin JL, Du S-H, Jewell DE.  The ratio of dietary (n-6) 
+to (n-3) influences immune system function, eicosanoid metabolism, lipid peroxidation 
+and vitamin E status in aged dogs.  J Nutr 1997; 127:1198-1205. 
+10 Laflamme D.  Effect of breed size on calcium requirements for puppies.  Comp. 
+Contin. Educ. Pract. Vet.  23 (9(A)):66-69, 2001. 
+11 Hedhammer AF, Wu F, Krook L, Schryver HF, deLahunta A, Whalen JP, 
+Kallfelz FA, Nunez EA, Hintz HF, Sheffy BE, Ryan GD. Overnutrition and skeletal 
+disease: An experimental study in growing Great Dane dogs. Cornell Vet 1974; 
+64(Suppl. 5):9-160. 
+12 Goedegebuure SA, Hazewinkel HA. 1986. Morphological findings in young 
+dogs chronically fed a diet containing excess calcium. Vet Pathol 1986; 23:594-605. 
+13 Hazewinkel HA, van den Brom WE, Van’t Klooster A, Voorhout G, van Wees 
+A. Calcium metabolism in Great Dane dogs fed diets with various calcium and 
+phosphorus levels.  J Nutr 1991; 121(Suppl 11):S99-106. 
+14 Czarnecki-Maulden GL, Rudnick RC, Chausow DG. Copper bioavailability and 
+requirement in the dog: Comparison of copper oxide and copper sulfate (abs). FASEB 
+J 1993;7(3):A306.  
+15 Castillo V, Lalia J, Junco M, Sartorio G, Marquez A, Rodriguez M, Pisarev M.  
+thyroid function in puppies fed a high iodine commercial diet.  Vet J 2001; 161:80-84. 
+16 Castillo V, Pisarev M, Lalia J, Rodriguez M, Cabrin R, Marquez A.  
+Commercial diet induced hyperthyroidism due to high iodine.  A histological and 
+radiological analysis.  Vet Q 2001; 23:218-223. 
+17 Levander O.  Selenium.  In: Trace Elements in Human and Animal Nutrition, 5th 
+edition, Volume 2. Mertz W, editor.  Orlando Press, Orlando Florida, 2006; pp. 209-
+279. 
+18 Tryfonidou MA.  Involvement of vitamin D3 metabolism in calcium 
+homeostasis and skeletal development in growing dogs.  Thesis, Faculty of Veterinary 
+Medicine, Utrecht University, 2002. 
+19 Tryfonidou MA, Stevenhagen JJ, van den Bend GJCM, Oosterlaken-
+Dijksterhuis MA, DeLuca HF, Mol JA, van den Brom WE, van Leeuwen JPTM, 
+Hazewinkel HAW. Moderate cholecalciferol supplementation depresses intestinal 
+calcium absorption in growing dogs. J. Nutr. 132:2644-2650, 2002. 
+20 Williams JM, Morris JG, Rogers QR. Phenylalanine requirements of kittens and 
+the sparing effect of tyrosine.  J. Nutr. 117:1102-1107, 1987. 
+21 Anderson PJB, Rogers QR, Morris JG. Cats require more dietary phenylalanine 
+or tyrosine for melanin deposition in hair than for maximal growth.  J. Nutr. 132:2037-
+2042, 2002. 
+
+
+----- pagina 20 -----
+
+APPENDIX A 
+ 
+    20 
+22 Fau D, Smalley KA, Rogers QR, Morris JG. Effect of excess dietary methionine 
+on weight gain and plasma amino acids in kittens. J Nutr 1987; 117:1838-1843. 
+23 Herwill A. Effect of excess L-tyrosine and L-tryptophan added to a low protein 
+diet for growing kittens.  M.S. thesis, University of California, Davis, 1994. 
+24 Wedekind KJ, Blumer ME, Huntington CE, Spate V, Morris JS.  Feline iodine 
+requirement is lower than the 2006 NRC recommended allowance.  J Anim. Physiol. 
+Anim. Nutr. (Berl.) Nov. 11, 2009. 
+25 Sih TR, Morris JG, Hickman A.  Chronic ingestion of high concentrations of 
+cholecalciferol in cats.  Am J Vet Res 62:1500-1506, 2001. 
+ 
+ 
+Correcting for Moisture Content 
+ 
+The values given in the Profiles are listed in terms of dry matter (DM).  However, 
+the values listed in the guaranteed analysis on dog and cat food labels are given on an 
+"as is" or "as fed" (AF) basis, and values reported from laboratories may be given on 
+either an AF or DM basis. The difference between a value reported on a DM basis 
+versus an AF basis is proportional to the moisture (water) content of the food. The 
+greater the moisture content of a food, the greater the food’s DM values for nutrients 
+would be compared to the corresponding AF values. This discrepancy makes direct 
+comparison between the guaranteed analysis values on a food label and the Profile 
+table values impossible without first correcting one or the other set of values so that 
+both are on an equal-moisture basis.  
+One method of correcting for moisture is the adjustment of the values listed in the 
+guaranteed analysis or reported from a laboratory on an AF basis to a DM basis before 
+comparing with the Profile values. This is done by dividing each AF value by the 
+proportion of DM in the food [(100 - % moisture)/100]. The examples shown below 
+use the guaranteed analysis values, but these adjustments are equally valid for actual 
+laboratory results reported on an AF basis. 
+ 
+Example A1: A Dry Dog Food Making a Growth Claim 
+Moisture-Adjusted Guaranteed Analysis Values 
+ 
+ 
+ 
+ 
+ 
+ 
+Nutrient 
+ 
+ 
+ 
+Guaranteed  
+Analysis 
+Values 
+Dog Food 
+Nutrient 
+Profile 
+Minimum 
+Values for 
+Growth 
+ 
+Moisture - 
+Adjusted 
+Guaranteed 
+Analysis 
+Values 
+ 
+Moisture-
+Adjusted 
+Guaranteed 
+Analysis vs. 
+Profile Values 
+Crude Protein: 
+min. 21% 
+22.5% 
+23.3% 
+OK 
+Crude Fat: 
+min. 8% 
+8.5% 
+8.9% 
+OK 
+Crude Fiber: 
+max. 4% 
+ 
+4.4% 
+ 
+Moisture: 
+max. 10% 
+0% 
+0% 
+ 
+Calcium: 
+min. 1.1% 
+1.2% 
+1.2% 
+OK 
+Phosphorus: 
+min. 0.9% 
+1.0% 
+1.0% 
+OK 
+ 
+Directly comparing the guaranteed values in Example A1 for crude protein, crude 
+fat, calcium, and phosphorus to the minimum values for growth given in the Dog Food 
+Nutrient Profile indicates this food would appear to be deficient.  However, this 
+comparison is not valid, because the values for the food are listed on a 10% moisture 
+(90% DM) basis, but the Profile values are given on a 0% moisture (100% DM) basis.  
+To put both sets of values on an equal-moisture basis, the guaranteed values were 
+
+
+----- pagina 21 -----
+
+APPENDIX A 
+ 
+    21 
+adjusted to 100% DM by dividing each value by the proportion of DM in the food 
+(0.90).  With this correction, it becomes apparent that the moisture-adjusted guaranteed 
+analysis values of the reported nutrients do, in fact, meet the minimum recommended 
+concentrations of the Dog Food Nutrient Profile for Growth and Reproduction.  
+As an alternative method to converting the guaranteed values to a DM basis, the 
+Profile values can be adjusted to match the moisture content of the food.  This can be 
+achieved by simply multiplying each Profile value by the proportion of DM in the food 
+(0.9 in example A1).  Such calculations yield the following: 
+ 
+Example A2: A Dry Dog Food Making a Growth Claim 
+Moisture-Adjusted Profile Values 
+ 
+ 
+ 
+ 
+ 
+ 
+Nutrient 
+ 
+ 
+ 
+Guaranteed 
+Analysis 
+Values 
+Dog Food 
+Nutrient 
+Profile 
+Minimum 
+Values for 
+Growth 
+ 
+Moisture-
+Adjusted 
+Profile    
+Values for 
+Growth 
+Guaranteed 
+Analysis vs. 
+Moisture-
+Adjusted  
+Profile      
+Values 
+Crude Protein: 
+min. 21% 
+22.5% 
+20.25% 
+OK 
+Crude Fat: 
+min. 8% 
+8.5% 
+7.65% 
+OK 
+Crude Fiber: 
+max. 4% 
+ 
+ 
+ 
+Moisture: 
+max. 10% 
+0% 
+10% 
+ 
+Calcium: 
+min. 1.1% 
+1.2% 
+1.08% 
+OK 
+Phosphorus: 
+min. 0.9% 
+1.0% 
+0.9% 
+OK 
+ 
+ 
+Correcting for Energy Density 
+ 
+The values given in the Profiles presume an energy density of 4000 kcal ME/kg 
+DM. Some dog and cat foods will have energy densities close to this amount. 
+However, many products may have DM energy densities considerably greater than the 
+presumed values. When these more energy-dense products are fed, the dog or cat will 
+require less of the food to meet its caloric requirements.  Under these circumstances, 
+the concentrations of the other nutrients in the food should be increased 
+proportionately, so that the dog or cat will receive the needed amount of each nutrient 
+in the smaller amount of food.  Therefore, when the energy density of the dog or cat 
+food exceeds 4000 kcal ME/kg DM the nutrient concentrations should be corrected for 
+caloric content before valid comparisons to the appropriate AAFCO Nutrient Profile 
+are made. 
+Conversely, products could be much lower in energy density than 4000 kcal 
+ME/kg DM.  Theoretically, a lower concentration of the other nutrients should be 
+required, assuming that the dog or cat is allowed, and able, to consume enough of the 
+product to meet its caloric needs and that those caloric needs are typical for the average 
+dog or cat of the specific life stage.  Because this assumption does not always hold 
+true, the nutrient content should not be decreased in less energy-dense products, that is, 
+the nutrient concentrations in such products should not be corrected for energy density.  
+In fact, if the food is intended to supply significantly fewer calories in somewhat 
+smaller amounts of food than typically consumed by the average weight and specific 
+life stage of the animal, the concentrations of some nutrients per 1000 kcal ME may 
+need to be increased compared to amounts listed in the tables to ensure the animal is 
+provided adequate amounts of those essential nutrients in the quantity of food 
+containing the targeted consumption of daily calories.  Furthermore, unless a product 
+
+
+----- pagina 22 -----
+
+APPENDIX A 
+ 
+    22 
+meeting the definition for a “lite” or “low calorie” product as specified in Model 
+Regulation PF10 has successfully passed the appropriate AAFCO Feeding Protocols, 
+the product should not be considered adequate for growth or reproduction, regardless 
+of the concentrations of the other nutrients. 
+The first step in correcting for energy density is to determine the actual energy 
+density of the food. The determination should be done in accordance with Model 
+Regulation PF9.  After determining the energy density of the food, the nutrient values 
+can be converted to a per 4000 kcal ME/kg DM or a per 1000 kcal ME basis and 
+compared to the values in the appropriate AAFCO Nutrient Profile. 
+ 
+Example B1:  A Canned Cat Food Making a Growth Claim: 
+Moisture and Energy Adjusted Guaranteed Analysis Values 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Nutrient 
+ 
+ 
+ 
+ 
+Guaranteed 
+Analysis 
+Values 
+ 
+ 
+Moisture - 
+Adjusted 
+Guaranteed 
+Analysis 
+Values 
+ 
+Moisture & 
+Energy-
+Adjusted 
+Guaranteed 
+Analysis 
+Values 
+ 
+Growth & 
+Reproduction 
+Cat Food 
+Profile 
+Values per kg 
+DM 
+Status of 
+Energy  
+Adjusted 
+Guaranteed 
+Analysis vs. 
+Profile  
+Values 
+Crude 
+Protein: 
+ 
+min. 9% 
+ 
+36% 
+ 
+32.1% 
+ 
+30.0 
+ 
+OK 
+Crude Fat: 
+min. 7% 
+28% 
+25.0% 
+9.0 
+OK 
+Crude 
+Fiber: 
+ 
+max. 1% 
+ 
+ 
+ 
+ 
+Moisture: 
+max. 75% 
+0% 
+0% 
+ 
+ 
+Ash: 
+max. 2% 
+ 
+ 
+ 
+ 
+Calcium: 
+min. 0.25% 
+1.0% 
+0.89% 
+1.0 
+Low 
+Phosphorus: 
+min. 0.2% 
+0.8% 
+0.71% 
+0.8 
+Low 
+Energy:a 
+1120 kcal 
+ME/kg AF 
+4480 kcal 
+ME/kg DM 
+4000 kcal 
+ME/kg DM 
+4000 kcal 
+ME/kg DM 
+ 
+a Energy = (3.5 x g Crude Protein) + (8.5 x g Crude Fat) + (3.5 x g Nitrogen Free Extractb (CHO)) 
+= (3.5 x 90) + (8.5 x 70) + (3.5 x 60) = 1120 
+b % Nitrogen Free Extract = 100- (% Crude Protein + % Crude Fat + % Crude Fiber + % Moisture + % Ash) 
+ 
+A cursory examination of the values listed in the guaranteed analysis compared to 
+the minimum values given in the Cat Food Nutrient Profiles expressed as per kg DM 
+containing 4000 kcal ME revealed that a direct comparison would not be valid. 
+Because the food in Example B1 was 75% moisture (25% DM), the major reason for 
+the discrepancy was likely due to water content.  By first dividing the guaranteed 
+values by the proportion of DM (0.25), the moisture-adjusted guaranteed values were 
+derived. Comparing these corrected values with the Profile values, this food appeared 
+to meet the minimums for a growth claim.  
+However, in this example, direct comparison of the moisture-adjusted guaranteed 
+values with the Profile values was premature.  The high DM crude fat content of the 
+food compared to the Profile value (25% vs. 9.0%) was an indication that the food was 
+probably more energy-dense than the Profile value of 4000 kcal ME/kg DM.  When 
+calculated, in fact, it was found to be 4480 kcal ME/kg DM (1120 kcal ME/kg AF). 
+Therefore a second adjustment to account for the differences in energy density was 
+warranted.  This was achieved by dividing each moisture-adjusted guaranteed value by 
+4480 (the DM energy density of the food) and then multiplying the result by 4000 (the 
+standard energy density).  This second manipulation revealed that the energy-adjusted 
+
+
+----- pagina 23 -----
+
+APPENDIX A 
+ 
+    23 
+guaranteed analysis values for the calcium and phosphorus were, in fact, below 
+minimum concentrations for growth. 
+As demonstrated with the moisture correction methods above, an alternative to 
+correcting the values of the food to meet the Profile energy density is correcting the 
+Profile values to meet the food's energy density.  Below, each Profile value was 
+divided by 4000, and the result was multiplied by the appropriate value for energy 
+density (1120 in this example).  
+ 
+Example B2:  A Canned Cat Food Making a Growth Claim: 
+Energy Adjusted Profile DM Values 
+ 
+ 
+ 
+ 
+ 
+ 
+Nutrient 
+ 
+ 
+ 
+Guaranteed 
+Analysis 
+Values 
+Cat Food 
+Nutrient 
+Profile 
+Minimum 
+Values for 
+Growth 
+ 
+ 
+Energy 
+Adjusted 
+Profile 
+Values 
+ 
+Guaranteed vs. 
+Energy 
+Adjusted 
+Profile Values 
+(Columns 2 vs. 4) 
+Crude Protein: 
+min. 9% 
+30.0% 
+8.4% 
+OK 
+Crude Fat: 
+min. 7% 
+9.0% 
+2.5% 
+OK 
+Crude Fiber: 
+max. 1% 
+ 
+ 
+ 
+Moisture: 
+max. 75% 
+ 
+ 
+ 
+Ash: 
+max. 2% 
+ 
+ 
+ 
+Calcium: 
+min. 0.25% 
+1.0% 
+0.28% 
+Low 
+Phosphorus: 
+min. 0.2% 
+0.8% 
+0.22% 
+Low 
+Energy 
+1120 kcal 
+ME/kg AF 
+4000 kcal 
+ME/kg DM 
+1120 kcal 
+ME/kg AF 
+ 
+ 
+Note that although the energy-adjusted minimum for crude fat calculated out to be 
+2.5%, a much higher concentration of crude fat (in this case 7%) predefined the higher 
+energy density and dictated the need for energy adjustment in the first place.  Because 
+for the most part a higher concentration of crude fat predetermines what the higher 
+energy density will be, the energy-adjusted Profile minimum value for crude fat should 
+always be met and will often be grossly exceeded. 
+ 
+The last method for correcting for energy density is to convert the guaranteed 
+values for the food to a per 1000 kcal basis, and to compare these values with those 
+listed in the appropriate Profile based on Calorie Content. This is accomplished by 
+dividing the AF values in the guaranteed analysis by the AF energy density (1120 kcal 
+ME/kg in this example) and then multiplying the result by 1000 kcal ME/kg.  The 
+result is the values appearing in the fourth column of Example B3 below with the 
+conclusion being identical to that reached in Examples B1 and B2 above. 
+ 
+Example B3:  A Canned Cat Food Making a Growth Claim: 
+Energy Adjusted Guaranteed Analysis Values 
+ 
+ 
+ 
+ 
+Nutrient 
+ 
+Guaranteed 
+Analysis 
+Value 
+Amount 
+per kg 
+(1000 g) 
+As-Fed 
+Product 
+Amount 
+per 1000 
+kcal ME 
+Profile 
+Amount 
+per 1000 
+kcal ME 
+ 
+ 
+ 
+Status 
+Crude Protein 
+9% 
+90 g 
+80.4 g 
+75 
+OK 
+Crude Fat 
+7% 
+70 g 
+62.5 g 
+22.5 
+OK 
+
+
+----- pagina 24 -----
+
+APPENDIX A 
+ 
+    24 
+Crude Fiber 
+1% 
+10 g 
+ 
+ 
+ 
+Moisture 
+75% 
+750 g 
+ 
+ 
+ 
+Ash 
+2% 
+20 g 
+ 
+ 
+ 
+Calcium 
+0.25% 
+2.5 g 
+2.2 g 
+2.5 
+Low 
+Phosphorus 
+0.20% 
+2.0 g 
+1.9 g 
+2.0 
+Low 
+Nitrogen Free 
+Extract (CHO)a 
+ 
+(8%) 
+ 
+60 g 
+ 
+ 
+ 
+Energyb 
+ 
+1120 kcal M 
+ 
+ 
+a % Nitrogen Free Extract = 100- (% Crude Protein + % Crude Fat + % Crude Fiber + % Moisture + % Ash) 
+b Energy = (3.5 x 90) + (8.5 x 70) + (3.5 x 60) = 1120 
+ 
+ 
+ 

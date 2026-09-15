@@ -527,7 +527,15 @@ def _tope_patologia_roto(gramos, al, patologias, etapa="Adulto",
     for clave, tope in topes.items():
         v = por_1000(clave)
         if v > tope * MARGEN:
-            _de = ("recomendado para el perro adulto sano" if clave in _del_libro
+            # ⚠️ Y NO SIEMPRE ES «EL PERRO ADULTO SANO» (15 de septiembre de
+            # 2026). Este texto decía eso de CUALQUIER techo del libro, y los
+            # del cachorro son del libro también: el calcio y el fósforo de la
+            # Tabla 17-1 de SACN5 y la vitamina D. O sea que a un veterinario
+            # que formulaba un cachorro se le decía que el techo de 2750 que le
+            # acababa de tirar el menú era «el recomendado para el perro adulto
+            # sano» — que es falso, y encima le invita a descartarlo por no
+            # venir a cuento. Lo cazó el BLOQUE 62 de rebote.
+            _de = ("recomendado para el perro sano en esta etapa" if clave in _del_libro
                    else "por patología")
             rotos.append(f"{clave} {v:.1f} (tope {tope:.1f} {_de})")
 

@@ -482,7 +482,17 @@ _EN_EL_REPO = ("fediaf", "sacn5", "small animal clinical nutrition", "nrc",
                # clave el parrafo se atribuia a SACN5 -- que es la otra fuente
                # que nombra -- y las dos citas salian acusadas de no aparecer
                # en SACN5, que es verdad y no es el punto.
-               "jewell")
+               "jewell",
+               # ⚠️ AAFCO (15 de septiembre de 2026). No es una de las cuatro
+               # fuentes del motor y no manda nada -- si contradice a FEDIAF gana
+               # FEDIAF --, pero se la cita como tercera opinion y hasta hoy no se
+               # podia comprobar. Su Apendice A entero vive en
+               # `aafco_nutrient_profiles_2014.txt`, sacado del PDF publico con
+               # `get_text()`. Entro el dia que este auditor cazo una cita suya
+               # MAL COPIADA: se habia escrito desde un resumen de busqueda y no
+               # desde el documento, y decia «will have a ratio greater than 0.6:1»
+               # donde AAFCO escribe «will have a ratio of > 0.6:1».
+               "aafco")
 # ⚠️ «purina institute» Y NO «purina» A SECAS (12 de septiembre). La marca se
 # llama igual que el nutriente en español y en ingles («purinas», «purine»), asi
 # que con la clave corta cualquier parrafo sobre purinas se atribuia a la marca y

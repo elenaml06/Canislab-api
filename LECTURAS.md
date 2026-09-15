@@ -2016,30 +2016,56 @@ el «Hill's Science and Technology Center». Una ración BARF fresca no es el mi
 escenario oxidativo que una croqueta extrusionada y almacenada. No es un reproche
 al estudio: es que la extrapolación no es automática.
 
-⚠️ **Y AQUÍ HAY UNA MEDIDA DEL REPO QUE SE HA QUEDADO VIEJA HOY MISMO, y se
-corrige.** `CLAUDE.md` decía que por la relación clásica vitamina E:PUFA (≥0,6
-mg/g) «vamos holgados — **0 de 216** menús por debajo, el peor a 1,53». Remedido
-el 15 de septiembre sobre el catálogo regenerado: **min 0,53 · mediana 3,24 ·
-máx 29,53 mg/g, y 8 de 214 por debajo de 0,6**. La causa es del mismo día: la
-revisión de las 25 etiquetas dejó a cero la vitamina E de las cinco V-INTEGRA
-—era un antioxidante **tecnológico**, no un aditivo nutricional— y bajó las de
-otras tres, así que la mediana sube porque los menús se van a las fichas de
-vitamina E suelta, y la cola baja en los que no las llevan. **Una medida no
-caduca sola: caduca cuando cambia el catálogo, y hay que rehacerla en el mismo
-commit.**
+⚠️ **Y AQUÍ, LA RELACIÓN VITAMINA E:PUFA — QUE EL REPO TENÍA BIEN EN EL NÚMERO
+Y MAL EN LA UNIDAD, Y QUE YO EMPEORÉ ANTES DE ARREGLARLA.** Merece contarse
+entero porque es un fallo de método en tres pasos y lo cazó la maquinaria.
 
-⚠️ Y de paso, algo que hay que decidir y no inventar: **no está claro si ese
-0,6 es mg o UI**. AAFCO lo enuncia así — *«a diet containing 50 IU of vitamin E
-will have a ratio greater than 0.6:1 when the PUFA content is 83 grams or
-less»* —, o sea **UI por gramo de PUFA**, que en d-α-tocoferol son 0,40 mg/g.
-El repo lo tenía escrito en mg. Con 0,40 los que se quedan por debajo son
-menos. Va a la **P-45** con el resto, porque cambiar el umbral por mi cuenta
-sería exactamente inventarse la cifra.
+`CLAUDE.md` decía: «por la relación clásica de vitamina E:PUFA (**≥0,6 mg/g**)
+vamos holgados — 0 de 216 menús por debajo, el peor a 1,53». Yo remedí, me salió
+**8 de 214 por debajo**, y lo escribí como que la medida había caducado. **Las
+dos cosas estaban mal**, y la que estaba mal de verdad era la **unidad**.
 
-⚠️ Al medirlo me comí la trampa nº4 de `UNIDADES.md` y la dejo escrita porque
-es la que más se repite: **el araquidónico va en `mg` y los demás ácidos grasos
-en `g`**. Sumarlos sin dividir da un PUFA 240 veces mayor y una relación de
-0,03 que parece un desastre y no es nada.
+Fui al documento de AAFCO — porque la primera versión de esto la cité de un
+**resumen de búsqueda** y no de la fuente, que es justo lo que este método
+prohíbe — y la nota al pie *h* de su Apéndice A dice, literal:
+
+> «It is recommended that the ratio of IU of vitamin E to grams of
+> polyunsaturated fatty acids (PUFA) be > 0.6:1.  A diet containing 50 IU of
+> vitamin E will have a ratio of > 0.6:1 when the PUFA content is 83 grams or
+> less.  Diets containing more than 83 grams of PUFA should contain an
+> additional 0.6 IU of vitamin E for every gram of PUFA.»
+
+O sea **UI de vitamina E por gramo de PUFA**, dicho con todas las letras en la
+primera frase. En d-α-tocoferol, 0,6 UI/g son **0,40 mg/g**. El repo llevaba
+escrito «0,6 mg/g», que es **un 50 % más estricto** que lo que dice la fuente.
+
+Remedido con la unidad buena, sobre el catálogo regenerado del 15 de septiembre:
+
+| | |
+|---|---|
+| vitamina E:PUFA | **min 0,79 · mediana 4,82 · máx 44,01 UI/g** |
+| Por debajo de 0,6 UI/g | **0 de 214** |
+
+O sea que la **conclusión del repo era correcta** —vamos holgados— y lo que
+había que corregir era la etiqueta de la unidad y el «peor caso», que ya no es
+1,53 sino 0,79 UI/g. El texto de AAFCO entra al repo entero
+(`aafco_nutrient_profiles_2014.txt`, sacado del PDF con `get_text()`, o sea
+rehacible) para que esto se pueda comprobar y no haya que volver a fiarse de un
+resumen.
+
+⚠️ Y **dos cosas más de esa misma nota que el motor NO aplica hoy**, y que son
+de verdad para la P-45: (1) el requisito de AAFCO **sube con el PUFA** por
+encima de 83 g/kg, cosa que una ración BARF con aceite de pescado puede pasar;
+y (2) su perfil **felino** trae una regla aún más dura — *«Add 10 IU Vitamin E
+above the minimum concentration for each gram of fish oil per»*—. FEDIAF dice lo
+mismo en su §3.3 **sin dar cifra para el perro** (`documentado_sin_cifra` en
+`requisitos_condicionales.json`). Atar la vitamina E al PUFA de CADA ración
+sería mejor que un suelo plano, y por eso está en la pregunta.
+
+⚠️ Y al medirlo me comí la trampa nº4 de `UNIDADES.md`, que la dejo escrita
+porque es la que más se repite: **el araquidónico va en `mg` y los demás ácidos
+grasos en `g`**. Sumarlos sin dividir da un PUFA 240 veces mayor y una relación
+de 0,03 que parece un desastre y no es nada.
 
 ### Y la comparación que ordena todo esto
 

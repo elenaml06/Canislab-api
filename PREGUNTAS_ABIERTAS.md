@@ -2857,15 +2857,11 @@ Tres cosas que cambian cómo se lee el 400, y las tres son para Adrián:
 2. **Lo medido es un biomarcador en suero** —alcanales, o sea peroxidación
    lipídica—, no un resultado clínico. 40 perros adultos sanos, 6 semanas.
 3. **Era un estudio de pienso SECO** (Hill's). Una ración BARF fresca no es el
-   mismo escenario oxidativo. ⚠️ Y la relación clásica vitamina E:PUFA, remedida
-   el 15 de septiembre sobre el catálogo regenerado: **min 0,53 · mediana 3,24 ·
-   máx 29,53 mg/g, y 8 de 214 menús por debajo de 0,6** (el repo decía «0 de 216,
-   el peor a 1,53» y eso caducó ese mismo día, al dejar a cero la vitamina E de
-   las cinco V-INTEGRA por ser un antioxidante tecnológico). ⚠️ Y **no está claro
-   si ese 0,6 es mg o UI**: AAFCO lo enuncia como *«a diet containing 50 IU of
-   vitamin E will have a ratio greater than 0.6:1 when the PUFA content is 83
-   grams or less»*, o sea UI/g, que son 0,40 mg/g. Esto es parte de la pregunta
-   3 de abajo.
+   mismo escenario oxidativo. Y por la relación clásica vitamina E:PUFA vamos
+   holgados: **min 0,79 · mediana 4,82 · máx 44,01 UI/g, y 0 de 214 menús por
+   debajo** del 0,6 UI/g que recomienda AAFCO (nota *h* de su Apéndice A,
+   comprobada contra el documento: *«It is recommended that the ratio of IU of
+   vitamin E to grams of polyunsaturated fatty acids (PUFA) be > 0.6:1»*).
 
 ### Lo que cuesta aplicarlo, medido
 
