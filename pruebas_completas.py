@@ -7519,18 +7519,61 @@ finally:
     _api._PEOR_CASO_SIEMPRE_SOLO_PRUEBAS = False
     _api.PRESUPUESTO_SEGUNDOS_VARIOS_PERROS = _PRESU_REAL_B48
 
-# Medir lo que cuesta no puede dar MENOS menús que suponer el peor caso: la
-# estimación medida nunca es mayor que el peor caso, así que nunca corta
-# antes. Si sale igual o peor, es que ha dejado de medirse.
-if max(_midiendo_b48) <= max(_peor_b48):
+# ⚠️ Y AQUÍ SE DEJA DE CONTAR MENÚS, QUE ES LA TERCERA VEZ QUE ESTA
+# COMPROBACIÓN SE CAE POR LO MISMO (15 de septiembre de 2026).
+#
+# Primero comparaba SUMAS: se puso roja con [2, 1, 3] contra [2, 2, 2] -- las
+# sumas empatan a 6 y una sola ronda con mala suerte lo tira. Se cambió a
+# comparar MÁXIMOS, y se volvió a poner roja el mismo día con [2, 2, 2, 2]
+# contra [1, 1, 2, 1]: midiendo salen 2 SIEMPRE y suponiendo el peor caso sale
+# 1 casi siempre -- o sea que medir SÍ estaba dando ventaja, clarísima -- y una
+# sola ronda afortunada del peor caso empató el máximo y decidió el veredicto.
+#
+# LA LECCIÓN, Y ES POR LA QUE ESTO NO SE ARREGLA CON MÁS RONDAS: cuando se
+# quita el mecanismo, las dos versiones pasan a ser LA MISMA, o sea dos
+# muestras de la misma distribución. Comparar dos muestras iguales con un `<`
+# acierta la mitad de las veces, se le den 4 rondas o 40. Una comprobación que
+# con el fallo puesto pasa el 50 % de las veces no es una comprobación: es una
+# moneda. Y este fichero ya tiene escrito que un test que falla cuando el motor
+# acierta enseña a desconfiar de la batería.
+#
+# LO QUE SÍ ES DETERMINISTA es la propiedad que se quiere afirmar, y no hace
+# falta el reloj para verla: la estimación medida **nunca puede ser mayor que
+# el peor caso**, porque se calcula con `min(peor_caso, ...)`, y **tiene que
+# mirar lo que han tardado las rondas anteriores**. Eso se lee del código de la
+# propia función, igual que el BLOQUE 86 lee el bytecode y el 112 lee el fuente
+# de `main.py`. Si alguien vuelve a decidir por el tope, el `min` y las
+# `duraciones_ronda` desaparecen y esto falla SIEMPRE, no la mitad de las veces.
+import inspect as _insp48
+_src48 = _insp48.getsource(_api.endpoint_varios_perros)
+_i48 = _src48.find("def coste_estimado_de_la_proxima_ronda")
+_fun48 = _src48[_i48:_i48 + 1400] if _i48 >= 0 else ""
+if not _fun48:
+    fallos.append("BLOQUE48: no se encuentra `coste_estimado_de_la_proxima_ronda` dentro de "
+                  "`/menu/varios-perros`. O se ha renombrado o ha desaparecido, y con ella la "
+                  "única razón por la que la semana de varios perros no reparte el presupuesto "
+                  "a ciegas")
+else:
+    for _quiere48, _por_que48 in (
+            ("min(peor_caso,", "sin el `min(peor_caso, ...)` la estimación podría salir MAYOR "
+                               "que el tope, y entonces cortaría ANTES que suponer el peor "
+                               "caso, que es justo lo contrario de para lo que existe"),
+            ("duraciones_ronda", "sin mirar lo que han tardado las rondas anteriores no está "
+                                 "midiendo nada: está decidiendo por el tope")):
+        if _quiere48 not in _fun48:
+            fallos.append(f"BLOQUE48: `coste_estimado_de_la_proxima_ronda` ya no contiene "
+                          f"«{_quiere48}» — {_por_que48}")
+# Y las dos tiradas se IMPRIMEN, porque el número sigue siendo interesante
+# aunque no pueda decidir el veredicto: si algún día midiendo saliera
+# sistemáticamente peor que el peor caso, se vería aquí.
+print(f"  midiendo lo que cuesta cada ronda: {_midiendo_b48} menús · "
+      f"suponiendo el peor caso: {_peor_b48}")
+if max(_midiendo_b48) < max(_peor_b48):
     fallos.append(
-        f"BLOQUE48: en su MEJOR tirada, midiendo lo que cuesta cada ronda salen "
-        f"{max(_midiendo_b48)} menús ({_midiendo_b48}) y suponiendo el peor caso "
-        f"{max(_peor_b48)} ({_peor_b48}) -- o sea que medir no está dando NINGUNA ventaja. "
-        f"La estimación medida nunca puede ser mayor que el peor caso (lo dice el "
-        f"`min(peor_caso, ...)` de `coste_estimado_de_la_proxima_ronda`), así que esto solo "
-        f"pasa si se ha vuelto a decidir por el tope. (Se comparan las dos en la misma "
-        f"máquina y seguidas, así que la carga afecta a las dos igual.)")
+        f"BLOQUE48: midiendo salen MENOS menús que suponiendo el peor caso "
+        f"({_midiendo_b48} contra {_peor_b48}). Eso no puede pasar por azar: la estimación "
+        f"medida nunca es mayor que el peor caso, así que nunca puede cortar antes. Si sale "
+        f"así, la cuenta de `coste_estimado_de_la_proxima_ronda` está mal.")
 if _mudas_b48:
     fallos.append(
         f"BLOQUE48: han salido menos menús de los 3 pedidos ({_mudas_b48}) y la respuesta NO "
@@ -7585,6 +7628,7 @@ def _cubre_b49(gramos, clave, der, etapa, peso):
     return None, _f.get("semaforo")
 
 _yodos_b49, _caidos_b49, _cortos_b49 = [], 0, []
+_infactibles_b49 = set()
 for _der_b49, _peso_b49 in ((300, 3), (200, 1.5), (250, 2.2), (400, 4.5)):
     for _sem_b49 in range(1, 6):
         # ⚠️ EL MISMO TIEMPO QUE LE DA LA API, Y NO MENOS (9 septiembre).
@@ -7601,10 +7645,30 @@ for _der_b49, _peso_b49 in ((300, 3), (200, 1.5), (250, 2.2), (400, 4.5)):
         # producción. Bajarle el listón al umbral de fallos habría escondido
         # el problema de verdad si algún día vuelve; darle el tiempo real lo
         # deja midiendo lo que dice medir.
+        # ⚠️ Y SE MIRA EL ESTADO DEL SOLVER, PORQUE «NO SALE» SON DOS COSAS
+        #    DISTINTAS (15 de septiembre de 2026). Esto resuelve en las
+        #    proporciones de BARF y con dos suplementos -- o sea el peldaño 1,
+        #    sin escalera -- y contaba como «caído» cualquier caso sin menú.
+        #
+        #    Ese día el toy de 1,5 kg pasó a ser INFACTIBLE DEMOSTRADO en ese
+        #    peldaño: el techo LEGAL de selenio (que desde ese día se mide sobre
+        #    materia seca, la única forma en que FEDIAF lo publica) y el tope de
+        #    UN multivitamínico le cierran la ventana. Sus cinco semillas se
+        #    contaban como cinco fallos del margen del suelo, que es de lo que
+        #    este bloque habla, y no tenían nada que ver.
+        #
+        #    `status 2` no es «se ha caído»: es «en este peldaño no hay menú», y
+        #    para eso está la escalera. Lo que sí se exige es que la escalera se
+        #    lo dé -- si no, el perro se queda sin comer de verdad y eso no se
+        #    puede tapar contando estados.
+        _est_b49 = {}
         _ok_b49, _g_b49 = _api.resolver_v2(
             _der_b49, "Adulto", _al_b49, _req_b49, _peso_b49, _api.dosis_maxima_fabricante,
             margenes_categoria=_api.MARGENES_V2, max_suplementos=2, time_limit=15,
-            semilla_aleatoria=_sem_b49)
+            semilla_aleatoria=_sem_b49, estado_del_solver=_est_b49)
+        if not _ok_b49 and _est_b49.get("status") == 2:
+            _infactibles_b49.add((_der_b49, _peso_b49))
+            continue
         if not _ok_b49:
             _caidos_b49 += 1
             continue
@@ -7622,6 +7686,25 @@ if _cortos_b49:
         f"mínimo después de redondear los gramos {_cortos_b49[:3]}. El margen del suelo "
         f"tiene que cubrir el paso de redondeo de la fuente más concentrada, no un "
         f"porcentaje fijo -- con solo el 1,5 % esto bajaba al 82 %.")
+# Y los que NO tienen menú en ese peldaño tienen que tenerlo bajando, verde.
+for _der_inf49, _peso_inf49 in sorted(_infactibles_b49):
+    _r_inf49 = _c.post("/menu/v2", json={
+        "nombres_alimentos": [], "modo": "automatico", "der_objetivo": _der_inf49,
+        "peso_perro_kg": _peso_inf49, "etapa_requisitos": "Adulto",
+        "presupuesto_segundos": 120.0}).json()
+    if not _r_inf49.get("factible"):
+        fallos.append(f"BLOQUE49: el perro de {_peso_inf49} kg (DER {_der_inf49}) sale "
+                      f"INFACTIBLE DEMOSTRADO en las proporciones de BARF con dos suplementos "
+                      f"Y TAMPOCO le da menú la escalera entera con 120 s. Aquí ya no es la "
+                      f"forma: se ha cerrado su ventana de verdad")
+    elif verificar(_r_inf49["menu"], _al_b49, _req_b49, _der_inf49, "Adulto")["semaforo"] != "verde":
+        fallos.append(f"BLOQUE49: el perro de {_peso_inf49} kg baja de peldaño y el menú no "
+                      f"está verde. Lo que cede es la FORMA, nunca un requisito (regla 3)")
+    else:
+        print(f"  perro de {_peso_inf49} kg: sin menú en el peldaño de BARF (infactible "
+              f"demostrado, lo cierran el techo LEGAL de selenio y el tope de un "
+              f"multivitamínico) y CON menú verde en «{_r_inf49.get('peldano')}»")
+
 if _caidos_b49:
     fallos.append(
         f"BLOQUE49: {_caidos_b49} de 20 menús de perros pequeños no salen o no están verdes. "
@@ -12796,7 +12879,27 @@ def _espia_76(*_a76, **_k76):
     _est = _k76.get("estado_del_solver")
     _r76 = _orig_76(*_a76, **_k76)
     _marg76 = _k76.get("margenes_categoria")
-    _clave76 = (repr(sorted((_marg76 or {}).items())), _k76.get("max_suplementos"))
+    # ⚠️ LA CLAVE TIENE QUE IDENTIFICAR EL PROBLEMA, NO EL PELDAÑO (15 de
+    #    septiembre de 2026). Era (márgenes, nº de suplementos), y con eso este
+    #    bloque acusaba de «repetir un peldaño ya demostrado imposible» NUEVE
+    #    veces de 18 llamadas... a un camino que no repite nada.
+    #
+    #    Lo que pasaba: cuando la escalera entera sale infactible, la API llama
+    #    otra vez al solver con `soltar_limites_patologia` para poder DECIRLE al
+    #    usuario cuál es el límite que choca -- suelta el tope de fósforo, luego
+    #    el de sodio, luego el de potasio... Son NUEVE problemas distintos, cada
+    #    uno con una restricción menos, y tiran el menú que construyen (lo
+    #    vigila el BLOQUE 52). Con la clave corta los nueve parecían el mismo.
+    #    La prueba: con esa clave uno salía `status 2` y el siguiente `status 0`
+    #    -- el mismo problema no puede ser imposible y tener solución a la vez,
+    #    así que no era el mismo problema.
+    #
+    #    Con la clave completa: 0 repetidos de 18. Y sigue cazando lo que existe
+    #    para cazar, porque lo que el bucle de reintentos repite es la llamada
+    #    IDÉNTICA, con los mismos `soltar`, `forzar` y `preferir`.
+    _clave76 = (repr(sorted((_marg76 or {}).items())), _k76.get("max_suplementos"),
+                repr(_k76.get("soltar_limites_patologia")), repr(_k76.get("forzar")),
+                repr(_k76.get("preferir")), repr(_k76.get("restringir_a_elegidos")))
     _llamadas_76.append((_clave76, bool((_est or {}).get("infactible_demostrado"))))
     return _r76
 
