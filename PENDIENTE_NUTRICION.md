@@ -1799,7 +1799,7 @@ el omega-3 de la artrosis.
 
 ## §22 · Cerrar el bucle del BCS: el peso adulto de la TRAYECTORIA, no de la tabla
 
-Con el historial de pesadas hecho (P-38), el ±10 % por condición corporal deja de
+Con el historial de pesadas hecho (P-40, que era la P-38 antes de renumerarla), el ±10 % por condición corporal deja de
 poder ser lo que la fuente describe: SACN5 cap.17 pide reevaluar **cada dos
 semanas** y ajustar, y hoy el ±10 % se aplica una vez y no se acumula, porque el
 DER se recalcula de cero en cada pantalla.

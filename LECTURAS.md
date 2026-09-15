@@ -151,11 +151,11 @@ cambia sola.
 
 ## Today's Veterinary Practice — Cook & Atiee, oxalato cálcico canino · releída entera el 12-sep-2026
 
-Se lee entera porque es la que podía cerrar **P-11** (si el oxalato necesita un
+Se lee entera porque es la que podía cerrar **P-41** (antes P-11) (si el oxalato necesita un
 suelo de fósforo). **No lo cierra: no da ninguna cifra de fósforo.** La única
 vez que nombra el fosfato es como inhibidor endógeno —*«This is an inorganic
 phosphate found in blood and urine that reduces the crystallization of calcium
-salts»*—, que es fisiología, no una recomendación dietética. Así que P-11 sigue
+salts»*—, que es fisiología, no una recomendación dietética. Así que P-41 sigue
 abierta y ahora se sabe que es una tercera fuente que no la contesta.
 
 **Y lo demás ya estaba aplicado, entero y bien.** Es la primera fuente que se
@@ -220,7 +220,7 @@ Lo que sí da son **objetivos en SANGRE**, que es otra cosa:
 
 Y con **suelo**: *«but not less than 0.9 mmol/l; <4.6 mg/dl but >2.7 mg/dl»*. O sea que la
 propia IRIS dice que bajar el fosfato **de más** también es malo — en sangre,
-no en el plato, pero es la misma forma que la pregunta P-11 sobre el suelo de
+no en el plato, pero es la misma forma que la pregunta P-41 (antes P-11) sobre el suelo de
 fósforo del oxalato.
 
 ### Y lo que dice del estadio 4 va en la dirección CONTRARIA

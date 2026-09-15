@@ -11226,7 +11226,22 @@ try:
     _pn66 = open("PREGUNTAS_ABIERTAS.md", encoding="utf-8").read()
 except OSError:
     _pn66 = ""
-_nums66 = _re_b65.findall(r"^### (P-\d+) ·", _pn66, _re_b65.M if hasattr(_re_b65, "M") else 0)
+# ⚠️ Y EL PATRÓN TIENE QUE ACEPTAR EL TACHADO, que es lo que lo dejó ciego a la
+# mitad del registro (15 de septiembre de 2026). Esto se escribió el 12 de
+# septiembre para cazar los dos «P-10»… y miraba `^### P-nn ·`, cuando una
+# pregunta CERRADA se escribe `### ~~P-nn · …~~`. O sea que solo veía las
+# abiertas.
+#
+# Y eso no es medio guardia: es **ninguno** para el caso que de verdad pasa. Una
+# pregunta nueva coge el siguiente número libre mirando las que se ven, y las
+# cerradas no se ven -- así que el choque casi siempre es abierta-contra-cerrada.
+# Medido el 15 de septiembre, con este patrón arreglado: había **dos P-38** (el
+# historial de pesadas, cerrada, contra la densidad energética) y **dos P-11**
+# (las dos razas de FEDIAF, cerrada, contra el suelo de fósforo del oxalato).
+# Las dos parejas llevaban días, y las dos con una tachada y una no.
+#
+# Un guardia que solo mira donde el fallo no ocurre sale verde siempre.
+_nums66 = _re_b65.findall(r"^### ~{0,2}(P-\d+) ·", _pn66, _re_b65.M if hasattr(_re_b65, "M") else 0)
 _rep66 = sorted({n for n in _nums66 if _nums66.count(n) > 1})
 if _rep66:
     fallos.append(f"BLOQUE66: PREGUNTAS_ABIERTAS.md tiene numeros repetidos: {_rep66}. Dos "

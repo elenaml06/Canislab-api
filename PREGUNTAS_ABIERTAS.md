@@ -685,7 +685,14 @@ Lo único que falta es la cifra.
 
 ---
 
-### P-11 · ¿Lleva el oxalato cálcico un suelo de fósforo?
+### P-41 · ¿Lleva el oxalato cálcico un suelo de fósforo?
+
+⚠️ **ERA LA P-11 Y SE RENUMERA A P-41 el 15 de septiembre**, por lo mismo que la
+P-40 de abajo: había **dos preguntas con el número 11**, ésta y «FEDIAF da cifras
+para dos razas que la app tiene y el motor ignora», que está CERRADA. Se renumera
+la abierta y no la cerrada a propósito: una pregunta cerrada es historia y se
+cita desde `HECHO.md`, mientras que la abierta es la que se va a volver a leer.
+Las referencias de `der.py` y `LECTURAS.md` van cambiadas en el mismo commit.
 
 | | |
 |---|---|
@@ -2116,7 +2123,18 @@ dividiendo por el exceso medido (Tabla VII-2 de FEDIAF), y esa tabla es de perro
 adulto: no hay base para aplicársela a un cachorro, que está creciendo.
 
 
-### ~~P-38 · No se guarda ni una pesada~~ · **HECHA el mismo día, y falta ejecutar el SQL**
+### ~~P-40 · No se guarda ni una pesada~~ · **HECHA el mismo día, y falta ejecutar el SQL**
+
+⚠️ **ERA LA P-38 Y SE RENUMERA A P-40 el 15 de septiembre**, porque había **dos
+preguntas con el número 38**: ésta y la de la densidad energética. Es el mismo
+fallo que los dos BLOQUE 98 del 13 de septiembre y la lección es la misma: **un
+número es la única forma que tiene el repo de decir de qué se está hablando**, y
+dos con el mismo número es una referencia rota que no da ningún error. Se
+renumera ÉSTA y no la otra por el mismo criterio que se usó con los bloques: la
+de la densidad está citada desde `CLAUDE.md`, `PENDIENTE.md`, `LECTURAS.md`, el
+sello de `main.py` y cuatro sitios de `pruebas_completas.py`, y ésta desde dos.
+Las dos referencias que había —`PENDIENTE_NUTRICION.md` §22 y `der.py`— van
+cambiadas en el mismo commit.
 
 | | |
 |---|---|
@@ -2153,7 +2171,65 @@ calcula la app y el motor solo lo recibe, que es la duplicación declarada del
 DER).
 
 
-### P-38 · Una ración de este motor va a 5,20 kcal/g de materia seca, y los 135 límites que vienen de una tabla en % de materia seca se convirtieron suponiendo 4,0
+### P-38 · Una ración de este motor va a 5,20 kcal/g de materia seca, y los 135 límites que vienen de una tabla en % de materia seca se convirtieron suponiendo 4,0 — **REDUCIDA el 15 de septiembre: los siete límites LEGALES ya están aplicados**
+
+⚠️ **LO PRIMERO QUE HAY QUE SABER AL ABRIR ESTA PREGUNTA (15 de septiembre de
+2026).** Elena, leyendo la medida: «pues corrige por densidad no??», y después
+«haz lo que diga FEDIAF tal como lo diga FEDIAF, **pero comprueba bien en la
+fuente antes de hacer nada**». Al comprobarlo, la pregunta se parte en dos y una
+de las dos mitades **deja de ser una pregunta**, porque la fuente ya la contesta.
+
+**Lo que FEDIAF dice, y son DOS cosas distintas que yo había mezclado**:
+
+| | Lo que dice §3.2.1 | Cuántos |
+|---|---|---|
+| **Los máximos LEGALES de la UE** | *«Legal maxima in EU legislation are expressed on 12% moisture content and **they do not account for energy density**. Therefore in these guidelines **they are only provided on a dry matter basis**.»* | **7** — cobre, yodo, hierro, manganeso, selenio, zinc y el (L) de la vitamina D |
+| **Todo lo demás** (los mínimos, y los seis máximos nutricionales) | FEDIAF **los imprime por 1000 kcal** en su Tabla III-3b, y el motor usa **ese** número | el resto |
+
+Y se ve **en la propia tabla**: la celda de máximo de esos siete está **VACÍA**
+en la III-3b, solo pone «(L)». **No hay número por 1000 kcal que usar** — el que
+aplicaba el motor lo habíamos hecho nosotros con el ×2,5 de la Tabla III-2, que
+es justo la conversión de la que la nota al pie dice *«These conversions assume
+an energy density of 16.7 kJ (4.0 kcal) ME/g DM. For foods with energy densities
+different from this value, the recommendations should be corrected for energy
+density»*.
+
+**✅ APLICADO EL 15 DE SEPTIEMBRE**, en la forma que no supone ninguna densidad:
+el límite entra en el MILP como restricción lineal sobre la materia seca del
+propio menú —`Σ nut·g ≤ L_ms · Σ MS·g`—, y el semáforo hace la misma cuenta.
+Medido: **10 de 10 perros de referencia con menú verde**, con el hueco de humedad
+contado como agua entera (el lado que más aprieta), y el selenio pegado al 100 %
+del techo nuevo. ⚠️ Y **212 de los 216 menús precalculados se pasaban** de un
+límite legal (selenio 206, cobre 101, vitamina D 28, zinc 1): el catálogo se
+regeneró entero. Lo vigila el **BLOQUE 113**.
+
+⚠️ **Y LO QUE **NO** SE TOCA, que es la mitad que casi me llevo por delante**:
+los **mínimos**. Mi primera lectura decía que corregir por densidad los bajaría
+un 23 % y que eso era «lo que dice la fuente al pie de la letra». **Es falso**:
+FEDIAF publica los mínimos por 1000 kcal en la Tabla III-3b, anclados a la
+ingesta diaria (*«Recommended minimum values are based on an average daily energy
+intake of either 95 kcal/kg0.75 or 110 kcal/kg0.75»*), y el motor usa esos
+números. No hay ninguna conversión nuestra que corregir ahí. Lo mismo los seis
+máximos nutricionales que sí vienen impresos por 1000 kcal — calcio 6,25/4,00/
+4,50 · fósforo 4,00 · vitamina A 100 000 · vitamina D (N) 800 · lisina 7,00 ·
+linoleico 16,25 —, comprobados celda a celda contra `fediaf_tabla_III_3b.txt`.
+
+**LO QUE SIGUE ABIERTO**, y es lo de abajo: los **122 límites que NO son de
+FEDIAF** —las 94 cifras de `patologias.json`, las 24 de
+`recomendaciones_libro.json` y las 4 de `requisitos_condicionales.json`—, que
+vienen de tablas de SACN5 y Fascetti en % de materia seca y se convirtieron con
+el mismo ×2,5. Ahí la fuente **no** dice que haya que corregir, y sus tablas
+están escritas para un **pienso**, donde 4,0 kcal/g MS es la densidad de verdad.
+Medido: corrigiéndolos también, **3 de 11 perros pierden el menú**, y los que
+aprietan son el fósforo y el sodio del libro. Y sigue abierta la otra mitad: que
+SACN5 recomienda una densidad de 3,5-4,5 kcal/g MS y ninguno de nuestros menús
+la cumple.
+
+Lo de abajo se conserva tal como se escribió el 14 de septiembre, porque la
+medida de la densidad y el recuento de las 135 siguen siendo buenos — lo que
+cambia es qué parte de ellos era una pregunta.
+
+### P-38-bis · lo escrito el 14 de septiembre (la medida sigue valiendo; el alcance no)
 
 | | |
 |---|---|
