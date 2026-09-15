@@ -2708,8 +2708,23 @@ def _aviso_de_lo_que_falta(gramos, al, categorias_excluidas=None):
         que = lista[0]
     else:
         que = ", ".join(lista[:-1]) + " ni " + lista[-1]
+    # ⚠️ SIN NÚMERO, Y ESTA VEZ A PROPÓSITO (15 de septiembre de 2026).
+    #
+    # Aquí ponía «los 30 requisitos» y el motor verifica 43 desde que se
+    # encendieron los aminoácidos. Es EXACTAMENTE el fallo que este fichero ya
+    # tiene escrito el 29 de agosto para el mensaje de «no existe combinación»
+    # —«aquí ponía "los 30 requisitos" y el motor ya verifica 42»— y que se
+    # arregló en aquel texto y no en éste ni en el de la edición. Un número que
+    # vive en una prosa y en el código se separa, y el de la prosa no lo cubre
+    # ninguna prueba.
+    #
+    # La salida no es actualizar el número: es no ponerlo. A quien lee esto no
+    # le dice nada si son 30, 43 o 49 -—Elena, el 15 de septiembre: «a un
+    # usuario no le tiene que salir ningún aviso que no entienda»— y encima es
+    # un número que hay que mantener en dos sitios para siempre. El recuento
+    # exacto sigue estando donde sirve: en la ficha del menú, que trae «49/49».
     return ("Con las restricciones de este perro no había forma de incluir " + que +
-            " sin incumplir algo. El menú cumple igualmente los 30 requisitos "
+            " sin incumplir algo. El menú cumple igualmente todos los requisitos "
             "y todos los límites de seguridad.")
 
 
@@ -4894,8 +4909,10 @@ def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None, restringir_e
         # ¿es culpa del alimento que se ha pedido meter? Se comprueba en vez
         # de suponerlo: si sin él sí hay menú, el problema es él, y muchas
         # veces se puede decir exactamente por qué (ver _por_que_no_cabe).
+        # Sin número, por lo mismo que el aviso de composición: ver el
+        # comentario de `_aviso_de_composicion`.
         motivo = ("Con este cambio no existe ninguna combinación que cumpla "
-                  "los 30 requisitos, ni siquiera soltando las proporciones "
+                  "todos los requisitos, ni siquiera soltando las proporciones "
                   "habituales del BARF. Prueba con otro alimento.")
         culpable = None
         if forzar:

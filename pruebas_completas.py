@@ -17783,6 +17783,47 @@ print(f"  {len(_lista107)} patologías miradas en /vocabulario · {len(_sucios10
 # de edición comprueban QUÉ alimentos quedan, y los de seguridad comprueban
 # menús recién generados. Una cadena de ediciones no la recorría ninguno.
 #
+# ⚠️ Y UN NÚMERO ESCRITO A MANO EN UN TEXTO DEL DUEÑO (15 de septiembre de 2026).
+#
+# Dos mensajes que lee el dueño decían «el menú cumple igualmente **los 30
+# requisitos**» y «no existe ninguna combinación que cumpla **los 30
+# requisitos**», y el motor verifica 43 desde que se encendieron los
+# aminoácidos. Es EXACTAMENTE el fallo que `main.py` ya tiene escrito el 29 de
+# agosto —«aquí ponía "los 30 requisitos" y el motor ya verifica 42»— y que se
+# arregló en aquel texto y **en estos dos no**.
+#
+# Un número que vive en una prosa y en el código se separa, y el de la prosa no
+# lo cubre ninguna prueba. Así que no se actualiza: se quita. A quien lo lee no
+# le dice nada si son 30, 43 o 49, y el recuento exacto sigue donde sirve, en la
+# ficha del menú.
+#
+# Se mira el ÁRBOL de `main.py`, no el fichero como texto: así un comentario que
+# cuente esta historia —como el que hay arriba de `_aviso_de_composicion`— no
+# sale acusado. Un guardia que acusa a quien no ha hecho nada se deja de mirar.
+import ast as _ast_107n
+import re as _re_107n
+_re_cuenta_107 = _re_107n.compile(r"\blos?\s+\d+\s+requisitos\b", _re_107n.I)
+try:
+    _arbol_107 = _ast_107n.parse(open("main.py", encoding="utf-8").read())
+except SyntaxError as _e_107:
+    _arbol_107 = None
+    fallos.append(f"BLOQUE107: main.py no compila, no se puede mirar ({_e_107})")
+if _arbol_107 is not None:
+    _con_numero_107 = []
+    for _nodo_107 in _ast_107n.walk(_arbol_107):
+        if isinstance(_nodo_107, _ast_107n.Constant) and isinstance(_nodo_107.value, str):
+            if _re_cuenta_107.search(_nodo_107.value):
+                _con_numero_107.append((getattr(_nodo_107, "lineno", "?"),
+                                        " ".join(_nodo_107.value.split())[:90]))
+    if _con_numero_107:
+        fallos.append(
+            "BLOQUE107: hay textos de main.py que escriben a mano cuántos requisitos "
+            "comprueba el motor, y ese número se separa del código -- ya pasó, con «los 30 "
+            "requisitos» cuando el motor verificaba 43: "
+            + " | ".join(f"linea {_l}: «{_x}»" for _l, _x in _con_numero_107[:5]))
+    else:
+        print("  0 textos con el número de requisitos escrito a mano")
+
 # ⚠️ PERO EL BARRIDO NO ES EL GUARDIA, Y HAY QUE DECIRLO. Se comprobó con los
 # dos arreglos quitados y **no lo reproduce**: la misma semilla da otra cadena
 # de ediciones porque el menú del que parte lo devuelve el SOLVER, y eso cambia

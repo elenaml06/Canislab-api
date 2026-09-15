@@ -71,17 +71,16 @@
    "peso_kg": 3,
    "der": 235,
    "gramos": {
-    "Corazón de pollo": 42.9,
-    "Lengua de buey": 28.86,
-    "Espinazo de conejo": 30.61,
-    "Dorada": 21.15,
+    "Corazón de pollo": 30.93,
+    "Lengua de buey": 41.09,
+    "Espinazo de conejo": 30.67,
+    "Bacalao": 21.15,
     "Pulmón de cordero": 8.0,
-    "Hígado de pollo": 5.0,
-    "Plátano": 15.0,
-    "Aceite de oliva virgen extra": 1.92,
-    "Pipa de calabaza": 1.0,
-    "astoral MultiVital BARF": 0.15,
-    "V-INTEGRA Senior": 0.84
+    "Hígado de vaca": 5.0,
+    "Acelga": 15.0,
+    "Semilla de sésamo": 4.07,
+    "astoral MultiVital BARF": 0.07,
+    "V-INTEGRA Senior": 0.54
    },
    "semaforo": "verde",
    "correctos": 49,
@@ -849,48 +848,48 @@
    {
     "proteina": "Conejo",
     "gramos": {
-     "Conejo": 64.31,
+     "Conejo": 66.82,
      "Carcasa de pollo": 25.0,
-     "Costillas de cordero": 31.05,
+     "Costillas de cordero": 30.27,
      "Bacalao": 25.92,
-     "Hígado de pato": 7.63,
-     "Espinaca": 16.91,
-     "Aceite de linaza": 1.23,
-     "Aceite de cacahuete": 5.0,
-     "astoral MultiVital BARF": 0.12,
-     "Sal común (cloruro sódico)": 1.28,
-     "V-INTEGRA Cachorro": 1.36
+     "Hígado de pato": 6.55,
+     "Espinaca": 16.98,
+     "Aceite de oliva": 5.0,
+     "Semilla de sésamo": 1.57,
+     "astoral MultiVital BARF": 0.11,
+     "Sal común (cloruro sódico)": 1.0,
+     "V-INTEGRA Cachorro": 1.35
     },
     "peldano": "proporcion_minima_visceras_higado_verdura"
    },
    {
     "proteina": "Salmón",
     "gramos": {
-     "Pollo pechuga sin piel": 26.54,
-     "Gallina (carne sin hueso)": 47.55,
-     "Costillas de cordero": 49.42,
+     "Gallina (carne sin hueso)": 47.21,
+     "Corazón de pollo": 25.92,
+     "Carcasa de pollo": 25.0,
+     "Costillas de cordero": 25.0,
      "Riñón de vaca": 8.0,
-     "Hígado de vaca": 5.0,
+     "Hígado de pollo": 8.38,
      "Albahaca": 15.0,
-     "AniForte Seaweed Meal": 0.07,
-     "Semilla de lino": 1.0,
-     "Semilla de sésamo": 4.31,
+     "Semilla de sésamo": 3.15,
      "Sal común (cloruro sódico)": 1.0,
-     "V-INTEGRA Cachorro": 1.6
+     "Yoduro potásico (comprimidos 200 µg)": 0.05,
+     "V-INTEGRA Cachorro": 1.8
     },
     "peldano": "estricto"
    },
    {
     "proteina": "Merluza",
     "gramos": {
-     "Corazón de pollo": 107.03,
-     "Costillas de cordero": 53.42,
-     "Merluza": 26.3,
+     "Corazón de pollo": 103.89,
+     "Costillas de cordero": 51.57,
+     "Merluza": 25.92,
      "Riñón de vaca": 8.0,
-     "Hígado de conejo": 5.0,
-     "Espinaca": 21.95,
+     "Hígado de pollo": 5.0,
+     "Espinaca": 21.36,
      "AniForte Seaweed Meal": 0.06,
-     "V-INTEGRA Cachorro": 1.42
+     "V-INTEGRA Cachorro": 1.54
     },
     "peldano": "estricto"
    }
@@ -1011,48 +1010,47 @@
    {
     "proteina": "Conejo",
     "gramos": {
-     "Conejo": 62.71,
-     "Espinazo de conejo": 31.55,
-     "Hígado de pollo": 5.15,
-     "Plátano": 56.79,
-     "Pets Purest Aceite de Salmón Escocés": 0.12,
+     "Conejo": 63.84,
+     "Espinazo de conejo": 31.81,
+     "Hígado de vaca": 6.97,
+     "Plátano": 54.86,
+     "Pets Purest Aceite de Salmón Escocés": 0.14,
      "Grasa de pollo": 5.0,
      "astoral MultiVital BARF": 0.14,
-     "V-INTEGRA Senior": 1.14
+     "V-INTEGRA Senior": 1.01
     },
     "peldano": "tope_maximo_de_visceras_higado_y_verdura"
    },
    {
     "proteina": "Salmón",
     "gramos": {
-     "Pollo ala con piel (sin hueso)": 31.5,
-     "Corazón de pollo": 58.5,
-     "Espinazo de conejo": 30.61,
-     "Riñón de vaca": 10.91,
-     "Hígado de pollo": 5.0,
-     "Albahaca": 15.0,
-     "Aceite de hígado de bacalao": 1.06,
-     "Pipa de calabaza": 1.01,
-     "astoral MultiVital BARF": 0.12,
-     "V-INTEGRA Senior": 0.76
+     "Pollo pechuga con piel": 27.92,
+     "Gallina (carne sin hueso)": 32.37,
+     "Corazón de pollo": 29.71,
+     "Espinazo de conejo": 30.69,
+     "Pulmón de cordero": 10.35,
+     "Hígado de pollo": 5.47,
+     "Acelga": 15.0,
+     "Aceite de sésamo": 1.0,
+     "astoral MultiVital BARF": 0.14,
+     "V-INTEGRA Senior": 0.8
     },
     "peldano": "estricto"
    },
    {
     "proteina": "Merluza",
     "gramos": {
-     "Corazón de pollo": 71.53,
-     "Espinazo de conejo": 30.84,
+     "Pollo ala con piel (sin hueso)": 21.15,
+     "Ternera con grasa": 35.29,
+     "Carcasa de pollo": 21.15,
      "Merluza": 21.15,
-     "Riñón de vaca": 8.0,
      "Hígado de vaca": 5.0,
-     "Acelga": 15.0,
-     "Grasa de pollo": 5.0,
-     "Pipa de girasol": 1.0,
-     "astoral MultiVital BARF": 0.13,
+     "Grasa de pollo": 1.88,
+     "Pipa de calabaza": 2.41,
+     "astoral MultiVital BARF": 0.14,
      "V-INTEGRA Senior": 0.69
     },
-    "peldano": "estricto"
+    "peldano": "proporcion_minima_visceras_higado_verdura"
    }
   ],
   "Toy_GestanteTardia": [
