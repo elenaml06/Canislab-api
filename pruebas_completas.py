@@ -20528,6 +20528,73 @@ print(f"  {len(_ANCLAS_119)} cifras de CLAUDE.md rehechas contra el motor vivo, 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
+# ============================================================
+# BLOQUE 120 — NINGÚN DOCUMENTO ESCRIBE UN NUTRIENTE EN UNA UNIDAD IMPOSIBLE
+# ============================================================
+#
+# ⚠️ POR QUÉ EXISTE, Y ES LA MEJOR RAZÓN QUE PUEDE TENER UN BLOQUE (15 de
+# septiembre de 2026). Elena, después de cazar ELLA un error que la batería no
+# veía:
+#
+#     «no podemos depender de que yo cace cosas, todo tienes que comprobarlo tú
+#      [...] yo he hecho esa pregunta del selenio, pero ¿y si no la llego a
+#      hacer??»
+#
+# El error: `CLAUDE.md` listaba los siete máximos legales bajo una unidad común,
+# «mg/100 g MS», y el selenio va en **µg**. Mil veces. El motor nunca aplicó esa
+# cifra --el solver lee el JSON, que siempre lo tuvo bien--, pero el documento
+# que se lee para entender el motor decía algo falso, y quien lo leyera se lo
+# creería. Pasó: me lo creí yo media hora después.
+#
+# ⚠️ Y POR QUÉ NO BASTA EL BLOQUE 119, que se escribió una hora antes para esto
+# mismo: aquél ancla quince cifras **a mano**, y una lista escrita a mano no da
+# error cuando se queda corta -- la cifra número dieciséis no la mira nadie. Es
+# la lección que este repo repite más veces. Éste no ancla nada: **barre** los
+# 26 documentos buscando «<nutriente> … <cifra> <unidad>» y compara contra todo
+# lo que el motor tiene de ese nutriente.
+#
+# LOS DOS PUNTOS CIEGOS, declarados porque una auditoría tiene que decir dónde
+# NO llega:
+#   1. Si el nutriente no se nombra cerca del número, la cifra no se comprueba.
+#      Ese recuento SE IMPRIME -- hoy 287 de 801 -- para que el hueco se vea, que
+#      es la lección de `VERIFICACION_FILA_A_FILA.md`: un barrido cuyo resultado
+#      no se compara contra el total es una muestra.
+#   2. Un error de unidad que caiga DENTRO del rango del propio nutriente. Es el
+#      precio de no acusar a nadie sin motivo: con la regla suelta salían siete
+#      falsos positivos, y una auditoría que acusa a quien no ha hecho nada se
+#      deja de mirar.
+#
+# COMPROBADO CON EL FALLO PUESTO DE OCHO FORMAS, y caza seis: el selenio en mg
+# (el real), cobre ×1000, zinc ×1000, hierro ÷10, manganeso ×100 y fósforo
+# ×1000. Los dos que se le escapan son los dos puntos ciegos de arriba.
+print("\n" + "=" * 60)
+print("=== BLOQUE 120: ningún documento escribe un nutriente en unidad imposible ===")
+
+_aud120 = _sp_b18.run([sys.executable, "auditar_unidades_en_la_prosa.py"],
+                      capture_output=True, text=True,
+                      cwd=_os_b18.path.dirname(_os_b18.path.abspath(__file__)))
+if "Discrepancias: 0" not in _aud120.stdout:
+    _cola120 = "\n      ".join((_aud120.stdout + _aud120.stderr).strip().splitlines()[-8:])
+    fallos.append(f"BLOQUE120: un documento escribe un nutriente en una unidad que no puede "
+                  f"ser:\n      {_cola120}")
+else:
+    for _ln120 in _aud120.stdout.splitlines():
+        if "comprobadas" in _ln120 or "NO comprobadas" in _ln120:
+            print("  " + _ln120.strip())
+
+# Y el punto ciego no puede crecer en silencio: si de pronto hay muchas más
+# cifras sin atribuir, es que se está escribiendo de una forma que este barrido
+# no ve, y eso hay que saberlo -- no descubrirlo dentro de seis meses.
+_m120 = _re118.search(r"(\d+) encontradas y NO comprobadas", _aud120.stdout)
+if _m120 and int(_m120.group(1)) > 330:
+    fallos.append(f"BLOQUE120: han pasado a {_m120.group(1)} las cifras que el barrido encuentra "
+                  f"y NO puede comprobar (eran 287 el 15 de septiembre). O se está escribiendo "
+                  f"de una forma que no reconoce --y hay que enseñarle-- o el hueco está "
+                  f"creciendo. Subir este número es una decisión, no un trámite")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
 _tiempos_por_bloque.sort(reverse=True)
 _gastado = sum(t for t, _ in _tiempos_por_bloque)
 print("\nDÓNDE SE VA EL TIEMPO — los diez bloques más caros:")
