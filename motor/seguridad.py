@@ -198,10 +198,40 @@ def _por_peso(tope_por_1000kcal):
     """El gemelo por kg^0,75 de un tope por 1000 kcal, al perro de mantenimiento."""
     return tope_por_1000kcal * _KCAL_POR_KG075_MANTENIMIENTO / 1000.0
 
+
+# ⚠️ Y HAY DOS CLASES DE TOPE AQUÍ, NO UNA -- y confundirlas costó dos
+# constantes MIL VECES demasiado pequeñas, calladas durante tres semanas porque
+# no las leía nadie (15 de septiembre de 2026).
+#
+# `TOPE_YODO_KCAL`, `TOPE_SELENIO_KCAL`, `TOPE_VITD_KCAL` y
+# `TOPE_EPA_DHA_SEMANAL_KCAL` son CANTIDADES POR 1000 kcal: µg o g de nutriente.
+# Su gemelo por peso se saca multiplicando por las kcal del perro de
+# mantenimiento y dividiendo por mil -- eso es `_por_peso`.
+#
+# `TOPE_TIAMINASA_KCAL` y `TOPE_MERCURIO_KCAL` **NO son eso**: son una FRACCIÓN
+# de las kcal del día (0,10 = el 10 %), y se comparan como `k > der * 0,10`. Su
+# gemelo por peso no se divide por mil: es «el 10 % de lo que come el perro de
+# mantenimiento», o sea 13 kcal por kg^0,75.
+#
+# Pasarlas por `_por_peso` daba **0,013**, y como el `min()` nunca las usaba,
+# nadie se enteró. El día que alguien las hubiera enchufado, CUALQUIER menú con
+# una sardina habría sido rechazado: 0,013 kcal no es nada. Es la peor forma de
+# constante equivocada -- la que no da error porque no la lee nadie -- y la
+# comprobación que había (BLOQUE 86) la daba por buena porque **rehacía la misma
+# cuenta equivocada**.
+def _por_peso_fraccion(fraccion_de_kcal):
+    """El gemelo por kg^0,75 de un tope que es una FRACCIÓN de las kcal del día.
+
+    Devuelve KCAL por kg^0,75, no gramos ni microgramos: es el techo de cuánta
+    energía del menú puede venir de ese alimento en el perro de mantenimiento.
+    """
+    return fraccion_de_kcal * _KCAL_POR_KG075_MANTENIMIENTO
+
+
 TOPE_YODO_KG075 = _por_peso(1275.0)          # 165,75 µg por kg^0,75
 TOPE_SELENIO_KG075 = _por_peso(570.0)        # 74,1 µg por kg^0,75
-TOPE_MERCURIO_KG075 = _por_peso(0.10)        # 0,013 mg por kg^0,75
-TOPE_TIAMINASA_KG075 = _por_peso(0.10)       # 0,013 g por kg^0,75
+TOPE_MERCURIO_KG075 = _por_peso_fraccion(TOPE_MERCURIO_KCAL)    # 13,0 kcal por kg^0,75
+TOPE_TIAMINASA_KG075 = _por_peso_fraccion(TOPE_TIAMINASA_KCAL)  # 13,0 kcal por kg^0,75
 TOPE_EPA_DHA_SEMANAL_KG075 = _por_peso(2.8)  # 0,364 g por kg^0,75, promedio semanal
 
 # ---------------------------------------------------------------------------
@@ -889,7 +919,17 @@ def revisar_seguridad(menu, alimentos, der, etapa="Adulto", patologias=None,
     tia = [n for n in menu if _es(n, TIAMINASA)]
     if tia:
         k = kcal_de(tia)
-        if k > der * TOPE_TIAMINASA_KCAL:
+        # ⚠️ Y EL GEMELO POR PESO, como el yodo, el selenio y la vitamina D
+        # (15 de septiembre). Estaba escrito desde el 9 y NO LO LEÍA NADIE. El
+        # motivo por el que hace falta es el mismo que el de aquellos tres: la
+        # tiaminasa destruye la tiamina del plato, y un perro de trabajo que
+        # come 175 kcal/kg^0,75 puede meter un 35 % más de pescado crudo que
+        # uno de mantenimiento sin pasarse del 10 % de SUS calorías. El tope
+        # por energía no lo ve; el de peso sí.
+        _tope_tia = der * TOPE_TIAMINASA_KCAL
+        if peso_perro_kg:
+            _tope_tia = min(_tope_tia, TOPE_TIAMINASA_KG075 * (peso_perro_kg ** 0.75))
+        if k > _tope_tia:
             # ⚠️ REFORMULADO (5 agosto, madrugada) — pedido expreso: el
             # mensaje empezaba con "TIAMINASA:" en mayúsculas, sonando a
             # alerta, y no dejaba claro hasta la segunda frase que el
@@ -907,7 +947,13 @@ def revisar_seguridad(menu, alimentos, der, etapa="Adulto", patologias=None,
     merc = [n for n in menu if _es(n, MERCURIO_ALTO)]
     if merc:
         k = kcal_de(merc)
-        if k > der * TOPE_MERCURIO_KCAL:
+        # el mismo gemelo por peso, y aquí pesa más todavía: el mercurio
+        # BIOACUMULA, así que lo que importa es cuántos miligramos entran, no
+        # qué fracción de las calorías son.
+        _tope_merc = der * TOPE_MERCURIO_KCAL
+        if peso_perro_kg:
+            _tope_merc = min(_tope_merc, TOPE_MERCURIO_KG075 * (peso_perro_kg ** 0.75))
+        if k > _tope_merc:
             problemas.append(
                 "En exceso, %s acumula mercurio en el cuerpo del perro con cada "
                 "exposición repetida -- no es un riesgo de una sola vez, es "

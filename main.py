@@ -2238,11 +2238,11 @@ def endpoint_menu_v2(datos: PeticionMenu):
 # entera supere el límite seguro, sin depender de ningún aviso.
 from seguridad import (
     TOPE_TIAMINASA_KCAL, TOPE_MERCURIO_KCAL, TOPE_VITD_KCAL, TOPE_YODO_KCAL,
-    TOPE_SELENIO_KCAL, TOPE_EPA_DHA_SEMANAL_KCAL,
+    TOPE_SELENIO_KCAL, TOPE_EPA_DHA_SEMANAL_KCAL, TOPE_EPA_DHA_SEMANAL_KG075,
 )
 
 
-def _presupuesto_semanal_inicial(der_objetivo):
+def _presupuesto_semanal_inicial(der_objetivo, peso_perro_kg=None):
     """Presupuesto SEGURO para la semana completa, para cada uno de los
     5 puntos de riesgo crónico. tiaminasa/mercurio son fracción de kcal
     (0-1); vitD, yodo y selenio son µg -- cada uno se reparte en su
@@ -2297,8 +2297,37 @@ def _presupuesto_semanal_inicial(der_objetivo):
         # Sin margen extra (a diferencia de vitD y yodo): 2800 YA es el límite
         # crónico, no un tope diario multiplicado por siete. Apretarlo más
         # sería inventarse una cifra.
-        "epa_dha": TOPE_EPA_DHA_SEMANAL_KCAL * der_objetivo / 1000.0 * 7,
+        "epa_dha": _epa_dha_de_la_semana(der_objetivo, peso_perro_kg),
     }
+
+
+def _epa_dha_de_la_semana(der_objetivo, peso_perro_kg=None):
+    """El presupuesto semanal de EPA+DHA, con su gemelo por peso metabólico.
+
+    ⚠️ EL GEMELO ESTABA ESCRITO DESDE EL 9 DE SEPTIEMBRE Y NO LO LEÍA NADIE
+    (15 de septiembre). `TOPE_EPA_DHA_SEMANAL_KG075` vivía en `seguridad.py`
+    junto a los de yodo, selenio y vitamina D -- que sí se aplican -- y era el
+    único de los cinco cuya cuenta estaba BIEN y aun así no llegaba a ningún
+    sitio. Una constante que no lee nadie no protege de nada, y además se lee y
+    se cree: el repo daba por hecho que los cinco topes crónicos tenían su
+    gemelo por peso puesto.
+
+    El motivo por el que hace falta es el que ya está escrito arriba para el
+    yodo: 2800 mg/1000 kcal es una CONCENTRACIÓN, y a un perro de trabajo que
+    come 175 kcal/kg^0,75 le deja meter un 35 % más de omega-3 en gramos que a
+    uno de mantenimiento sin salirse de la concentración. Lo que el SUL limita
+    es la dosis crónica, no la densidad, así que manda el más estricto de los
+    dos.
+
+    MEDIDO antes de aplicarlo, sobre el catálogo real y perros de trabajo: el
+    menú trae entre 0,056 y 0,091 g/kg^0,75 contra un tope de 0,364 -- o sea
+    que **hoy no le quita el menú a nadie**, igual que los otros cuatro. Es red
+    de seguridad, no un cambio de menús.
+    """
+    por_energia = TOPE_EPA_DHA_SEMANAL_KCAL * der_objetivo / 1000.0 * 7
+    if not peso_perro_kg:
+        return por_energia
+    return min(por_energia, TOPE_EPA_DHA_SEMANAL_KG075 * (peso_perro_kg ** 0.75) * 7)
 
 
 def _consumo_real_menu(gramos, al, der_objetivo):
@@ -2721,7 +2750,8 @@ def endpoint_menu_semana(datos: PeticionMenu, numero_de_menus: int = 1):
         resto_dias = 7 % n
         dias_por_menu = [base_dias + (1 if i < resto_dias else 0) for i in range(n)]
 
-        presupuesto_restante = _presupuesto_semanal_inicial(datos.der_objetivo)
+        presupuesto_restante = _presupuesto_semanal_inicial(
+            datos.der_objetivo, datos.peso_perro_kg)
         especies_usadas = []
 
         for i in range(n):
@@ -4071,7 +4101,7 @@ def endpoint_varios_perros(datos: PeticionVariosPerros):
         # tiaminasa, mercurio, selenio) es POR PERRO: depende de sus kcal.
         # Compartir uno solo entre varios perros sería mezclar lo que come
         # cada uno, que no tiene ningún sentido físico.
-        presupuesto = {i: _presupuesto_semanal_inicial(p.der_objetivo)
+        presupuesto = {i: _presupuesto_semanal_inicial(p.der_objetivo, p.peso_perro_kg)
                        for i, p in enumerate(datos.perros)}
         # Proteína ya usada, para rotarla entre los menús de un mismo perro.
         especies_usadas = {i: [] for i in range(n)}
@@ -6795,7 +6825,8 @@ def formular_autocompletar(datos: PeticionFormular):
     _pres_f = None
     _dias_f = max(1, int(datos.dias_de_esta_racion or 1))
     if datos.raciones_ya_puestas:
-        _restante_f = _presupuesto_semanal_inicial(datos.der_objetivo)
+        _restante_f = _presupuesto_semanal_inicial(
+            datos.der_objetivo, getattr(datos, 'peso_perro_kg', None))
         _dias_gastados_f = 0
         for _r_prev in datos.raciones_ya_puestas:
             _g_prev = (_r_prev or {}).get("gramos") or {}
