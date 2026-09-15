@@ -18052,7 +18052,317 @@ print(f"  {len(_acc110.FACILES)} de súper · {len(_acc110.DE_ENCARGO)} de encar
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
+
+
+# ============================================================
+# BLOQUE 111 — LA HUMEDAD DE CADA FICHA, Y LOS 4,0 kcal/g QUE NADIE HABÍA MEDIDO
+# ============================================================
+#
+# ⚠️ POR QUÉ EXISTE (14 de septiembre de 2026). El catálogo va en gramos de
+# alimento TAL CUAL SE DA, y casi todas las fuentes que no son FEDIAF publican
+# sus cifras en **% de MATERIA SECA**. Entre una cosa y la otra hay una
+# conversión, y la conversión tiene un supuesto escrito en la propia FEDIAF:
+#
+#     «These conversions assume an energy density of 16.7 kJ (4.0 kcal) ME/g
+#      DM. For foods with energy densities different from this value, the
+#      recommendations should be corrected for energy density.»
+#                                      -- FEDIAF 2025, §3.2.1, Tabla III-2
+#
+# Las 94 cifras de `patologias.json`, las 24 de `recomendaciones_libro.json`,
+# las 4 de `requisitos_condicionales.json` y **los 13 máximos de FEDIAF que se
+# publican SOLO en base materia seca** -- siete de ellos LÍMITES LEGALES DE LA
+# UE (vitamina D, hierro, yodo, selenio, zinc, cobre, manganeso) -- salen de ahí,
+# y las 135 declaran `densidad_kcal_por_g_MS: 4.0`.
+#
+# Hasta hoy **no se podía ni comprobar si eso era verdad**, porque sin la humedad
+# de cada alimento no hay materia seca: la de una ración es
+# `suma(gramos × (100 − humedad) / 100)`. 97 de las 162 fichas no la tenían.
+#
+# Ahora la tienen 144, y la medida sale: una ración de este motor va a
+# **5,20 kcal/g de materia seca** (4,05-6,18 en los 216 menús del catálogo), no
+# a 4,0. Una ración BARF es más densa que el pienso para el que se escribieron
+# esas tablas, porque es proteína y grasa sin almidón, sin fibra y sin ceniza de
+# relleno. O sea que **todas esas conversiones van un ~23 % flojas**. Eso está
+# medido y escrito, y lo que se hace con ello está SIN DECIDIR: ver
+# `PREGUNTAS_ABIERTAS.md` P-38.
+#
+# Lo que vigila este bloque son las dos mitades:
+#
+#   A. QUE EL DATO NO PUEDA MENTIR. Cada ficha tiene humedad con su procedencia
+#      o dice por qué no la tiene; la que se cerró contra una base se REHACE
+#      contra la instantánea congelada (sin red); la del hueso se REHACE contra
+#      la columna «DM [%]» de la Tabla 1 de Köber, que es la misma fila de la
+#      que ya sale su calcio; y la cota por composición de los aceites no puede
+#      escribirse sobre una ficha que no sea grasa casi pura.
+#   B. QUE LA MEDIDA SIGA DICIÉNDOSE. Si un día la densidad real se acerca a
+#      4,0, el supuesto deja de ser un problema y hay que enterarse; si se
+#      aleja más, también. Un número que decide 135 límites no puede vivir solo
+#      en un documento.
+print("\n" + "=" * 60)
+print("=== BLOQUE 111: la humedad de cada ficha, y los 4,0 kcal/g del supuesto ===")
+import json as _json111
+import os as _os111
+import statistics as _st111
+
+_raiz111 = str(_raiz_b24)
+_cat111 = _json111.load(open(_os111.path.join(_raiz111, "alimentos_v3_final.json"), encoding="utf-8"))
+_inst111 = _json111.load(open(_os111.path.join(_raiz111, "fuentes_instantanea.json"),
+                               encoding="utf-8")).get("alimentos", {})
+
+# --- A.1 ninguna ficha se queda muda -----------------------------------------
+_mudas111 = [f["nombre"] for f in _cat111
+             if f.get("humedad_g_100g") is None and not f.get("humedad_hueco")]
+if _mudas111:
+    fallos.append(f"BLOQUE111: {len(_mudas111)} fichas sin humedad Y sin decir por qué. «No hay "
+                  f"dato» y «nadie ha mirado» tienen que verse distinto, que es la lección de "
+                  f"`hueco_verificado`: " + ", ".join(_mudas111[:6]))
+
+_con111 = [f for f in _cat111 if f.get("humedad_g_100g") is not None]
+_hue111 = [f for f in _cat111 if f.get("humedad_hueco")]
+print(f"  fichas con humedad: {len(_con111)} de {len(_cat111)} · "
+      f"huecos con su motivo: {len(_hue111)}")
+
+# --- A.2 una humedad sin procedencia, o imposible, no vale -------------------
+_mal111 = []
+for _f111 in _con111:
+    _h111 = _f111["humedad_g_100g"]
+    if not isinstance(_h111, (int, float)) or not (0.0 <= _h111 <= 100.0):
+        _mal111.append(f"{_f111['nombre']}: humedad {_h111!r}, que no es un valor posible")
+    # ⚠️ SE MIRA QUE NOMBRE UNA FUENTE, NO QUE SEA LARGA. La primera versión
+    # pedía 20 caracteres y acusó a doce fichas correctas: «bedca:2636 · Trucha»
+    # son 19, y lo único que tiene de malo es que la trucha se llama con seis
+    # letras. Es la lección del BLOQUE 13 otra vez -- una prueba que mide la
+    # redacción en vez del hecho acusa al motor de acertar.
+    _fu111 = str(_f111.get("humedad_fuente") or "").lower()
+    if not any(_q111 in _fu111 for _q111 in
+               ("bedca", "ciqual", "usda", "ber 2017", "köber", "kober",
+                "composición", "composicion", "proxy", "fooddata")):
+        _mal111.append(f"{_f111['nombre']}: su humedad no dice de qué fuente sale "
+                       f"({_f111.get('humedad_fuente')!r})")
+    if _f111.get("humedad_hueco"):
+        _mal111.append(f"{_f111['nombre']}: tiene humedad Y está declarada como hueco a la vez")
+if _mal111:
+    fallos.append(f"BLOQUE111: {len(_mal111)} humedades que no se sostienen: "
+                  + " · ".join(_mal111[:5]))
+
+# --- A.3 y un hueco declarado tampoco puede mentir ---------------------------
+_malh111 = [f"{_f['nombre']}: su motivo son {len(str(_f['humedad_hueco']))} caracteres y tiene "
+            f"que decir QUÉ se miró"
+            for _f in _hue111 if len(str(_f["humedad_hueco"])) < 40]
+if _malh111:
+    fallos.append(f"BLOQUE111: {len(_malh111)} huecos de humedad sin motivo de verdad: "
+                  + " · ".join(_malh111[:5]))
+
+# --- A.4 la que salió de una base se REHACE contra la instantánea ------------
+#
+# Es lo mismo que hace el BLOQUE 104 con las demás celdas, y por lo mismo: entre
+# la fuente y la ficha hay un paso a mano que, si no se rehace, no se audita.
+_rehechas111 = 0
+_norehace111 = []
+for _f111 in _con111:
+    _fu111 = str(_f111.get("humedad_fuente") or "")
+    if ":" not in _fu111.split(" ")[0]:
+        continue                                   # Köber, cota o proxy: abajo
+    _clave111 = _fu111.split(" ")[0]
+    _base111 = _clave111.split(":")[0]
+    _guardado111 = (((_inst111.get(_f111["nombre"]) or {}).get(_base111) or {})
+                    .get("celdas", {}).get("humedad"))
+    if _guardado111 is None:
+        continue                                   # las 65 de antes del barrido
+    try:
+        _v111 = float(str(_guardado111["valor"]).replace(",", "."))
+    except (TypeError, ValueError, KeyError):
+        _norehace111.append(f"{_f111['nombre']}: la instantánea no guarda un número")
+        continue
+    if abs(_v111 - float(_f111["humedad_g_100g"])) > 0.01:
+        _norehace111.append(f"{_f111['nombre']}: la ficha dice {_f111['humedad_g_100g']} y su "
+                            f"fuente congelada dice {_v111}")
+    else:
+        _rehechas111 += 1
+if _norehace111:
+    fallos.append(f"BLOQUE111: {len(_norehace111)} humedades que no se rehacen contra la fuente "
+                  f"congelada: " + " · ".join(_norehace111[:5]))
+print(f"  rehechas contra `fuentes_instantanea.json`: {_rehechas111}")
+
+# --- A.5 la del HUESO se rehace contra la columna «DM [%]» de Köber ----------
+#
+# ⚠️ Y SE REHACE CONTRA EL MISMO EMPAREJAMIENTO DEL QUE SALE SU CALCIO. Si
+# alguien cambia de qué fila sale una ficha, la humedad tiene que moverse con
+# ella; leerla de otro sitio sería tener la misma pieza descrita por dos filas.
+try:
+    import auditar_kober as _kober111
+except Exception as _e111:                                     # pragma: no cover
+    fallos.append(f"BLOQUE111: no se puede importar `auditar_kober` ({type(_e111).__name__}), "
+                  f"y es de donde sale la humedad de las once piezas con hueso")
+    _kober111 = None
+if _kober111 is not None:
+    _porn111 = {f["nombre"]: f for f in _cat111}
+    _malk111 = []
+    for _n111, _filas111 in _kober111.DE_DONDE_SALE.items():
+        _f111 = _porn111.get(_n111)
+        if _f111 is None:
+            continue                               # ya lo dice el BLOQUE de Köber
+        _dm111 = sum(_kober111.TABLA_1[_x][2] for _x in _filas111) / len(_filas111)
+        _esp111 = 100.0 - _dm111
+        _hay111 = _f111.get("humedad_g_100g")
+        if _hay111 is None:
+            _malk111.append(f"{_n111}: sin humedad, y Köber la mide (DM {_dm111:.1f} %)")
+        elif abs(float(_hay111) - _esp111) > 0.02:
+            _malk111.append(f"{_n111}: la ficha dice {_hay111} y la Tabla 1 de Köber da "
+                            f"{_esp111:.2f} (100 − DM {_dm111:.1f} %)")
+        elif "ber" not in str(_f111.get("humedad_fuente") or ""):
+            _malk111.append(f"{_n111}: el número cuadra con Köber pero su `humedad_fuente` no "
+                            f"la nombra, así que no se puede saber de dónde salió")
+    if _malk111:
+        fallos.append(f"BLOQUE111: {len(_malk111)} humedades de hueso que no se rehacen contra la "
+                      f"Tabla 1 de Köber: " + " · ".join(_malk111[:5]))
+    print(f"  piezas con hueso rehechas contra Köber: {len(_kober111.DE_DONDE_SALE)}")
+
+    # ⚠️ Y QUE LA AMPLIACIÓN DEL MANDATO ESTÉ ESCRITA. Köber entró al repo con
+    # el ámbito «SOLO el calcio y el fósforo. Nada más», y leerle una columna
+    # más sin decirlo dejaría once números sin procedencia.
+    _decl111 = _json111.load(open(_os111.path.join(_raiz111, "fuentes_de_composicion.json"),
+                                  encoding="utf-8"))
+    _amb111 = str((_decl111["fuentes"].get("kober2017") or {}).get("ambito") or "")
+    if "DM" not in _amb111 or "humedad" not in _amb111.lower():
+        fallos.append("BLOQUE111: `fuentes_de_composicion.json` no declara que de Köber se lea "
+                      "también la columna «DM [%]». Un mandato que se estira en silencio deja "
+                      "números sin procedencia")
+
+# --- A.6 la cota por composición no se puede escribir sobre cualquier cosa ---
+#
+# «100 g de grasa por 100 g no dejan sitio para el agua» es aritmética, pero
+# solo si la ficha es de verdad grasa casi pura. En cualquier otra sería un
+# número inventado con forma de razonamiento.
+_malc111 = []
+for _f111 in _con111:
+    if "COTA POR COMPOSICIÓN" not in str(_f111.get("humedad_fuente") or "") and \
+       "CERO CIERTO POR COMPOSICIÓN" not in str(_f111.get("humedad_fuente") or ""):
+        continue
+    _g111 = (_f111.get("nutrientes") or {}).get("grasa") or 0
+    if float(_g111) < 99.0:
+        _malc111.append(f"{_f111['nombre']}: dice «por composición» y declara {_g111} g de grasa "
+                        f"por 100 g, que deja sitio de sobra para el agua")
+    if float(_f111["humedad_g_100g"]) > 100.0 - float(_g111) + 0.001:
+        _malc111.append(f"{_f111['nombre']}: su humedad ({_f111['humedad_g_100g']}) no cabe en lo "
+                        f"que deja su grasa ({100 - float(_g111):g} g)")
+if _malc111:
+    fallos.append(f"BLOQUE111: {len(_malc111)} cotas por composición que no se sostienen: "
+                  + " · ".join(_malc111[:5]))
+
+# --- B. LA MEDIDA: a cuántas kcal por gramo de materia seca va una ración ----
+#
+# ⚠️ ESTE ES EL NÚMERO QUE DECIDE 135 LÍMITES, y hasta hoy no se había medido
+# nunca. Se mide sobre los 216 menús del catálogo, que son menús de verdad del
+# motor. Los 18 alimentos sin humedad (los suplementos en polvo, mandato 5)
+# pesan una mediana de 7,4 g sobre 730 g de ración, así que la banda entre
+# contarlos como agua o como materia seca es estrecha y NO decide nada -- que
+# es justo lo que hay que poder afirmar antes de usar la medida.
+_al111 = {f["nombre"]: f for f in _cat111}
+_menus111 = []
+
+
+def _paseo111(obj):
+    if isinstance(obj, dict):
+        if isinstance(obj.get("gramos"), dict):
+            _menus111.append(obj["gramos"])
+        for _v in obj.values():
+            _paseo111(_v)
+    elif isinstance(obj, list):
+        for _v in obj:
+            _paseo111(_v)
+
+
+_paseo111(_json111.load(open(_os111.path.join(_raiz111, "catalogo_menus.json"), encoding="utf-8")))
+_dens111 = []
+_sinhum111 = []
+for _g111 in _menus111:
+    _kcal111 = sum(_al111[n]["energia"] * x / 100.0 for n, x in _g111.items() if n in _al111)
+    _ms111 = sum(x * (100.0 - (_al111[n].get("humedad_g_100g") or 0)) / 100.0
+                 for n, x in _g111.items() if n in _al111)
+    _sinhum111.append(sum(x for n, x in _g111.items()
+                          if n in _al111 and _al111[n].get("humedad_g_100g") is None))
+    if _kcal111 > 0 and _ms111 > 0:
+        _dens111.append(_kcal111 / _ms111)
+if len(_dens111) < 200:
+    fallos.append(f"BLOQUE111: solo se han podido medir {len(_dens111)} menús del catálogo. La "
+                  f"medida de la densidad energética es la que sostiene la P-38 y una muestra "
+                  f"no vale")
+else:
+    _med111 = _st111.median(_dens111)
+    print(f"  kcal por gramo de MATERIA SECA de una ración: mediana {_med111:.2f} "
+          f"(de {min(_dens111):.2f} a {max(_dens111):.2f}, {len(_dens111)} menús)")
+    print(f"  el supuesto de las conversiones es 4,00 -> van un "
+          f"{100 * (1 - 4.0 / _med111):.0f} % flojas")
+    print(f"  gramos por ración sin humedad conocida: mediana "
+          f"{_st111.median(_sinhum111):.1f} g")
+    # ⚠️ LAS DOS DIRECCIONES. Si un día la densidad real baja a 4,0 el supuesto
+    # deja de ser un problema y hay que enterarse, no seguir citando un 23 % que
+    # ya no existe; y si sube más, la P-38 se queda corta. Las cotas son anchas
+    # a propósito: lo que no puede pasar es que el número cambie y nadie lo vea.
+    if not (4.7 <= _med111 <= 5.8):
+        fallos.append(f"BLOQUE111: la densidad energética de una ración ha pasado a "
+                      f"{_med111:.2f} kcal/g de materia seca. Estaba medida en 5,20 el 14 de "
+                      f"septiembre y de ese número cuelgan los 135 límites que se convirtieron "
+                      f"suponiendo 4,0 (P-38 de `PREGUNTAS_ABIERTAS.md`). Si ha cambiado, la "
+                      f"medida escrita ya no es verdad y hay que rehacerla, no ajustar esta cota")
+    if _st111.median(_sinhum111) > 30:
+        fallos.append(f"BLOQUE111: una ración lleva ya una mediana de "
+                      f"{_st111.median(_sinhum111):.1f} g de alimento sin humedad conocida. La "
+                      f"medida de arriba deja de poder afirmarse: con tanto peso sin saber, la "
+                      f"banda entre contarlo como agua o como materia seca decide el resultado")
+
+
+
 _cerrar_el_ultimo_bloque()
+
+# ⚠️ ¿SE HAN EJECUTADO TODOS LOS BLOQUES QUE HAY ESCRITOS? (14 de septiembre).
+#
+# CASO REAL, y lo cometí yo el mismo día que se escribe esto: el BLOQUE 111 se
+# añadió **al final del fichero**, o sea DESPUÉS del `sys.exit()` de aquí abajo.
+# La batería entera salió «✅ TODO EN VERDE» sin haberlo ejecutado nunca, y el
+# bloque tampoco aparecía en la lista de tiempos — que es donde se habría visto
+# si alguien la hubiera leído entera. Con `probar_bloques.py 111` salía verde,
+# porque ese script EXTRAE el bloque y lo corre suelto.
+#
+# Es la peor forma de esta familia: un guardia escrito, probado con el fallo
+# puesto, y **inerte**. Peor que no tenerlo, porque parece que alguien mira.
+#
+# Se compara lo que hay ESCRITO en el fuente (las cabeceras «=== BLOQUE N») contra lo
+# que de verdad ha impreso su cabecera. Cuesta leer un fichero y no depende de
+# que nadie se acuerde de nada, que es la misma regla con la que se miden los
+# tiempos aquí arriba.
+import re as _re_fin
+with open(__file__, encoding="utf-8") as _f_fin:
+    _fuente_fin = _f_fin.read()
+# ⚠️ EL PATRÓN TIENE QUE ACEPTAR EL SALTO DE LÍNEA DE DELANTE, y la primera
+# versión no lo hacía: escribir el salto dentro de la cadena, antes del «===»,
+# es la forma más común en este fichero, y anclando el patrón a `print("===`
+# se contaban 67 de 104. Un guardia que solo mira dos tercios
+# de lo que hay es otra forma de salir verde sin mirar. El envoltorio de `print`
+# de arriba hace `lstrip()`, así que aquí se acepta lo mismo que acepta él.
+_escritos_fin = set(_re_fin.findall(r'"(?:\\n)*\s*=== BLOQUE (\d+)', _fuente_fin))
+_corridos_fin = set()
+for _, _nom_fin in _tiempos_por_bloque:
+    _m_fin = _re_fin.match(r"=== BLOQUE (\d+)", _nom_fin)
+    if _m_fin:
+        _corridos_fin.add(_m_fin.group(1))
+# ⚠️ LOS QUE PUEDEN FALTAR CON MOTIVO son los que necesitan el repo de fuentes
+# al lado, y ya llevan su propio aviso arriba. Se descuentan LEYENDO SU LISTA,
+# no copiándolos aquí: dos listas del mismo conjunto se desincronizan.
+_con_motivo_fin = set()
+if not _hay_fuentes:
+    for _b_fin in _BLOQUES_QUE_NECESITAN_FUENTES:
+        _m2_fin = _re_fin.match(r"(\d+)", str(_b_fin))
+        if _m2_fin:
+            _con_motivo_fin.add(_m2_fin.group(1))
+_faltan_fin = sorted(_escritos_fin - _corridos_fin - _con_motivo_fin, key=int)
+if _faltan_fin:
+    fallos.append(
+        f"BLOQUES ESCRITOS Y NO EJECUTADOS: {', '.join(_faltan_fin)}. Están en el fichero y la "
+        f"batería no ha pasado por ellos -- casi siempre porque se añadieron DESPUÉS del "
+        f"`sys.exit()` del final. Un guardia inerte es peor que no tenerlo: sale verde igual")
+
 _tiempos_por_bloque.sort(reverse=True)
 _gastado = sum(t for t, _ in _tiempos_por_bloque)
 print("\nDÓNDE SE VA EL TIEMPO — los diez bloques más caros:")

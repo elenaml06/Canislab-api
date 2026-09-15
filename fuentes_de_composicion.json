@@ -72,7 +72,7 @@
    "mandato": 2,
    "nombre": "Köber N, Schmitt S, Kienzle E, Dobenecker B (2017), «Bones and gristle as a source of calcium in BARF-rations», 21st ESVCN Congress, Cirencester",
    "quien": "Cátedra de Nutrición Animal y Dietética, Universidad de Múnich (LMU)",
-   "ambito": "SOLO el calcio y el fósforo de los cortes CON HUESO. Nada más.",
+   "ambito": "El calcio y el fósforo de los cortes CON HUESO, y desde el 14 de septiembre de 2026 también SU HUMEDAD, leída de la columna «DM [%]» de la misma Tabla 1 (humedad = 100 − DM). ⚠️ Esto AMPLÍA el ámbito, que hasta ese día decía «solo el calcio y el fósforo. Nada más», y va escrito aquí porque un mandato que se estira en silencio deja números sin procedencia. El motivo es el mismo que el de su calcio: BEDCA, CIQUAL y USDA miden carne DESHUESADA, así que ninguna tiene una fila para estas once piezas y la materia seca de un cuello de pavo con hueso no es la de un cuello de pavo sin él. La columna está en la tabla, la fila es la que la ficha ya declara, y la lee `buscar_humedad.py`. Nada más que eso: el resto de nutrientes sigue fuera de su ámbito.",
    "manda_sobre": [
     "bedca",
     "ciqual",
