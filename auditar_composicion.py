@@ -112,8 +112,11 @@ INSTANTANEA = os.path.join(RAIZ, "fuentes_instantanea.json")
 
 # Las fichas cuya fuente es la etiqueta del fabricante (mandato 5): no tienen
 # fila en ninguna base de composición, así que no entran en el barrido.
-CATEGORIAS_DE_ETIQUETA = {"Multivitamínico", "Omega-3", "Calcio", "Vitamina B", "Vitamina E",
-                          "Yodo", "Fibra", "Hierro"}
+# ⚠️ LA LISTA SE IMPORTA, NO SE COPIA: son exactamente las categorías de
+# suplemento del motor. Ver el BLOQUE 117.
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "motor"))
+from constructor import CAT_SUPLEMENTO as _CAT_SUP
+CATEGORIAS_DE_ETIQUETA = set(_CAT_SUP)
 NOMBRES_DE_ETIQUETA = {"Sal común (cloruro sódico)"}
 
 # Las diez fichas de hueso: su calcio y su fósforo los manda Köber 2017.

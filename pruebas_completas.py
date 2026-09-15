@@ -65,7 +65,10 @@ from constructor import valor_plausible_de
 from catalogo_menus import CATALOGO
 
 al, req = cargar()
-SUP_COMERCIALES = ("Multivitamínico", "Omega-3", "Yodo", "Fibra", "Calcio", "Hierro", "Vitamina B")
+# ⚠️ LA LISTA SE IMPORTA, NO SE COPIA. Ver el BLOQUE 117: había ONCE copias a
+# mano del mismo conjunto y cuatro estaban aquí, en la batería — o sea que la
+# propia vigilancia se habría quedado ciega ante una categoría nueva.
+from constructor import CAT_SUPLEMENTO as SUP_COMERCIALES
 PESCADOS = ["Salmón", "Sardina", "Caballa", "Merluza", "Bacalao", "Lubina", "Dorada",
            "Trucha", "Atún", "Boquerón", "Lenguado", "Pescadilla", "Besugo", "Bacaladilla", "Perca"]
 VINTEGRA = {"V-INTEGRA Cachorro", "V-INTEGRA Perro Adulto", "V-INTEGRA Senior",
@@ -2387,8 +2390,10 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 # ============================================================
 print("=== BLOQUE 14: nada que no se pueda pesar ===")
 
-_SE_DOSIFICAN_B14 = {"Multivitamínico", "Omega-3", "Yodo", "Fibra", "Calcio",
-                     "Hierro", "Vitamina B", "Suplementos comerciales"}
+# ⚠️ «Suplementos comerciales» va APARTE: es la CLAVE del grupo de candidatos,
+# no una categoría del catálogo, y por eso no está en `CAT_SUPLEMENTO`. Es la
+# misma distinción que costó el fallo de la regla 5 del solver.
+_SE_DOSIFICAN_B14 = set(SUP_COMERCIALES) | {"Suplementos comerciales"}
 _SUELO_B14 = 1.0
 
 _CASOS_B14 = [
@@ -2731,8 +2736,7 @@ else:
     # Los candidatos los dice el propio motor (una fila de vinculación por
     # cada uno), así que la prueba no tiene que adivinarlos ni repetir la
     # lógica de accesibilidad.
-    _DOSIFICADOS_B16 = ("Multivitamínico", "Omega-3", "Yodo", "Fibra", "Calcio",
-                        "Hierro", "Vitamina B")
+    _DOSIFICADOS_B16 = SUP_COMERCIALES   # la lista, no una copia
     _por_alimento_b16 = _diag.get("_alimentos") or {}
     _candidatos_b16 = set(_por_alimento_b16.get("vinculacion_usa_techo") or [])
     _con_suelo_b16 = set(_por_alimento_b16.get("suelo_medible") or [])
@@ -4992,7 +4996,7 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 print("\n=== BLOQUE 29: ningún hueco sin declarar, de las tres formas ===")
 
 _al29 = json.load(open("alimentos_v3_final.json", encoding="utf-8"))
-_SUP29 = {"Multivitamínico", "Vitamina B", "Hierro", "Calcio", "Yodo", "Fibra", "Omega-3"}
+_SUP29 = set(SUP_COMERCIALES)   # la lista, no una copia
 _ANIMAL29 = {"Carne muscular", "Vísceras", "Hígado", "Pescados y mariscos", "Hueso carnoso"}
 _CLAVES29 = ["proteina", "grasa", "fibra", "linoleico", "linolenico", "epa", "dha",
              "araquidonico", "calcio", "fosforo", "potasio", "sodio", "cloruro", "magnesio",
@@ -7089,7 +7093,7 @@ elif _vivos_b46:
 # cumpla la condición HOY, y la prueba no caduca.
 _cat_b46 = _json_b46.load(open(_os_b46.path.join(_dir_b46, "alimentos_v3_final.json"),
                                encoding="utf-8"))
-_SUPL_B46 = ("Multivitamínico", "Vitamina B", "Hierro", "Calcio", "Yodo", "Fibra", "Omega-3")
+_SUPL_B46 = SUP_COMERCIALES   # la lista, no una copia
 _grupos_b46 = {}
 for _a_b46 in _cat_b46:
     if (_a_b46.get("categoria") not in _SUPL_B46
@@ -19310,6 +19314,100 @@ if _pasados115:
                   f"propias kcal: {', '.join(_pasados115[:4])}")
 else:
     print("  y ninguno se pasa de un maximo medido con la misma vara")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
+# BLOQUE 117 — LA LISTA DE CATEGORÍAS DE SUPLEMENTO ES UNA, NO ONCE
+# ============================================================
+#
+# ⚠️ POR QUÉ (15 de septiembre de 2026). Elena pidió meter al catálogo dos
+# suplementos de vitamina E sueltos, y eso obligaba a crear la categoría
+# «Vitamina E». Al buscar dónde tocarla aparecieron **once tuplas escritas a
+# mano con el mismo conjunto**: dos en `constructor.py`, una en `verificar.py`,
+# tres en `motor_completo.py`, una en `auditar_catalogo.py`, una en
+# `auditar_composicion.py` y **cuatro en esta misma batería**.
+#
+# Una lista copiada a mano **no da error cuando se queda corta**: se queda
+# parada, y la categoría nueva simplemente no existe para ese trozo de código.
+# Es exactamente la forma de fallo de las seis categorías de Personalizar, la de
+# los cinco niveles de actividad y la de los 163 alimentos que la app pintaba —
+# las tres descubiertas por casualidad. Y aquí era peor por un sitio: cuatro de
+# las once estaban en la BATERÍA, o sea que la propia vigilancia se habría
+# quedado ciega ante la categoría nueva sin decir nada.
+#
+# Ahora `constructor.CAT_SUPLEMENTO` es **la** lista y las demás se derivan.
+# Este bloque exige que siga siendo así, leyendo el FUENTE: si mañana alguien
+# vuelve a escribir la tupla a mano, falla al escribirla, que es el único
+# momento en que se puede cazar.
+#
+# ⚠️ LO QUE NO ACUSA, Y ES A PROPÓSITO: los subconjuntos deliberados. La lista
+# de `seguridad.py` son cuatro categorías elegidas («Hígado», «Multivitamínico»,
+# «Omega-3», «Extras») y no pretende ser el conjunto. El corte está en **cinco o
+# más** categorías de suplemento en la misma tupla o conjunto: por debajo de eso
+# es una elección, por encima es una copia.
+print("\n=== BLOQUE 117: la lista de categorias de suplemento es UNA ===")
+
+import ast as _ast117
+from constructor import CAT_SUPLEMENTO as _CAT117
+
+_FICHEROS_117 = ["main.py", "pruebas_completas.py", "auditar_catalogo.py",
+                 "auditar_composicion.py", "auditar_patologias.py",
+                 "motor/constructor.py", "motor/verificar.py",
+                 "motor/motor_completo.py", "motor/seguridad.py", "motor/modos.py",
+                 "motor/patologias.py", "motor/condicionales.py",
+                 "motor/recomendaciones.py"]
+_UMBRAL_117 = 5          # cinco o más: ya no es una elección, es una copia
+_copias117, _mirados117 = [], 0
+for _f117 in _FICHEROS_117:
+    _ruta117 = _raiz_b24 / _f117
+    if not _ruta117.exists():
+        continue
+    _mirados117 += 1
+    _arbol117 = _ast117.parse(_ruta117.read_text(encoding="utf-8"))
+    for _n117 in _ast117.walk(_arbol117):
+        if not isinstance(_n117, (_ast117.Tuple, _ast117.List, _ast117.Set)):
+            continue
+        _cadenas117 = [x.value for x in _n117.elts
+                       if isinstance(x, _ast117.Constant) and isinstance(x.value, str)]
+        _cuantas117 = sum(1 for c in _cadenas117 if c in _CAT117)
+        if _cuantas117 < _UMBRAL_117:
+            continue
+        # Una copia literal con cinco o más: solo vale si es LA lista.
+        if _f117 == "motor/constructor.py" and set(_cadenas117) == set(_CAT117):
+            continue          # es la definicion, y esta completa
+        _copias117.append(f"{_f117}:{getattr(_n117, 'lineno', '?')} "
+                          f"({_cuantas117} categorias: {sorted(set(_cadenas117) & set(_CAT117))})")
+
+if _copias117:
+    fallos.append(
+        f"BLOQUE117: {len(_copias117)} copia(s) a mano de la lista de categorias de suplemento, "
+        f"que tiene que importarse de `constructor.CAT_SUPLEMENTO`: " + " · ".join(_copias117[:6])
+        + ". Una lista copiada no da error cuando se queda corta: se queda parada, y una "
+        f"categoria nueva deja de existir para ese trozo de codigo sin que salte nada")
+else:
+    print(f"  {_mirados117} ficheros mirados, 0 copias a mano de las "
+          f"{len(_CAT117)} categorias")
+
+# ── Y QUE LA DEFINICIÓN SIGA SIENDO COMPLETA ────────────────────────────────
+#
+# El guardia de arriba mira el fuente; este mira el CATÁLOGO, que es la otra
+# punta: una categoría de suplemento que exista en las fichas y no esté en
+# `CAT_SUPLEMENTO` no la cuenta nadie — ni el tope de suplementos, ni la
+# dosificación por peso, ni el aviso de composición.
+_cats_del_catalogo117 = {a.get("categoria") for a in al.values() if a.get("categoria")}
+_COMIDA_117 = {"Carne muscular", "Hueso carnoso", "Vísceras", "Hígado",
+               "Pescados y mariscos", "Verduras y frutas", "Extras"}
+_huerfanas117 = sorted(_cats_del_catalogo117 - set(_CAT117) - _COMIDA_117)
+if _huerfanas117:
+    fallos.append(
+        f"BLOQUE117: el catalogo tiene categorias que no son ni comida ni suplemento "
+        f"declarado: {_huerfanas117}. Un suplemento con una categoria que `CAT_SUPLEMENTO` no "
+        f"nombra no cuenta para el tope de suplementos ni se dosifica por peso, y el menu sale "
+        f"verde igual")
+else:
+    print(f"  las {len(_cats_del_catalogo117)} categorias del catalogo estan todas declaradas")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 

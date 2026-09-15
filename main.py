@@ -2495,17 +2495,38 @@ def _hay_comida_de_verdad(al, excluidos=None, categorias_excluidas=None):
     Se mira lo que de verdad queda: la categoría excluida a mano, y también
     la que se ha quedado sin nada por las alergias (excluir "pollo" puede
     vaciar una categoría entera en un catálogo reducido).
+
+    ⚠️ BASTA CON **UNA** DE LAS DOS, Y ANTES SE EXIGÍAN LAS DOS (15 de
+    septiembre de 2026). CASO REAL, cazado por el BLOQUE 9 el mismo día que
+    entraron los siete máximos LEGALES de la UE: el **cachorro de 10 kg sin
+    hueso y con tres alergias** dejó de sacar menú a cualquier hora, 0 de 10.
+
+    Y el menú EXISTE: el solver lo encuentra en el peldaño
+    `tope_de_visceras_higado_y_verdura_al_doble`, o sea en uno de los tres
+    últimos. Lo que pasaba es que esta función devolvía `False` —porque el
+    usuario había excluido «Hueso carnoso» a mano— y esos tres peldaños **no se
+    le ofrecían**. O sea: a un perro le faltaba el menú por una regla de FORMA,
+    que es exactamente lo que el BLOQUE 9 existe para impedir.
+
+    El argumento de arriba sigue en pie, pero pedía de más. Lo que hace seguro
+    ese peldaño no es que estén las DOS categorías: es que **al menos una siga
+    teniendo su SUELO mordiendo**, porque un suelo sobre una categoría vacía se
+    cumple solo. Con el hueso fuera, la carne muscular conserva su 10 % y la
+    ración no puede volverse hígado y calabaza. Con las dos fuera —que es el
+    caso de agosto, «sin carne, hueso ni pescado»— no queda ninguna y esto
+    sigue devolviendo `False`.
     """
     fuera = set(categorias_excluidas or [])
     prohibidos = set(excluidos or [])
+    quedan = []
     for cat in CATEGORIAS_QUE_HACEN_RACION:
         if cat in fuera:
-            return False
+            continue
         de_la_cat = [n for n, a in (al or {}).items() if a.get("categoria") == cat]
         permitidos, _f, _av = filtrar_exclusiones(de_la_cat, prohibidos)
-        if not permitidos:
-            return False
-    return True
+        if permitidos:
+            quedan.append(cat)
+    return bool(quedan)
 
 
 def _escalera_de_relajacion(hay_comida_de_verdad=True):
