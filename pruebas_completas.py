@@ -6802,6 +6802,58 @@ else:
             fallos.append(f"BLOQUE45 {_k45}: dice {_supl45.get(_k45)} suplementos y el motor "
                           f"usa {_s45}.")
 
+# ⚠️ Y LA ESCALERA TIENE QUE IR SIEMPRE HACIA ABAJO (15 de septiembre de 2026).
+#
+# Se añadieron dos peldaños de en medio -- el techo de lo accesorio al doble y
+# al triple, antes del que lo quita del todo -- porque una variante salia con
+# 3.676 g de coles de Bruselas, el 42 % del plato, y medido seis de las trece
+# que llegaban ahi NO lo necesitaban: les salia barato.
+#
+# El invariante que eso estrena es que **ningun peldaño puede APRETAR lo que el
+# anterior ya habia soltado**. Si uno de en medio se colara en el orden
+# equivocado, la escalera dejaria de ser una escalera: un perro para el que el
+# peldaño 5 tiene menu se quedaria mirando el 6, que es mas estricto, y bajaria
+# creyendo que ha soltado algo. No daria ningun error y el menu saldria verde.
+_ant45 = None
+for _m45b, _s45b, _k45b in _api._escalera_de_relajacion(True):
+    _k45b = _k45b or _api.PELDANO_ESTRICTO
+    if _ant45 is not None:
+        _km, _mm, _sm = _ant45
+        if _s45b < _sm:
+            fallos.append(f"BLOQUE45: el peldaño «{_k45b}» deja MENOS suplementos ({_s45b}) que "
+                          f"el de antes «{_km}» ({_sm}). La escalera solo puede ir a menos "
+                          f"estricto")
+        for _cat45 in _mm:
+            _mn_a, _mx_a = _mm[_cat45]
+            _mn_b, _mx_b = _m45b[_cat45]
+            if _mx_b < _mx_a - 1e-9:
+                fallos.append(f"BLOQUE45: el peldaño «{_k45b}» BAJA el techo de {_cat45} "
+                              f"({_mx_b:.2%}) por debajo del de «{_km}» ({_mx_a:.2%}). Un "
+                              f"peldaño que aprieta lo que el anterior solto no es un peldaño")
+            # ⚠️ LOS SUELOS NO ENTRAN EN ESTE INVARIANTE, Y NO ES UN OLVIDO:
+            # LA ESCALERA NO ES MONOTONA Y ESO ESTA PUESTO A PROPOSITO. El
+            # ultimo peldaño DEVUELVE los minimos de «Carne muscular» (10 %) y
+            # «Hueso carnoso» (20 %) que los anteriores habian soltado, porque
+            # lo que cambia ahi es OTRA cosa -- el techo de lo accesorio -- y
+            # sin esos dos suelos el motor monta una racion de higado, verdura y
+            # suplementos que cumple los 43 requisitos EN EL PAPEL y no es
+            # comida para un perro. Lo tiro el BLOQUE 9 la primera vez que se
+            # intento, y esta escrito en `_escalera_de_relajacion`.
+            #
+            # Lo escribio este mismo guardia al estrenarse: la primera version
+            # exigia monotonia en las dos direcciones y acuso al motor de algo
+            # que lleva bien puesto desde el 29 de agosto. Lo que SI tiene que
+            # cumplirse es que un suelo de las SECUNDARIAS, una vez soltado, no
+            # vuelva -- ahi no hay nada que proteja.
+            if _cat45 in _api.CATEGORIAS_SECUNDARIAS and _mn_b > _mn_a + 1e-9:
+                fallos.append(f"BLOQUE45: el peldaño «{_k45b}» SUBE el suelo de {_cat45} "
+                              f"({_mn_b:.2%}) por encima del de «{_km}» ({_mn_a:.2%}), y esa es "
+                              f"una categoria accesoria: un suelo suyo que vuelve despues de "
+                              f"soltarse no protege nada y puede quitar un menu")
+    _ant45 = (_k45b, _m45b, _s45b)
+print(f"  la escalera tiene {len(_api._escalera_de_relajacion(True))} peldaños y ninguno aprieta "
+      f"lo que solto el anterior")
+
 # El caso real: pancreatitis en un adulto de 25 kg.
 _CUERPO_45 = {"nombres_alimentos": [], "modo": "automatico", "der_objetivo": 1040.0,
               "peso_perro_kg": 25.0, "etapa_requisitos": "Adulto",

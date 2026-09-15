@@ -2568,10 +2568,65 @@ def _escalera_de_relajacion(hay_comida_de_verdad=True):
         (sin_ningun_minimo, 3, "proporcion_minima_y_un_suplemento_mas"),
         (sin_ningun_minimo, 4, "proporcion_minima_y_dos_suplementos_mas"),
     ]
+    # ⚠️ Y EL TECHO NO SE LEVANTA DE GOLPE: SUBE EN DOS PASOS (15 de septiembre
+    #    de 2026). CASO REAL, DE ELENA: «651 g de albahaca fresca en una ración
+    #    no es comida», y medido sobre los 216 precalculados el peor era una
+    #    variante con **3.676 g de coles de Bruselas, el 42 % del plato**.
+    #
+    #    La causa no es un fallo: este peldaño pone el techo de lo accesorio en
+    #    el **100 %**, así que dentro de él la verdura no tiene límite ninguno.
+    #    Y el MILP optimiza nutrición por gramo, así que si la verdura sale
+    #    barata para cerrar un hueco, mete verdura hasta donde le dejen — que es
+    #    exactamente el argumento de «la comida del menú se tiene que poder
+    #    comprar» del 14 de septiembre, visto por dentro del plato.
+    #
+    #    LA PREGUNTA QUE HAY QUE HACERSE NO ES «¿cuánta verdura sale?» SINO
+    #    «¿la NECESITA?». Medido sobre las 13 variantes que hoy caen aquí:
+    #
+    #        techo al doble  (20 % de verdura) ...  3 de 13 siguen con menú
+    #        techo al triple (30 % de verdura) ...  6 de 13 siguen con menú
+    #        sin techo (hoy) .................... 13 de 13, con 25-63 % de verdura
+    #
+    #    O sea que **seis de las trece la usaban porque les salía barata**, no
+    #    porque les hiciera falta. Con los dos peldaños de en medio, esas seis
+    #    paran en el primero que les vale y las otras siete siguen bajando hasta
+    #    el de siempre: **no se pierde ni un menú**, que es la regla 3 entera —
+    #    la forma se relaja lo MENOS posible y se dice en cuál se paró.
+    #
+    # ⚠️ Y LA OTRA FILA, LA DEL RELOJ, TAMBIÉN ESTÁ MEDIDA, porque dos peldaños
+    #    más son dos llamadas más al solver y este fichero ya tiene escrito que
+    #    «los dos casos tiran en direcciones opuestas». Ocho perros por la API,
+    #    cinco vueltas cada uno, con el presupuesto de verdad: **ninguno pierde
+    #    el menú y los tiempos no suben** (5/5 antes y 5/5 después en los siete
+    #    que salen; el toy de 3 kg con ocho especies fuera sale 0/5 en los dos,
+    #    o sea que no es de esto).
+    #
+    #    Y el que más gana es un perro de VERDAD, no una variante del catálogo:
+    #    el **cachorro de 10 kg con tres alergias** pasa de **40,5 % a 19,0 % de
+    #    verdura**, y tarda menos (2,7 s -> 1,5 s). Los que se quedan arriba es
+    #    porque la necesitan: el toy con artrosis (54 %) y el adulto con
+    #    pancreatitis (52 %) tienen que diluir con algo que no engorde, que es
+    #    justo el caso por el que este último peldaño existe.
+    #
     # El último peldaño solo existe si la ración sigue teniendo carne y
     # hueso de donde tirar -- ver _hay_comida_de_verdad(). Sin eso, soltar
     # los techos de lo accesorio no relaja la forma: inventa comida.
+    def _secundarias_por(veces):
+        """El mismo peldaño, pero con el techo de lo accesorio multiplicado.
+
+        Los mínimos se sueltan igual que en el de siempre; lo único que cambia
+        es hasta dónde puede llegar el techo. `min(1.0, ...)` porque un techo
+        por encima del 100 % del plato no significa nada.
+        """
+        return {c: ((0.0 if c in CATEGORIAS_SECUNDARIAS else mn),
+                    (min(1.0, mx * veces) if c in CATEGORIAS_SECUNDARIAS else mx))
+                for c, (mn, mx) in MARGENES_V2.items()}
+
     if hay_comida_de_verdad:
+        peldanos.append(
+            (_secundarias_por(2.0), 4, "tope_de_visceras_higado_y_verdura_al_doble"))
+        peldanos.append(
+            (_secundarias_por(3.0), 4, "tope_de_visceras_higado_y_verdura_al_triple"))
         peldanos.append(
             (sin_max_secundarias, 4, "tope_maximo_de_visceras_higado_y_verdura"))
     return peldanos
@@ -2625,6 +2680,14 @@ PELDANOS_EN_CRISTIANO = {
     "proporcion_minima_y_dos_suplementos_mas": (
         "Sin mínimos, y hasta 4 suplementos",
         "Dos suplementos más. Es lo más lejos que llega la escalera sin tocar ningún techo."),
+    "tope_de_visceras_higado_y_verdura_al_doble": (
+        "Vísceras, hígado y verdura hasta el doble",
+        "El techo de lo accesorio sube al doble — la verdura, del 10 % al 20 % del plato. "
+        "Los mínimos de carne y hueso siguen intactos."),
+    "tope_de_visceras_higado_y_verdura_al_triple": (
+        "Vísceras, hígado y verdura hasta el triple",
+        "El techo de lo accesorio sube al triple — la verdura, del 10 % al 30 % del plato. "
+        "Los mínimos de carne y hueso siguen intactos."),
     "tope_maximo_de_visceras_higado_y_verdura": (
         "Sin tope de vísceras, hígado y verdura",
         "Se levanta el techo de lo accesorio — el 10 % de verdura es lo que suele bloquear "
@@ -2670,7 +2733,7 @@ def _peldano_por_clave(clave, hay_comida_de_verdad=True):
 def listar_peldanos():
     """Los peldanos de la escalera, para que un profesional pueda elegir.
 
-    Se sirven los siete -- el ultimo incluido -- porque esto es la tabla, no
+    Se sirven los ocho -- el ultimo incluido -- porque esto es la tabla, no
     una decision sobre un paciente concreto: si al formular no hay carne y
     hueso de donde tirar, ese peldano simplemente no se aplica (ver
     `_hay_comida_de_verdad`). Decir aqui que no existe seria esconder una
