@@ -93,7 +93,8 @@
   ],
   "taurina_fuente": "Taurina/L-carnitina = 0: carbonato calcico (cascara de huevo molida), compuesto mineral sin materia organica soluble relevante.",
   "lcarnitina_fuente": "Taurina/L-carnitina = 0: carbonato calcico (cascara de huevo molida), compuesto mineral sin materia organica soluble relevante.",
-  "humedad_hueco": "14-sep-2026, buscar_humedad.py: no tiene fila en BEDCA, CIQUAL ni USDA (es Calcio, mandato 5: la etiqueta del fabricante), y la etiqueta no declara humedad. Köber 2017 tampoco la mide: su Tabla 1 es de hueso y cartílago."
+  "humedad_hueco": "14-sep-2026, buscar_humedad.py: no tiene fila en BEDCA, CIQUAL ni USDA (es Calcio, mandato 5: la etiqueta del fabricante), y la etiqueta no declara humedad. Köber 2017 tampoco la mide: su Tabla 1 es de hueso y cartílago.",
+  "composicion_fuente": {}
  },
  {
   "nombre": "NaturGreen Psyllium Bio",
@@ -206,7 +207,8 @@
    "fenilalanina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto («Psyllium» y «Plantago»: USDA no tiene ninguna fila).",
    "tirosina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto («Psyllium» y «Plantago»: USDA no tiene ninguna fila).",
    "arginina": "Mirado el 2026-09-15. Es un SUPLEMENTO COMERCIAL: su mandato es el 5, la etiqueta del fabricante, y su ficha tecnica no publica aminograma. Comprobado ademas que no se puede bajar por la cadena: BEDCA y CIQUAL no publican NINGUN aminoacido de nada, y USDA -- la unica que los publica -- no tiene fila para este producto («Psyllium» y «Plantago»: USDA no tiene ninguna fila)."
-  }
+  },
+  "composicion_fuente": {}
  },
  {
   "nombre": "AniForte Beef Blood Powder",
@@ -400,7 +402,8 @@
   "taurina_fuente": "Taurina = 0: es grasa extraida (aceite/manteca), sin la fraccion soluble en agua del tejido de origen -- mismo argumento que ya usa este catalogo para su proteina = 0.",
   "lcarnitina_fuente": "L-carnitina = 0: mismo argumento que la taurina -- la carnitina es hidrosoluble y no queda en la grasa extraida.",
   "humedad_g_100g": 0.0,
-  "humedad_fuente": "COTA POR COMPOSICIÓN, no una cifra de la fuente: la ficha declara 99.5 g de grasa por cada 100 g, así que quedan 0.5 g para TODO lo demás, agua incluida. Es el mismo argumento ya escrito y aceptado en la ficha del aceite de oliva el 13 de septiembre para su zinc. Su etiqueta (mandato 5) no declara humedad y ninguna base de composición tiene una fila para este producto."
+  "humedad_fuente": "COTA POR COMPOSICIÓN, no una cifra de la fuente: la ficha declara 99.5 g de grasa por cada 100 g, así que quedan 0.5 g para TODO lo demás, agua incluida. Es el mismo argumento ya escrito y aceptado en la ficha del aceite de oliva el 13 de septiembre para su zinc. Su etiqueta (mandato 5) no declara humedad y ninguna base de composición tiene una fila para este producto.",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Oleum Canis Aceite de Salmón",
@@ -481,7 +484,8 @@
   "taurina_fuente": "Taurina = 0: es grasa extraida (aceite/manteca), sin la fraccion soluble en agua del tejido de origen -- mismo argumento que ya usa este catalogo para su proteina = 0.",
   "lcarnitina_fuente": "L-carnitina = 0: mismo argumento que la taurina -- la carnitina es hidrosoluble y no queda en la grasa extraida.",
   "humedad_g_100g": 0.0,
-  "humedad_fuente": "COTA POR COMPOSICIÓN, no una cifra de la fuente: la ficha declara 99.5 g de grasa por cada 100 g, así que quedan 0.5 g para TODO lo demás, agua incluida. Es el mismo argumento ya escrito y aceptado en la ficha del aceite de oliva el 13 de septiembre para su zinc. Su etiqueta (mandato 5) no declara humedad y ninguna base de composición tiene una fila para este producto."
+  "humedad_fuente": "COTA POR COMPOSICIÓN, no una cifra de la fuente: la ficha declara 99.5 g de grasa por cada 100 g, así que quedan 0.5 g para TODO lo demás, agua incluida. Es el mismo argumento ya escrito y aceptado en la ficha del aceite de oliva el 13 de septiembre para su zinc. Su etiqueta (mandato 5) no declara humedad y ninguna base de composición tiene una fila para este producto.",
+  "composicion_fuente": {}
  },
  {
   "nombre": "AniForte Aceite de Salmón",
@@ -562,7 +566,8 @@
   "taurina_fuente": "Taurina = 0: es grasa extraida (aceite/manteca), sin la fraccion soluble en agua del tejido de origen -- mismo argumento que ya usa este catalogo para su proteina = 0.",
   "lcarnitina_fuente": "L-carnitina = 0: mismo argumento que la taurina -- la carnitina es hidrosoluble y no queda en la grasa extraida.",
   "humedad_g_100g": 0.0,
-  "humedad_fuente": "COTA POR COMPOSICIÓN, no una cifra de la fuente: la ficha declara 99.5 g de grasa por cada 100 g, así que quedan 0.5 g para TODO lo demás, agua incluida. Es el mismo argumento ya escrito y aceptado en la ficha del aceite de oliva el 13 de septiembre para su zinc. Su etiqueta (mandato 5) no declara humedad y ninguna base de composición tiene una fila para este producto."
+  "humedad_fuente": "COTA POR COMPOSICIÓN, no una cifra de la fuente: la ficha declara 99.5 g de grasa por cada 100 g, así que quedan 0.5 g para TODO lo demás, agua incluida. Es el mismo argumento ya escrito y aceptado en la ficha del aceite de oliva el 13 de septiembre para su zinc. Su etiqueta (mandato 5) no declara humedad y ninguna base de composición tiene una fila para este producto.",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Pets Purest Aceite de Salmón Escocés",
@@ -641,7 +646,8 @@
   "taurina_fuente": "Taurina = 0: es grasa extraida (aceite/manteca), sin la fraccion soluble en agua del tejido de origen -- mismo argumento que ya usa este catalogo para su proteina = 0.",
   "lcarnitina_fuente": "L-carnitina = 0: mismo argumento que la taurina -- la carnitina es hidrosoluble y no queda en la grasa extraida.",
   "humedad_g_100g": 0.0,
-  "humedad_fuente": "COTA POR COMPOSICIÓN, no una cifra de la fuente: la ficha declara 99 g de grasa por cada 100 g, así que quedan 1 g para TODO lo demás, agua incluida. Es el mismo argumento ya escrito y aceptado en la ficha del aceite de oliva el 13 de septiembre para su zinc. Su etiqueta (mandato 5) no declara humedad y ninguna base de composición tiene una fila para este producto."
+  "humedad_fuente": "COTA POR COMPOSICIÓN, no una cifra de la fuente: la ficha declara 99 g de grasa por cada 100 g, así que quedan 1 g para TODO lo demás, agua incluida. Es el mismo argumento ya escrito y aceptado en la ficha del aceite de oliva el 13 de septiembre para su zinc. Su etiqueta (mandato 5) no declara humedad y ninguna base de composición tiene una fila para este producto.",
+  "composicion_fuente": {}
  },
  {
   "nombre": "GRAU Levadura de cerveza",
@@ -1217,7 +1223,8 @@
   "cero_verificado": {
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:1162 · «Conejo de granja, carne, cruda» · columna «fibra, dietetica total» = 0.0 g. `value_type` LZ, o sea una MEDIDA y no una celda vacía."
   },
-  "nota_datos": " ⚠️ 13 sep 2026: lcarnitina, taurina estaba(n) declarado(s) en `sin_dato` pero LA CLAVE NO EXISTÍA en `nutrientes`. Es la peor de las tres formas de esconder un hueco que describe `UNIDADES.md`: `valor_nutriente()` devuelve 0 igual que en los otros dos casos, pero NO HAY NINGÚN CERO QUE ENCONTRAR, así que ni la auditoría ni `datos_incompletos` podían decir nada. Se añade la clave a 0 —que es lo que el motor ya usaba— sin tocar ningún valor: lo único que cambia es que ahora el hueco se ve. Afectaba a 58 fichas."
+  "nota_datos": " ⚠️ 13 sep 2026: lcarnitina, taurina estaba(n) declarado(s) en `sin_dato` pero LA CLAVE NO EXISTÍA en `nutrientes`. Es la peor de las tres formas de esconder un hueco que describe `UNIDADES.md`: `valor_nutriente()` devuelve 0 igual que en los otros dos casos, pero NO HAY NINGÚN CERO QUE ENCONTRAR, así que ni la auditoría ni `datos_incompletos` podían decir nada. Se añade la clave a 0 —que es lo que el motor ya usaba— sin tocar ningún valor: lo único que cambia es que ahora el hueco se ve. Afectaba a 58 fichas.",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Pollo muslo con piel",
@@ -1402,7 +1409,8 @@
   "cero_verificado": {
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2285 · «Pavo, crudo» · columna «fibra, dietetica total» = 0.0 g. `value_type` AR, o sea una MEDIDA y no una celda vacía."
   },
-  "nota_datos": " ⚠️ MANGANESO, 13 sep 2026: estaba en 0,6 mg/100 g y ese número NO TIENE FUENTE EN NINGUNA PARTE. Estaba repetido en OCHO fichas del catálogo —Pavo, Pavo muslo con piel, Pavo pechuga sin piel, Pato, Cuello de pavo, Cuello de pato, Carcasa de pato y Canónigos—, y al buscarlo: BEDCA no publica manganeso (comprobado ficha a ficha, la columna no existe en su tabla), USDA da 0,022 en el muslo de pavo y 0,019 en el pato, y la Tabla 1 de Köber no mide manganeso. Un mismo número en ocho fichas de especies distintas no es una medida: es un valor que se propagó. Y no era inocente por el lado que parece: 0,6 es unas treinta veces el valor real del ave, así que el motor creía el manganeso cubierto cuando no lo estaba. En esta ficha pasa a HUECO declarado y no a otra cifra, porque BEDCA 2285 «Pavo, crudo» no publica manganeso: no hay de dónde sacarlo. Un hueco vale 0 para el motor pero sale en `datos_incompletos` junto al menú y contra un máximo se imputa por familia, que es lo contrario de lo que hacía el 0,6."
+  "nota_datos": " ⚠️ MANGANESO, 13 sep 2026: estaba en 0,6 mg/100 g y ese número NO TIENE FUENTE EN NINGUNA PARTE. Estaba repetido en OCHO fichas del catálogo —Pavo, Pavo muslo con piel, Pavo pechuga sin piel, Pato, Cuello de pavo, Cuello de pato, Carcasa de pato y Canónigos—, y al buscarlo: BEDCA no publica manganeso (comprobado ficha a ficha, la columna no existe en su tabla), USDA da 0,022 en el muslo de pavo y 0,019 en el pato, y la Tabla 1 de Köber no mide manganeso. Un mismo número en ocho fichas de especies distintas no es una medida: es un valor que se propagó. Y no era inocente por el lado que parece: 0,6 es unas treinta veces el valor real del ave, así que el motor creía el manganeso cubierto cuando no lo estaba. En esta ficha pasa a HUECO declarado y no a otra cifra, porque BEDCA 2285 «Pavo, crudo» no publica manganeso: no hay de dónde sacarlo. Un hueco vale 0 para el motor pero sale en `datos_incompletos` junto al menú y contra un máximo se imputa por familia, que es lo contrario de lo que hacía el 0,6.",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Pavo muslo con piel",
@@ -1576,7 +1584,8 @@
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:1029 · «Ternera, solomillo, sin grasa, crudo» · columna «fibra, dietetica total» = 0.0 g. `value_type` LZ, o sea una MEDIDA y no una celda vacía."
   },
   "humedad_g_100g": 75.0,
-  "humedad_fuente": "bedca:1029 · Ternera, solomillo, sin grasa, crudo"
+  "humedad_fuente": "bedca:1029 · Ternera, solomillo, sin grasa, crudo",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Ternera con grasa",
@@ -1850,7 +1859,8 @@
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2630 · «Sardina» · columna «fibra, dietetica total» = 0.0 g. `value_type` AR, o sea una MEDIDA y no una celda vacía."
   },
   "humedad_g_100g": 74.4,
-  "humedad_fuente": "bedca:2630 · Sardina"
+  "humedad_fuente": "bedca:2630 · Sardina",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Caballa",
@@ -1941,7 +1951,8 @@
   },
   "cero_verificado": {
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:175119 · «Fish, mackerel, Atlantic, raw» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
-  }
+  },
+  "composicion_fuente": {}
  },
  {
   "nombre": "Atún",
@@ -2033,7 +2044,8 @@
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2134 · «Atún, crudo» · columna «fibra, dietetica total» = 0.0 g. `value_type` AR, o sea una MEDIDA y no una celda vacía."
   },
   "humedad_g_100g": 67.3,
-  "humedad_fuente": "bedca:2134 · Atún, crudo"
+  "humedad_fuente": "bedca:2134 · Atún, crudo",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Merluza",
@@ -2303,7 +2315,8 @@
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2636 · «Trucha» · columna «fibra, dietetica total» = 0.0 g. `value_type` AR, o sea una MEDIDA y no una celda vacía."
   },
   "humedad_g_100g": 81.3,
-  "humedad_fuente": "bedca:2636 · Trucha"
+  "humedad_fuente": "bedca:2636 · Trucha",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Huevo clara",
@@ -2606,7 +2619,8 @@
    "vitD": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2543 · «Aceite de oliva» · columna «Vitamina D» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía.",
    "yodo": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2543 · «Aceite de oliva» · columna «ioduro» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía.",
    "zinc": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2543 · «Aceite de oliva» · columna «zinc (cinc)» = 0.0 mg. `value_type` AR, o sea una MEDIDA y no una celda vacía."
-  }
+  },
+  "composicion_fuente": {}
  },
  {
   "nombre": "Aceite de oliva virgen extra",
@@ -2719,7 +2733,8 @@
   },
   "nota_datos": " ⚠️ 13 sep 2026 — calcio, folato, fosforo, hierro, magnesio, niacina, potasio, proteina, riboflavina, sodio, tiamina, zinc: el barrido los declaró HUECO porque BEDCA los da como `TR` con la celda vacía, y eso era un ERROR. En una grasa pura ese cero es CIERTO por composición, y no era inofensivo: un hueco se imputa al percentil 90 de su familia contra los máximos, y la familia «Extras» incluye semillas con 17 g de proteína. Con la proteína de dos aceites declarada hueco, el chihuahua de 3 kg con patología RENAL se quedaba SIN MENÚ en los seis peldaños de la escalera. Pasan a `cero_verificado`.",
   "humedad_g_100g": 0.0,
-  "humedad_fuente": "CERO CIERTO POR COMPOSICIÓN, 14-sep-2026. No es una cifra de la fuente: bedca:2544 da `TR` con la celda VACÍA, que es NO HAY CIFRA, y la ficha no declara fila en CIQUAL ni en USDA. Lo decide la aritmética, que es el MISMO argumento ya escrito y aceptado en esta ficha el 13 de septiembre para el zinc: 100 g de grasa por cada 100 g y 888 kcal no dejan sitio para agua. Y las fuentes lo confirman de refilón en los aceites hermanos: BEDCA da 0,00 al de sésamo y 0,10 al de hígado de bacalao."
+  "humedad_fuente": "CERO CIERTO POR COMPOSICIÓN, 14-sep-2026. No es una cifra de la fuente: bedca:2544 da `TR` con la celda VACÍA, que es NO HAY CIFRA, y la ficha no declara fila en CIQUAL ni en USDA. Lo decide la aritmética, que es el MISMO argumento ya escrito y aceptado en esta ficha el 13 de septiembre para el zinc: 100 g de grasa por cada 100 g y 888 kcal no dejan sitio para agua. Y las fuentes lo confirman de refilón en los aceites hermanos: BEDCA da 0,00 al de sésamo y 0,10 al de hígado de bacalao.",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Hígado de vaca",
@@ -2805,7 +2820,8 @@
   "cero_verificado": {
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:169451 · «Beef, variety meats and by-products, liver, raw» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
   },
-  "fuentes_id_porque": "BEDCA 1053 «Hígado, de vaca/buey, crudo» — E 135,5/136 · P 21,1/21,1 · G 4,02159/4,0216. EXACTA en proteína y grasa al quinto decimal. ⚠️ La ficha solo declaraba usda:169451, y de ahí salen su vitamina D (1,2, que las dos fuentes dan igual) pero NO su vitamina A: BEDCA da 10250 -- que es la nuestra -- y USDA da 4968, o sea 2,06 veces menos. Sin este id esa cifra no se comparaba con ninguna fuente que la publique, y es la mayor aportadora de vitamina A de toda la ración, con máximo de FEDIAF encima. Ver `discrepancias_declaradas`."
+  "fuentes_id_porque": "BEDCA 1053 «Hígado, de vaca/buey, crudo» — E 135,5/136 · P 21,1/21,1 · G 4,02159/4,0216. EXACTA en proteína y grasa al quinto decimal. ⚠️ La ficha solo declaraba usda:169451, y de ahí salen su vitamina D (1,2, que las dos fuentes dan igual) pero NO su vitamina A: BEDCA da 10250 -- que es la nuestra -- y USDA da 4968, o sea 2,06 veces menos. Sin este id esa cifra no se comparaba con ninguna fuente que la publique, y es la mayor aportadora de vitamina A de toda la ración, con máximo de FEDIAF encima. Ver `discrepancias_declaradas`.",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Corazón de pollo",
@@ -3070,7 +3086,8 @@
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:174356 · «Veal, variety meats and by-products, kidneys, raw» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
   },
   "nota_datos": "⚠️ RENOMBRADA EL 2026-09-13, SIN TOCAR UN SOLO NÚMERO. Se llamaba «Riñón de ternera» y sus datos no son de ternera: cuadran celda a celda con CIQUAL 40402 «Rognon, boeuf, cru». Importa porque no es un decimal -- vaca y ternera son animales de composición muy distinta -- y porque quien compra en la carnicería compra uno de los dos. Es lo mismo que ya pasó con el bazo, el páncreas y el pulmón. El catálogo se queda SIN riñón de ternera: BEDCA 1069 y USDA 174356 lo publican, así que se puede añadir como ficha nueva el día que se quiera, pero eso es sembrar una ficha entera y no renombrar. || ⚠️ SU FILA DECLARADA NO ES LA FILA DE LA QUE SALEN SUS NÚMEROS (13 de septiembre). Declara usda:174356 «Veal… kidneys, raw» (99/15,76/3,12) y sus cifras no son esas. Cuadran EXACTAS con CIQUAL 40402 «Rognon, BOEUF, cru» (95,9/17,1/2,65 contra nuestros 92,3/17,1/2,65), y su vitamina D, 1,05, es la de esa fila de BUEY clavada -- BEDCA 1069 «Riñón, de ternera» da 1 y USDA no publica ninguna. O sea que es un RIÑÓN DE BUEY con nombre de ternera: el cuarto caso de esta familia, detrás de «Bazo de ternera», «Páncreas de ternera» y «Pulmón de ternera». NO SE TOCA NI UNA CIFRA: rellenar desde la fila de la otra especie mezcla dos mediciones en una columna, y renombrarla es una decisión de producto. Su vitamina A, 204, no sale de ninguna de las cuatro filas candidatas (BEDCA 140, USDA 92, CIQUAL buey 253, CIQUAL ternera 86) y también está sin explicar. En `DATOS_QUE_FALTAN.md`.",
-  "fuentes_id_porque": "CIQUAL 40402 «Rognon, boeuf, cru» — y no es un parecido, son TRECE CELDAS EXACTAS: proteína 17,1 · grasa 2,65 · hierro 7,04 · potasio 236 · sodio 169 · zinc 1,52 · selenio 118 · vitamina D 1,05 · vitamina B12 21,1 · magnesio 16 · calcio 11,2 · fósforo 243 · energía 95,9/92,3. ⚠️ RENOMBRADA EL 2026-09-13: se llamaba «Riñón de ternera» y declaraba `usda:174356` «Veal… kidneys, raw», que da 99/15,76/3,12 -- no son sus números. Tampoco lo son los de BEDCA 1069 «Riñón, de ternera» (106,5/16,8/4,32). Es un riñón de BUEY con nombre de ternera, el cuarto caso de esta familia detrás de «Bazo de ternera», «Páncreas de ternera» y «Pulmón de ternera», renombrados en agosto y septiembre por lo mismo. Se renombra y NO se toca ni una cifra, que es justo el motivo de renombrar en vez de rellenar: traer los números de la fila de la otra especie mezclaría dos mediciones en una columna. ⚠️ Queda UNA celda sin explicar: su vitamina A, 204, no es la de esta fila (CIQUAL da «Rétinol» 253) ni la de ninguna de las otras tres candidatas (BEDCA ternera 140, USDA ternera 92, CIQUAL ternera 86)."
+  "fuentes_id_porque": "CIQUAL 40402 «Rognon, boeuf, cru» — y no es un parecido, son TRECE CELDAS EXACTAS: proteína 17,1 · grasa 2,65 · hierro 7,04 · potasio 236 · sodio 169 · zinc 1,52 · selenio 118 · vitamina D 1,05 · vitamina B12 21,1 · magnesio 16 · calcio 11,2 · fósforo 243 · energía 95,9/92,3. ⚠️ RENOMBRADA EL 2026-09-13: se llamaba «Riñón de ternera» y declaraba `usda:174356` «Veal… kidneys, raw», que da 99/15,76/3,12 -- no son sus números. Tampoco lo son los de BEDCA 1069 «Riñón, de ternera» (106,5/16,8/4,32). Es un riñón de BUEY con nombre de ternera, el cuarto caso de esta familia detrás de «Bazo de ternera», «Páncreas de ternera» y «Pulmón de ternera», renombrados en agosto y septiembre por lo mismo. Se renombra y NO se toca ni una cifra, que es justo el motivo de renombrar en vez de rellenar: traer los números de la fila de la otra especie mezclaría dos mediciones en una columna. ⚠️ Queda UNA celda sin explicar: su vitamina A, 204, no es la de esta fila (CIQUAL da «Rétinol» 253) ni la de ninguna de las otras tres candidatas (BEDCA ternera 140, USDA ternera 92, CIQUAL ternera 86).",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Calabaza",
@@ -3443,18 +3460,18 @@
   "humedad_g_100g": 90.1,
   "humedad_fuente": "bedca:2198 · Judía verde, cruda",
   "composicion_fuente": {
-   "lisina": "usda:169961 · «Beans, snap, green, raw» · columna «Lysine» · transferido por gramo de proteina: ×(2.2/1.83) → 0.105792 g · 2026-09-15",
-   "metionina": "usda:169961 · «Beans, snap, green, raw» · columna «Methionine» · transferido por gramo de proteina: ×(2.2/1.83) → 0.026448 g · 2026-09-15",
-   "cistina": "usda:169961 · «Beans, snap, green, raw» · columna «Cystine» · transferido por gramo de proteina: ×(2.2/1.83) → 0.021639 g · 2026-09-15",
-   "triptofano": "usda:169961 · «Beans, snap, green, raw» · columna «Tryptophan» · transferido por gramo de proteina: ×(2.2/1.83) → 0.022842 g · 2026-09-15",
-   "treonina": "usda:169961 · «Beans, snap, green, raw» · columna «Threonine» · transferido por gramo de proteina: ×(2.2/1.83) → 0.094973 g · 2026-09-15",
-   "isoleucina": "usda:169961 · «Beans, snap, green, raw» · columna «Isoleucine» · transferido por gramo de proteina: ×(2.2/1.83) → 0.079344 g · 2026-09-15",
-   "leucina": "usda:169961 · «Beans, snap, green, raw» · columna «Leucine» · transferido por gramo de proteina: ×(2.2/1.83) → 0.134645 g · 2026-09-15",
-   "valina": "usda:169961 · «Beans, snap, green, raw» · columna «Valine» · transferido por gramo de proteina: ×(2.2/1.83) → 0.108197 g · 2026-09-15",
-   "histidina": "usda:169961 · «Beans, snap, green, raw» · columna «Histidine» · transferido por gramo de proteina: ×(2.2/1.83) → 0.040874 g · 2026-09-15",
-   "fenilalanina": "usda:169961 · «Beans, snap, green, raw» · columna «Phenylalanine» · transferido por gramo de proteina: ×(2.2/1.83) → 0.080546 g · 2026-09-15",
-   "tirosina": "usda:169961 · «Beans, snap, green, raw» · columna «Tyrosine» · transferido por gramo de proteina: ×(2.2/1.83) → 0.050492 g · 2026-09-15",
-   "arginina": "usda:169961 · «Beans, snap, green, raw» · columna «Arginine» · transferido por gramo de proteina: ×(2.2/1.83) → 0.08776 g · 2026-09-15"
+   "arginina": "usda:169961 · «Beans, snap, green, raw» · columna «Arginine» = 0.073 G · transferido por gramo de proteina: ×(2.2/1.83) → 0.08776 g · 2026-09-15",
+   "cistina": "usda:169961 · «Beans, snap, green, raw» · columna «Cystine» = 0.018 G · transferido por gramo de proteina: ×(2.2/1.83) → 0.021639 g · 2026-09-15",
+   "fenilalanina": "usda:169961 · «Beans, snap, green, raw» · columna «Phenylalanine» = 0.067 G · transferido por gramo de proteina: ×(2.2/1.83) → 0.080546 g · 2026-09-15",
+   "histidina": "usda:169961 · «Beans, snap, green, raw» · columna «Histidine» = 0.034 G · transferido por gramo de proteina: ×(2.2/1.83) → 0.040874 g · 2026-09-15",
+   "isoleucina": "usda:169961 · «Beans, snap, green, raw» · columna «Isoleucine» = 0.066 G · transferido por gramo de proteina: ×(2.2/1.83) → 0.079344 g · 2026-09-15",
+   "leucina": "usda:169961 · «Beans, snap, green, raw» · columna «Leucine» = 0.112 G · transferido por gramo de proteina: ×(2.2/1.83) → 0.134645 g · 2026-09-15",
+   "lisina": "usda:169961 · «Beans, snap, green, raw» · columna «Lysine» = 0.088 G · transferido por gramo de proteina: ×(2.2/1.83) → 0.105792 g · 2026-09-15",
+   "metionina": "usda:169961 · «Beans, snap, green, raw» · columna «Methionine» = 0.022 G · transferido por gramo de proteina: ×(2.2/1.83) → 0.026448 g · 2026-09-15",
+   "tirosina": "usda:169961 · «Beans, snap, green, raw» · columna «Tyrosine» = 0.042 G · transferido por gramo de proteina: ×(2.2/1.83) → 0.050492 g · 2026-09-15",
+   "treonina": "usda:169961 · «Beans, snap, green, raw» · columna «Threonine» = 0.079 G · transferido por gramo de proteina: ×(2.2/1.83) → 0.094973 g · 2026-09-15",
+   "triptofano": "usda:169961 · «Beans, snap, green, raw» · columna «Tryptophan» = 0.019 G · transferido por gramo de proteina: ×(2.2/1.83) → 0.022842 g · 2026-09-15",
+   "valina": "usda:169961 · «Beans, snap, green, raw» · columna «Valine» = 0.09 G · transferido por gramo de proteina: ×(2.2/1.83) → 0.108197 g · 2026-09-15"
   }
  },
  {
@@ -3724,18 +3741,18 @@
   "humedad_g_100g": 92.2,
   "humedad_fuente": "bedca:2409 · Pimiento rojo, crudo",
   "composicion_fuente": {
-   "lisina": "usda:170108 · «Peppers, sweet, red, raw» · columna «Lysine» · transferido por gramo de proteina: ×(1.3/0.99) → 0.047273 g · 2026-09-15",
-   "metionina": "usda:170108 · «Peppers, sweet, red, raw» · columna «Methionine» · transferido por gramo de proteina: ×(1.3/0.99) → 0.007879 g · 2026-09-15",
-   "cistina": "usda:170108 · «Peppers, sweet, red, raw» · columna «Cystine» · transferido por gramo de proteina: ×(1.3/0.99) → 0.024949 g · 2026-09-15",
-   "triptofano": "usda:170108 · «Peppers, sweet, red, raw» · columna «Tryptophan» · transferido por gramo de proteina: ×(1.3/0.99) → 0.015758 g · 2026-09-15",
-   "treonina": "usda:170108 · «Peppers, sweet, red, raw» · columna «Threonine» · transferido por gramo de proteina: ×(1.3/0.99) → 0.052525 g · 2026-09-15",
-   "isoleucina": "usda:170108 · «Peppers, sweet, red, raw» · columna «Isoleucine» · transferido por gramo de proteina: ×(1.3/0.99) → 0.027576 g · 2026-09-15",
-   "leucina": "usda:170108 · «Peppers, sweet, red, raw» · columna «Leucine» · transferido por gramo de proteina: ×(1.3/0.99) → 0.047273 g · 2026-09-15",
-   "valina": "usda:170108 · «Peppers, sweet, red, raw» · columna «Valine» · transferido por gramo de proteina: ×(1.3/0.99) → 0.040707 g · 2026-09-15",
-   "histidina": "usda:170108 · «Peppers, sweet, red, raw» · columna «Histidine» · transferido por gramo de proteina: ×(1.3/0.99) → 0.022323 g · 2026-09-15",
-   "fenilalanina": "usda:170108 · «Peppers, sweet, red, raw» · columna «Phenylalanine» · transferido por gramo de proteina: ×(1.3/0.99) → 0.065657 g · 2026-09-15",
-   "tirosina": "usda:170108 · «Peppers, sweet, red, raw» · columna «Tyrosine» · transferido por gramo de proteina: ×(1.3/0.99) → 0.011818 g · 2026-09-15",
-   "arginina": "usda:170108 · «Peppers, sweet, red, raw» · columna «Arginine» · transferido por gramo de proteina: ×(1.3/0.99) → 0.047273 g · 2026-09-15"
+   "arginina": "usda:170108 · «Peppers, sweet, red, raw» · columna «Arginine» = 0.036 G · transferido por gramo de proteina: ×(1.3/0.99) → 0.047273 g · 2026-09-15",
+   "cistina": "usda:170108 · «Peppers, sweet, red, raw» · columna «Cystine» = 0.019 G · transferido por gramo de proteina: ×(1.3/0.99) → 0.024949 g · 2026-09-15",
+   "fenilalanina": "usda:170108 · «Peppers, sweet, red, raw» · columna «Phenylalanine» = 0.05 G · transferido por gramo de proteina: ×(1.3/0.99) → 0.065657 g · 2026-09-15",
+   "histidina": "usda:170108 · «Peppers, sweet, red, raw» · columna «Histidine» = 0.017 G · transferido por gramo de proteina: ×(1.3/0.99) → 0.022323 g · 2026-09-15",
+   "isoleucina": "usda:170108 · «Peppers, sweet, red, raw» · columna «Isoleucine» = 0.021 G · transferido por gramo de proteina: ×(1.3/0.99) → 0.027576 g · 2026-09-15",
+   "leucina": "usda:170108 · «Peppers, sweet, red, raw» · columna «Leucine» = 0.036 G · transferido por gramo de proteina: ×(1.3/0.99) → 0.047273 g · 2026-09-15",
+   "lisina": "usda:170108 · «Peppers, sweet, red, raw» · columna «Lysine» = 0.036 G · transferido por gramo de proteina: ×(1.3/0.99) → 0.047273 g · 2026-09-15",
+   "metionina": "usda:170108 · «Peppers, sweet, red, raw» · columna «Methionine» = 0.006 G · transferido por gramo de proteina: ×(1.3/0.99) → 0.007879 g · 2026-09-15",
+   "tirosina": "usda:170108 · «Peppers, sweet, red, raw» · columna «Tyrosine» = 0.009 G · transferido por gramo de proteina: ×(1.3/0.99) → 0.011818 g · 2026-09-15",
+   "treonina": "usda:170108 · «Peppers, sweet, red, raw» · columna «Threonine» = 0.04 G · transferido por gramo de proteina: ×(1.3/0.99) → 0.052525 g · 2026-09-15",
+   "triptofano": "usda:170108 · «Peppers, sweet, red, raw» · columna «Tryptophan» = 0.012 G · transferido por gramo de proteina: ×(1.3/0.99) → 0.015758 g · 2026-09-15",
+   "valina": "usda:170108 · «Peppers, sweet, red, raw» · columna «Valine» = 0.031 G · transferido por gramo de proteina: ×(1.3/0.99) → 0.040707 g · 2026-09-15"
   }
  },
  {
@@ -3981,7 +3998,8 @@
    "vitD": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2241 · «Pera» · columna «Vitamina D» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía."
   },
   "humedad_g_100g": 86.7,
-  "humedad_fuente": "bedca:2241 · Pera"
+  "humedad_fuente": "bedca:2241 · Pera",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Arándano",
@@ -4062,7 +4080,8 @@
   "cero_verificado": {
    "vitB12": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2368 · «Arandano» · columna «Vitamina B-12» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía.",
    "vitD": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2368 · «Arandano» · columna «Vitamina D» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía."
-  }
+  },
+  "composicion_fuente": {}
  },
  {
   "nombre": "Plátano",
@@ -4133,7 +4152,8 @@
    "vitD": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2245 · «Plátano» · columna «Vitamina D» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía."
   },
   "humedad_g_100g": 75.1,
-  "humedad_fuente": "bedca:2245 · Plátano"
+  "humedad_fuente": "bedca:2245 · Plátano",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Fresa",
@@ -4214,7 +4234,8 @@
    "vitD": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2225 · «Fresa» · columna «Vitamina D» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía."
   },
   "humedad_g_100g": 89.6,
-  "humedad_fuente": "bedca:2225 · Fresa"
+  "humedad_fuente": "bedca:2225 · Fresa",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Naranja",
@@ -4388,7 +4409,8 @@
    "vitD": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2247 · «Sandía» · columna «Vitamina D» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía."
   },
   "humedad_g_100g": 94.6,
-  "humedad_fuente": "bedca:2247 · Sandía"
+  "humedad_fuente": "bedca:2247 · Sandía",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Melón",
@@ -4545,7 +4567,8 @@
    "vitE": "Ninguna fuente la mide: la fila de BEDCA 2299 no trae esa columna, USDA 174359 no publica vitamina E del pulmón, y CIQUAL no tiene ninguna fila de pulmón. (2026-09-13)",
    "yodo": "Ninguna fuente la mide: la fila de BEDCA 2299 no trae esa columna, USDA no publica yodo de nada, y CIQUAL no tiene ninguna fila de pulmón. El yodo es tope crónico. (2026-09-13)"
   },
-  "fuentes_id_porque": "BEDCA 2299 «Pulmón, de cordero, crudo» — E 90,8/91 · P 16,7/16,7 · G 2,6/2,6. De aquí salen su vitamina D (12) y su vitamina A (27). ⚠️ USDA 174359, la única fila que la ficha declaraba, NO publica la vitamina D del pulmón, así que esos 12 µg no se comparaban con nada y parecían no venir de ningún sitio."
+  "fuentes_id_porque": "BEDCA 2299 «Pulmón, de cordero, crudo» — E 90,8/91 · P 16,7/16,7 · G 2,6/2,6. De aquí salen su vitamina D (12) y su vitamina A (27). ⚠️ USDA 174359, la única fila que la ficha declaraba, NO publica la vitamina D del pulmón, así que esos 12 µg no se comparaban con nada y parecían no venir de ningún sitio.",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Riñón de cordero",
@@ -4629,7 +4652,8 @@
   ],
   "hueco_verificado": {
    "vitD": "BEDCA 1063 «Riñón, de cordero, crudo» la da como `TR` con la celda VACÍA -- NO HAY CIFRA --, USDA 174354 «Lamb, variety meats and by-products, kidneys, raw» no publica vitamina D, y CIQUAL 40407 «Rognon, agneau, cru» la da como «-». TRES fuentes y ninguna la mide. Que la ficha bebió de BEDCA está probado: su vitamina E, 0,43 mg, es la de BEDCA exacta. Era un CERO MUDO en un RIÑÓN, y un cero mudo AFLOJA el tope crónico de la vitamina D, que es el lado peligroso. Es el mismo fallo que el de la pescadilla. (2026-09-13)"
-  }
+  },
+  "composicion_fuente": {}
  },
  {
   "nombre": "Corazón de vaca",
@@ -4810,7 +4834,8 @@
    "vitD"
   ],
   "humedad_g_100g": 57.3,
-  "humedad_fuente": "Köber 2017, Tabla 1, columna «DM [%]» de «Chicken carcass» + «Chicken dorsum» = 42.70 % de materia seca, o sea 57.30 g de agua por 100 g. Es la MISMA fila de la que ya salen el calcio y el fósforo de esta ficha. Ninguna de las tres bases de composición tiene una fila para esta pieza."
+  "humedad_fuente": "Köber 2017, Tabla 1, columna «DM [%]» de «Chicken carcass» + «Chicken dorsum» = 42.70 % de materia seca, o sea 57.30 g de agua por 100 g. Es la MISMA fila de la que ya salen el calcio y el fósforo de esta ficha. Ninguna de las tres bases de composición tiene una fila para esta pieza.",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Cuello de pavo",
@@ -4893,7 +4918,8 @@
    "manganeso"
   ],
   "humedad_g_100g": 68.8,
-  "humedad_fuente": "Köber 2017, Tabla 1, columna «DM [%]» de «Turkey neck» = 31.20 % de materia seca, o sea 68.80 g de agua por 100 g. Es la MISMA fila de la que ya salen el calcio y el fósforo de esta ficha. Ninguna de las tres bases de composición tiene una fila para esta pieza."
+  "humedad_fuente": "Köber 2017, Tabla 1, columna «DM [%]» de «Turkey neck» = 31.20 % de materia seca, o sea 68.80 g de agua por 100 g. Es la MISMA fila de la que ya salen el calcio y el fósforo de esta ficha. Ninguna de las tres bases de composición tiene una fila para esta pieza.",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Cuello de pato",
@@ -4964,7 +4990,8 @@
   "taurina_fuente": "Taurina = 178 mg/100g: no hay dato de carcasa/cuello de pato especificamente -- se usa \"Duck, leg meat\" (Spitze et al. 2003) por familia (mismo animal, otro corte), confianza MEDIA.",
   "lcarnitina_fuente": "L-carnitina = 27 mg/100g: valor agregado tipico de pato (no separa corte), literatura general sobre contenido de carnitina en carne.",
   "humedad_g_100g": 53.8,
-  "humedad_fuente": "Köber 2017, Tabla 1, columna «DM [%]» de «Duck neck» = 46.20 % de materia seca, o sea 53.80 g de agua por 100 g. Es la MISMA fila de la que ya salen el calcio y el fósforo de esta ficha. Ninguna de las tres bases de composición tiene una fila para esta pieza."
+  "humedad_fuente": "Köber 2017, Tabla 1, columna «DM [%]» de «Duck neck» = 46.20 % de materia seca, o sea 53.80 g de agua por 100 g. Es la MISMA fila de la que ya salen el calcio y el fósforo de esta ficha. Ninguna de las tres bases de composición tiene una fila para esta pieza.",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Carcasa de conejo",
@@ -5066,7 +5093,8 @@
    "zinc"
   ],
   "humedad_g_100g": 65.7,
-  "humedad_fuente": "Köber 2017, Tabla 1, columna «DM [%]» de «Rabbit carcass» = 34.30 % de materia seca, o sea 65.70 g de agua por 100 g. Es la MISMA fila de la que ya salen el calcio y el fósforo de esta ficha. Ninguna de las tres bases de composición tiene una fila para esta pieza."
+  "humedad_fuente": "Köber 2017, Tabla 1, columna «DM [%]» de «Rabbit carcass» = 34.30 % de materia seca, o sea 65.70 g de agua por 100 g. Es la MISMA fila de la que ya salen el calcio y el fósforo de esta ficha. Ninguna de las tres bases de composición tiene una fila para esta pieza.",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Costillas de cordero",
@@ -5159,7 +5187,8 @@
    "yodo"
   ],
   "humedad_g_100g": 63.1,
-  "humedad_fuente": "Köber 2017, Tabla 1, columna «DM [%]» de «Lamb rips» = 36.90 % de materia seca, o sea 63.10 g de agua por 100 g. Es la MISMA fila de la que ya salen el calcio y el fósforo de esta ficha. Ninguna de las tres bases de composición tiene una fila para esta pieza."
+  "humedad_fuente": "Köber 2017, Tabla 1, columna «DM [%]» de «Lamb rips» = 36.90 % de materia seca, o sea 63.10 g de agua por 100 g. Es la MISMA fila de la que ya salen el calcio y el fósforo de esta ficha. Ninguna de las tres bases de composición tiene una fila para esta pieza.",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Aceite de girasol",
@@ -5387,7 +5416,8 @@
    "zinc": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2542 · «Aceite de lino» · columna «zinc (cinc)» = 0.0 mg. `value_type` AR, o sea una MEDIDA y no una celda vacía."
   },
   "humedad_g_100g": 0.0,
-  "humedad_fuente": "bedca:2542 · Aceite de lino"
+  "humedad_fuente": "bedca:2542 · Aceite de lino",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Pato (carne sin hueso)",
@@ -5725,7 +5755,8 @@
    "dha": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:174366 · «Lamb, variety meats and by-products, tongue, raw» · columna «PUFA 22:6 n-3 (DHA)» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
    "epa": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:174366 · «Lamb, variety meats and by-products, tongue, raw» · columna «PUFA 20:5 n-3 (EPA)» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2276 · «Lengua de cordero, cruda» · columna «fibra, dietetica total» = 0.0 g. `value_type` AR, o sea una MEDIDA y no una celda vacía."
-  }
+  },
+  "composicion_fuente": {}
  },
  {
   "nombre": "Lengua de buey",
@@ -5812,7 +5843,8 @@
    "dha": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:170196 · «Beef, variety meats and by-products, tongue, raw» · columna «PUFA 22:6 n-3 (DHA)» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
    "epa": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:170196 · «Beef, variety meats and by-products, tongue, raw» · columna «PUFA 20:5 n-3 (EPA)» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:170196 · «Beef, variety meats and by-products, tongue, raw» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
-  }
+  },
+  "composicion_fuente": {}
  },
  {
   "nombre": "Lengua de ternera",
@@ -5891,7 +5923,8 @@
   },
   "cero_verificado": {
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:174368 · «Veal, variety meats and by-products, tongue, raw» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
-  }
+  },
+  "composicion_fuente": {}
  },
  {
   "nombre": "Pavo pechuga sin piel",
@@ -6151,7 +6184,8 @@
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2292 · «Pollo, entero, con piel, crudo» · columna «fibra, dietetica total» = 0.0 g. `value_type` AR, o sea una MEDIDA y no una celda vacía."
   },
   "humedad_g_100g": 70.3,
-  "humedad_fuente": "bedca:2292 · Pollo, entero, con piel, crudo"
+  "humedad_fuente": "bedca:2292 · Pollo, entero, con piel, crudo",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Lomo de ternera con grasa",
@@ -6244,7 +6278,8 @@
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:991 · «Ternera, lomo, crudo, con grasa separable» · columna «fibra, dietetica total» = 0.0 g. `value_type` AR, o sea una MEDIDA y no una celda vacía."
   },
   "humedad_g_100g": 76.5,
-  "humedad_fuente": "bedca:991 · Ternera, lomo, crudo, con grasa separable"
+  "humedad_fuente": "bedca:991 · Ternera, lomo, crudo, con grasa separable",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Yogur griego",
@@ -6332,7 +6367,8 @@
   },
   "nota_datos": " ⚠️ 13 sep 2026: lcarnitina estaba(n) declarado(s) en `sin_dato` pero LA CLAVE NO EXISTÍA en `nutrientes`. Es la peor de las tres formas de esconder un hueco que describe `UNIDADES.md`: `valor_nutriente()` devuelve 0 igual que en los otros dos casos, pero NO HAY NINGÚN CERO QUE ENCONTRAR, así que ni la auditoría ni `datos_incompletos` podían decir nada. Se añade la clave a 0 —que es lo que el motor ya usaba— sin tocar ningún valor: lo único que cambia es que ahora el hueco se ve. Afectaba a 58 fichas.",
   "humedad_g_100g": 78.0,
-  "humedad_fuente": "bedca:2520 · Yogur griego"
+  "humedad_fuente": "bedca:2520 · Yogur griego",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Huevo de codorniz",
@@ -6790,7 +6826,8 @@
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2136 · «Bacaladilla» · columna «fibra, dietetica total» = 0.0 g. `value_type` AR, o sea una MEDIDA y no una celda vacía."
   },
   "humedad_g_100g": 81.9,
-  "humedad_fuente": "bedca:2136 · Bacaladilla"
+  "humedad_fuente": "bedca:2136 · Bacaladilla",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Besugo",
@@ -6879,7 +6916,8 @@
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2312 · «Besugo» · columna «fibra, dietetica total» = 0.0 g. `value_type` AR, o sea una MEDIDA y no una celda vacía."
   },
   "humedad_g_100g": 80.1,
-  "humedad_fuente": "bedca:2312 · Besugo"
+  "humedad_fuente": "bedca:2312 · Besugo",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Boquerón",
@@ -7055,8 +7093,8 @@
   },
   "composicion_fuente": {
    "cobre": "ciqual:10001 · «Calmar ou calamar ou encornet, cru» · columna «Cuivre (mg/100 g)» = 0.15 mg → 0.15 mg · 2026-09-13",
-   "yodo": "ciqual:10001 · «Calmar ou calamar ou encornet, cru» · columna «Iode (µg/100 g)» = 12.8 ug → 12.8 ug · 2026-09-13",
-   "vitD": "ciqual:10001 · «Calmar ou calamar ou encornet, cru» · columna «Vitamine D (µg/100 g)» = 0,36 → 0.36 ug · 2026-09-13. La fuente que manda NO TIENE CIFRA de este nutriente para este alimento -- BEDCA lo da como `TR` con la celda VACÍA, que es NO HAY CIFRA y no «trazas» (BLOQUE 51) --, así que se baja por la cadena de mandato hasta la primera que publica número, que es la regla de `fuentes_de_composicion.json`. Antes de bajar se agotó BEDCA: la fila 807 da `TR`. USDA 174223 «Mollusks, squid, mixed species, raw» da 0."
+   "vitD": "ciqual:10001 · «Calmar ou calamar ou encornet, cru» · columna «Vitamine D (µg/100 g)» = 0,36 → 0.36 ug · 2026-09-13. La fuente que manda NO TIENE CIFRA de este nutriente para este alimento -- BEDCA lo da como `TR` con la celda VACÍA, que es NO HAY CIFRA y no «trazas» (BLOQUE 51) --, así que se baja por la cadena de mandato hasta la primera que publica número, que es la regla de `fuentes_de_composicion.json`. Antes de bajar se agotó BEDCA: la fila 807 da `TR`. USDA 174223 «Mollusks, squid, mixed species, raw» da 0.",
+   "yodo": "ciqual:10001 · «Calmar ou calamar ou encornet, cru» · columna «Iode (µg/100 g)» = 12.8 ug → 12.8 ug · 2026-09-13"
   },
   "cero_verificado": {
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:807 · «Calamar, crudo» · columna «fibra, dietetica total» = 0.0 g. `value_type` AR, o sea una MEDIDA y no una celda vacía.",
@@ -7148,7 +7186,8 @@
   },
   "fuentes_id_porque": "BEDCA 815 «Dorada, cruda». ⚠️ SE APUNTA EL ID PERO LA FILA SE CONTRADICE A SÍ MISMA, y es la ficha que `UNIDADES.md` ya cita como el caso de «dos alimentos en una fila»: BEDCA da P 17 y G 7,22, que por 4 y por 9 son 133 kcal, y la misma fila declara 77,9 kcal. Nuestra ficha (17/1/78) SÍ es coherente consigo misma (17×4+1×9=77). O sea que aquí no se corrige hacia la fuente: la fuente es la que está rota. El id queda para poder volver a ella.",
   "humedad_g_100g": 82.0,
-  "humedad_fuente": "bedca:815 · Dorada, cruda"
+  "humedad_fuente": "bedca:815 · Dorada, cruda",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Gamba roja",
@@ -7237,7 +7276,8 @@
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:817 · «Gamba roja, cruda» · columna «fibra, dietetica total» = 0.0 g. `value_type` AR, o sea una MEDIDA y no una celda vacía."
   },
   "humedad_g_100g": 78.67,
-  "humedad_fuente": "bedca:817 · Gamba roja, cruda"
+  "humedad_fuente": "bedca:817 · Gamba roja, cruda",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Langostino",
@@ -7327,7 +7367,8 @@
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2340 · «Langostino» · columna «fibra, dietetica total» = 0.0 g. `value_type` AR, o sea una MEDIDA y no una celda vacía."
   },
   "humedad_g_100g": 73.4,
-  "humedad_fuente": "bedca:2340 · Langostino"
+  "humedad_fuente": "bedca:2340 · Langostino",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Lenguado",
@@ -7696,7 +7737,8 @@
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:1174 · «Pescadilla, congelada, cruda» · columna «fibra, dietetica total» = 0.0 g. `value_type` LZ, o sea una MEDIDA y no una celda vacía."
   },
   "humedad_g_100g": 86.1,
-  "humedad_fuente": "bedca:1174 · Pescadilla, congelada, cruda"
+  "humedad_fuente": "bedca:1174 · Pescadilla, congelada, cruda",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Pulpo",
@@ -8106,7 +8148,8 @@
    "vitD": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:748 · «Aceite de coco» · columna «Vitamina D» = 0.0 ug. `value_type` LZ, o sea una MEDIDA y no una celda vacía.",
    "yodo": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:748 · «Aceite de coco» · columna «ioduro» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía.",
    "zinc": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:748 · «Aceite de coco» · columna «zinc (cinc)» = 0.0 mg. `value_type` AR, o sea una MEDIDA y no una celda vacía."
-  }
+  },
+  "composicion_fuente": {}
  },
  {
   "nombre": "Aceite de hígado de bacalao",
@@ -8220,7 +8263,8 @@
    "zinc": "Cero cierto por composición, comprobado el 2026-09-13: la ficha es grasa pura (99.9 g por 100 g) y el zinc no viaja en grasa. BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay cifra»— pero aquí lo decide la composición: un aceite refinado son triglicéridos y 888 kcal por 100 g no dejan sitio para nada más. Lo que una grasa SÍ lleva son las vitaminas liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta regla."
   },
   "humedad_g_100g": 0.1,
-  "humedad_fuente": "bedca:755 · Aceite de hígado de bacalao"
+  "humedad_fuente": "bedca:755 · Aceite de hígado de bacalao",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Aceite de sésamo",
@@ -8322,7 +8366,8 @@
    "zinc": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:752 · «Aceite de sésamo» · columna «zinc (cinc)» = 0.0 mg. `value_type` AR, o sea una MEDIDA y no una celda vacía."
   },
   "humedad_g_100g": 0.0,
-  "humedad_fuente": "bedca:752 · Aceite de sésamo"
+  "humedad_fuente": "bedca:752 · Aceite de sésamo",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Grasa de pollo",
@@ -8548,7 +8593,8 @@
   },
   "nota_datos": " ⚠️ 13 sep 2026 — riboflavina, selenio, tiamina, vitB6, yodo: el barrido los declaró HUECO porque BEDCA los da como `TR` con la celda vacía, y eso era un ERROR. En una grasa pura ese cero es CIERTO por composición, y no era inofensivo: un hueco se imputa al percentil 90 de su familia contra los máximos, y la familia «Extras» incluye semillas con 17 g de proteína. Con la proteína de dos aceites declarada hueco, el chihuahua de 3 kg con patología RENAL se quedaba SIN MENÚ en los seis peldaños de la escalera. Pasan a `cero_verificado`.",
   "humedad_g_100g": 1.0,
-  "humedad_fuente": "bedca:2549 · Manteca"
+  "humedad_fuente": "bedca:2549 · Manteca",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Semilla de lino",
@@ -8711,7 +8757,8 @@
    "vitD": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2204 · «Pipa de calabaza» · columna «Vitamina D» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía."
   },
   "humedad_g_100g": 5.23,
-  "humedad_fuente": "bedca:2204 · Pipa de calabaza"
+  "humedad_fuente": "bedca:2204 · Pipa de calabaza",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Pipa de girasol",
@@ -8785,7 +8832,8 @@
    "vitD": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2205 · «Pipa de girasol» · columna «Vitamina D» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía."
   },
   "humedad_g_100g": 7.3,
-  "humedad_fuente": "bedca:2205 · Pipa de girasol"
+  "humedad_fuente": "bedca:2205 · Pipa de girasol",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Semilla de sésamo",
@@ -8879,7 +8927,8 @@
    "vitB12": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:1127 · «Sésamo, semilla» · columna «Vitamina B-12» = 0.0 ug. `value_type` LZ, o sea una MEDIDA y no una celda vacía.",
    "vitD": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:1127 · «Sésamo, semilla» · columna «Vitamina D» = 0.0 ug. `value_type` LZ, o sea una MEDIDA y no una celda vacía.",
    "yodo": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:1127 · «Sésamo, semilla» · columna «ioduro» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía."
-  }
+  },
+  "composicion_fuente": {}
  },
  {
   "nombre": "Albahaca",
@@ -9076,7 +9125,8 @@
    "fenilalanina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:169205 «Artichokes, (globe or french), raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
    "tirosina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:169205 «Artichokes, (globe or french), raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
    "arginina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:169205 «Artichokes, (globe or french), raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026)."
-  }
+  },
+  "composicion_fuente": {}
  },
  {
   "nombre": "Apio",
@@ -9158,7 +9208,8 @@
    "vitB12": "Cero real por composición, comprobado 13 sep 2026: la cobalamina la producen bacterias y ningún vegetal la contiene. Es el mismo criterio de `UNIDADES.md`, leído al revés que para el tejido animal: allí dice que «un alimento animal no tiene la B12 a cero», y eso implica que un vegetal sí. BEDCA deja la celda vacía (TR).",
    "vitD": "Cero real por composición, comprobado 13 sep 2026: ninguna planta sintetiza colecalciferol ni ergocalciferol (la excepción son los hongos tratados con UV, que no es este caso). BEDCA 2375 deja la celda vacía con `value_type` TR, o sea que ella no afirma el cero: lo afirmamos nosotros con el criterio de composición de `UNIDADES.md` («un cero solo es creíble si algún alimento de esa familia puede tenerlo de verdad»).",
    "yodo": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2366 · «Apio, crudo» · columna «ioduro» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía."
-  }
+  },
+  "composicion_fuente": {}
  },
  {
   "nombre": "Berenjena",
@@ -9335,18 +9386,18 @@
   "humedad_g_100g": 71.5,
   "humedad_fuente": "bedca:731 · Boniato, crudo",
   "composicion_fuente": {
-   "lisina": "usda:168482 · «Sweet potato, raw, unprepared» · columna «Lysine» · transferido por gramo de proteina: ×(1.2/1.57) → 0.050446 g · 2026-09-15",
-   "metionina": "usda:168482 · «Sweet potato, raw, unprepared» · columna «Methionine» · transferido por gramo de proteina: ×(1.2/1.57) → 0.022166 g · 2026-09-15",
-   "cistina": "usda:168482 · «Sweet potato, raw, unprepared» · columna «Cystine» · transferido por gramo de proteina: ×(1.2/1.57) → 0.016815 g · 2026-09-15",
-   "triptofano": "usda:168482 · «Sweet potato, raw, unprepared» · columna «Tryptophan» · transferido por gramo de proteina: ×(1.2/1.57) → 0.023694 g · 2026-09-15",
-   "treonina": "usda:168482 · «Sweet potato, raw, unprepared» · columna «Threonine» · transferido por gramo de proteina: ×(1.2/1.57) → 0.063439 g · 2026-09-15",
-   "isoleucina": "usda:168482 · «Sweet potato, raw, unprepared» · columna «Isoleucine» · transferido por gramo de proteina: ×(1.2/1.57) → 0.042038 g · 2026-09-15",
-   "leucina": "usda:168482 · «Sweet potato, raw, unprepared» · columna «Leucine» · transferido por gramo de proteina: ×(1.2/1.57) → 0.070318 g · 2026-09-15",
-   "valina": "usda:168482 · «Sweet potato, raw, unprepared» · columna «Valine» · transferido por gramo de proteina: ×(1.2/1.57) → 0.065732 g · 2026-09-15",
-   "histidina": "usda:168482 · «Sweet potato, raw, unprepared» · columna «Histidine» · transferido por gramo de proteina: ×(1.2/1.57) → 0.023694 g · 2026-09-15",
-   "fenilalanina": "usda:168482 · «Sweet potato, raw, unprepared» · columna «Phenylalanine» · transferido por gramo de proteina: ×(1.2/1.57) → 0.068025 g · 2026-09-15",
-   "tirosina": "usda:168482 · «Sweet potato, raw, unprepared» · columna «Tyrosine» · transferido por gramo de proteina: ×(1.2/1.57) → 0.025987 g · 2026-09-15",
-   "arginina": "usda:168482 · «Sweet potato, raw, unprepared» · columna «Arginine» · transferido por gramo de proteina: ×(1.2/1.57) → 0.042038 g · 2026-09-15"
+   "arginina": "usda:168482 · «Sweet potato, raw, unprepared» · columna «Arginine» = 0.055 G · transferido por gramo de proteina: ×(1.2/1.57) → 0.042038 g · 2026-09-15",
+   "cistina": "usda:168482 · «Sweet potato, raw, unprepared» · columna «Cystine» = 0.022 G · transferido por gramo de proteina: ×(1.2/1.57) → 0.016815 g · 2026-09-15",
+   "fenilalanina": "usda:168482 · «Sweet potato, raw, unprepared» · columna «Phenylalanine» = 0.089 G · transferido por gramo de proteina: ×(1.2/1.57) → 0.068025 g · 2026-09-15",
+   "histidina": "usda:168482 · «Sweet potato, raw, unprepared» · columna «Histidine» = 0.031 G · transferido por gramo de proteina: ×(1.2/1.57) → 0.023694 g · 2026-09-15",
+   "isoleucina": "usda:168482 · «Sweet potato, raw, unprepared» · columna «Isoleucine» = 0.055 G · transferido por gramo de proteina: ×(1.2/1.57) → 0.042038 g · 2026-09-15",
+   "leucina": "usda:168482 · «Sweet potato, raw, unprepared» · columna «Leucine» = 0.092 G · transferido por gramo de proteina: ×(1.2/1.57) → 0.070318 g · 2026-09-15",
+   "lisina": "usda:168482 · «Sweet potato, raw, unprepared» · columna «Lysine» = 0.066 G · transferido por gramo de proteina: ×(1.2/1.57) → 0.050446 g · 2026-09-15",
+   "metionina": "usda:168482 · «Sweet potato, raw, unprepared» · columna «Methionine» = 0.029 G · transferido por gramo de proteina: ×(1.2/1.57) → 0.022166 g · 2026-09-15",
+   "tirosina": "usda:168482 · «Sweet potato, raw, unprepared» · columna «Tyrosine» = 0.034 G · transferido por gramo de proteina: ×(1.2/1.57) → 0.025987 g · 2026-09-15",
+   "treonina": "usda:168482 · «Sweet potato, raw, unprepared» · columna «Threonine» = 0.083 G · transferido por gramo de proteina: ×(1.2/1.57) → 0.063439 g · 2026-09-15",
+   "triptofano": "usda:168482 · «Sweet potato, raw, unprepared» · columna «Tryptophan» = 0.031 G · transferido por gramo de proteina: ×(1.2/1.57) → 0.023694 g · 2026-09-15",
+   "valina": "usda:168482 · «Sweet potato, raw, unprepared» · columna «Valine» = 0.086 G · transferido por gramo de proteina: ×(1.2/1.57) → 0.065732 g · 2026-09-15"
   }
  },
  {
@@ -9437,7 +9488,8 @@
   },
   "nota_datos": " ⚠️ MANGANESO, 13 sep 2026: estaba en 0,6 mg/100 g y ese número NO TIENE FUENTE EN NINGUNA PARTE. Estaba repetido en OCHO fichas del catálogo —Pavo, Pavo muslo con piel, Pavo pechuga sin piel, Pato, Cuello de pavo, Cuello de pato, Carcasa de pato y Canónigos—, y al buscarlo: BEDCA no publica manganeso (comprobado ficha a ficha, la columna no existe en su tabla), USDA da 0,022 en el muslo de pavo y 0,019 en el pato, y la Tabla 1 de Köber no mide manganeso. Un mismo número en ocho fichas de especies distintas no es una medida: es un valor que se propagó. Y no era inocente por el lado que parece: 0,6 es unas treinta veces el valor real del ave, así que el motor creía el manganeso cubierto cuando no lo estaba. En esta ficha pasa a HUECO declarado y no a otra cifra, porque BEDCA 2379 «Canonigos» no publica manganeso: no hay de dónde sacarlo. Un hueco vale 0 para el motor pero sale en `datos_incompletos` junto al menú y contra un máximo se imputa por familia, que es lo contrario de lo que hacía el 0,6.",
   "humedad_g_100g": 95.6,
-  "humedad_fuente": "bedca:2379 · Canonigos"
+  "humedad_fuente": "bedca:2379 · Canonigos",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Cardo",
@@ -9622,18 +9674,18 @@
   "humedad_g_100g": 91.4,
   "humedad_fuente": "bedca:2384 · Champiñon",
   "composicion_fuente": {
-   "lisina": "usda:169251 · «Mushrooms, white, raw» · columna «Lysine» · transferido por gramo de proteina: ×(1.8/3.09) → 0.06233 g · 2026-09-15",
-   "metionina": "usda:169251 · «Mushrooms, white, raw» · columna «Methionine» · transferido por gramo de proteina: ×(1.8/3.09) → 0.018058 g · 2026-09-15",
-   "cistina": "usda:169251 · «Mushrooms, white, raw» · columna «Cystine» · transferido por gramo de proteina: ×(1.8/3.09) → 0.00699 g · 2026-09-15",
-   "triptofano": "usda:169251 · «Mushrooms, white, raw» · columna «Tryptophan» · transferido por gramo de proteina: ×(1.8/3.09) → 0.020388 g · 2026-09-15",
-   "treonina": "usda:169251 · «Mushrooms, white, raw» · columna «Threonine» · transferido por gramo de proteina: ×(1.8/3.09) → 0.06233 g · 2026-09-15",
-   "isoleucina": "usda:169251 · «Mushrooms, white, raw» · columna «Isoleucine» · transferido por gramo de proteina: ×(1.8/3.09) → 0.044272 g · 2026-09-15",
-   "leucina": "usda:169251 · «Mushrooms, white, raw» · columna «Leucine» · transferido por gramo de proteina: ×(1.8/3.09) → 0.069903 g · 2026-09-15",
-   "valina": "usda:169251 · «Mushrooms, white, raw» · columna «Valine» · transferido por gramo de proteina: ×(1.8/3.09) → 0.135146 g · 2026-09-15",
-   "histidina": "usda:169251 · «Mushrooms, white, raw» · columna «Histidine» · transferido por gramo de proteina: ×(1.8/3.09) → 0.033204 g · 2026-09-15",
-   "fenilalanina": "usda:169251 · «Mushrooms, white, raw» · columna «Phenylalanine» · transferido por gramo de proteina: ×(1.8/3.09) → 0.049515 g · 2026-09-15",
-   "tirosina": "usda:169251 · «Mushrooms, white, raw» · columna «Tyrosine» · transferido por gramo de proteina: ×(1.8/3.09) → 0.025631 g · 2026-09-15",
-   "arginina": "usda:169251 · «Mushrooms, white, raw» · columna «Arginine» · transferido por gramo de proteina: ×(1.8/3.09) → 0.045437 g · 2026-09-15"
+   "arginina": "usda:169251 · «Mushrooms, white, raw» · columna «Arginine» = 0.078 G · transferido por gramo de proteina: ×(1.8/3.09) → 0.045437 g · 2026-09-15",
+   "cistina": "usda:169251 · «Mushrooms, white, raw» · columna «Cystine» = 0.012 G · transferido por gramo de proteina: ×(1.8/3.09) → 0.00699 g · 2026-09-15",
+   "fenilalanina": "usda:169251 · «Mushrooms, white, raw» · columna «Phenylalanine» = 0.085 G · transferido por gramo de proteina: ×(1.8/3.09) → 0.049515 g · 2026-09-15",
+   "histidina": "usda:169251 · «Mushrooms, white, raw» · columna «Histidine» = 0.057 G · transferido por gramo de proteina: ×(1.8/3.09) → 0.033204 g · 2026-09-15",
+   "isoleucina": "usda:169251 · «Mushrooms, white, raw» · columna «Isoleucine» = 0.076 G · transferido por gramo de proteina: ×(1.8/3.09) → 0.044272 g · 2026-09-15",
+   "leucina": "usda:169251 · «Mushrooms, white, raw» · columna «Leucine» = 0.12 G · transferido por gramo de proteina: ×(1.8/3.09) → 0.069903 g · 2026-09-15",
+   "lisina": "usda:169251 · «Mushrooms, white, raw» · columna «Lysine» = 0.107 G · transferido por gramo de proteina: ×(1.8/3.09) → 0.06233 g · 2026-09-15",
+   "metionina": "usda:169251 · «Mushrooms, white, raw» · columna «Methionine» = 0.031 G · transferido por gramo de proteina: ×(1.8/3.09) → 0.018058 g · 2026-09-15",
+   "tirosina": "usda:169251 · «Mushrooms, white, raw» · columna «Tyrosine» = 0.044 G · transferido por gramo de proteina: ×(1.8/3.09) → 0.025631 g · 2026-09-15",
+   "treonina": "usda:169251 · «Mushrooms, white, raw» · columna «Threonine» = 0.107 G · transferido por gramo de proteina: ×(1.8/3.09) → 0.06233 g · 2026-09-15",
+   "triptofano": "usda:169251 · «Mushrooms, white, raw» · columna «Tryptophan» = 0.035 G · transferido por gramo de proteina: ×(1.8/3.09) → 0.020388 g · 2026-09-15",
+   "valina": "usda:169251 · «Mushrooms, white, raw» · columna «Valine» = 0.232 G · transferido por gramo de proteina: ×(1.8/3.09) → 0.135146 g · 2026-09-15"
   }
  },
  {
@@ -9819,18 +9871,18 @@
   "humedad_g_100g": 92.3,
   "humedad_fuente": "bedca:2400 · Lombarda",
   "composicion_fuente": {
-   "lisina": "usda:169977 · «Cabbage, red, raw» · columna «Lysine» · transferido por gramo de proteina: ×(1.25/1.43) → 0.042832 g · 2026-09-15",
-   "metionina": "usda:169977 · «Cabbage, red, raw» · columna «Methionine» · transferido por gramo de proteina: ×(1.25/1.43) → 0.012238 g · 2026-09-15",
-   "cistina": "usda:169977 · «Cabbage, red, raw» · columna «Cystine» · transferido por gramo de proteina: ×(1.25/1.43) → 0.01049 g · 2026-09-15",
-   "triptofano": "usda:169977 · «Cabbage, red, raw» · columna «Tryptophan» · transferido por gramo de proteina: ×(1.25/1.43) → 0.01049 g · 2026-09-15",
-   "treonina": "usda:169977 · «Cabbage, red, raw» · columna «Threonine» · transferido por gramo de proteina: ×(1.25/1.43) → 0.034091 g · 2026-09-15",
-   "isoleucina": "usda:169977 · «Cabbage, red, raw» · columna «Isoleucine» · transferido por gramo de proteina: ×(1.25/1.43) → 0.02972 g · 2026-09-15",
-   "leucina": "usda:169977 · «Cabbage, red, raw» · columna «Leucine» · transferido por gramo de proteina: ×(1.25/1.43) → 0.04021 g · 2026-09-15",
-   "valina": "usda:169977 · «Cabbage, red, raw» · columna «Valine» · transferido por gramo de proteina: ×(1.25/1.43) → 0.041958 g · 2026-09-15",
-   "histidina": "usda:169977 · «Cabbage, red, raw» · columna «Histidine» · transferido por gramo de proteina: ×(1.25/1.43) → 0.020979 g · 2026-09-15",
-   "fenilalanina": "usda:169977 · «Cabbage, red, raw» · columna «Phenylalanine» · transferido por gramo de proteina: ×(1.25/1.43) → 0.031469 g · 2026-09-15",
-   "tirosina": "usda:169977 · «Cabbage, red, raw» · columna «Tyrosine» · transferido por gramo de proteina: ×(1.25/1.43) → 0.019231 g · 2026-09-15",
-   "arginina": "usda:169977 · «Cabbage, red, raw» · columna «Arginine» · transferido por gramo de proteina: ×(1.25/1.43) → 0.072552 g · 2026-09-15"
+   "arginina": "usda:169977 · «Cabbage, red, raw» · columna «Arginine» = 0.083 G · transferido por gramo de proteina: ×(1.25/1.43) → 0.072552 g · 2026-09-15",
+   "cistina": "usda:169977 · «Cabbage, red, raw» · columna «Cystine» = 0.012 G · transferido por gramo de proteina: ×(1.25/1.43) → 0.01049 g · 2026-09-15",
+   "fenilalanina": "usda:169977 · «Cabbage, red, raw» · columna «Phenylalanine» = 0.036 G · transferido por gramo de proteina: ×(1.25/1.43) → 0.031469 g · 2026-09-15",
+   "histidina": "usda:169977 · «Cabbage, red, raw» · columna «Histidine» = 0.024 G · transferido por gramo de proteina: ×(1.25/1.43) → 0.020979 g · 2026-09-15",
+   "isoleucina": "usda:169977 · «Cabbage, red, raw» · columna «Isoleucine» = 0.034 G · transferido por gramo de proteina: ×(1.25/1.43) → 0.02972 g · 2026-09-15",
+   "leucina": "usda:169977 · «Cabbage, red, raw» · columna «Leucine» = 0.046 G · transferido por gramo de proteina: ×(1.25/1.43) → 0.04021 g · 2026-09-15",
+   "lisina": "usda:169977 · «Cabbage, red, raw» · columna «Lysine» = 0.049 G · transferido por gramo de proteina: ×(1.25/1.43) → 0.042832 g · 2026-09-15",
+   "metionina": "usda:169977 · «Cabbage, red, raw» · columna «Methionine» = 0.014 G · transferido por gramo de proteina: ×(1.25/1.43) → 0.012238 g · 2026-09-15",
+   "tirosina": "usda:169977 · «Cabbage, red, raw» · columna «Tyrosine» = 0.022 G · transferido por gramo de proteina: ×(1.25/1.43) → 0.019231 g · 2026-09-15",
+   "treonina": "usda:169977 · «Cabbage, red, raw» · columna «Threonine» = 0.039 G · transferido por gramo de proteina: ×(1.25/1.43) → 0.034091 g · 2026-09-15",
+   "triptofano": "usda:169977 · «Cabbage, red, raw» · columna «Tryptophan» = 0.012 G · transferido por gramo de proteina: ×(1.25/1.43) → 0.01049 g · 2026-09-15",
+   "valina": "usda:169977 · «Cabbage, red, raw» · columna «Valine» = 0.048 G · transferido por gramo de proteina: ×(1.25/1.43) → 0.041958 g · 2026-09-15"
   }
  },
  {
@@ -9916,7 +9968,8 @@
    "yodo": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:852 · «Col rizada, cruda» · columna «ioduro» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía."
   },
   "humedad_g_100g": 90.3,
-  "humedad_fuente": "bedca:852 · Col rizada, cruda"
+  "humedad_fuente": "bedca:852 · Col rizada, cruda",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Coliflor",
@@ -10001,18 +10054,18 @@
   "humedad_g_100g": 92.5,
   "humedad_fuente": "bedca:859 · Coliflor, congelada, cruda",
   "composicion_fuente": {
-   "lisina": "usda:169986 · «Cauliflower, raw» · columna «Lysine» · transferido por gramo de proteina: ×(2.0/1.92) → 0.226042 g · 2026-09-15",
-   "metionina": "usda:169986 · «Cauliflower, raw» · columna «Methionine» · transferido por gramo de proteina: ×(2.0/1.92) → 0.020833 g · 2026-09-15",
+   "arginina": "usda:169986 · «Cauliflower, raw» · columna «Arginine» = 0.086 G · transferido por gramo de proteina: ×(2.0/1.92) → 0.089583 g · 2026-09-15",
    "cistina": "usda:169986 · «Cauliflower, raw» · columna «Cystine» · transferido por gramo de proteina: ×(2.0/1.92) → 0.020833 g · 2026-09-15",
+   "fenilalanina": "usda:169986 · «Cauliflower, raw» · columna «Phenylalanine» = 0.065 G · transferido por gramo de proteina: ×(2.0/1.92) → 0.067708 g · 2026-09-15",
+   "histidina": "usda:169986 · «Cauliflower, raw» · columna «Histidine» = 0.056 G · transferido por gramo de proteina: ×(2.0/1.92) → 0.058333 g · 2026-09-15",
+   "isoleucina": "usda:169986 · «Cauliflower, raw» · columna «Isoleucine» = 0.071 G · transferido por gramo de proteina: ×(2.0/1.92) → 0.073958 g · 2026-09-15",
+   "leucina": "usda:169986 · «Cauliflower, raw» · columna «Leucine» = 0.106 G · transferido por gramo de proteina: ×(2.0/1.92) → 0.110417 g · 2026-09-15",
+   "lisina": "usda:169986 · «Cauliflower, raw» · columna «Lysine» = 0.217 G · transferido por gramo de proteina: ×(2.0/1.92) → 0.226042 g · 2026-09-15",
+   "metionina": "usda:169986 · «Cauliflower, raw» · columna «Methionine» · transferido por gramo de proteina: ×(2.0/1.92) → 0.020833 g · 2026-09-15",
+   "tirosina": "usda:169986 · «Cauliflower, raw» · columna «Tyrosine» = 0.051 G · transferido por gramo de proteina: ×(2.0/1.92) → 0.053125 g · 2026-09-15",
+   "treonina": "usda:169986 · «Cauliflower, raw» · columna «Threonine» = 0.076 G · transferido por gramo de proteina: ×(2.0/1.92) → 0.079167 g · 2026-09-15",
    "triptofano": "usda:169986 · «Cauliflower, raw» · columna «Tryptophan» · transferido por gramo de proteina: ×(2.0/1.92) → 0.020833 g · 2026-09-15",
-   "treonina": "usda:169986 · «Cauliflower, raw» · columna «Threonine» · transferido por gramo de proteina: ×(2.0/1.92) → 0.079167 g · 2026-09-15",
-   "isoleucina": "usda:169986 · «Cauliflower, raw» · columna «Isoleucine» · transferido por gramo de proteina: ×(2.0/1.92) → 0.073958 g · 2026-09-15",
-   "leucina": "usda:169986 · «Cauliflower, raw» · columna «Leucine» · transferido por gramo de proteina: ×(2.0/1.92) → 0.110417 g · 2026-09-15",
-   "valina": "usda:169986 · «Cauliflower, raw» · columna «Valine» · transferido por gramo de proteina: ×(2.0/1.92) → 0.130208 g · 2026-09-15",
-   "histidina": "usda:169986 · «Cauliflower, raw» · columna «Histidine» · transferido por gramo de proteina: ×(2.0/1.92) → 0.058333 g · 2026-09-15",
-   "fenilalanina": "usda:169986 · «Cauliflower, raw» · columna «Phenylalanine» · transferido por gramo de proteina: ×(2.0/1.92) → 0.067708 g · 2026-09-15",
-   "tirosina": "usda:169986 · «Cauliflower, raw» · columna «Tyrosine» · transferido por gramo de proteina: ×(2.0/1.92) → 0.053125 g · 2026-09-15",
-   "arginina": "usda:169986 · «Cauliflower, raw» · columna «Arginine» · transferido por gramo de proteina: ×(2.0/1.92) → 0.089583 g · 2026-09-15"
+   "valina": "usda:169986 · «Cauliflower, raw» · columna «Valine» = 0.125 G · transferido por gramo de proteina: ×(2.0/1.92) → 0.130208 g · 2026-09-15"
   }
  },
  {
@@ -10187,18 +10240,18 @@
   "humedad_g_100g": 92.8,
   "humedad_fuente": "bedca:1179 · Espárrago, verde",
   "composicion_fuente": {
-   "lisina": "usda:168389 · «Asparagus, raw» · columna «Lysine» · transferido por gramo de proteina: ×(2.9/2.2) → 0.137091 g · 2026-09-15",
-   "metionina": "usda:168389 · «Asparagus, raw» · columna «Methionine» · transferido por gramo de proteina: ×(2.9/2.2) → 0.040864 g · 2026-09-15",
-   "cistina": "usda:168389 · «Asparagus, raw» · columna «Cystine» · transferido por gramo de proteina: ×(2.9/2.2) → 0.040864 g · 2026-09-15",
-   "triptofano": "usda:168389 · «Asparagus, raw» · columna «Tryptophan» · transferido por gramo de proteina: ×(2.9/2.2) → 0.035591 g · 2026-09-15",
-   "treonina": "usda:168389 · «Asparagus, raw» · columna «Threonine» · transferido por gramo de proteina: ×(2.9/2.2) → 0.110727 g · 2026-09-15",
-   "isoleucina": "usda:168389 · «Asparagus, raw» · columna «Isoleucine» · transferido por gramo de proteina: ×(2.9/2.2) → 0.098864 g · 2026-09-15",
-   "leucina": "usda:168389 · «Asparagus, raw» · columna «Leucine» · transferido por gramo de proteina: ×(2.9/2.2) → 0.168727 g · 2026-09-15",
-   "valina": "usda:168389 · «Asparagus, raw» · columna «Valine» · transferido por gramo de proteina: ×(2.9/2.2) → 0.151591 g · 2026-09-15",
-   "histidina": "usda:168389 · «Asparagus, raw» · columna «Histidine» · transferido por gramo de proteina: ×(2.9/2.2) → 0.064591 g · 2026-09-15",
-   "fenilalanina": "usda:168389 · «Asparagus, raw» · columna «Phenylalanine» · transferido por gramo de proteina: ×(2.9/2.2) → 0.098864 g · 2026-09-15",
-   "tirosina": "usda:168389 · «Asparagus, raw» · columna «Tyrosine» · transferido por gramo de proteina: ×(2.9/2.2) → 0.068545 g · 2026-09-15",
-   "arginina": "usda:168389 · «Asparagus, raw» · columna «Arginine» · transferido por gramo de proteina: ×(2.9/2.2) → 0.119955 g · 2026-09-15"
+   "arginina": "usda:168389 · «Asparagus, raw» · columna «Arginine» = 0.091 G · transferido por gramo de proteina: ×(2.9/2.2) → 0.119955 g · 2026-09-15",
+   "cistina": "usda:168389 · «Asparagus, raw» · columna «Cystine» = 0.031 G · transferido por gramo de proteina: ×(2.9/2.2) → 0.040864 g · 2026-09-15",
+   "fenilalanina": "usda:168389 · «Asparagus, raw» · columna «Phenylalanine» = 0.075 G · transferido por gramo de proteina: ×(2.9/2.2) → 0.098864 g · 2026-09-15",
+   "histidina": "usda:168389 · «Asparagus, raw» · columna «Histidine» = 0.049 G · transferido por gramo de proteina: ×(2.9/2.2) → 0.064591 g · 2026-09-15",
+   "isoleucina": "usda:168389 · «Asparagus, raw» · columna «Isoleucine» = 0.075 G · transferido por gramo de proteina: ×(2.9/2.2) → 0.098864 g · 2026-09-15",
+   "leucina": "usda:168389 · «Asparagus, raw» · columna «Leucine» = 0.128 G · transferido por gramo de proteina: ×(2.9/2.2) → 0.168727 g · 2026-09-15",
+   "lisina": "usda:168389 · «Asparagus, raw» · columna «Lysine» = 0.104 G · transferido por gramo de proteina: ×(2.9/2.2) → 0.137091 g · 2026-09-15",
+   "metionina": "usda:168389 · «Asparagus, raw» · columna «Methionine» = 0.031 G · transferido por gramo de proteina: ×(2.9/2.2) → 0.040864 g · 2026-09-15",
+   "tirosina": "usda:168389 · «Asparagus, raw» · columna «Tyrosine» = 0.052 G · transferido por gramo de proteina: ×(2.9/2.2) → 0.068545 g · 2026-09-15",
+   "treonina": "usda:168389 · «Asparagus, raw» · columna «Threonine» = 0.084 G · transferido por gramo de proteina: ×(2.9/2.2) → 0.110727 g · 2026-09-15",
+   "triptofano": "usda:168389 · «Asparagus, raw» · columna «Tryptophan» = 0.027 G · transferido por gramo de proteina: ×(2.9/2.2) → 0.035591 g · 2026-09-15",
+   "valina": "usda:168389 · «Asparagus, raw» · columna «Valine» = 0.115 G · transferido por gramo de proteina: ×(2.9/2.2) → 0.151591 g · 2026-09-15"
   }
  },
  {
@@ -10270,7 +10323,8 @@
    "vitD": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2396 · «Grelo» · columna «Vitamina D» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía."
   },
   "humedad_g_100g": 93.1,
-  "humedad_fuente": "bedca:2396 · Grelo"
+  "humedad_fuente": "bedca:2396 · Grelo",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Lechuga",
@@ -10352,18 +10406,18 @@
   "humedad_g_100g": 95.2,
   "humedad_fuente": "bedca:2399 · Lechuga",
   "composicion_fuente": {
-   "lisina": "usda:169247 · «Lettuce, cos or romaine, raw» · columna «Lysine» · transferido por gramo de proteina: ×(1.125/1.23) → 0.058537 g · 2026-09-15",
-   "metionina": "usda:169247 · «Lettuce, cos or romaine, raw» · columna «Methionine» · transferido por gramo de proteina: ×(1.125/1.23) → 0.01372 g · 2026-09-15",
-   "cistina": "usda:169247 · «Lettuce, cos or romaine, raw» · columna «Cystine» · transferido por gramo de proteina: ×(1.125/1.23) → 0.005488 g · 2026-09-15",
-   "triptofano": "usda:169247 · «Lettuce, cos or romaine, raw» · columna «Tryptophan» · transferido por gramo de proteina: ×(1.125/1.23) → 0.009146 g · 2026-09-15",
-   "treonina": "usda:169247 · «Lettuce, cos or romaine, raw» · columna «Threonine» · transferido por gramo de proteina: ×(1.125/1.23) → 0.039329 g · 2026-09-15",
-   "isoleucina": "usda:169247 · «Lettuce, cos or romaine, raw» · columna «Isoleucine» · transferido por gramo de proteina: ×(1.125/1.23) → 0.041159 g · 2026-09-15",
-   "leucina": "usda:169247 · «Lettuce, cos or romaine, raw» · columna «Leucine» · transferido por gramo de proteina: ×(1.125/1.23) → 0.069512 g · 2026-09-15",
-   "valina": "usda:169247 · «Lettuce, cos or romaine, raw» · columna «Valine» · transferido por gramo de proteina: ×(1.125/1.23) → 0.050305 g · 2026-09-15",
-   "histidina": "usda:169247 · «Lettuce, cos or romaine, raw» · columna «Histidine» · transferido por gramo de proteina: ×(1.125/1.23) → 0.019207 g · 2026-09-15",
-   "fenilalanina": "usda:169247 · «Lettuce, cos or romaine, raw» · columna «Phenylalanine» · transferido por gramo de proteina: ×(1.125/1.23) → 0.059451 g · 2026-09-15",
-   "tirosina": "usda:169247 · «Lettuce, cos or romaine, raw» · columna «Tyrosine» · transferido por gramo de proteina: ×(1.125/1.23) → 0.022866 g · 2026-09-15",
-   "arginina": "usda:169247 · «Lettuce, cos or romaine, raw» · columna «Arginine» · transferido por gramo de proteina: ×(1.125/1.23) → 0.04939 g · 2026-09-15"
+   "arginina": "usda:169247 · «Lettuce, cos or romaine, raw» · columna «Arginine» = 0.054 G · transferido por gramo de proteina: ×(1.125/1.23) → 0.04939 g · 2026-09-15",
+   "cistina": "usda:169247 · «Lettuce, cos or romaine, raw» · columna «Cystine» = 0.006 G · transferido por gramo de proteina: ×(1.125/1.23) → 0.005488 g · 2026-09-15",
+   "fenilalanina": "usda:169247 · «Lettuce, cos or romaine, raw» · columna «Phenylalanine» = 0.065 G · transferido por gramo de proteina: ×(1.125/1.23) → 0.059451 g · 2026-09-15",
+   "histidina": "usda:169247 · «Lettuce, cos or romaine, raw» · columna «Histidine» = 0.021 G · transferido por gramo de proteina: ×(1.125/1.23) → 0.019207 g · 2026-09-15",
+   "isoleucina": "usda:169247 · «Lettuce, cos or romaine, raw» · columna «Isoleucine» = 0.045 G · transferido por gramo de proteina: ×(1.125/1.23) → 0.041159 g · 2026-09-15",
+   "leucina": "usda:169247 · «Lettuce, cos or romaine, raw» · columna «Leucine» = 0.076 G · transferido por gramo de proteina: ×(1.125/1.23) → 0.069512 g · 2026-09-15",
+   "lisina": "usda:169247 · «Lettuce, cos or romaine, raw» · columna «Lysine» = 0.064 G · transferido por gramo de proteina: ×(1.125/1.23) → 0.058537 g · 2026-09-15",
+   "metionina": "usda:169247 · «Lettuce, cos or romaine, raw» · columna «Methionine» = 0.015 G · transferido por gramo de proteina: ×(1.125/1.23) → 0.01372 g · 2026-09-15",
+   "tirosina": "usda:169247 · «Lettuce, cos or romaine, raw» · columna «Tyrosine» = 0.025 G · transferido por gramo de proteina: ×(1.125/1.23) → 0.022866 g · 2026-09-15",
+   "treonina": "usda:169247 · «Lettuce, cos or romaine, raw» · columna «Threonine» = 0.043 G · transferido por gramo de proteina: ×(1.125/1.23) → 0.039329 g · 2026-09-15",
+   "triptofano": "usda:169247 · «Lettuce, cos or romaine, raw» · columna «Tryptophan» = 0.01 G · transferido por gramo de proteina: ×(1.125/1.23) → 0.009146 g · 2026-09-15",
+   "valina": "usda:169247 · «Lettuce, cos or romaine, raw» · columna «Valine» = 0.055 G · transferido por gramo de proteina: ×(1.125/1.23) → 0.050305 g · 2026-09-15"
   }
  },
  {
@@ -10448,7 +10502,8 @@
    "vitD": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:880 · «Nabo, pelado, crudo» · columna «Vitamina D» = 0.0 ug. `value_type` LZ, o sea una MEDIDA y no una celda vacía."
   },
   "humedad_g_100g": 89.8,
-  "humedad_fuente": "bedca:880 · Nabo, pelado, crudo"
+  "humedad_fuente": "bedca:880 · Nabo, pelado, crudo",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Pepino",
@@ -10630,7 +10685,8 @@
    "bedca": "2415"
   },
   "humedad_g_100g": 94.8,
-  "humedad_fuente": "bedca:2415 · Rábano"
+  "humedad_fuente": "bedca:2415 · Rábano",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Repollo",
@@ -10712,18 +10768,18 @@
   "humedad_g_100g": 89.3,
   "humedad_fuente": "bedca:2417 · Repollo",
   "composicion_fuente": {
-   "lisina": "usda:169975 · «Cabbage, raw» · columna «Lysine» · transferido por gramo de proteina: ×(1.8/1.28) → 0.061875 g · 2026-09-15",
-   "metionina": "usda:169975 · «Cabbage, raw» · columna «Methionine» · transferido por gramo de proteina: ×(1.8/1.28) → 0.016875 g · 2026-09-15",
-   "cistina": "usda:169975 · «Cabbage, raw» · columna «Cystine» · transferido por gramo de proteina: ×(1.8/1.28) → 0.015469 g · 2026-09-15",
-   "triptofano": "usda:169975 · «Cabbage, raw» · columna «Tryptophan» · transferido por gramo de proteina: ×(1.8/1.28) → 0.015469 g · 2026-09-15",
-   "treonina": "usda:169975 · «Cabbage, raw» · columna «Threonine» · transferido por gramo de proteina: ×(1.8/1.28) → 0.049219 g · 2026-09-15",
-   "isoleucina": "usda:169975 · «Cabbage, raw» · columna «Isoleucine» · transferido por gramo de proteina: ×(1.8/1.28) → 0.042187 g · 2026-09-15",
-   "leucina": "usda:169975 · «Cabbage, raw» · columna «Leucine» · transferido por gramo de proteina: ×(1.8/1.28) → 0.057656 g · 2026-09-15",
-   "valina": "usda:169975 · «Cabbage, raw» · columna «Valine» · transferido por gramo de proteina: ×(1.8/1.28) → 0.059063 g · 2026-09-15",
-   "histidina": "usda:169975 · «Cabbage, raw» · columna «Histidine» · transferido por gramo de proteina: ×(1.8/1.28) → 0.030937 g · 2026-09-15",
-   "fenilalanina": "usda:169975 · «Cabbage, raw» · columna «Phenylalanine» · transferido por gramo de proteina: ×(1.8/1.28) → 0.045 g · 2026-09-15",
-   "tirosina": "usda:169975 · «Cabbage, raw» · columna «Tyrosine» · transferido por gramo de proteina: ×(1.8/1.28) → 0.026719 g · 2026-09-15",
-   "arginina": "usda:169975 · «Cabbage, raw» · columna «Arginine» · transferido por gramo de proteina: ×(1.8/1.28) → 0.105469 g · 2026-09-15"
+   "arginina": "usda:169975 · «Cabbage, raw» · columna «Arginine» = 0.075 G · transferido por gramo de proteina: ×(1.8/1.28) → 0.105469 g · 2026-09-15",
+   "cistina": "usda:169975 · «Cabbage, raw» · columna «Cystine» = 0.011 G · transferido por gramo de proteina: ×(1.8/1.28) → 0.015469 g · 2026-09-15",
+   "fenilalanina": "usda:169975 · «Cabbage, raw» · columna «Phenylalanine» = 0.032 G · transferido por gramo de proteina: ×(1.8/1.28) → 0.045 g · 2026-09-15",
+   "histidina": "usda:169975 · «Cabbage, raw» · columna «Histidine» = 0.022 G · transferido por gramo de proteina: ×(1.8/1.28) → 0.030937 g · 2026-09-15",
+   "isoleucina": "usda:169975 · «Cabbage, raw» · columna «Isoleucine» = 0.03 G · transferido por gramo de proteina: ×(1.8/1.28) → 0.042187 g · 2026-09-15",
+   "leucina": "usda:169975 · «Cabbage, raw» · columna «Leucine» = 0.041 G · transferido por gramo de proteina: ×(1.8/1.28) → 0.057656 g · 2026-09-15",
+   "lisina": "usda:169975 · «Cabbage, raw» · columna «Lysine» = 0.044 G · transferido por gramo de proteina: ×(1.8/1.28) → 0.061875 g · 2026-09-15",
+   "metionina": "usda:169975 · «Cabbage, raw» · columna «Methionine» = 0.012 G · transferido por gramo de proteina: ×(1.8/1.28) → 0.016875 g · 2026-09-15",
+   "tirosina": "usda:169975 · «Cabbage, raw» · columna «Tyrosine» = 0.019 G · transferido por gramo de proteina: ×(1.8/1.28) → 0.026719 g · 2026-09-15",
+   "treonina": "usda:169975 · «Cabbage, raw» · columna «Threonine» = 0.035 G · transferido por gramo de proteina: ×(1.8/1.28) → 0.049219 g · 2026-09-15",
+   "triptofano": "usda:169975 · «Cabbage, raw» · columna «Tryptophan» = 0.011 G · transferido por gramo de proteina: ×(1.8/1.28) → 0.015469 g · 2026-09-15",
+   "valina": "usda:169975 · «Cabbage, raw» · columna «Valine» = 0.042 G · transferido por gramo de proteina: ×(1.8/1.28) → 0.059063 g · 2026-09-15"
   }
  },
  {
@@ -10830,7 +10886,8 @@
    "fenilalanina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:169387 «Arugula, raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
    "tirosina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:169387 «Arugula, raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
    "arginina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:169387 «Arugula, raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026)."
-  }
+  },
+  "composicion_fuente": {}
  },
  {
   "nombre": "Tomate (puré)",
@@ -10869,25 +10926,38 @@
    "colina": 7,
    "cloruro": 369.6,
    "fibra": 2.8,
-   "arginina": 0.087273,
-   "histidina": 0.068182,
-   "isoleucina": 0.084545,
-   "leucina": 0.125455,
-   "lisina": 0.130909,
-   "metionina": 0.024545,
-   "cistina": 0.027273,
-   "fenilalanina": 0.092727,
-   "tirosina": 0.057273,
-   "treonina": 0.100909,
-   "triptofano": 0.03,
-   "valina": 0.09,
+   "arginina": 0,
+   "histidina": 0,
+   "isoleucina": 0,
+   "leucina": 0,
+   "lisina": 0,
+   "metionina": 0,
+   "cistina": 0,
+   "fenilalanina": 0,
+   "tirosina": 0,
+   "treonina": 0,
+   "triptofano": 0,
+   "valina": 0,
    "purinas": 6.6,
    "taurina": 0,
    "lcarnitina": 0
   },
   "fuente": "BEDCA",
-  "nota_datos": "BEDCA, «Tomate, maduro, puré» — fibra dietética total 2,8 g/100 g (fuente 29). Es el puré, no el tomate fresco, que en BEDCA es otra ficha distinta y trae 1,1 g. La energía (73 kcal), la proteína (4,5 g) y la grasa (0,2 g) que ya teníamos coinciden exactas con la ficha del puré, así que es la buena.",
-  "sin_dato": [],
+  "nota_datos": "BEDCA, «Tomate, maduro, puré» — fibra dietética total 2,8 g/100 g (fuente 29). Es el puré, no el tomate fresco, que en BEDCA es otra ficha distinta y trae 1,1 g. La energía (73 kcal), la proteína (4,5 g) y la grasa (0,2 g) que ya teníamos coinciden exactas con la ficha del puré, así que es la buena. ⚠️ AMINOGRAMA RETIRADO EL 15-sep-2026, y no por falta de datos sino porque la fila de la que salia NO DESCRIBE ESTE PRODUCTO. Se habia transferido de `usda:170460` «Tomato products, canned, puree, without salt added», que declara 1,65 g de proteina por 100 g; esta ficha declara 4,50, que es la cifra de `bedca:892` «Tomate, maduro, pure». Un factor 2,7 en la proteina no es ruido entre fuentes: un tomate fresco tiene 0,9 g, un pure de lata 1,65 y un concentrado 4,5, asi que las dos filas hablan de dos productos con distinta CONCENTRACION. Transferir por gramo de proteina conserva la relacion aminoacidos/proteina de la fila de origen, y la de esa fila deja los doce en el 20 % de la proteina -- fuera de la banda 25-85 % de UNIDADES.md, que es el aviso que dio el BLOQUE 19. || Se retira ENTERO, que es la regla: un aminograma se escribe entero o no se escribe, porque celda a celda no hay forma de ver que la relacion no cuadra. || Medido antes de quitarlo: el tomate en pure aparece en 0 de los 216 menus precalculados, asi que no cambia ningun menu. Y quedarse SIN aminograma es el lado seguro contra un minimo: el motor cuenta 0 y va a buscar esos aminoacidos a otro sitio.",
+  "sin_dato": [
+   "arginina",
+   "cistina",
+   "fenilalanina",
+   "histidina",
+   "isoleucina",
+   "leucina",
+   "lisina",
+   "metionina",
+   "tirosina",
+   "treonina",
+   "triptofano",
+   "valina"
+  ],
   "purinas_bases": {
    "adenina": 3.2,
    "guanina": 1.2,
@@ -10904,8 +10974,7 @@
   "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
   "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada.",
   "fuentes_id": {
-   "bedca": "892",
-   "usda": "170460"
+   "bedca": "892"
   },
   "fuentes_id_porque": "BEDCA 892 «Tomate, maduro, puré» — E 72,5/73 · P 4,5/4,5 · G 0,2/0,2. Exacta.",
   "cero_verificado": {
@@ -10914,19 +10983,20 @@
   },
   "humedad_g_100g": 79.6,
   "humedad_fuente": "bedca:892 · Tomate, maduro, puré",
-  "composicion_fuente": {
-   "lisina": "usda:170460 · «Tomato products, canned, puree, without salt added» · columna «Lysine» · transferido por gramo de proteina: ×(4.5/1.65) → 0.130909 g · 2026-09-15",
-   "metionina": "usda:170460 · «Tomato products, canned, puree, without salt added» · columna «Methionine» · transferido por gramo de proteina: ×(4.5/1.65) → 0.024545 g · 2026-09-15",
-   "cistina": "usda:170460 · «Tomato products, canned, puree, without salt added» · columna «Cystine» · transferido por gramo de proteina: ×(4.5/1.65) → 0.027273 g · 2026-09-15",
-   "triptofano": "usda:170460 · «Tomato products, canned, puree, without salt added» · columna «Tryptophan» · transferido por gramo de proteina: ×(4.5/1.65) → 0.03 g · 2026-09-15",
-   "treonina": "usda:170460 · «Tomato products, canned, puree, without salt added» · columna «Threonine» · transferido por gramo de proteina: ×(4.5/1.65) → 0.100909 g · 2026-09-15",
-   "isoleucina": "usda:170460 · «Tomato products, canned, puree, without salt added» · columna «Isoleucine» · transferido por gramo de proteina: ×(4.5/1.65) → 0.084545 g · 2026-09-15",
-   "leucina": "usda:170460 · «Tomato products, canned, puree, without salt added» · columna «Leucine» · transferido por gramo de proteina: ×(4.5/1.65) → 0.125455 g · 2026-09-15",
-   "valina": "usda:170460 · «Tomato products, canned, puree, without salt added» · columna «Valine» · transferido por gramo de proteina: ×(4.5/1.65) → 0.09 g · 2026-09-15",
-   "histidina": "usda:170460 · «Tomato products, canned, puree, without salt added» · columna «Histidine» · transferido por gramo de proteina: ×(4.5/1.65) → 0.068182 g · 2026-09-15",
-   "fenilalanina": "usda:170460 · «Tomato products, canned, puree, without salt added» · columna «Phenylalanine» · transferido por gramo de proteina: ×(4.5/1.65) → 0.092727 g · 2026-09-15",
-   "tirosina": "usda:170460 · «Tomato products, canned, puree, without salt added» · columna «Tyrosine» · transferido por gramo de proteina: ×(4.5/1.65) → 0.057273 g · 2026-09-15",
-   "arginina": "usda:170460 · «Tomato products, canned, puree, without salt added» · columna «Arginine» · transferido por gramo de proteina: ×(4.5/1.65) → 0.087273 g · 2026-09-15"
+  "composicion_fuente": {},
+  "hueco_verificado": {
+   "arginina": "⚠️ AMINOGRAMA RETIRADO EL 15-sep-2026, y no por falta de datos sino porque la fila de la que salia NO DESCRIBE ESTE PRODUCTO. Se habia transferido de `usda:170460` «Tomato products, canned, puree, without salt added», que declara 1,65 g de proteina por 100 g; esta ficha declara 4,50, que es la cifra de `bedca:892` «Tomate, maduro, pure». Un factor 2,7 en la proteina no es ruido entre fuentes: un tomate fresco tiene 0,9 g, un pure de lata 1,65 y un concentrado 4,5, asi que las dos filas hablan de dos productos con distinta CONCENTRACION. Transferir por gramo de proteina conserva la relacion aminoacidos/proteina de la fila de origen, y la de esa fila deja los doce en el 20 % de la proteina -- fuera de la banda 25-85 % de UNIDADES.md, que es el aviso que dio el BLOQUE 19. || Se retira ENTERO, que es la regla: un aminograma se escribe entero o no se escribe, porque celda a celda no hay forma de ver que la relacion no cuadra. || Medido antes de quitarlo: el tomate en pure aparece en 0 de los 216 menus precalculados, asi que no cambia ningun menu. Y quedarse SIN aminograma es el lado seguro contra un minimo: el motor cuenta 0 y va a buscar esos aminoacidos a otro sitio.",
+   "cistina": "⚠️ AMINOGRAMA RETIRADO EL 15-sep-2026, y no por falta de datos sino porque la fila de la que salia NO DESCRIBE ESTE PRODUCTO. Se habia transferido de `usda:170460` «Tomato products, canned, puree, without salt added», que declara 1,65 g de proteina por 100 g; esta ficha declara 4,50, que es la cifra de `bedca:892` «Tomate, maduro, pure». Un factor 2,7 en la proteina no es ruido entre fuentes: un tomate fresco tiene 0,9 g, un pure de lata 1,65 y un concentrado 4,5, asi que las dos filas hablan de dos productos con distinta CONCENTRACION. Transferir por gramo de proteina conserva la relacion aminoacidos/proteina de la fila de origen, y la de esa fila deja los doce en el 20 % de la proteina -- fuera de la banda 25-85 % de UNIDADES.md, que es el aviso que dio el BLOQUE 19. || Se retira ENTERO, que es la regla: un aminograma se escribe entero o no se escribe, porque celda a celda no hay forma de ver que la relacion no cuadra. || Medido antes de quitarlo: el tomate en pure aparece en 0 de los 216 menus precalculados, asi que no cambia ningun menu. Y quedarse SIN aminograma es el lado seguro contra un minimo: el motor cuenta 0 y va a buscar esos aminoacidos a otro sitio.",
+   "fenilalanina": "⚠️ AMINOGRAMA RETIRADO EL 15-sep-2026, y no por falta de datos sino porque la fila de la que salia NO DESCRIBE ESTE PRODUCTO. Se habia transferido de `usda:170460` «Tomato products, canned, puree, without salt added», que declara 1,65 g de proteina por 100 g; esta ficha declara 4,50, que es la cifra de `bedca:892` «Tomate, maduro, pure». Un factor 2,7 en la proteina no es ruido entre fuentes: un tomate fresco tiene 0,9 g, un pure de lata 1,65 y un concentrado 4,5, asi que las dos filas hablan de dos productos con distinta CONCENTRACION. Transferir por gramo de proteina conserva la relacion aminoacidos/proteina de la fila de origen, y la de esa fila deja los doce en el 20 % de la proteina -- fuera de la banda 25-85 % de UNIDADES.md, que es el aviso que dio el BLOQUE 19. || Se retira ENTERO, que es la regla: un aminograma se escribe entero o no se escribe, porque celda a celda no hay forma de ver que la relacion no cuadra. || Medido antes de quitarlo: el tomate en pure aparece en 0 de los 216 menus precalculados, asi que no cambia ningun menu. Y quedarse SIN aminograma es el lado seguro contra un minimo: el motor cuenta 0 y va a buscar esos aminoacidos a otro sitio.",
+   "histidina": "⚠️ AMINOGRAMA RETIRADO EL 15-sep-2026, y no por falta de datos sino porque la fila de la que salia NO DESCRIBE ESTE PRODUCTO. Se habia transferido de `usda:170460` «Tomato products, canned, puree, without salt added», que declara 1,65 g de proteina por 100 g; esta ficha declara 4,50, que es la cifra de `bedca:892` «Tomate, maduro, pure». Un factor 2,7 en la proteina no es ruido entre fuentes: un tomate fresco tiene 0,9 g, un pure de lata 1,65 y un concentrado 4,5, asi que las dos filas hablan de dos productos con distinta CONCENTRACION. Transferir por gramo de proteina conserva la relacion aminoacidos/proteina de la fila de origen, y la de esa fila deja los doce en el 20 % de la proteina -- fuera de la banda 25-85 % de UNIDADES.md, que es el aviso que dio el BLOQUE 19. || Se retira ENTERO, que es la regla: un aminograma se escribe entero o no se escribe, porque celda a celda no hay forma de ver que la relacion no cuadra. || Medido antes de quitarlo: el tomate en pure aparece en 0 de los 216 menus precalculados, asi que no cambia ningun menu. Y quedarse SIN aminograma es el lado seguro contra un minimo: el motor cuenta 0 y va a buscar esos aminoacidos a otro sitio.",
+   "isoleucina": "⚠️ AMINOGRAMA RETIRADO EL 15-sep-2026, y no por falta de datos sino porque la fila de la que salia NO DESCRIBE ESTE PRODUCTO. Se habia transferido de `usda:170460` «Tomato products, canned, puree, without salt added», que declara 1,65 g de proteina por 100 g; esta ficha declara 4,50, que es la cifra de `bedca:892` «Tomate, maduro, pure». Un factor 2,7 en la proteina no es ruido entre fuentes: un tomate fresco tiene 0,9 g, un pure de lata 1,65 y un concentrado 4,5, asi que las dos filas hablan de dos productos con distinta CONCENTRACION. Transferir por gramo de proteina conserva la relacion aminoacidos/proteina de la fila de origen, y la de esa fila deja los doce en el 20 % de la proteina -- fuera de la banda 25-85 % de UNIDADES.md, que es el aviso que dio el BLOQUE 19. || Se retira ENTERO, que es la regla: un aminograma se escribe entero o no se escribe, porque celda a celda no hay forma de ver que la relacion no cuadra. || Medido antes de quitarlo: el tomate en pure aparece en 0 de los 216 menus precalculados, asi que no cambia ningun menu. Y quedarse SIN aminograma es el lado seguro contra un minimo: el motor cuenta 0 y va a buscar esos aminoacidos a otro sitio.",
+   "leucina": "⚠️ AMINOGRAMA RETIRADO EL 15-sep-2026, y no por falta de datos sino porque la fila de la que salia NO DESCRIBE ESTE PRODUCTO. Se habia transferido de `usda:170460` «Tomato products, canned, puree, without salt added», que declara 1,65 g de proteina por 100 g; esta ficha declara 4,50, que es la cifra de `bedca:892` «Tomate, maduro, pure». Un factor 2,7 en la proteina no es ruido entre fuentes: un tomate fresco tiene 0,9 g, un pure de lata 1,65 y un concentrado 4,5, asi que las dos filas hablan de dos productos con distinta CONCENTRACION. Transferir por gramo de proteina conserva la relacion aminoacidos/proteina de la fila de origen, y la de esa fila deja los doce en el 20 % de la proteina -- fuera de la banda 25-85 % de UNIDADES.md, que es el aviso que dio el BLOQUE 19. || Se retira ENTERO, que es la regla: un aminograma se escribe entero o no se escribe, porque celda a celda no hay forma de ver que la relacion no cuadra. || Medido antes de quitarlo: el tomate en pure aparece en 0 de los 216 menus precalculados, asi que no cambia ningun menu. Y quedarse SIN aminograma es el lado seguro contra un minimo: el motor cuenta 0 y va a buscar esos aminoacidos a otro sitio.",
+   "lisina": "⚠️ AMINOGRAMA RETIRADO EL 15-sep-2026, y no por falta de datos sino porque la fila de la que salia NO DESCRIBE ESTE PRODUCTO. Se habia transferido de `usda:170460` «Tomato products, canned, puree, without salt added», que declara 1,65 g de proteina por 100 g; esta ficha declara 4,50, que es la cifra de `bedca:892` «Tomate, maduro, pure». Un factor 2,7 en la proteina no es ruido entre fuentes: un tomate fresco tiene 0,9 g, un pure de lata 1,65 y un concentrado 4,5, asi que las dos filas hablan de dos productos con distinta CONCENTRACION. Transferir por gramo de proteina conserva la relacion aminoacidos/proteina de la fila de origen, y la de esa fila deja los doce en el 20 % de la proteina -- fuera de la banda 25-85 % de UNIDADES.md, que es el aviso que dio el BLOQUE 19. || Se retira ENTERO, que es la regla: un aminograma se escribe entero o no se escribe, porque celda a celda no hay forma de ver que la relacion no cuadra. || Medido antes de quitarlo: el tomate en pure aparece en 0 de los 216 menus precalculados, asi que no cambia ningun menu. Y quedarse SIN aminograma es el lado seguro contra un minimo: el motor cuenta 0 y va a buscar esos aminoacidos a otro sitio.",
+   "metionina": "⚠️ AMINOGRAMA RETIRADO EL 15-sep-2026, y no por falta de datos sino porque la fila de la que salia NO DESCRIBE ESTE PRODUCTO. Se habia transferido de `usda:170460` «Tomato products, canned, puree, without salt added», que declara 1,65 g de proteina por 100 g; esta ficha declara 4,50, que es la cifra de `bedca:892` «Tomate, maduro, pure». Un factor 2,7 en la proteina no es ruido entre fuentes: un tomate fresco tiene 0,9 g, un pure de lata 1,65 y un concentrado 4,5, asi que las dos filas hablan de dos productos con distinta CONCENTRACION. Transferir por gramo de proteina conserva la relacion aminoacidos/proteina de la fila de origen, y la de esa fila deja los doce en el 20 % de la proteina -- fuera de la banda 25-85 % de UNIDADES.md, que es el aviso que dio el BLOQUE 19. || Se retira ENTERO, que es la regla: un aminograma se escribe entero o no se escribe, porque celda a celda no hay forma de ver que la relacion no cuadra. || Medido antes de quitarlo: el tomate en pure aparece en 0 de los 216 menus precalculados, asi que no cambia ningun menu. Y quedarse SIN aminograma es el lado seguro contra un minimo: el motor cuenta 0 y va a buscar esos aminoacidos a otro sitio.",
+   "tirosina": "⚠️ AMINOGRAMA RETIRADO EL 15-sep-2026, y no por falta de datos sino porque la fila de la que salia NO DESCRIBE ESTE PRODUCTO. Se habia transferido de `usda:170460` «Tomato products, canned, puree, without salt added», que declara 1,65 g de proteina por 100 g; esta ficha declara 4,50, que es la cifra de `bedca:892` «Tomate, maduro, pure». Un factor 2,7 en la proteina no es ruido entre fuentes: un tomate fresco tiene 0,9 g, un pure de lata 1,65 y un concentrado 4,5, asi que las dos filas hablan de dos productos con distinta CONCENTRACION. Transferir por gramo de proteina conserva la relacion aminoacidos/proteina de la fila de origen, y la de esa fila deja los doce en el 20 % de la proteina -- fuera de la banda 25-85 % de UNIDADES.md, que es el aviso que dio el BLOQUE 19. || Se retira ENTERO, que es la regla: un aminograma se escribe entero o no se escribe, porque celda a celda no hay forma de ver que la relacion no cuadra. || Medido antes de quitarlo: el tomate en pure aparece en 0 de los 216 menus precalculados, asi que no cambia ningun menu. Y quedarse SIN aminograma es el lado seguro contra un minimo: el motor cuenta 0 y va a buscar esos aminoacidos a otro sitio.",
+   "treonina": "⚠️ AMINOGRAMA RETIRADO EL 15-sep-2026, y no por falta de datos sino porque la fila de la que salia NO DESCRIBE ESTE PRODUCTO. Se habia transferido de `usda:170460` «Tomato products, canned, puree, without salt added», que declara 1,65 g de proteina por 100 g; esta ficha declara 4,50, que es la cifra de `bedca:892` «Tomate, maduro, pure». Un factor 2,7 en la proteina no es ruido entre fuentes: un tomate fresco tiene 0,9 g, un pure de lata 1,65 y un concentrado 4,5, asi que las dos filas hablan de dos productos con distinta CONCENTRACION. Transferir por gramo de proteina conserva la relacion aminoacidos/proteina de la fila de origen, y la de esa fila deja los doce en el 20 % de la proteina -- fuera de la banda 25-85 % de UNIDADES.md, que es el aviso que dio el BLOQUE 19. || Se retira ENTERO, que es la regla: un aminograma se escribe entero o no se escribe, porque celda a celda no hay forma de ver que la relacion no cuadra. || Medido antes de quitarlo: el tomate en pure aparece en 0 de los 216 menus precalculados, asi que no cambia ningun menu. Y quedarse SIN aminograma es el lado seguro contra un minimo: el motor cuenta 0 y va a buscar esos aminoacidos a otro sitio.",
+   "triptofano": "⚠️ AMINOGRAMA RETIRADO EL 15-sep-2026, y no por falta de datos sino porque la fila de la que salia NO DESCRIBE ESTE PRODUCTO. Se habia transferido de `usda:170460` «Tomato products, canned, puree, without salt added», que declara 1,65 g de proteina por 100 g; esta ficha declara 4,50, que es la cifra de `bedca:892` «Tomate, maduro, pure». Un factor 2,7 en la proteina no es ruido entre fuentes: un tomate fresco tiene 0,9 g, un pure de lata 1,65 y un concentrado 4,5, asi que las dos filas hablan de dos productos con distinta CONCENTRACION. Transferir por gramo de proteina conserva la relacion aminoacidos/proteina de la fila de origen, y la de esa fila deja los doce en el 20 % de la proteina -- fuera de la banda 25-85 % de UNIDADES.md, que es el aviso que dio el BLOQUE 19. || Se retira ENTERO, que es la regla: un aminograma se escribe entero o no se escribe, porque celda a celda no hay forma de ver que la relacion no cuadra. || Medido antes de quitarlo: el tomate en pure aparece en 0 de los 216 menus precalculados, asi que no cambia ningun menu. Y quedarse SIN aminograma es el lado seguro contra un minimo: el motor cuenta 0 y va a buscar esos aminoacidos a otro sitio.",
+   "valina": "⚠️ AMINOGRAMA RETIRADO EL 15-sep-2026, y no por falta de datos sino porque la fila de la que salia NO DESCRIBE ESTE PRODUCTO. Se habia transferido de `usda:170460` «Tomato products, canned, puree, without salt added», que declara 1,65 g de proteina por 100 g; esta ficha declara 4,50, que es la cifra de `bedca:892` «Tomate, maduro, pure». Un factor 2,7 en la proteina no es ruido entre fuentes: un tomate fresco tiene 0,9 g, un pure de lata 1,65 y un concentrado 4,5, asi que las dos filas hablan de dos productos con distinta CONCENTRACION. Transferir por gramo de proteina conserva la relacion aminoacidos/proteina de la fila de origen, y la de esa fila deja los doce en el 20 % de la proteina -- fuera de la banda 25-85 % de UNIDADES.md, que es el aviso que dio el BLOQUE 19. || Se retira ENTERO, que es la regla: un aminograma se escribe entero o no se escribe, porque celda a celda no hay forma de ver que la relacion no cuadra. || Medido antes de quitarlo: el tomate en pure aparece en 0 de los 216 menus precalculados, asi que no cambia ningun menu. Y quedarse SIN aminograma es el lado seguro contra un minimo: el motor cuenta 0 y va a buscar esos aminoacidos a otro sitio."
   }
  },
  {
@@ -10997,7 +11067,8 @@
    "vitD": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2218 · «Albaricoque» · columna «Vitamina D» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía."
   },
   "humedad_g_100g": 87.6,
-  "humedad_fuente": "bedca:2218 · Albaricoque"
+  "humedad_fuente": "bedca:2218 · Albaricoque",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Coco fresco",
@@ -11070,7 +11141,8 @@
    "bedca": "909"
   },
   "humedad_g_100g": 39.0,
-  "humedad_fuente": "bedca:909 · Coco, fresco"
+  "humedad_fuente": "bedca:909 · Coco, fresco",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Dátil",
@@ -11144,18 +11216,18 @@
   "humedad_g_100g": 16.5,
   "humedad_fuente": "bedca:2224 · Dátil",
   "composicion_fuente": {
-   "lisina": "usda:171726 · «Dates, deglet noor» · columna «Lysine» · transferido por gramo de proteina: ×(2.5/2.45) → 0.067347 g · 2026-09-15",
-   "metionina": "usda:171726 · «Dates, deglet noor» · columna «Methionine» · transferido por gramo de proteina: ×(2.5/2.45) → 0.022449 g · 2026-09-15",
-   "cistina": "usda:171726 · «Dates, deglet noor» · columna «Cystine» · transferido por gramo de proteina: ×(2.5/2.45) → 0.068367 g · 2026-09-15",
-   "triptofano": "usda:171726 · «Dates, deglet noor» · columna «Tryptophan» · transferido por gramo de proteina: ×(2.5/2.45) → 0.012245 g · 2026-09-15",
-   "treonina": "usda:171726 · «Dates, deglet noor» · columna «Threonine» · transferido por gramo de proteina: ×(2.5/2.45) → 0.043878 g · 2026-09-15",
-   "isoleucina": "usda:171726 · «Dates, deglet noor» · columna «Isoleucine» · transferido por gramo de proteina: ×(2.5/2.45) → 0.05 g · 2026-09-15",
-   "leucina": "usda:171726 · «Dates, deglet noor» · columna «Leucine» · transferido por gramo de proteina: ×(2.5/2.45) → 0.085714 g · 2026-09-15",
-   "valina": "usda:171726 · «Dates, deglet noor» · columna «Valine» · transferido por gramo de proteina: ×(2.5/2.45) → 0.072449 g · 2026-09-15",
-   "histidina": "usda:171726 · «Dates, deglet noor» · columna «Histidine» · transferido por gramo de proteina: ×(2.5/2.45) → 0.032653 g · 2026-09-15",
+   "arginina": "usda:171726 · «Dates, deglet noor» · columna «Arginine» = 0.136 G · transferido por gramo de proteina: ×(2.5/2.45) → 0.138776 g · 2026-09-15",
+   "cistina": "usda:171726 · «Dates, deglet noor» · columna «Cystine» = 0.067 G · transferido por gramo de proteina: ×(2.5/2.45) → 0.068367 g · 2026-09-15",
    "fenilalanina": "usda:171726 · «Dates, deglet noor» · columna «Phenylalanine» · transferido por gramo de proteina: ×(2.5/2.45) → 0.05102 g · 2026-09-15",
+   "histidina": "usda:171726 · «Dates, deglet noor» · columna «Histidine» · transferido por gramo de proteina: ×(2.5/2.45) → 0.032653 g · 2026-09-15",
+   "isoleucina": "usda:171726 · «Dates, deglet noor» · columna «Isoleucine» = 0.049 G · transferido por gramo de proteina: ×(2.5/2.45) → 0.05 g · 2026-09-15",
+   "leucina": "usda:171726 · «Dates, deglet noor» · columna «Leucine» = 0.084 G · transferido por gramo de proteina: ×(2.5/2.45) → 0.085714 g · 2026-09-15",
+   "lisina": "usda:171726 · «Dates, deglet noor» · columna «Lysine» = 0.066 G · transferido por gramo de proteina: ×(2.5/2.45) → 0.067347 g · 2026-09-15",
+   "metionina": "usda:171726 · «Dates, deglet noor» · columna «Methionine» · transferido por gramo de proteina: ×(2.5/2.45) → 0.022449 g · 2026-09-15",
    "tirosina": "usda:171726 · «Dates, deglet noor» · columna «Tyrosine» · transferido por gramo de proteina: ×(2.5/2.45) → 0.015306 g · 2026-09-15",
-   "arginina": "usda:171726 · «Dates, deglet noor» · columna «Arginine» · transferido por gramo de proteina: ×(2.5/2.45) → 0.138776 g · 2026-09-15"
+   "treonina": "usda:171726 · «Dates, deglet noor» · columna «Threonine» · transferido por gramo de proteina: ×(2.5/2.45) → 0.043878 g · 2026-09-15",
+   "triptofano": "usda:171726 · «Dates, deglet noor» · columna «Tryptophan» · transferido por gramo de proteina: ×(2.5/2.45) → 0.012245 g · 2026-09-15",
+   "valina": "usda:171726 · «Dates, deglet noor» · columna «Valine» = 0.071 G · transferido por gramo de proteina: ×(2.5/2.45) → 0.072449 g · 2026-09-15"
   }
  },
  {
@@ -11251,7 +11323,8 @@
    "fenilalanina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:167755 «Raspberries, raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
    "tirosina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:167755 «Raspberries, raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
    "arginina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:167755 «Raspberries, raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026)."
-  }
+  },
+  "composicion_fuente": {}
  },
  {
   "nombre": "Mandarina",
@@ -11335,7 +11408,8 @@
    "vitD": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2229 · «Mandarina» · columna «Vitamina D» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía."
   },
   "humedad_g_100g": 88.3,
-  "humedad_fuente": "bedca:2229 · Mandarina"
+  "humedad_fuente": "bedca:2229 · Mandarina",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Mango",
@@ -11606,7 +11680,8 @@
   ],
   "taurina_fuente": "Taurina/L-carnitina = 0: carbonato calcico (cascara de huevo molida), compuesto mineral sin materia organica soluble relevante.",
   "lcarnitina_fuente": "Taurina/L-carnitina = 0: carbonato calcico (cascara de huevo molida), compuesto mineral sin materia organica soluble relevante.",
-  "humedad_hueco": "14-sep-2026, buscar_humedad.py: no tiene fila en BEDCA, CIQUAL ni USDA (es Calcio, mandato 5: la etiqueta del fabricante), y la etiqueta no declara humedad. Köber 2017 tampoco la mide: su Tabla 1 es de hueso y cartílago."
+  "humedad_hueco": "14-sep-2026, buscar_humedad.py: no tiene fila en BEDCA, CIQUAL ni USDA (es Calcio, mandato 5: la etiqueta del fabricante), y la etiqueta no declara humedad. Köber 2017 tampoco la mide: su Tabla 1 es de hueso y cartílago.",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Hígado de conejo",
@@ -11695,7 +11770,8 @@
    "ciqual": "40110"
   },
   "humedad_g_100g": 70.8,
-  "humedad_fuente": "ciqual:40110 · Foie, lapin, cru"
+  "humedad_fuente": "ciqual:40110 · Foie, lapin, cru",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Homemadekun (multivitamínico completo)",
@@ -11996,7 +12072,8 @@
   "cero_verificado": {
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:171060 · «Chicken, liver, all classes, raw» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
    "vitD": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:171060 · «Chicken, liver, all classes, raw» · columna «Vitamin D (D2 + D3)» = 0.0 UG. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
-  }
+  },
+  "composicion_fuente": {}
  },
  {
   "nombre": "Carcasa de pato",
@@ -12086,7 +12163,8 @@
    "vitD"
   ],
   "humedad_g_100g": 60.9,
-  "humedad_fuente": "Köber 2017, Tabla 1, columna «DM [%]» de «Duck carcass» = 39.10 % de materia seca, o sea 60.90 g de agua por 100 g. Es la MISMA fila de la que ya salen el calcio y el fósforo de esta ficha. Ninguna de las tres bases de composición tiene una fila para esta pieza."
+  "humedad_fuente": "Köber 2017, Tabla 1, columna «DM [%]» de «Duck carcass» = 39.10 % de materia seca, o sea 60.90 g de agua por 100 g. Es la MISMA fila de la que ya salen el calcio y el fósforo de esta ficha. Ninguna de las tres bases de composición tiene una fila para esta pieza.",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Espinazo de conejo",
@@ -12188,7 +12266,8 @@
    "zinc"
   ],
   "humedad_g_100g": 67.6,
-  "humedad_fuente": "Köber 2017, Tabla 1, columna «DM [%]» de «Rabbit dorsum» = 32.40 % de materia seca, o sea 67.60 g de agua por 100 g. Es la MISMA fila de la que ya salen el calcio y el fósforo de esta ficha. Ninguna de las tres bases de composición tiene una fila para esta pieza."
+  "humedad_fuente": "Köber 2017, Tabla 1, columna «DM [%]» de «Rabbit dorsum» = 32.40 % de materia seca, o sea 67.60 g de agua por 100 g. Es la MISMA fila de la que ya salen el calcio y el fósforo de esta ficha. Ninguna de las tres bases de composición tiene una fila para esta pieza.",
+  "composicion_fuente": {}
  },
  {
   "nombre": "napfcheck Novomineral proLEBER",
@@ -12564,7 +12643,8 @@
   "taurina_fuente": "Taurina = 0: compuesto quimico inorganico puro, sin materia organica.",
   "lcarnitina_fuente": "L-carnitina = 0: compuesto quimico inorganico puro, sin materia organica.",
   "humedad_g_100g": 0.0,
-  "humedad_fuente": "composicion quimica · "
+  "humedad_fuente": "composicion quimica · ",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Yoduro potásico (comprimidos 200 µg)",
@@ -12638,7 +12718,8 @@
   ],
   "taurina_fuente": "Taurina = 0: compuesto quimico inorganico puro, sin materia organica.",
   "lcarnitina_fuente": "L-carnitina = 0: compuesto quimico inorganico puro, sin materia organica.",
-  "humedad_hueco": "14-sep-2026, buscar_humedad.py: no tiene fila en BEDCA, CIQUAL ni USDA (es Yodo, mandato 5: la etiqueta del fabricante), y la etiqueta no declara humedad. Köber 2017 tampoco la mide: su Tabla 1 es de hueso y cartílago."
+  "humedad_hueco": "14-sep-2026, buscar_humedad.py: no tiene fila en BEDCA, CIQUAL ni USDA (es Yodo, mandato 5: la etiqueta del fabricante), y la etiqueta no declara humedad. Köber 2017 tampoco la mide: su Tabla 1 es de hueso y cartílago.",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Nutratop Vitamínico-Mineral 7:1",
@@ -12833,7 +12914,8 @@
    "dha": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:171456 · «Chicken, gizzard, all classes, raw» · columna «PUFA 22:6 n-3 (DHA)» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
    "epa": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:171456 · «Chicken, gizzard, all classes, raw» · columna «PUFA 20:5 n-3 (EPA)» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:171456 · «Chicken, gizzard, all classes, raw» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
-  }
+  },
+  "composicion_fuente": {}
  },
  {
   "nombre": "Molleja de pavo",
@@ -12917,7 +12999,8 @@
   "cero_verificado": {
    "epa": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:171085 · «Turkey, gizzard, all classes, raw» · columna «PUFA 20:5 n-3 (EPA)» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:171085 · «Turkey, gizzard, all classes, raw» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
-  }
+  },
+  "composicion_fuente": {}
  },
  {
   "nombre": "Pollo pechuga sin piel",
@@ -13313,7 +13396,8 @@
    "anio": "1976"
   },
   "humedad_g_100g": 76.7,
-  "humedad_fuente": "PROXY de «Corazón de cordero» (76.7 g): la ficha entera es un PROXY declarado desde agosto («sin dato USDA/CIQUAL de conejo. Estimado a partir de corazon de cordero»), así que la humedad viaja por el mismo camino que su energía, su proteína y su grasa. No es una medida de conejo."
+  "humedad_fuente": "PROXY de «Corazón de cordero» (76.7 g): la ficha entera es un PROXY declarado desde agosto («sin dato USDA/CIQUAL de conejo. Estimado a partir de corazon de cordero»), así que la humedad viaja por el mismo camino que su energía, su proteína y su grasa. No es una medida de conejo.",
+  "composicion_fuente": {}
  },
  {
   "nombre": "V-INTEGRA Cachorro",
@@ -13809,7 +13893,8 @@
   "taurina_fuente": "Taurina = 31,3 mg/100g: Spitze et al. 2003, tabla 1, \"Beef, lean\" (crudo) = 313 (277-348) mg/kg -> 31,3 mg/100g.",
   "lcarnitina_fuente": "L-carnitina = 80 mg/100g: valor agregado tipico de vaca/ternera (no separa corte ni tejido), literatura general (rango de fuentes 70-91 mg/100g).",
   "humedad_g_100g": 42.7,
-  "humedad_fuente": "Köber 2017, Tabla 1, columna «DM [%]» de «Calf breastbone» = 57.30 % de materia seca, o sea 42.70 g de agua por 100 g. Es la MISMA fila de la que ya salen el calcio y el fósforo de esta ficha. Ninguna de las tres bases de composición tiene una fila para esta pieza."
+  "humedad_fuente": "Köber 2017, Tabla 1, columna «DM [%]» de «Calf breastbone» = 57.30 % de materia seca, o sea 42.70 g de agua por 100 g. Es la MISMA fila de la que ya salen el calcio y el fósforo de esta ficha. Ninguna de las tres bases de composición tiene una fila para esta pieza.",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Cuello de ternera",
@@ -13896,7 +13981,8 @@
   "taurina_fuente": "Taurina = 31,3 mg/100g: Spitze et al. 2003, tabla 1, \"Beef, lean\" (crudo) = 313 (277-348) mg/kg -> 31,3 mg/100g.",
   "lcarnitina_fuente": "L-carnitina = 80 mg/100g: valor agregado tipico de vaca/ternera (no separa corte ni tejido), literatura general (rango de fuentes 70-91 mg/100g).",
   "humedad_g_100g": 52.0,
-  "humedad_fuente": "Köber 2017, Tabla 1, columna «DM [%]» de «Calf neck bones» = 48.00 % de materia seca, o sea 52.00 g de agua por 100 g. Es la MISMA fila de la que ya salen el calcio y el fósforo de esta ficha. Ninguna de las tres bases de composición tiene una fila para esta pieza."
+  "humedad_fuente": "Köber 2017, Tabla 1, columna «DM [%]» de «Calf neck bones» = 48.00 % de materia seca, o sea 52.00 g de agua por 100 g. Es la MISMA fila de la que ya salen el calcio y el fósforo de esta ficha. Ninguna de las tres bases de composición tiene una fila para esta pieza.",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Laringe de vacuno",
@@ -13991,7 +14077,8 @@
    "fenilalanina": "Mirado el 2026-09-15. Es CARTILAGO, y su aminograma esta vacio A PROPOSITO desde que entro al catalogo: la Tabla 1 de Kober la mide como «Cattle larynges» y no publica aminoacidos, y ninguna de las tres bases tiene una fila de laringe.",
    "tirosina": "Mirado el 2026-09-15. Es CARTILAGO, y su aminograma esta vacio A PROPOSITO desde que entro al catalogo: la Tabla 1 de Kober la mide como «Cattle larynges» y no publica aminoacidos, y ninguna de las tres bases tiene una fila de laringe.",
    "arginina": "Mirado el 2026-09-15. Es CARTILAGO, y su aminograma esta vacio A PROPOSITO desde que entro al catalogo: la Tabla 1 de Kober la mide como «Cattle larynges» y no publica aminoacidos, y ninguna de las tres bases tiene una fila de laringe."
-  }
+  },
+  "composicion_fuente": {}
  },
  {
   "nombre": "Bazo de vaca",
@@ -14081,7 +14168,8 @@
    "epa": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:169454 · «Beef, variety meats and by-products, spleen, raw» · columna «PUFA 20:5 n-3 (EPA)» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:169454 · «Beef, variety meats and by-products, spleen, raw» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
    "linolenico": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:169454 · «Beef, variety meats and by-products, spleen, raw» · columna «PUFA 18:3» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
-  }
+  },
+  "composicion_fuente": {}
  },
  {
   "nombre": "Páncreas de vaca",
@@ -14163,7 +14251,8 @@
    "dha": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:169452 · «Beef, variety meats and by-products, pancreas, raw» · columna «PUFA 22:6 n-3 (DHA)» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
    "epa": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:169452 · «Beef, variety meats and by-products, pancreas, raw» · columna «PUFA 20:5 n-3 (EPA)» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:169452 · «Beef, variety meats and by-products, pancreas, raw» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
-  }
+  },
+  "composicion_fuente": {}
  },
  {
   "nombre": "Bazo de cordero",
@@ -14252,7 +14341,8 @@
   },
   "hueco_verificado": {
    "yodo": "Ninguna fuente la mide: BEDCA no tiene NINGUNA fila de bazo (comprobado el 13 de septiembre), USDA no publica yodo de nada, y CIQUAL no tiene bazo. El yodo es tope crónico, así que el cero mudo lo aflojaba. (2026-09-13)"
-  }
+  },
+  "composicion_fuente": {}
  },
  {
   "nombre": "Timo de vaca",
@@ -14334,7 +14424,8 @@
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:170194 · «Beef, variety meats and by-products, thymus, raw» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
   },
   "humedad_g_100g": 67.8,
-  "humedad_fuente": "usda:170194 · Beef, variety meats and by-products, thymus, raw"
+  "humedad_fuente": "usda:170194 · Beef, variety meats and by-products, thymus, raw",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Corazón de pavo",
@@ -14418,7 +14509,8 @@
   },
   "cero_verificado": {
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:171484 · «Turkey, all classes, heart, raw» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
-  }
+  },
+  "composicion_fuente": {}
  },
  {
   "nombre": "Hígado de pavo",
@@ -14501,7 +14593,8 @@
   },
   "cero_verificado": {
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:171486 · «Turkey, all classes, liver, raw» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
-  }
+  },
+  "composicion_fuente": {}
  },
  {
   "nombre": "Hígado de pato",
@@ -14591,7 +14684,8 @@
   "fuentes_id": {
    "ciqual": "40121",
    "usda": "174467"
-  }
+  },
+  "composicion_fuente": {}
  },
  {
   "nombre": "Timo de ternera",
@@ -14841,7 +14935,8 @@
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:1047 · «Sesos, de ternera, crudos» · columna «fibra, dietetica total» = 0.0 g. `value_type` LZ, o sea una MEDIDA y no una celda vacía.",
    "vitD": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:1047 · «Sesos, de ternera, crudos» · columna «Vitamina D» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía."
   },
-  "aviso_al_comprar": "Tienen que ser sesos de TERNERA, de un animal de menos de 12 meses. Si en la carnicería no tienen y te ofrecen sesos de vaca, de buey o de añojo, NO valen y no es lo mismo aunque lo parezca: por ley no se pueden dar a un animal. Si no hay de ternera, mejor cambia de alimento y vuelve a generar el menú."
+  "aviso_al_comprar": "Tienen que ser sesos de TERNERA, de un animal de menos de 12 meses. Si en la carnicería no tienen y te ofrecen sesos de vaca, de buey o de añojo, NO valen y no es lo mismo aunque lo parezca: por ley no se pueden dar a un animal. Si no hay de ternera, mejor cambia de alimento y vuelve a generar el menú.",
+  "composicion_fuente": {}
  },
  {
   "nombre": "Beaphar Aceite de Germen de Trigo (vitamina E)",
@@ -14969,9 +15064,9 @@
   ],
   "fuente": "Etiqueta del fabricante (Beaphar, ficha de producto 11218) y distribuidor espanol",
   "composicion_fuente": {
-   "vitE": "etiqueta Beaphar: «Aceite vegetal (Vitamina E 5900 UI/kg)»",
+   "energia": "FEDIAF §7.2.2.2 b)",
    "grasa": "etiqueta Beaphar: «Grasa bruta 100 %»",
-   "energia": "FEDIAF §7.2.2.2 b)"
+   "vitE": "etiqueta Beaphar: «Aceite vegetal (Vitamina E 5900 UI/kg)»"
   },
   "conversion": {
    "valor_en_la_fuente": 5900,
@@ -15099,9 +15194,9 @@
   "dosis_fuente": "⚠️ SIN TABLA DE DOSIS PARA PERRO. La etiqueta del fabricante es humana (0,5 ml/dia en adultos) y la tienda canina que lo vende dice que «la cantidad diaria puede ajustarse segun el peso, el tipo de dieta y los requerimientos individuales» bajo criterio profesional. No se inventa una tabla: `dosis_maxima_fabricante` devuelve None y el tope lo ponen las proporciones de la racion y los 43 requisitos.",
   "fuente": "Etiqueta MARNYS (linea VITAHELP), via distribuidor espanol",
   "composicion_fuente": {
-   "vitE": "etiqueta MARNYS: «Por 0,5 ml: Vitamina E 12 mg (D-alfa-tocoferol)»",
+   "energia": "FEDIAF §7.2.2.2 b)",
    "grasa": "cota por composicion: el producto es aceite de oliva virgen mas concentrado oleoso de vitamina E",
-   "energia": "FEDIAF §7.2.2.2 b)"
+   "vitE": "etiqueta MARNYS: «Por 0,5 ml: Vitamina E 12 mg (D-alfa-tocoferol)»"
   },
   "conversion": {
    "valor_en_la_fuente": 12,
