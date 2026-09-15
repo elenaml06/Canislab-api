@@ -568,6 +568,50 @@ MINIMO_POR_CATEGORIA_PORCION = {
 # y ahí ya no es una cuestión de precio.
 PENALIZACION_DE_ENCARGO = 12.0
 
+# ⚠️ LA ROTACIÓN DE PROTEÍNA, CON SU NÚMERO A LA VISTA Y MEDIDO (15 de
+# septiembre de 2026). Estaba escrita como un `+= 2.0` suelto dentro de la
+# función, y por eso nadie la volvió a medir cuando cambiaron las dos cosas de
+# las que depende: el margen de optimalidad del solver (`mip_rel_gap`, hoy
+# 0,30) y la penalización de lo difícil de comprar (12,0, del 14 de
+# septiembre).
+#
+# EL FALLO QUE LO DESTAPÓ: el BLOQUE 11 decía que los tres menús de un mismo
+# perro llevaban la MISMA proteína, dos tiradas independientes seguidas. Y era
+# verdad a medias -- reproducido, el menú 2 SÍ rota (Gallina -> Ternera) y el 3
+# vuelve a Gallina.
+#
+# LA CAUSA NO ES QUE NO SE APLIQUE, ES QUE NO SE NOTA. El solver se conforma
+# con estar a un 30 % del óptimo (es lo que lo hace rápido, ver el comentario
+# de `mip_rel_gap` abajo), y un objetivo típico ronda 10-14 unidades. Una
+# penalización de 2,0 cabe ENTERA dentro de esa tolerancia: el solver puede
+# devolver la solución sin rotar y no estar haciendo nada mal. Es exactamente
+# la misma lección que costó medir `PENALIZACION_DE_ENCARGO` el 14 de
+# septiembre --3,0 no bastaba y 8,0 sí--, y esta no se remidió entonces.
+#
+# ⚠️ Y TIENE QUE QUEDARSE POR DEBAJO DE `PENALIZACION_DE_ENCARGO`, que es la
+# razón por la que no se sube más: si rotar costara más que comprar en una
+# carnicería de encargo, el motor mandaría a la usuaria a por costillas de
+# cordero antes que repetir pollo dos semanas. Repetir proteína es un defecto
+# de variedad; no encontrar el alimento es no comer.
+#
+# MEDIDO, seis casas de tres menús seguidos cada una (adulto de 20 kg, 6 s por
+# menú, que es lo que le da `/menu/varios-perros`), contando cuántas repiten LA
+# MISMA carne en los tres:
+#
+#     penalización  2,0 (la de antes) ... 3 de 6 repiten
+#     penalización  4,0 ................. 0 de 6
+#     penalización  6,0 ................. 0 de 6
+#     penalización  8,0 ................. 0 de 6
+#
+# El umbral está en 4,0 y se deja en 6,0 por el mismo motivo por el que la de
+# encargo se dejó en 12,0 teniendo su umbral en 8,0: margen para los peldaños
+# relajados, donde el solver tiene menos tiempo y acepta soluciones peores.
+#
+# ⚠️ Y VA EN EL OBJETIVO, NO EN LAS RESTRICCIONES, así que puede cambiar QUÉ
+# proteína se elige y NUNCA SI hay menú. Eso no se supone: se comprueba, igual
+# que con la de encargo.
+PENALIZACION_DE_ROTACION = 6.0
+
 
 def resolver(*args, **kwargs):
     """El solver, con UN reintento y solo uno: el del techo del libro.
@@ -2988,7 +3032,7 @@ def _resolver_una_vez(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn
             if categoria_de[n] in ("Carne muscular", "Pescados y mariscos", "Hueso carnoso",
                                    "Vísceras", "Hígado"):
                 if especie_de(n).strip().lower() in evitar_lower:
-                    coste_binaria[idx[n]] += 2.0
+                    coste_binaria[idx[n]] += PENALIZACION_DE_ROTACION
     c = np.array([0.0] * n_var + coste_binaria)
 
     # ⚠️ AÑADIDO (5 agosto, noche) — CASO REAL ENCONTRADO: cachorro pequeño

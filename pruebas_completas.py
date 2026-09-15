@@ -715,10 +715,31 @@ for _etq_p, _der, _etapa, _peso, _adulto in PERROS_B9:
         # si tuvo que relajar, debe decirlo -- un menú raro sin explicación
         # es peor que no darlo
         if _r.get("se_relajo") and not _r.get("aviso_composicion"):
+            # ⚠️ LO QUE EL USUARIO HA QUITADO A MANO NO CUENTA COMO «DEJADO
+            #    FUERA» (15 de septiembre de 2026). Esta comprobación acusaba de
+            #    no avisar por la ausencia de «Hueso carnoso» en los dos casos
+            #    que llevan `categorias_excluidas: ["Hueso carnoso"]` -- o sea,
+            #    por hacer exactamente lo que se le había pedido. Avisar de eso
+            #    sería decirle a alguien «oye, que no lleva hueso» después de
+            #    que él haya escrito que no quiere hueso.
+            #
+            #    Estaba latente y salió hoy: hasta el 15 de septiembre el
+            #    peldaño 0 ya permitía dos suplementos, así que estos perros no
+            #    relajaban nada y `se_relajo` venía vacío. Al partir el peldaño
+            #    en dos --uno y dos botes-- pasan a bajar al 1, `se_relajo` se
+            #    llena, y el `if` entra por primera vez. Una comprobación que
+            #    nunca se había ejecutado no es una comprobación que funcione.
+            #
+            #    Lo que SÍ tiene que seguir cazando: una categoría que el motor
+            #    deja fuera POR SU CUENTA al relajar, sin decirlo. Eso es la
+            #    regla 5 --nunca se cambia en silencio-- y sigue vigilado.
+            _quitadas9 = set(_extra.get("categorias_excluidas") or [])
             _presentes = {al.get(n, {}).get("categoria") for n in _g}
-            if any(c not in _presentes for c in MARGENES):
-                fallos.append(f"BLOQUE9 {_etq_p} / {_etq_r}: relajó y dejó categorías "
-                              f"fuera sin avisar de ello")
+            if any(c not in _presentes and c not in _quitadas9 for c in MARGENES):
+                _faltan9 = [c for c in MARGENES
+                            if c not in _presentes and c not in _quitadas9]
+                fallos.append(f"BLOQUE9 {_etq_p} / {_etq_r}: relajó y dejó {_faltan9} "
+                              f"fuera sin avisar de ello, y no las había quitado el usuario")
 
 # LÍMITE CONOCIDO Y ACEPTADO: quitar las 8 especies más comunes deja el
 # catálogo con 2 carnes, 1 hueso, 0 vísceras, 0 hígado y 20 pescados, y NO SALE
@@ -2990,6 +3011,25 @@ else:
 #     Cambiar una restricción del solver mueve la solución de cada semilla
 #     igual que cambiar el catálogo: la lista de semillas es un muestreo del
 #     azar, no un número mágico, y hay que remedirla las dos veces.
+#   · 15 sep, y ese día se tocaron LAS DOS COSAS A LA VEZ: el catálogo (62
+#     celdas corregidas al revisar las 25 etiquetas de suplemento, más dos
+#     fichas nuevas de vitamina E) y TRES restricciones del solver (los siete
+#     máximos legales de la UE pasan a medirse sobre materia seca; la regla 5
+#     empieza a aplicar `CUANTOS_MAX` con la categoría REAL, así que los topes
+#     de «Multivitamínico» y «Extras» dejan de ser inertes; y el peldaño 0 pasa
+#     a permitir UN solo suplemento). Remedidas las 30:
+#         arreglado ... 20 de 30; no conservan 3, 7, 9, 18, 20, 22, 24, 25, 27
+#                       y 30
+#         con fallo ... 11 de 30; no conservan 1, 3, 5, 6, 7, 8, 9, 12, 13, 14,
+#                       17, 18, 20, 22, 24, 25, 27, 28 y 30
+#     Las que DISTINGUEN son NUEVE: 1, 5, 6, 8, 12, 13, 14, 17 y 28. Las cinco
+#     primeras son 1, 5, 6, 8 y 12.
+#     ⚠️ Y las que estaban puestas antes se caían por lo de siempre: la 7 y la 9
+#     pasaron a NO conservar de las dos formas -- ahí el motor suelta el
+#     boquerón por su cuenta y hace bien, preferir es una preferencia -- y la 4
+#     conserva de las dos, así que no probaba nada. O sea que de las cinco
+#     ancladas solo dos seguían sirviendo. Esto es exactamente lo que el párrafo
+#     de abajo manda hacer, y funciona.
 # Si esta prueba se cae después de tocar el catálogo O UNA RESTRICCIÓN DEL
 # SOLVER, lo primero no es sospechar del motor: es volver a medir las 30 con y
 # sin el fallo.
@@ -3000,7 +3040,7 @@ _PREFERIR_B17 = [n for n in ["Boquerón", "Carcasa de pollo", "Hígado de terner
 if "Boquerón" not in _PREFERIR_B17:
     fallos.append("BLOQUE17: el boquerón ya no está en el catálogo; hay que reanclar esta prueba.")
 else:
-    for _sem_b17 in (1, 4, 7, 9, 14):
+    for _sem_b17 in (1, 5, 6, 8, 12):
         _ok_b17, _g_b17 = _api.resolver_v2(
             1040.0, "Adulto", _al_b17, _req_b17, 20.0, _api.dosis_maxima_fabricante,
             margenes_categoria=_api.MARGENES_V2, max_suplementos=2, time_limit=12,
@@ -6637,10 +6677,54 @@ for _etq43, _der43, _etapa43, _peso43, _adulto43 in _CASOS_43:
                                          max_suplementos=2, time_limit=30.0,
                                          peso_adulto_esperado_kg=_adulto43)
             if not _ok43b:
-                fallos.append(f"BLOQUE43 {_etq43}: no sale menú NI CON 30 s de solver. Aquí ya "
-                              f"no es el reloj: o el catálogo ha dejado de poder alimentar a "
-                              f"este perro, o un límite nuevo ha cerrado su ventana. Hay que "
-                              f"medirlo antes de entregar nada.")
+                # ⚠️ Y AQUI HAY UNA TERCERA POSIBILIDAD QUE ESTE BLOQUE NO
+                #    CONTEMPLABA, Y ES LA QUE PASO (15 de septiembre de 2026):
+                #    que en las proporciones de BARF de los dos primeros
+                #    peldaños NO EXISTA menu, y si exista un peldaño mas abajo.
+                #    Eso no es «el catalogo ha dejado de alimentar a este
+                #    perro»: es la REGLA 3 funcionando -- lo que cede es la
+                #    FORMA, que es criterio nuestro, y nunca la nutricion.
+                #
+                #    MEDIDO ESE DIA, toy de 1,5 kg con DER 200: con
+                #    `MARGENES_V2` el solver devuelve `status 2` (infactible
+                #    DEMOSTRADO, no falta de reloj) y por la API sale menu
+                #    VERDE en el peldaño `proporcion_minima_visceras_higado_
+                #    verdura`. Y la causa esta medida, quitando los techos
+                #    legales de uno en uno: es el **SELENIO**, que desde el 15
+                #    de septiembre se mide sobre MATERIA SECA -- la unica forma
+                #    en que FEDIAF lo publica -- y con eso se aprieta un ~23 %.
+                #    Es LEY (regla 2) y no cede. Es exactamente el mismo limite
+                #    que cierra la ventana de calcio de Cairo en el BLOQUE 101:
+                #    hoy el selenio es el nutriente que manda en este motor.
+                #
+                #    Asi que lo que se exige es que EXISTA menu en la escalera
+                #    y que salga VERDE, no que salga en un peldaño concreto --
+                #    afirmar el peldaño es justo lo que este fichero tiene
+                #    prohibido desde el 10 de septiembre.
+                _r43esc = _c.post("/menu/v2", json={
+                    "nombres_alimentos": [], "modo": "automatico",
+                    "der_objetivo": _der43, "etapa_requisitos": _etapa43,
+                    "peso_perro_kg": _peso43, "presupuesto_segundos": 120.0,
+                    **({"peso_adulto_esperado_kg": _adulto43} if _adulto43 else {})}).json()
+                if not _r43esc.get("factible"):
+                    fallos.append(f"BLOQUE43 {_etq43}: no sale menú NI CON 30 s de solver en las "
+                                  f"proporciones de BARF NI recorriendo la escalera entera con "
+                                  f"120 s por la API. Aquí ya no es el reloj ni la forma: o el "
+                                  f"catálogo ha dejado de poder alimentar a este perro, o un "
+                                  f"límite nuevo ha cerrado su ventana. Hay que medirlo antes "
+                                  f"de entregar nada.")
+                else:
+                    _f43esc = verificar(_r43esc["menu"], al, req, _der43, _etapa43)
+                    if _f43esc["semaforo"] != "verde":
+                        fallos.append(f"BLOQUE43 {_etq43}: la escalera le da menú pero en "
+                                      f"{_f43esc['semaforo']}. Bajar de peldaño suelta la FORMA "
+                                      f"y NUNCA un requisito: un menú que no está verde no se "
+                                      f"entrega (regla 1)")
+                    else:
+                        print(f"  {_etq43}: en las proporciones de BARF no existe menú "
+                              f"(infactible demostrado, lo cierra el techo LEGAL de selenio), y "
+                              f"sí existe bajando al peldaño «{_r43esc.get('peldano')}», verde. "
+                              f"Es la regla 3, no un fallo")
             else:
                 print(f"  {_etq43}: con 1 s no salió en ocho intentos, con 30 s sí. Es el "
                       f"reloj, no la nutrición")
@@ -6706,7 +6790,11 @@ for _etq43c, _cuerpo43c in [
     ("cachorro 4 meses", {"der_objetivo": 549, "peso_perro_kg": 4,
                           "etapa_requisitos": "CachorroCrecimiento",
                           "peso_adulto_esperado_kg": 9}),
-    ("toy 1,5 kg", {"der_objetivo": 200, "peso_perro_kg": 1.5, "etapa_requisitos": "Adulto"}),
+    # ⚠️ EL TOY DE 1,5 KG SE SACA DE ESTA LISTA, Y NO PARA BAJAR EL LISTÓN
+    #    (15 de septiembre de 2026). Lo que esta lista prueba es UNA cosa: que
+    #    una solución YA CALCULADA no se tire por mirar el reloj. Para eso hace
+    #    falta un perro cuyo menú esté EN el primer peldaño, y el toy dejó de
+    #    serlo ese día. Tiene su propia comprobación justo debajo, más exigente.
 ]:
     _sin_menu43, _no_verdes43 = 0, 0
     for _ in range(3):
@@ -6731,6 +6819,60 @@ for _etq43c, _cuerpo43c in [
     if _no_verdes43:
         fallos.append(f"BLOQUE43 {_etq43c}: ha salido un menú que no está verde. Con prisa se "
                       f"acepta un menú con un alimento de más, nunca uno que no cumpla.")
+
+# ⚠️ EL TOY DE 1,5 KG, APARTE, Y CONTRA EL PRESUPUESTO DE VERDAD (15 de
+# septiembre de 2026). LA MEDIDA ES EL HALLAZGO Y HAY QUE LEERLA ANTES DE TOCAR
+# NADA AQUÍ.
+#
+# Ese día este perro pasó de sacar menú en el peldaño ESTRICTO a necesitar el
+# peldaño 2, y la causa NO era el reloj ni el catálogo. Trazado llamada a
+# llamada, con el presupuesto de verdad:
+#
+#     peldaño 0 (1 suplemento) ....  2,7 s  status 2  infactible DEMOSTRADO
+#     peldaño 1 (2 suplementos) ... 14,9 s  status 2  infactible DEMOSTRADO
+#     peldaño 2 ...................  8,1 s  status 0  MENÚ, verde, UN bote
+#     total 25,7 s de un presupuesto de 40
+#
+# Y la causa, aislada quitando restricciones de una en una: **el tope de UN
+# SOLO MULTIVITAMÍNICO**. Sin él, el peldaño 1 da menú en 18,3 s; con él es
+# infactible. No es el selenio solo -- quitar el techo LEGAL de selenio también
+# lo abre --: es que los dos juntos cierran la ventana de este perro.
+#
+# ⚠️ Y EL SISTEMA ESTÁ HACIENDO LO CORRECTO, que es lo que decide que esto no
+# sea un fallo. El tope de un multivitamínico es criterio NUESTRO (regla 3) y
+# lo pidió Elena --«son cosas caras, que la gente no quiere estar comprando
+# eso»--, así que no puede dejar a un perro sin comer: lo que cede es la FORMA,
+# el perro baja de peldaño, y el menú que sale es VERDE y lleva UN bote, que es
+# justo lo que se quería. Bajar diciéndolo es la regla 3.
+#
+# LO QUE SÍ HAY QUE VIGILAR, Y ES LO QUE SE COMPRUEBA AQUÍ, es que con el
+# presupuesto de VERDAD este perro siga comiendo. 25,7 s de 40 es holgado aquí
+# y apretado en Render, que va ~4,5 veces más lento -- pero allí cada peldaño
+# lleva su propio `time_limit`, así que un peldaño caro se corta en vez de
+# comerse el presupuesto entero. Está en `PREGUNTAS_ABIERTAS.md`.
+_toy43 = {"nombres_alimentos": [], "modo": "automatico", "der_objetivo": 200,
+          "peso_perro_kg": 1.5, "etapa_requisitos": "Adulto"}
+_sin43toy, _norojo43toy, _peldanos43toy = 0, 0, []
+for _ in range(3):
+    _r43toy = _c.post("/menu/v2", json=_toy43).json()
+    if not _r43toy.get("factible"):
+        _sin43toy += 1
+        continue
+    _peldanos43toy.append(_r43toy.get("peldano"))
+    if verificar(_r43toy["menu"], al, req, 200.0, "Adulto")["semaforo"] != "verde":
+        _norojo43toy += 1
+if _sin43toy:
+    fallos.append(f"BLOQUE43 toy 1,5 kg: {_sin43toy} de 3 veces no sale menú con el presupuesto "
+                  f"de verdad ({_api.PRESUPUESTO_SEGUNDOS} s) y la escalera entera. Medido el 15 "
+                  f"de septiembre tardaba 25,7 s y salía 3 de 3 en el peldaño 2: si ahora no "
+                  f"sale, o se ha encarecido un peldaño de arriba o se ha cerrado el de abajo. "
+                  f"En Render, ~4,5 veces más lento, esto es la diferencia entre dar menú y "
+                  f"contestar «está tardando más de lo normal»")
+if _norojo43toy:
+    fallos.append(f"BLOQUE43 toy 1,5 kg: {_norojo43toy} de 3 menús no están verdes. Bajar de "
+                  f"peldaño suelta la FORMA y NUNCA un requisito (regla 3)")
+print(f"  toy 1,5 kg con el presupuesto de verdad: {3 - _sin43toy}/3 con menú, "
+      f"peldaños {_peldanos43toy}")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
