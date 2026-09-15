@@ -78,7 +78,7 @@ def _es_crecimiento(etapa):
     return e in ("CachorroJoven", "CachorroCrecimiento")
 
 
-def topes_de_patologias(patologias, etapa="Adulto"):
+def topes_de_patologias(patologias, etapa="Adulto", para_el_dueno=False):
     """Devuelve (topes_por_1000kcal, pct_kcal_grasa, avisos_extra,
     suelos_por_1000kcal) ya resueltos para esta etapa y esta combinación de
     patologías.
@@ -101,8 +101,39 @@ def topes_de_patologias(patologias, etapa="Adulto"):
             # En crecimiento este tope no se aplica. Si además hay que
             # decirlo (no bloquea, solo se relaja), se dice: nunca en
             # silencio.
-            if info.get("en_crecimiento") == "sin_tope" and info.get("aviso_crecimiento"):
-                avisos.append(info["aviso_crecimiento"])
+            # ⚠️ Y SE DICE EN EL REGISTRO DE QUIEN LO VA A LEER (15 de septiembre).
+            #
+            # CASO REAL, encontrado barriendo el motor DESPLEGADO con ocho perros
+            # y diez patologías: esta lista sale por `problemas_seguridad`, que
+            # es el canal del DUEÑO -- lo dice la cabecera de
+            # `_seguridad_completa`: «AQUI SOLO VA LO QUE TIENE QUE VER EL
+            # DUEÑO» --, y aquí se metía el `aviso_crecimiento` TAL CUAL, que es
+            # el registro técnico. Lo que leía el dueño de un cachorro con
+            # artrosis era esto:
+            #
+            #   «este menú NO lleva puesto NADA de la artrosis: ni los techos de
+            #    fósforo y sodio, ni los suelos de EPA, L-carnitina y vitamina E.
+            #    || ⚠️ Y una corrección, porque este texto llegó a decir lo
+            #    contrario: … `topes_de_patologias()` no separa unos de otros…»
+            #
+            # O sea: nombres de nutrientes, «techos» y «suelos», y una nota mía
+            # sobre un fallo del código con el nombre de esta función dentro.
+            # Es exactamente lo que Elena mandó fuera dos veces -- «los avisos al
+            # usuario son muy técnicos y nombran fuentes. FUERA» y «eso a un
+            # usuario que no tiene ni idea de qué significa le causa desconfianza
+            # y no se fía» --, y se había escapado del barrido porque el BLOQUE
+            # 107 miraba `avisos_patologia` y `GET /vocabulario`, no esta puerta.
+            # Es la lección de las DOS PUERTAS del BLOQUE 64, otra vez.
+            #
+            # `avisos_de_patologias()` ya elegía bien el registro; esta función
+            # no sabía que existían dos. Ahora se le dice para quién es, y por
+            # defecto es para el dueño **solo cuando quien llama lo pide**: el
+            # solver no enseña esto a nadie y el modo profesional tiene que
+            # seguir leyendo la palabra de la fuente.
+            _cual = ((para_el_dueno and info.get("aviso_dueno_crecimiento"))
+                     or info.get("aviso_crecimiento"))
+            if info.get("en_crecimiento") == "sin_tope" and _cual:
+                avisos.append(_cual)
             continue
 
         for clave, valor in (info.get("max_por_1000kcal") or {}).items():

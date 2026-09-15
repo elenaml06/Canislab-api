@@ -538,6 +538,60 @@ una restricción que no existe—, y aceptar sinónimos solo en la positiva habr
 dejado colar un «le baja el fósforo» en crecimiento, que es falso. Comprobado
 con el fallo puesto por los dos lados.
 
+### ⚠️ Y HABÍA UNA TERCERA PUERTA, que es por donde se escapó la jerga
+
+*(15 de septiembre de 2026.)* Los dos barridos anteriores dejaron el canal del
+dueño limpio de fuentes y de nombres de nutrientes… **en las dos puertas que se
+conocían**: `avisos_patologia` dentro del menú y `GET /vocabulario` al marcar la
+patología. Hay una tercera, y es la que la app pinta en los ocho caminos:
+**`problemas_seguridad`**.
+
+**Encontrado barriendo el motor DESPLEGADO** —ocho perros × diez patologías
+contra `canislab-api.onrender.com`, no leyendo el repo—. Lo que le salía al
+dueño de un cachorro con artrosis era esto:
+
+> «este menú NO lleva puesto NADA de la artrosis: ni los **techos** de fósforo y
+> sodio, ni los **suelos** de EPA, L-carnitina y vitamina E. || ⚠️ Y una
+> corrección, porque este texto llegó a decir lo contrario: …
+> `topes_de_patologias()` no separa unos de otros…»
+
+O sea: nombres de nutrientes, «techos» y «suelos», y **una nota mía sobre un
+fallo del código, con el nombre de una función dentro**, servida a quien solo
+quiere dar de comer a su perro.
+
+**Y la artrosis TENÍA su `dueno_crecimiento` escrito desde el 13 de septiembre.**
+Lo que fallaba es que `topes_de_patologias()` —que es quien llena esa lista— **no
+sabía que existen dos registros** y metía el técnico tal cual. `avisos_de_patologias()`
+sí lo sabía desde el primer día. Una función que elige bien y su hermana que no.
+
+**El arreglo**: `topes_de_patologias(..., para_el_dueno=True)`, que es como lo
+llama `_seguridad_completa` — cuya propia cabecera dice desde el 10 de septiembre
+«**AQUÍ SOLO VA LO QUE TIENE QUE VER EL DUEÑO**». El registro técnico sigue
+saliendo por `GET /patologias` y por el modo profesional, intacto.
+
+**Lo que faltaba escrito**: cuatro patologías no tenían texto de dueño para
+crecimiento (renal, oxalato, estruvita y fosfato cálcico) y caían al técnico.
+Escritos los cuatro. Y el de la **estruvita iba sin tildes** («Este menu NO ha
+podido… gestacion… Consultalo»), en los dos sitios donde vive.
+
+⚠️ **Y al ponerle el guardia saltó un cuarto**, que llevaba escrito desde el 13:
+el `dueno_crecimiento` de la artrosis nombraba «vitamina E y L-carnitina». Se
+escribió el mismo día que la regla COMIDA-NO-NUTRIENTES y se escapó porque el
+BLOQUE 107 miraba `dueno` y `general`, **no `dueno_crecimiento`**.
+
+**Lo vigila el BLOQUE 107**, preguntándole a la MISMA función que llama
+`_seguridad_completa` y con el mismo `para_el_dueno=True`: 18 avisos de
+crecimiento servidos al dueño, 0 con jerga. ⚠️ **Y su mitad de «las dos puertas»
+hubo que rehacerla porque NO PODÍA FALLAR**: comparaba lo que devuelve el motor
+contra el mismo JSON del que lo saca —el fichero contra sí mismo—, así que
+copiándole al técnico el texto del dueño los dos cambiaban a la vez y salía
+verde. Es la lección del BLOQUE 109 otra vez. Ahora se ancla en tres palabras que
+el registro del dueño quita a propósito (la vitamina E de la artrosis, el «1000
+kcal» de la pancreatitis, el magnesio del oxalato) y falla de las dos formas.
+
+**La regla que queda**: un texto se vigila por **la puerta por la que sale**, no
+por dónde está escrito. Van tres.
+
 ### Marcar una patología pide diagnóstico, no una corazonada
 
 *(14 de septiembre de 2026.)* Elena:
@@ -1885,6 +1939,21 @@ en voz alta en vez de acusar a los doce aminoácidos.
 afirma algo del motor está midiendo dos cosas a la vez. O el reloj es lo que se
 prueba —y entonces va en proporción— o no lo es, y entonces no puede decidir el
 resultado.
+
+⚠️ **Y UN QUINTO, EL 15 DE SEPTIEMBRE, EN EL BLOQUE 48** — y este ya había sido
+reescrito una vez por esto mismo. Comparaba las SUMAS de tres tiradas: «midiendo»
+contra «suponiendo el peor caso». Dentro de la batería completa salió **[2, 1, 3]
+contra [2, 2, 2]** — las sumas empatan a 6, el `<=` lo tira, y en aislado salía
+verde **3 de 3**. Una sola ronda con mala suerte decidía el veredicto.
+
+Lo que el bloque quiere afirmar es que **medir da ventaja sobre suponer el tope**,
+y eso es cierto de los **MÁXIMOS** y no de las sumas: cuántos menús caben depende
+de lo que tarde cada ronda, que varía, pero la versión que mide **nunca puede
+estimar más que el peor caso** —lo dice su propio `min(peor_caso, ...)`—, así que
+en su mejor tirada tiene que llegar más lejos. Si alguien volviera a decidir por
+el tope, los dos máximos serían el mismo. Cuatro tiradas y `max` contra `max`:
+verde 3 de 3, y con el fallo puesto (devolver siempre `peor_caso`) sale **[1,1,1,1]
+contra [1,2,1,2]** y el bloque lo dice.
 
 ⚠️ **Y HUBO UN CUARTO, que no es del reloj sino de la otra mitad de la misma
 regla**: el BLOQUE 106 fijaba el techo de omega-6:omega-3 en **3,0** porque el
