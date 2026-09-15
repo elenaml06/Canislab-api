@@ -538,6 +538,46 @@ una restricción que no existe—, y aceptar sinónimos solo en la positiva habr
 dejado colar un «le baja el fósforo» en crecimiento, que es falso. Comprobado
 con el fallo puesto por los dos lados.
 
+### Los cinco topes crónicos tienen gemelo por peso, y TRES no los leía nadie
+
+*(15 de septiembre de 2026.)* El motor aplica los cinco topes crónicos por
+energía **y** por **kg^0,75**, con `min()`, porque un perro de trabajo que come
+175 kcal/kg^0,75 puede meter un 35 % más de nutriente en gramos que uno de
+mantenimiento sin salirse de la concentración. Eso está escrito desde el 9 de
+septiembre… y **solo funcionaba en tres de los cinco**: el yodo, el selenio y la
+vitamina D. Los de **mercurio, tiaminasa y EPA+DHA** estaban definidos y
+**ninguna función los leía**.
+
+⚠️ **Y dos de ellos estaban MIL VECES por debajo**, que es lo que convierte esto
+de una omisión en una trampa. Hay **dos clases de tope** aquí y se trataban como
+una:
+
+| Clase | Cuáles | Gemelo por peso |
+|---|---|---|
+| **Cantidad** por 1000 kcal | yodo, selenio, vitamina D, EPA+DHA | `tope × 130 / 1000` |
+| **Fracción** de las kcal del día (0,10 = el 10 %) | tiaminasa, mercurio | `fracción × 130` = **13 kcal/kg^0,75** |
+
+A los dos de la segunda fila se les aplicaba la fórmula de la primera y salía
+**0,013**. Como no los leía nadie, no hizo daño — pero **el día que alguien los
+enchufara, cualquier menú con una sardina se habría rechazado**: 0,013 kcal no
+es nada. Es la peor forma de constante equivocada, la que no da error porque no
+se usa, y encima **se lee y se cree**: el repo daba por hecho que los cinco
+estaban puestos.
+
+⚠️ **Y el BLOQUE 86 los daba por buenos porque REHACÍA LA MISMA CUENTA
+EQUIVOCADA.** Una comprobación que repite la operación que audita no audita
+nada. Ahora separa las dos clases, y además exige que los seis gemelos **se lean
+de verdad** — mirando `co_names` del **bytecode** y no contando palabras en el
+fuente, porque la primera versión contaba apariciones y una línea de `import`
+más una mención en un docstring ya sumaban dos: comprobado, con el `min()` de
+EPA+DHA quitado seguía verde.
+
+**Medido antes de aplicarlo**, con el catálogo real y seis perros de 3 a 45 kg a
+150-175 kcal/kg^0,75: **0 se quedan sin menú**, y los menús traen **0 kcal** de
+alimentos con tiaminasa o mercurio contra topes de 30 a 226 kcal. El EPA+DHA va
+a 0,056-0,091 g/kg^0,75 contra 0,364. O sea: **red de seguridad, no un cambio de
+menús** — exactamente lo que ya decía la nota del 9 de septiembre sobre los otros
+tres.
 ### ⚠️ Y HABÍA UNA TERCERA PUERTA, que es por donde se escapó la jerga
 
 *(15 de septiembre de 2026.)* Los dos barridos anteriores dejaron el canal del

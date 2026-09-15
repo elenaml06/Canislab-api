@@ -12939,15 +12939,81 @@ import seguridad as _sg86
 import main as _main86
 
 _MANT_86 = 130.0
-for _nut86, _kcal86, _peso86 in (("yodo", _sg86.TOPE_YODO_KCAL, _sg86.TOPE_YODO_KG075),
-                                 ("selenio", _sg86.TOPE_SELENIO_KCAL, _sg86.TOPE_SELENIO_KG075),
-                                 ("mercurio", _sg86.TOPE_MERCURIO_KCAL, _sg86.TOPE_MERCURIO_KG075),
-                                 ("tiaminasa", _sg86.TOPE_TIAMINASA_KCAL, _sg86.TOPE_TIAMINASA_KG075)):
+
+# ⚠️ SON DOS CLASES DE TOPE Y ESTE BLOQUE LAS TRATABA COMO UNA, dando por buenas
+# dos constantes MIL VECES demasiado pequeñas (15 de septiembre de 2026).
+#
+# `yodo`, `selenio` y `EPA+DHA` son CANTIDADES por 1000 kcal, así que su gemelo
+# por peso es `tope × 130 / 1000`. `tiaminasa` y `mercurio` son una FRACCIÓN de
+# las kcal del día (0,10 = el 10 %), y su gemelo es `fracción × 130` = 13 KCAL
+# por kg^0,75 -- sin dividir por mil.
+#
+# Aplicándoles la fórmula de los primeros salía 0,013, y este bloque lo daba por
+# bueno porque REHACÍA LA MISMA CUENTA EQUIVOCADA. Se salvó de hacer daño solo
+# porque las dos constantes no las leía nadie: el día que alguien las enchufara,
+# cualquier menú con una sardina se habría rechazado. Una comprobación que repite
+# la operación que audita no audita nada.
+_CANTIDAD_86 = (("yodo", _sg86.TOPE_YODO_KCAL, _sg86.TOPE_YODO_KG075),
+                ("selenio", _sg86.TOPE_SELENIO_KCAL, _sg86.TOPE_SELENIO_KG075),
+                ("EPA+DHA", _sg86.TOPE_EPA_DHA_SEMANAL_KCAL, _sg86.TOPE_EPA_DHA_SEMANAL_KG075))
+_FRACCION_86 = (("mercurio", _sg86.TOPE_MERCURIO_KCAL, _sg86.TOPE_MERCURIO_KG075),
+                ("tiaminasa", _sg86.TOPE_TIAMINASA_KCAL, _sg86.TOPE_TIAMINASA_KG075))
+for _nut86, _kcal86, _peso86 in _CANTIDAD_86:
     _esperado86 = _kcal86 * _MANT_86 / 1000.0
     if abs(_peso86 - _esperado86) > 1e-9:
         fallos.append(f"BLOQUE86: el tope de {_nut86} por kg^0,75 es {_peso86} y su gemelo por "
-                      f"energía ({_kcal86}) daría {_esperado86:.4f} al perro de mantenimiento "
-                      f"(130 kcal/kg^0,75). Los dos tienen que moverse juntos")
+                      f"energía ({_kcal86} por 1000 kcal) daría {_esperado86:.4f} al perro de "
+                      f"mantenimiento (130 kcal/kg^0,75). Los dos tienen que moverse juntos")
+for _nut86, _frac86, _peso86 in _FRACCION_86:
+    _esperado86 = _frac86 * _MANT_86
+    if abs(_peso86 - _esperado86) > 1e-9:
+        fallos.append(f"BLOQUE86: el tope de {_nut86} por kg^0,75 es {_peso86} y tendría que ser "
+                      f"{_esperado86:.4f} KCAL por kg^0,75 -- es una FRACCIÓN de las kcal del día "
+                      f"({_frac86}), no una cantidad por 1000 kcal, así que su gemelo NO se divide "
+                      f"por mil. Con la fórmula de los otros sale {_frac86 * _MANT_86 / 1000.0}, "
+                      f"que es mil veces menos y rechazaría cualquier menú con una sardina")
+    # y que no se haya colado la fórmula equivocada, que da un número plausible
+    if abs(_peso86 - _frac86 * _MANT_86 / 1000.0) < 1e-9:
+        fallos.append(f"BLOQUE86: el tope de {_nut86} por kg^0,75 se ha calculado con `_por_peso`, "
+                      f"que es para cantidades por 1000 kcal. Esto es una fracción de kcal")
+
+# ⚠️ Y QUE LOS CINCO SE LEAN DE VERDAD. Tres de ellos estaban escritos desde el
+# 9 de septiembre y NO LOS LLAMABA NADIE -- una constante que no lee nadie no
+# protege de nada, y además se lee y se cree.
+# ⚠️ Y SE MIRA EN EL BYTECODE, NO EN EL TEXTO, y la primera versión de esto lo
+# hacía contando apariciones en el fuente -- con lo que una línea de `import` y
+# una mención en un docstring ya sumaban dos y el guardia pasaba. Comprobado:
+# quitando el `min()` que aplica el gemelo de EPA+DHA, seguía verde. Un guardia
+# que cuenta palabras no sabe si el número se USA.
+#
+# `co_names` de cada función dice qué nombres globales lee de verdad, así que
+# esto no se puede engañar con un comentario.
+import types as _types86
+
+
+def _nombres_que_lee_86(mod):
+    vistos = set()
+
+    def _del_codigo(c):
+        vistos.update(c.co_names)
+        for _k in c.co_consts:
+            if isinstance(_k, type((lambda: 0).__code__)):
+                _del_codigo(_k)
+
+    for _obj in vars(mod).values():
+        if isinstance(_obj, _types86.FunctionType):
+            _del_codigo(_obj.__code__)
+    return vistos
+
+
+_leidos86 = _nombres_que_lee_86(_sg86) | _nombres_que_lee_86(_main86)
+for _n86 in ("TOPE_YODO_KG075", "TOPE_SELENIO_KG075", "TOPE_VITD_KG075",
+             "TOPE_MERCURIO_KG075", "TOPE_TIAMINASA_KG075", "TOPE_EPA_DHA_SEMANAL_KG075"):
+    if _n86 not in _leidos86:
+        fallos.append(f"BLOQUE86: `{_n86}` está definido y NINGUNA función lo lee. Los cinco "
+                      f"topes crónicos tienen gemelo por peso a propósito, y uno que no se "
+                      f"aplica no es una red de seguridad: es una línea que se lee y se cree. "
+                      f"Tres de ellos llevaban así desde el 9 de septiembre")
 
 _coef86 = _sg86.TOPE_VITD_KG075 / _sg86.TOPE_VITD_KCAL * 1000.0
 if abs(_coef86 - _MANT_86) > 1.0:
