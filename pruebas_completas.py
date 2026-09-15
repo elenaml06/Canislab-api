@@ -16502,13 +16502,29 @@ else:
     print(f"  huecos guardados como cero: {len(_mudos100)}")
 
     # --- 4. cada celda cerrada se rehace desde la instantánea -------------
-    _reh100 = _mal_reh100 = 0
+    _reh100 = _mal_reh100 = _etiq100 = 0
     for _ficha100 in _cat100:
         _proc100 = _ficha100.get("composicion_fuente") or {}
         _nom100 = _ficha100["nombre"]
         for _cl100, _texto100 in _proc100.items():
-            _reh100 += 1
             _fu100 = _texto100.split(":")[0]
+            # ⚠️ UNA ETIQUETA NO ESTÁ EN LA INSTANTÁNEA, Y NO PUEDE ESTARLO
+            #    (15 de septiembre de 2026). `fuentes_instantanea.json` es lo que
+            #    publica cada BASE DE COMPOSICIÓN, congelado para poder comprobar
+            #    sin red. La etiqueta de un fabricante es el mandato 5: no tiene
+            #    volcado descargable. Y congelar aquí mi propia transcripción
+            #    para compararla conmigo mismo no auditaría nada -- el fichero
+            #    contra sí mismo, que es la lección del BLOQUE 109.
+            #
+            #    Así que se saltan Y SE CUENTAN, y su guardián es el BLOQUE 116,
+            #    que ancla la cifra de cada etiqueta a mano y exige que NINGUNA
+            #    celda de etiqueta se quede sin vigilar. Sin esa segunda mitad,
+            #    esto sería mover el agujero de sitio en vez de cerrarlo.
+            if (_fu100.startswith("etiqueta") or "cota por" in _fu100
+                    or "FEDIAF" in _fu100):
+                _etiq100 += 1
+                continue
+            _reh100 += 1
             _d100 = (_inst100.get(_nom100) or {}).get(_fu100) or {}
             _celda100 = (_d100.get("celdas") or {}).get(_cl100)
             if not _celda100:
@@ -16529,7 +16545,8 @@ else:
                     fallos.append(f"BLOQUE104: {_nom100} · {_cl100}: su procedencia dice partir de "
                                   f"un valor que no es el que publica {_fu100} hoy "
                                   f"({_celda100.get('valor')}). La celda hay que rehacerla")
-    print(f"  celdas con procedencia de fuente: {_reh100}, {_mal_reh100} que no se rehacen")
+    print(f"  celdas con procedencia de fuente: {_reh100}, {_mal_reh100} que no se rehacen"
+          f" · {_etiq100} de ETIQUETA, que vigila el BLOQUE 116")
 
     # --- 5. ninguna ficha emparejada con una fila cocinada ----------------
     import fijar_identificadores as _fid100
@@ -19597,6 +19614,114 @@ if _malV116:
                   f"declaran como aditivo nutricional: " + " · ".join(_malV116))
 print(f"  huecos y ceros de etiqueta comprobados · "
       f"{len(_TAU116)} fichas con taurina/L-carnitina de etiqueta")
+
+# --- 8. y NINGUNA celda de etiqueta puede quedarse sin vigilar ---------------
+#
+# ⚠️ POR QUÉ ESTO VIVE AQUÍ Y NO EN EL BLOQUE 104 (15 de septiembre de 2026).
+# El 104 rehace cada `composicion_fuente` contra `fuentes_instantanea.json`, que
+# es lo que publica cada BASE DE COMPOSICIÓN congelado. Una etiqueta de
+# fabricante no está ahí y NO PUEDE ESTARLO: no tiene volcado descargable, es el
+# mandato 5. Y congelar mi propia transcripción para compararla conmigo mismo no
+# auditaría nada -- el fichero contra sí mismo, que es la lección del BLOQUE 109.
+#
+# Lo que sí audita es esto: la cifra de la etiqueta transcrita AQUÍ, a mano y una
+# sola vez, contra el valor que aplica el motor. Si alguien mueve la celda del
+# catálogo sin tocar este bloque, salta. Es el mismo mecanismo con el que el
+# BLOQUE 65 ancla 25 cifras de `PARA_EL_NUTRICIONISTA.md`.
+#
+# Las de arriba (sales, UI, folato, taurina, energía) ya se rehacen con su
+# cuenta. Éstas son las que no llevan cuenta ninguna: se leen de la etiqueta y se
+# escriben tal cual, así que lo único que se puede vigilar es que no cambien.
+_ETIQUETA_SUELTA_116 = {
+    ("AniForte Beef Blood Powder", "fibra"): (0.5, "«Rohfaser 0,5 %»"),
+    ("AniForte Beef Blood Powder", "humedad_g_100g"): (6.0, "«Restfeuchte 6 %»"),
+    ("AniForte Seaweed Meal", "fibra"): (8.0, "«Rohfaser 8,0 %»"),
+    ("AniForte Seaweed Meal", "humedad_g_100g"): (12.33, "«Restfeuchte 12,33 %»"),
+    ("AniForte Seaweed Meal", "yodo"): (79000.0, "«Iodine 790 mg/kg», la más alta de las CUATRO "
+                                                 "cifras que publican del mismo producto"),
+    ("GRAU Levadura de cerveza", "energia"): (349.5, "4x46,0 + 9x2,7 + 4x35,3 de NFE"),
+    ("GRAU Levadura de cerveza", "fibra"): (1.0, "«Rohfaser 1,0 %»"),
+    ("GRAU Levadura de cerveza", "grasa"): (2.7, "«Fettgehalt 2,7 %»"),
+    ("GRAU Levadura de cerveza", "humedad_g_100g"): (7.0, "«Feuchte 7,0 %»"),
+    ("Homemadekun (multivitamínico completo)", "fibra"): (1.44, "«Fibras brutas 1.44%»"),
+    ("MARNYS VITAHELP Vitamina E liquida", "energia"): (897.0, "99,7 g de grasa x 9"),
+    ("MARNYS VITAHELP Vitamina E liquida", "grasa"): (99.7, "cota por composición"),
+    ("MARNYS VITAHELP Vitamina E liquida", "vitE"): (2620.0, "D-alfa-tocoferol, ya en la unidad "
+                                                             "del catálogo: no lleva conversión"),
+    ("NEKTON Dog Easy-BARF (multivitamínico)", "fibra"): (4.6, "«Rohfaser 4,6 %»"),
+    ("Nutratop Vitamínico-Mineral 7:1", "fibra"): (4.2, "«Fibra Bruta 4.20%»"),
+    ("PAWS & PATCH Levadura de cerveza", "energia"): (330.1, "4x44,0 + 9x3,3 + 4x31,1 de NFE"),
+    ("PAWS & PATCH Levadura de cerveza", "grasa"): (3.3, "«Rohfett 3,3 %»"),
+    ("PAWS & PATCH Levadura de cerveza", "humedad_g_100g"): (14.0, "«Feuchtigkeit <14 %», COTA: se "
+                                                                   "toma el extremo alto"),
+    ("V-INTEGRA Cachorro", "humedad_g_100g"): (1.8, "«umidità 1,8 %»"),
+    ("V-INTEGRA Epato", "calcio"): (16100.0, "«calcio 16,1 %» — la ficha llevaba 17.300"),
+    ("V-INTEGRA Epato", "humedad_g_100g"): (2.0, "«umidità 2,0 %»"),
+    ("V-INTEGRA Perro Adulto", "humedad_g_100g"): (1.9, "«umidità 1,9 %»"),
+    ("V-INTEGRA Renal", "humedad_g_100g"): (2.3, "«umidità 2,3 %»"),
+    ("V-INTEGRA Senior", "humedad_g_100g"): (2.5, "«umidità 2,5 %»"),
+    ("astoral MultiVital BARF", "fibra"): (1.3, "«Rohfaser 1,3 %»"),
+    # Las dos vitaminas E que SÍ llevan conversión, pero cuya forma no cabe en
+    # `_UI116` (una es un éster y la otra un supuesto): se ancla el resultado.
+    ("NEKTON Dog Easy-BARF (multivitamínico)", "vitE"): (
+        134.2, "«2.000 mg Vitamin E» /kg sin forma; supuesto 3a700 (1 mg = 1 UI) → 200 UI/100 g "
+               "÷ 1,49"),
+    ("astoral MultiVital BARF", "vitE"): (
+        456.4, "«rrr-alpha-Tocopherylacetat (3a700) 5000 mg» /kg → 500 mg/100 g × 1,36 UI/mg "
+               "= 680 UI ÷ 1,49"),
+    ("Nutratop Vitamínico-Mineral 7:1", "grasa"): (1.2, "«Aceites y Grasas Brutas 1,20%»"),
+    ("Nutratop Vitamínico-Mineral 7:1", "proteina"): (17.0, "«Proteína Bruta 17,00%»"),
+    ("V-INTEGRA Epato", "grasa"): (2.6, "«oli e grassi grezzi 2,6 %» — la ficha llevaba 0,2"),
+    ("V-INTEGRA Epato", "proteina"): (7.0, "«proteina grezza 7,0 %» — la ficha llevaba 4,2"),
+    ("Beaphar Aceite de Germen de Trigo (vitamina E)", "grasa"): (
+        100.0, "aceite puro: la etiqueta declara grasa bruta 100 %"),
+    ("Beaphar Aceite de Germen de Trigo (vitamina E)", "energia"): (
+        900, "100 g de grasa × 9 kcal/g (Atwater), igual que los demás aceites del catálogo"),
+}
+_malS116 = []
+for (_n116, _c116), (_v116, _cita116) in sorted(_ETIQUETA_SUELTA_116.items()):
+    _f116 = _cat116.get(_n116)
+    if _f116 is None:
+        _malS116.append(f"{_n116}: la ficha ya no existe"); continue
+    _tiene116 = (_f116.get("energia") if _c116 == "energia"
+                 else _f116.get("humedad_g_100g") if _c116 == "humedad_g_100g"
+                 else (_f116.get("nutrientes") or {}).get(_c116))
+    if _tiene116 is None or abs(float(_tiene116) - _v116) > 0.02:
+        _malS116.append(f"{_n116} · {_c116}: la etiqueta dice {_cita116} = {_v116} y la ficha "
+                        f"dice {_tiene116}")
+if _malS116:
+    fallos.append(f"BLOQUE116: {len(_malS116)} celdas de etiqueta que ya no dicen lo que dice su "
+                  f"etiqueta: " + " · ".join(_malS116[:4]))
+
+# Y la otra mitad: que NINGUNA celda de etiqueta se quede fuera de este bloque.
+# Sin esto, una celda nueva entraría sin vigilancia y el 104 la saltaría en
+# silencio -- que es cambiar un agujero de sitio, no cerrarlo.
+_vigiladas116 = set(_ETIQUETA_SUELTA_116)
+_vigiladas116 |= {(n, c) for n, c, *_ in _SALES116}
+_vigiladas116 |= {(n, "vitE") for n, *_ in _UI116}
+_vigiladas116 |= {(n, c) for n in _TAU116 for c in ("taurina", "lcarnitina")
+                  if _TAU116[n][0 if c == "taurina" else 1] is not None}
+_vigiladas116 |= {(n, "folato") for n in _cat116 if _cat116[n].get("categoria") == "Multivitamínico"}
+_vigiladas116 |= {(n, "energia") for n in (
+    "Homemadekun (multivitamínico completo)", "NEKTON Dog Easy-BARF (multivitamínico)",
+    "astoral MultiVital BARF", "Nutratop Vitamínico-Mineral 7:1", "AniForte Beef Blood Powder",
+    "V-INTEGRA Perro Adulto", "V-INTEGRA Cachorro", "V-INTEGRA Senior", "V-INTEGRA Epato",
+    "V-INTEGRA Renal")}
+_vigiladas116 |= {(n, "vitE") for n in ("V-INTEGRA Perro Adulto", "V-INTEGRA Cachorro",
+                                        "V-INTEGRA Senior", "V-INTEGRA Epato", "V-INTEGRA Renal")}
+_sueltas116 = []
+for _f116 in _cat116.values():
+    for _c116, _tx116 in (_f116.get("composicion_fuente") or {}).items():
+        _fu116 = str(_tx116).split(":")[0]
+        if not (_fu116.startswith("etiqueta") or "cota por" in _fu116 or "FEDIAF" in _fu116):
+            continue
+        if (_f116["nombre"], _c116) not in _vigiladas116:
+            _sueltas116.append(f"{_f116['nombre']} · {_c116}")
+if _sueltas116:
+    fallos.append(f"BLOQUE116: {len(_sueltas116)} celdas dicen venir de una ETIQUETA y no las "
+                  f"vigila nadie — el BLOQUE 104 las salta porque una etiqueta no está en la "
+                  f"instantánea, así que su guardián es éste: " + " · ".join(_sueltas116[:6]))
+print(f"  celdas de etiqueta vigiladas: {len(_vigiladas116 & {(f['nombre'], c) for f in _cat116.values() for c in (f.get('composicion_fuente') or {})})}")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
