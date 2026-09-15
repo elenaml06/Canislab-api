@@ -716,16 +716,16 @@
    "peso_kg": 55,
    "der": 8482,
    "gramos": {
-    "Conejo": 1056.03,
-    "Corazón de pollo": 2930.16,
-    "Carcasa de pollo": 430.38,
-    "Carcasa de conejo": 293.81,
-    "Bacalao": 824.75,
-    "Dorada": 370.31,
-    "Hígado de pollo": 140.95,
-    "Albahaca": 664.37,
+    "Conejo": 1334.82,
+    "Corazón de pollo": 2558.26,
+    "Carcasa de pollo": 520.16,
+    "Carcasa de conejo": 311.66,
+    "Bacalao": 961.85,
+    "Riñón de vaca": 27.94,
+    "Hígado de vaca": 190.47,
+    "Albahaca": 648.85,
     "AniForte Beef Blood Powder": 16.5,
-    "V-INTEGRA Cachorro": 41.81
+    "V-INTEGRA Cachorro": 36.59
    },
    "semaforo": "verde",
    "correctos": 49,
@@ -3547,89 +3547,63 @@
     "proteina": "Pollo",
     "gramos": {
      "Corazón de pollo": 3152.09,
-     "Carcasa de pollo": 358.5,
-     "Costillas de cordero": 602.78,
-     "Bacalao": 969.64,
-     "Dorada": 1084.28,
-     "Hígado de conejo": 56.87,
-     "Espinaca": 683.9,
-     "AniForte Beef Blood Powder": 16.5,
-     "V-INTEGRA Cachorro": 34.04
+     "Carcasa de pollo": 433.13,
+     "Costillas de cordero": 436.49,
+     "Bacalao": 1054.74,
+     "Dorada": 1065.61,
+     "Hígado de conejo": 111.42,
+     "Espinaca": 687.12,
+     "AniForte Beef Blood Powder": 14.36,
+     "V-INTEGRA Cachorro": 30.34
     },
     "peldano": "proporcion_minima_de_todas_las_categorias"
    },
    {
     "proteina": "Ternera",
-    "gramos": {
-     "Lengua de ternera": 3392.54,
-     "Carcasa de pollo": 737.65,
-     "Carcasa de conejo": 569.11,
-     "Bacalao": 437.51,
-     "Dorada": 578.37,
-     "Pulmón de cordero": 130.68,
-     "Hígado de vaca": 130.68,
-     "Albahaca": 492.61,
-     "Aceite de girasol": 5.0,
-     "Aceite de cacahuete": 5.0,
-     "astoral MultiVital BARF": 2.75,
-     "V-INTEGRA Cachorro": 37.04
-    },
-    "peldano": "estricto"
+    "gramos": {},
+    "no_hay_menu": true,
+    "por_que": "NO EXISTE MENU PARA ESTA COMBINACION, Y NO ES FALTA DE TIEMPO (15-sep-2026). El solver la declara INFACTIBLE DEMOSTRADA en 0,1 s en los OCHO peldaños, con el catalogo accesible y con el entero. La causa son los SIETE MAXIMOS LEGALES de la UE, que desde el 15 de septiembre van sobre MATERIA SECA -- que es la unica forma en que FEDIAF los publica (§3.2.1) -- y no por 1000 kcal con el x2,5. Medido quitandolos: con ellos fuera SI hay menu; quitando uno cualquiera, o dos cualesquiera, sigue sin haberlo, o sea que lo que no cabe es el conjunto. || Una racion cruda es ~70 % agua, asi que su materia seca es ~30 % de los gramos, y un techo por gramo de MS aprieta mucho mas que uno por 1000 kcal en una perra lactante gigante, que es el perro que mas come de todos. Con la carne muscular restringida a UNA sola especie no queda combinacion posible. || ESTO ES LEY, o sea restriccion dura de la regla 2, y no se relaja: lo que se hace es DECIRLO. La variante se queda declarada y sin gramos, para que el atajo del catalogo no sirva un menu viejo que el filtro final va a tirar igual. Las otras tres proteinas de este mismo perro (pollo, salmon y merluza) SI salen."
    },
    {
     "proteina": "Conejo",
-    "gramos": {
-     "Conejo": 2037.33,
-     "Carcasa de pollo": 1149.16,
-     "Espinazo de conejo": 587.43,
-     "Dorada": 652.58,
-     "Hígado de cordero": 232.25,
-     "Coles de Bruselas": 3675.75,
-     "Albahaca": 262.47,
-     "AniForte Beef Blood Powder": 16.5,
-     "Aceite de girasol": 5.0,
-     "Aceite de cacahuete": 5.0,
-     "Aceite de sésamo": 2.6,
-     "astoral MultiVital BARF": 2.75,
-     "Sal común (cloruro sódico)": 2.17,
-     "Yoduro potásico (comprimidos 200 µg)": 0.65,
-     "V-INTEGRA Cachorro": 43.13
-    },
-    "peldano": "tope_maximo_de_visceras_higado_y_verdura"
+    "gramos": {},
+    "no_hay_menu": true,
+    "por_que": "NO EXISTE MENU PARA ESTA COMBINACION, Y NO ES FALTA DE TIEMPO (15-sep-2026). El solver la declara INFACTIBLE DEMOSTRADA en 0,1 s en los OCHO peldaños, con el catalogo accesible y con el entero. La causa son los SIETE MAXIMOS LEGALES de la UE, que desde el 15 de septiembre van sobre MATERIA SECA -- que es la unica forma en que FEDIAF los publica (§3.2.1) -- y no por 1000 kcal con el x2,5. Medido quitandolos: con ellos fuera SI hay menu; quitando uno cualquiera, o dos cualesquiera, sigue sin haberlo, o sea que lo que no cabe es el conjunto. || Una racion cruda es ~70 % agua, asi que su materia seca es ~30 % de los gramos, y un techo por gramo de MS aprieta mucho mas que uno por 1000 kcal en una perra lactante gigante, que es el perro que mas come de todos. Con la carne muscular restringida a UNA sola especie no queda combinacion posible. || ESTO ES LEY, o sea restriccion dura de la regla 2, y no se relaja: lo que se hace es DECIRLO. La variante se queda declarada y sin gramos, para que el atajo del catalogo no sirva un menu viejo que el filtro final va a tirar igual. Las otras tres proteinas de este mismo perro (pollo, salmon y merluza) SI salen."
    },
    {
     "proteina": "Salmón",
     "gramos": {
-     "Conejo": 1642.3,
-     "Corazón de pollo": 633.0,
-     "Corazón de vaca": 1879.77,
-     "Carcasa de pollo": 810.23,
+     "Conejo": 2212.69,
+     "Corazón de pollo": 633.5,
+     "Corazón de vaca": 1191.76,
+     "Carcasa de pollo": 784.81,
      "Costillas de cordero": 602.78,
-     "Hígado de vaca": 27.99,
-     "Albahaca": 1399.01,
+     "Hígado de vaca": 53.42,
+     "Albahaca": 1318.94,
      "AniForte Beef Blood Powder": 16.5,
-     "Oleum Canis Aceite de Salmón": 12.71,
-     "Yoduro potásico (comprimidos 200 µg)": 2.11,
-     "V-INTEGRA Cachorro": 34.29
+     "Pets Purest Aceite de Salmón Escocés": 5.0,
+     "Yoduro potásico (comprimidos 200 µg)": 2.05,
+     "V-INTEGRA Cachorro": 36.29
     },
-    "peldano": "tope_maximo_de_visceras_higado_y_verdura"
+    "peldano": "tope_de_visceras_higado_y_verdura_al_doble"
    },
    {
     "proteina": "Merluza",
     "gramos": {
-     "Conejo": 2213.76,
-     "Corazón de pollo": 552.45,
-     "Lengua de ternera": 1001.23,
-     "Carcasa de pollo": 678.41,
+     "Conejo": 2213.6,
+     "Pato (carne sin hueso)": 1114.01,
+     "Corazón de pollo": 487.68,
+     "Carcasa de pollo": 694.68,
      "Costillas de cordero": 602.78,
-     "Merluza": 293.41,
-     "Hígado de vaca": 222.65,
-     "Albahaca": 777.8,
+     "Riñón de vaca": 113.24,
+     "Hígado de vaca": 90.31,
+     "Albahaca": 1106.75,
      "AniForte Beef Blood Powder": 16.5,
-     "Yoduro potásico (comprimidos 200 µg)": 1.49,
-     "V-INTEGRA Cachorro": 44.84
+     "Aceite de Salmón Natural Greatness": 7.99,
+     "Yoduro potásico (comprimidos 200 µg)": 2.21,
+     "V-INTEGRA Cachorro": 35.0
     },
-    "peldano": "tope_de_visceras_higado_y_verdura_al_triple"
+    "peldano": "tope_de_visceras_higado_y_verdura_al_doble"
    }
   ]
  }

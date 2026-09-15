@@ -4041,12 +4041,31 @@ if _n_var_b25 != 180:
 # algo.
 _PESO_B25 = {"Toy": 3, "Mini": 6, "Pequeño": 12, "Mediano": 22, "Grande": 32, "Gigante": 55}
 _no_verdes_b25, _inseguros_b25, _mirados_b25 = [], [], 0
+_sin_declarar_b25, _sin_motivo_b25, _declarados_b25 = [], [], 0
 for _grupo_b25, _datos_b25 in (("menú", _CAT_B25), ("variante", _VAR_B25)):
     for _k_b25, _v_b25 in _datos_b25.items():
         _tam_b25, _etapa_b25 = _k_b25.split("_", 1)
         for _m_b25 in (_v_b25 if isinstance(_v_b25, list) else [_v_b25]):
             _g_b25 = (_m_b25 or {}).get("gramos")
             if not _g_b25:
+                # ⚠️ UNA VARIANTE SIN GRAMOS TIENE QUE ESTAR DECLARADA (15 de
+                # septiembre de 2026). Dos del `Gigante_Lactante` no existen: el
+                # solver las da INFACTIBLE DEMOSTRADA en los ocho peldaños desde
+                # que los siete maximos LEGALES de la UE van sobre materia seca.
+                # Eso es LEY y no se relaja -- lo que se hace es decirlo.
+                #
+                # Sin esta comprobacion, un menu que desapareciera del fichero
+                # por un fallo de escritura se saltaria en silencio y el recuento
+                # de abajo bajaria sin que nadie supiera por que. Un `continue`
+                # mudo es como se esconde media bateria.
+                if not (_m_b25 or {}).get("no_hay_menu"):
+                    _sin_declarar_b25.append(f"{_grupo_b25} {_k_b25}"
+                                             + (f"/{_m_b25.get('proteina')}"
+                                                if (_m_b25 or {}).get("proteina") else ""))
+                elif len((_m_b25 or {}).get("por_que") or "") < 80:
+                    _sin_motivo_b25.append(f"{_grupo_b25} {_k_b25}/{_m_b25.get('proteina')}")
+                else:
+                    _declarados_b25 += 1
                 continue
             _der_b25 = sum(al[_n]["energia"] * _gr / 100.0
                            for _n, _gr in _g_b25.items() if _n in al)
@@ -4061,8 +4080,18 @@ for _grupo_b25, _datos_b25 in (("menú", _CAT_B25), ("variante", _VAR_B25)):
             elif not _api._menu_precalculado_es_seguro(_g_b25, al, _der_b25,
                                                        _PESO_B25.get(_tam_b25)):
                 _inseguros_b25.append(_quien_b25)
-if _mirados_b25 != 216:
-    fallos.append(f"BLOQUE25: se han mirado {_mirados_b25} menús precalculados y son 216. "
+if _sin_declarar_b25:
+    fallos.append(f"BLOQUE25: {len(_sin_declarar_b25)} entradas del catálogo no tienen gramos y "
+                  f"NO están declaradas con `no_hay_menu`: {', '.join(_sin_declarar_b25[:5])}. Un "
+                  f"menú que desaparece en silencio baja el recuento sin que nadie sepa por qué")
+if _sin_motivo_b25:
+    fallos.append(f"BLOQUE25: {len(_sin_motivo_b25)} entradas declaradas `no_hay_menu` sin un "
+                  f"`por_que` que lo sea: {', '.join(_sin_motivo_b25[:5])}. Decir que no hay menú "
+                  f"sin decir por qué no es decirlo")
+if _mirados_b25 + _declarados_b25 != 216:
+    fallos.append(f"BLOQUE25: se han mirado {_mirados_b25} menús precalculados y hay "
+                  f"{_declarados_b25} declarados sin menú; entre los dos son "
+                  f"{_mirados_b25 + _declarados_b25} y son 216. "
                   f"Si el recuento baja, hay entradas sin gramos y nadie las comprueba")
 if _no_verdes_b25:
     fallos.append(f"BLOQUE25: {len(_no_verdes_b25)} de los {_mirados_b25} menús precalculados "
@@ -4146,9 +4175,16 @@ _CATS_COMIDA_B25 = set(_ACCESIBLES_B25)
 
 # el peldaño de cada menú, y un índice para poder mirarlo por su etiqueta
 import main as _main_b25
-_peldanos_b25 = {_k: _e.get("peldano") for _k, _e in _CAT_B25.items()}
+# ⚠️ LAS DECLARADAS `no_hay_menu` NO ENTRAN, y no es una excepción de
+# conveniencia: no tienen gramos, así que no hay proporciones que medir ni
+# peldaño en el que hayan salido. Que estén declaradas y con motivo lo exige el
+# bucle de arriba, que es donde tiene que exigirse.
+_peldanos_b25 = {_k: _e.get("peldano") for _k, _e in _CAT_B25.items()
+                 if not _e.get("no_hay_menu")}
 for _k_b25, _l_b25 in _VAR_B25.items():
     for _v_b25 in _l_b25:
+        if _v_b25.get("no_hay_menu"):
+            continue
         _peldanos_b25[_k_b25 + "/" + _v_b25.get("proteina", "?")] = _v_b25.get("peldano")
 
 # ⚠️ Y QUE EL PELDAÑO ESTÉ ESCRITO. Un menú sin `peldano` no se puede comprobar
@@ -4156,16 +4192,18 @@ for _k_b25, _l_b25 in _VAR_B25.items():
 # el fallo sería del que mide. Hasta el 13 de septiembre ninguna entrada lo traía.
 _sin_peldano_b25 = [_k for _k, _p in _peldanos_b25.items() if not _p]
 if _sin_peldano_b25:
-    fallos.append(f"BLOQUE25: {len(_sin_peldano_b25)} de los 216 menús precalculados no dicen en "
+    fallos.append(f"BLOQUE25: {len(_sin_peldano_b25)} de los menús precalculados CON menú no dicen en "
                   f"qué PELDAÑO salieron. Sin eso no se pueden comprobar sus proporciones: si "
                   f"bajó de peldaño se le mediría contra los márgenes del primero. Se arregla "
                   f"regenerando (`python3 regenerar_catalogo.py`). Los primeros: "
                   + ", ".join(_sin_peldano_b25[:5]))
 
 _avisados_b25 = 0
-for _origen_b25, _menus_b25 in (("catálogo", [(_k, _e["gramos"]) for _k, _e in _CAT_B25.items()]),
-                                ("variante", [(_k + "/" + _v.get("proteina", "?"), _v["gramos"])
-                                              for _k, _l in _VAR_B25.items() for _v in _l])):
+for _origen_b25, _menus_b25 in (
+        ("catálogo", [(_k, _e["gramos"]) for _k, _e in _CAT_B25.items()
+                      if _e.get("gramos")]),
+        ("variante", [(_k + "/" + _v.get("proteina", "?"), _v["gramos"])
+                      for _k, _l in _VAR_B25.items() for _v in _l if _v.get("gramos")])):
     for _clave_b25, _gr_b25 in _menus_b25:
         _tot_b25 = sum(_gr_b25.values())
         if not _tot_b25:
@@ -4240,10 +4278,17 @@ try:
     from constructor import cargar as _cargar_b25
     from verificar import verificar as _verificar_b25
     _al_b25, _req_b25 = _cargar_b25()
+    _declarados25 = 0
     for _k25, _e25 in _CAT_B25.items():
         for _etiqueta25, _gramos25 in ([(_k25, _e25["gramos"])]
                                        + [(f"{_k25}/{_v25['proteina']}", _v25["gramos"])
                                           for _v25 in _VAR_B25.get(_k25, [])]):
+            # ⚠️ Las declaradas `no_hay_menu` no se verifican: no hay menú. Que
+            # estén declaradas y con motivo se exige arriba, y que el atajo del
+            # catálogo no las sirva se guarda en `main.py`.
+            if not _gramos25:
+                _declarados25 += 1
+                continue
             _v = _verificar_b25(_gramos25, _al_b25, _req_b25, _e25["der"], _e25["etapa"])
             if _v["semaforo"] != "verde":
                 _total25 = _v["correctos"] + len(_v["faltan"]) + len(_v["se_pasa"])
@@ -4261,8 +4306,9 @@ if _mal_verde_b25:
                   f"ahora. Se reintentan con más tiempo: "
                   f"`CANISLAB_SEGUNDOS_POR_MENU=300 python3 regenerar_catalogo.py --solo Conejo`. "
                   f"Los que fallan: " + " · ".join(_mal_verde_b25[:8]))
-print(f"  los 216 menús precalculados verifican: "
-      f"{216 - len(_mal_verde_b25)}/216 verdes")
+print(f"  los menús precalculados verifican: "
+      f"{216 - len(_mal_verde_b25) - _declarados_b25}/{216 - _declarados_b25} verdes"
+      + (f" ({_declarados_b25} declarados sin menú, con su motivo)" if _declarados_b25 else ""))
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
@@ -19204,15 +19250,27 @@ _CASOS115 = [
     ("cachorro 10 kg",          900.0, "CachorroJoven",      10.0, 20.0),
     ("adulto 20 kg",           1100.0, "Adulto",             20.0,  None),
 ]
+# ⚠️ CON LA ESCALERA, NO CON EL PELDAÑO ESTRICTO. Es la leccion del 10 de
+# septiembre: «una prueba no puede afirmar en que peldaño sale un menu» --
+# bajar es legitimo y se dice. Al toy de 1,5 kg le toca bajar, y exigirle el
+# estricto seria acusar al motor de un fallo que no tiene.
+def _por_la_escalera_115(der, etapa, peso, adulto):
+    for _m, _s, _k in _api._escalera_de_relajacion():
+        _ok, _g, _ = _resolver_con_holgura(
+            der, etapa, al, req, peso, dosis_maxima_fabricante,
+            margenes_categoria=_m, max_suplementos=_s,
+            peso_adulto_esperado_kg=adulto, time_limit=_con_este_reloj(20))
+        if _ok:
+            return _g
+    return None
+
 _mirados115, _malos115, _desvios115 = 0, [], []
 for _etq115, _der115, _eta115, _peso115, _adulto115 in _CASOS115:
     for _vuelta115 in range(3):
-        _ok115, _g115, _tarde115 = _resolver_con_holgura(
-            _der115, _eta115, al, req, _peso115, dosis_maxima_fabricante,
-            margenes_categoria=MARGENES, max_suplementos=2,
-            peso_adulto_esperado_kg=_adulto115, time_limit=_con_este_reloj(20))
-        if not _ok115:
-            fallos.append(f"BLOQUE115: no sale menu para {_etq115} ni con tiempo de sobra")
+        _g115 = _por_la_escalera_115(_der115, _eta115, _peso115, _adulto115)
+        if _g115 is None:
+            fallos.append(f"BLOQUE115: no sale menu para {_etq115} en ningun peldaño, ni con "
+                          f"tiempo de sobra")
             break
         _mirados115 += 1
         # LAS KCAL DE VERDAD DEL MENU, no las pedidas. Es la diferencia entera.
@@ -19241,11 +19299,8 @@ else:
 # los mismos menus, con la misma vara: sus propias kcal.
 _pasados115 = []
 for _etq115, _der115, _eta115, _peso115, _adulto115 in _CASOS115[:3]:
-    _ok115, _g115, _ = _resolver_con_holgura(
-        _der115, _eta115, al, req, _peso115, dosis_maxima_fabricante,
-        margenes_categoria=MARGENES, max_suplementos=2,
-        peso_adulto_esperado_kg=_adulto115, time_limit=_con_este_reloj(20))
-    if not _ok115:
+    _g115 = _por_la_escalera_115(_der115, _eta115, _peso115, _adulto115)
+    if _g115 is None:
         continue
     _real115 = sum(al[_n]["energia"] * _x / 100.0 for _n, _x in _g115.items())
     for _x115 in verificar(_g115, al, req, _real115, _eta115).get("se_pasa", []):

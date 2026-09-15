@@ -3183,8 +3183,17 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
             from catalogo_menus import CATALOGO_VARIANTES
             clave_v = f"{datos.tamano}_{datos.etapa_requisitos}"
             variantes = CATALOGO_VARIANTES.get(clave_v, [])
+            # ⚠️ Y SOLO LAS QUE TIENEN MENU (15 de septiembre de 2026). Dos
+            # variantes del `Gigante_Lactante` estan declaradas `no_hay_menu`
+            # porque el solver las da INFACTIBLE DEMOSTRADA en los ocho peldaños
+            # desde que los siete maximos LEGALES de la UE van sobre materia
+            # seca. Se quedan escritas, con su motivo y SIN gramos, para que no
+            # se sirva un menu viejo que el filtro final va a tirar igual --
+            # pero entonces el atajo no puede leerlas: se cae al camino normal,
+            # que resuelve de verdad y dice que no hay.
             coincide = next((v for v in variantes
-                             if v["proteina"].strip().lower() == especie_pedida.strip().lower()), None)
+                             if v["proteina"].strip().lower() == especie_pedida.strip().lower()
+                             and v.get("gramos")), None)
             if coincide:
                 SUP_COMERCIALES = CAT_SUPLEMENTO   # la del motor, no una copia
                 der_base = sum(al[n]["energia"] * g / 100 for n, g in coincide["gramos"].items())
@@ -3288,11 +3297,20 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
         from catalogo_menus import CATALOGO_VARIANTES
         clave_variantes = f"{datos.tamano}_{datos.etapa_requisitos}" if datos.tamano else None
         variantes = CATALOGO_VARIANTES.get(clave_variantes) if clave_variantes else None
-        if variantes:
+        # ⚠️ `any(gramos)` Y NO SOLO `variantes`: si TODAS las de ese perro
+        # estuvieran declaradas sin menu, `elegida` se quedaria en None y la
+        # linea de abajo reventaria con un KeyError. Hoy no pasa --el
+        # `Gigante_Lactante` tiene tres que si salen-- pero un atajo que revienta
+        # es peor que un atajo que no se usa.
+        if variantes and any(v.get("gramos") for v in variantes):
             evitar_lower = {e.strip().lower() for e in (datos.evitar_especies or [])}
-            elegida = next((v for v in variantes if v["proteina"].strip().lower() not in evitar_lower), None)
-            if elegida is None:
-                elegida = variantes[0]  # si ya se evitaron todas, se repite alguna antes que fallar
+            # Igual que arriba: una variante declarada `no_hay_menu` no tiene
+            # gramos que reescalar, asi que no se elige nunca.
+            _con_menu = [v for v in variantes if v.get("gramos")]
+            elegida = next((v for v in _con_menu
+                            if v["proteina"].strip().lower() not in evitar_lower), None)
+            if elegida is None and _con_menu:
+                elegida = _con_menu[0]  # si ya se evitaron todas, se repite alguna antes que fallar
             SUP_COMERCIALES = CAT_SUPLEMENTO   # la del motor, no una copia
             der_base = sum(al[n]["energia"] * g / 100 for n, g in elegida["gramos"].items())
             factor = datos.der_objetivo / der_base if der_base else 1.0
