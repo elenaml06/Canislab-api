@@ -2612,14 +2612,70 @@ def _resolver_una_vez(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn
         _fila("suelo_medible", fila, 0.0, np.inf, alimento=n)
 
     # 5. CUÁNTOS ALIMENTOS DISTINTOS por categoría (máx.)
+    #
+    # ⚠️ CON LA CATEGORÍA REAL DEL CATÁLOGO, NO CON LA CLAVE DEL GRUPO DE
+    # CANDIDATOS (15 de septiembre de 2026). ES EL MISMO FALLO QUE YA TUVO
+    # `max_suplementos` EL 5 DE AGOSTO, y está contado doce líneas más abajo:
+    # `categoria_de[n]` es la CLAVE de `candidatos_por_cat`, y esa clave vale
+    # literalmente «Suplementos» para CUALQUIER suplemento y para CUALQUIER
+    # extra -- porque `ACCESIBLES` solo tiene las seis categorías de comida y
+    # todo lo demás se mete en un cajón con ese nombre.
+    #
+    # O sea que una entrada `"Extras"` o `"Multivitamínico"` en `CUANTOS_MAX`
+    # NO HACÍA NADA: la condición nunca era cierta y la fila se quedaba a
+    # ceros, «0 <= tope» siempre. Inerte y sin dar error, que es la peor forma.
+    #
+    # Y no es teórico. CASO REAL DE ELENA, reproducido contra producción con el
+    # perfil de su perro (American Staffordshire de 7 meses, 20 kg, en
+    # Personalizar con pollo, carcasa, hígado y zanahoria):
+    #
+    #     2 suplementos + SEIS extras
+    #     aceite de oliva virgen extra · aceite de girasol · aceite de sésamo
+    #     semilla de lino · semilla de sésamo · sal
+    #
+    # Tres aceites distintos en el mismo plato. El MILP optimiza nutrición por
+    # gramo y nadie le había dicho que un cuenco no lleva tres aceites -- que es
+    # exactamente el argumento de «la comida del menú se tiene que poder
+    # comprar» del 14 de septiembre, visto por el otro lado.
+    #
+    # Para las seis categorías de comida no cambia nada: ahí la clave del grupo
+    # ES la categoría del catálogo. Lo único que cambia es que ahora
+    # `CUANTOS_MAX` puede nombrar lo que antes no podía.
     for cat, tope in cuantos_max.items():
-        miembros = [n for n in nombres if categoria_de[n] == cat]
+        miembros = [n for n in nombres
+                    if (alimentos[n].get("categoria") or categoria_de[n]) == cat]
         if not miembros:
             continue
         fila = fila_vacia()
         for n in miembros:
             fila[n_var + idx[n]] = 1.0
         _fila("max_por_categoria", fila, 0, tope)
+
+    # 5-bis. Y CUÁNTOS EXTRAS DEL MISMO GRUPO (aceites, semillas, huevo...).
+    #
+    # Ver el comentario largo de `CUANTOS_MAX_POR_GRUPO_DE_EXTRA` en `modos.py`:
+    # los 23 extras comparten una sola categoría del catálogo, así que la regla
+    # 5 no puede distinguir «sal + un aceite + una semilla» (que está bien) de
+    # «tres aceites» (que no es comida). El agrupamiento sale del MISMO fichero
+    # con el que la app los pinta.
+    try:
+        from modos import CUANTOS_MAX_POR_GRUPO_DE_EXTRA as _tope_grupo_extra
+        from grupos_de_extras import grupo_de_extra as _grupo_de_extra
+    except ImportError:
+        _tope_grupo_extra = None
+    if _tope_grupo_extra:
+        _por_grupo = {}
+        for n in nombres:
+            _g = _grupo_de_extra(n)
+            if _g:
+                _por_grupo.setdefault(_g, []).append(n)
+        for _g, _miembros in _por_grupo.items():
+            if len(_miembros) <= _tope_grupo_extra:
+                continue
+            fila = fila_vacia()
+            for n in _miembros:
+                fila[n_var + idx[n]] = 1.0
+            _fila("max_por_grupo_de_extra", fila, 0, _tope_grupo_extra)
 
     # 6. MÁXIMO DE SUPLEMENTOS (solo los COMERCIALES cuentan para el
     # límite de "2" — los aceites/huevos de Extras no son "un suplemento"
