@@ -1357,7 +1357,7 @@ Tabla 17-1 de arriba, que están por encima de ese mínimo.
 > suelo de sodio por encima del mínimo de FEDIAF (290) en un perro sano no lo
 > pide nadie. Si eso es leerlo mal, es una línea de cambio.
 
-## 8 · Las patologías: 47 perfiles, 75 límites numéricos y 4 ratios
+## 8 · Las patologías: 47 perfiles, 74 límites numéricos y 4 ratios
 
 Los topes por patología **son más estrictos que FEDIAF** y se miden sobre las
 **kcal reales del menú**, no las pedidas — el menú puede salir un 3 % por

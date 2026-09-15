@@ -9,6 +9,24 @@ Este archivo no se lee solo: se abre cuando hace falta el detalle de algo
 que ya se resolvió — por qué se decidió así, qué se midió, qué PR lo trajo.
 Nada de esto es agenda; es historial. Se separó el 6 de septiembre.
 
+## El día que la batería tuvo razón cuatro veces — 15 de septiembre de 2026
+
+Todo lo de este apartado lo encontró la propia batería o una medida, no un
+usuario. Va aquí junto porque las cuatro cosas son la **misma familia**: dos
+sitios que miden lo mismo con dos varas distintas.
+
+| Qué | Quién lo cazó | Qué era |
+|---|---|---|
+| El reloj se gastaba reintentando un peldaño sin menú | Elena, con su toy | `not infactible_demostrado` dejaba pasar el status 1 («se me acabó el reloj») cuando el comentario decía «SOLO el status 2». Y el presupuesto de 24 s estaba puesto sobre una premisa falsa: medido contra la API desplegada, una llamada tardó **41,4 s** y Render no cortó nada |
+| Dos multivitaminicos y tres aceites en el mismo cuenco | Elena, usando Personalizar | La regla 5 del solver comparaba la CLAVE del grupo de candidatos («Suplementos», para todos) y no la categoría del catálogo, así que `CUANTOS_MAX` era **inerte** para los suplementos y los extras |
+| `obesidad` y `renal` dejaron de dar menú | **BLOQUE 61** | El tope de 1 multivitamínico es FORMA y no estaba en la escalera; y la vitamina E de la renal (67,1) ya no cabe debajo de los siete máximos legales |
+| El toy en crecimiento salía en ámbar con el hierro al 99 % | regenerando el catálogo | El **techo** se medía contra las kcal de verdad del menú desde el 21 de agosto y el **suelo** contra las pedidas. El menú salía a 297 kcal contra 288, o sea el doble del margen del 1,5 % que llevaba el suelo |
+
+**La regla que dejan las cuatro**: cuando hay dos formas de medir lo mismo, la
+que no está vigilada es la que falla, y falla **en silencio y solo a veces** —
+en el perro pequeño, en el menú que se pasó un 3 % de kcal, en la patología que
+nadie generaba. El detalle de cada una está en `CLAUDE.md`.
+
 ## La pregunta zombi que la batería estaba defendiendo — 14 de septiembre de 2026
 
 Repasando `PENDIENTE.md` aparecieron **tres cosas ya resueltas que seguían

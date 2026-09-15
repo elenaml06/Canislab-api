@@ -2475,6 +2475,73 @@ grasa bruta, cenizas, calcio y fósforo, y nada más. Las cuatro fuentes del rep
 están miradas y ninguna tiene el número.
 
 
+### P-42 · A un perro RENAL se le ha quitado el suelo de vitamina E, y la causa es que en el catálogo no hay vitamina E suelta
+
+| | |
+|---|---|
+| **Dueño** | **Cris Carles** (es clínica: si el antioxidante de la Tabla 37-9 se puede quedar fuera mientras no haya ficha) y **Elena** (es dato: conseguir la ficha) |
+| **Estado** | **abierta** — aplicado el apagado el 15 de septiembre de 2026, con la cifra escrita y medida |
+
+**Qué dice la fuente.** SACN5 5ª ed., Tabla 37-9 «Key nutritional factors for
+dogs and cats with chronic kidney disease», fila «Antioxidants … ≥400 IU vitamin
+E/kg of food for dogs». Convertido con el factor del d-α-tocoferol natural de la
+Tabla VII-14 de FEDIAF (1 UI = 0,671 mg) y la densidad de 4,0 kcal/g MS: **67,1
+mg/1000 kcal**. Es **la misma cifra** que piden otras tres tablas del mismo libro
+—artrosis (34-2), obesidad (27-4) y hepatobiliar (68-8)— y el techo del perro
+sano de los capítulos 13 y 14.
+
+**Qué ha pasado.** El BLOQUE 61 se puso rojo: la `renal`, marcada `formulable:
+true`, dejó de dar menú **a ningún peso**. La causa no es la cifra, es de
+**datos**, y ya estaba escrita dos veces en el repo: **en el catálogo no hay un
+suplemento de vitamina E suelto**, solo los nueve multivitamínicos. Llegar a 67,1
+obliga a meter **dos**, y dos ya no caben debajo de los **siete máximos LEGALES
+de la UE**, que desde el 15 de septiembre van sobre **materia seca**, que es la
+única forma en que FEDIAF los publica (§3.2.1).
+
+**La medida, sobre el perro de referencia del BLOQUE 61** (adulto de 20 kg, DER
+950):
+
+| | |
+|---|---|
+| Con el suelo puesto | **sin menú en ninguno de los ocho peldaños** |
+| Sin el suelo | menú en `proporcion_minima_y_un_suplemento_mas` |
+| Vitamina E de ese menú | **34,5 mg/1000 kcal** (la mitad de lo que pide SACN5) |
+| Zinc de ese menú | **99,0 % de su techo LEGAL** |
+| Selenio | 93,5 % |
+
+O sea: **no hay sitio para el segundo multivitamínico**. Subir la vitamina E se
+paga en zinc, y el zinc es **ley**, no una recomendación.
+
+**Lo que se ha hecho, que es el procedimiento y no una decisión clínica**: la
+cifra **no se ha bajado**. Se ha movido a
+`limites_escritos_que_el_solver_no_aplica` de `patologias.json` con esta medida,
+con su cita literal y con su conversión intactas, que es lo que este repo hace
+con un número de la fuente que no cabe.
+
+⚠️ **Las otras tres la siguen aplicando, y eso está medido una por una**:
+artrosis, obesidad y hepatopatía salen con **dos multivitamínicos**, bajando de
+peldaño. Que tres la apliquen y una no **no es incoherencia**: es que en las tres
+cabe y en la cuarta no. Uniformar bajando la cifra sería inventársela; uniformar
+quitándola de las cuatro sería tirar un límite que sí cabe.
+
+**Lo que hay que decidir:**
+
+1. **Cris** — ¿es aceptable que un perro renal se quede sin ese antioxidante
+   mientras no haya ficha? ¿O la renal debería dejar de ser `formulable` hasta
+   entonces, que es la otra salida que el propio BLOQUE 61 nombra?
+2. **Elena** — conseguir la **ficha de un suplemento de vitamina E suelto**
+   (`DATOS_QUE_FALTAN.md`). Es el mismo dato que desbloquea el suelo del perro
+   sano, apagado desde el 11 de septiembre por lo mismo. El día que entre, se
+   vuelve a poner `aplicado_por_el_solver: true` y **la batería tiene que salir
+   verde**: esa es la comprobación de que el problema era el catálogo y no la
+   cifra.
+
+⚠️ **Y la trampa del factor, que sigue viva**: los 67,1 salen del d-α-tocoferol
+**natural**, que es el más permisivo de los siete de la Tabla VII-14. Si la ficha
+que entre es de **acetato sintético**, el mismo requisito son **100 mg/1000
+kcal**, no 67,1.
+
+
 ---
 
 ## Cerradas
