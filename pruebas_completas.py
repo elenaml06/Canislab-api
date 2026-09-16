@@ -20510,7 +20510,6 @@ else:
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
-_cerrar_el_ultimo_bloque()
 
 
 # ============================================================
@@ -20819,6 +20818,17 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 _tiempos_por_bloque.sort(reverse=True)
 _gastado = sum(t for t, _ in _tiempos_por_bloque)
+# ⚠️ Y CERRAR EL ÚLTIMO BLOQUE VA PEGADO AL GUARDIA, NO DONDE ESTABA (16 de
+#    septiembre de 2026, y costó una vuelta entera de batería). Un bloque solo
+#    entra en `_tiempos_por_bloque` cuando alguien lo CIERRA, y al último lo
+#    cierra esta llamada. Al mover el guardia se quedó atrás, así que el guardia
+#    miraba una lista a la que todavía le faltaba el bloque de arriba y lo acusaba
+#    de no haberse ejecutado -- con su resultado impreso tres líneas antes. Es el
+#    mismo fallo que la vez anterior en su tercera cara: no basta con que el
+#    guardia sea lo último, es que **lo que lee tiene que estar completo cuando
+#    lo lee**. Los dos van juntos y en este orden, siempre.
+_cerrar_el_ultimo_bloque()
+
 # ⚠️ Y ESTE GUARDIA TIENE QUE SER LO ÚLTIMO DEL FICHERO, Y EL 16 DE SEPTIEMBRE
 #    NO LO ERA -- o sea que cayó en SU PROPIO fallo, en espejo (medido: acusó a
 #    los BLOQUES 119, 120 y 121 de «escritos y no ejecutados» mientras los tres
@@ -20844,6 +20854,7 @@ _gastado = sum(t for t, _ in _tiempos_por_bloque)
 # que de verdad ha impreso su cabecera. Cuesta leer un fichero y no depende de
 # que nadie se acuerde de nada, que es la misma regla con la que se miden los
 # tiempos aquí arriba.
+# _ESTE_ES_EL_GUARDIA_DEL_FINAL_NO_LO_MUEVAS
 import re as _re_fin
 with open(__file__, encoding="utf-8") as _f_fin:
     _fuente_fin = _f_fin.read()
@@ -20868,6 +20879,31 @@ if not _hay_fuentes:
         _m2_fin = _re_fin.match(r"(\d+)", str(_b_fin))
         if _m2_fin:
             _con_motivo_fin.add(_m2_fin.group(1))
+# ⚠️ Y EL GUARDIA COMPRUEBA SU PROPIA COLOCACIÓN, porque el 16 de septiembre de
+#    2026 falló DOS VECES EN EL MISMO DÍA por estar mal puesto, de dos formas
+#    distintas -- primero escrito antes de tres bloques, y luego separado de la
+#    llamada que cierra el último--, y las dos veces acusó a bloques que habían
+#    corrido con su resultado en pantalla. Un rojo que acusa al motor cuando el
+#    motor acierta enseña a desconfiar de la batería, así que la tercera forma no
+#    puede quedar por encontrar. Son dos condiciones y cuestan leer una lista:
+#    después del guardia no puede quedar NINGUNA cabecera de bloque, y la llamada
+#    que cierra el último tiene que estar ANTES. Lo que no se ejecuta no protege.
+_yo_fin = _fuente_fin.index("_ESTE_ES_EL_GUARDIA_DEL_FINAL_NO_LO_MUEVAS")
+_cabeceras_fin = [_m.start() for _m in _re_fin.finditer(r'"(?:\\n)*\s*=== BLOQUE (\d+)', _fuente_fin)]
+_tarde_fin = [c for c in _cabeceras_fin if c > _yo_fin]
+if _tarde_fin:
+    fallos.append(
+        f"BLOQUE-GUARDIA: hay {len(_tarde_fin)} cabeceras «=== BLOQUE» ESCRITAS DESPUÉS de este "
+        f"guardia, asi que cuando mira todavia no han corrido y las acusa de inertes teniendo "
+        f"razon el motor. El guardia va SIEMPRE lo ultimo del fichero")
+_cierre_fin = _fuente_fin.rfind("\n_cerrar_el_ultimo_bloque()")
+if _cierre_fin == -1 or _cierre_fin > _yo_fin:
+    fallos.append(
+        "BLOQUE-GUARDIA: `_cerrar_el_ultimo_bloque()` no esta ANTES de este guardia. Un bloque "
+        "solo entra en `_tiempos_por_bloque` cuando se le cierra, asi que sin esa llamada "
+        "delante el guardia lee una lista incompleta y acusa al ultimo bloque de no haberse "
+        "ejecutado")
+
 _faltan_fin = sorted(_escritos_fin - _corridos_fin - _con_motivo_fin, key=int)
 if _faltan_fin:
     fallos.append(
