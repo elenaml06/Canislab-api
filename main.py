@@ -3767,6 +3767,10 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
                     # mantenimiento a una racion de bajada. Las dos mal.
                     peso_objetivo_kg=_peso_de_referencia(datos)[0],
                     kcal_de_premios=_kcal_de_premios(datos),
+                    # Y lo que el dueño DECLARA que le da entra como gramos fijos: donde
+                    # viajan las kcal de premios tienen que viajar los declarados, o el
+                    # premio se pierde en este camino y en silencio.
+                    gramos_fijos=_premios_en_el_plato(datos, al) or None,
                 )
                 if not ok_rapido:
                     break
@@ -3827,11 +3831,6 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
         ok_i, gramos_i = resolver_v2(
             datos.der_objetivo, datos.etapa_requisitos, al, req,
             datos.peso_perro_kg, dosis_maxima_fabricante,
-            # Lo que el dueño declara que le da SE METE EN EL PLATO, con sus
-            # gramos, y a partir de ahí es comida como cualquier otra: sus kcal
-            # cuentan en la ración y sus nutrientes también. Ver
-            # `premios_declarados`, arriba, y `_premios_en_el_plato`.
-            gramos_fijos=_premios_en_el_plato(datos, al) or None,
             excluidos=excluidos or None,
             margenes_categoria=(margenes if margenes is not None else _margenes_base),
             max_suplementos=(max_supl if max_supl is not None else _supl_base),
@@ -3848,6 +3847,10 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
             presupuesto_semanal_restante=datos.presupuesto_semanal_restante,
             soltar_limites_patologia=soltar,
             kcal_de_premios=_kcal_de_premios(datos),
+            # Y lo que el dueño DECLARA que le da entra como gramos fijos: donde
+            # viajan las kcal de premios tienen que viajar los declarados, o el
+            # premio se pierde en este camino y en silencio.
+            gramos_fijos=_premios_en_el_plato(datos, al) or None,
         )
         # ⚠️ VERIFICAR CUESTA 1,6 ms: NO SE PUEDE QUEDAR SIN TIEMPO (29 agosto).
         #
@@ -3884,6 +3887,10 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
                 categorias_excluidas=datos.categorias_excluidas,
                 presupuesto_semanal_restante=datos.presupuesto_semanal_restante,
                 kcal_de_premios=_kcal_de_premios(datos),
+                # Y lo que el dueño DECLARA que le da entra como gramos fijos: donde
+                # viajan las kcal de premios tienen que viajar los declarados, o el
+                # premio se pierde en este camino y en silencio.
+                gramos_fijos=_premios_en_el_plato(datos, al) or None,
             )
             if ok2:
                 ok_i, gramos_i = ok2, gramos2
@@ -3990,6 +3997,10 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
                 estado_del_solver=_estado_solver,
                 soltar_el_techo_si_no_cabe=soltar_techo_libro,
                 kcal_de_premios=_kcal_de_premios(datos),
+                # Y lo que el dueño DECLARA que le da entra como gramos fijos: donde
+                # viajan las kcal de premios tienen que viajar los declarados, o el
+                # premio se pierde en este camino y en silencio.
+                gramos_fijos=_premios_en_el_plato(datos, al) or None,
             )
             ficha_i = (verificar_v2(gramos_i, al, req, datos.der_objetivo, datos.etapa_requisitos)
                        if ok_i else None)
@@ -4085,6 +4096,10 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
             evitar_especies=datos.evitar_especies,
             presupuesto_semanal_restante=datos.presupuesto_semanal_restante,
             kcal_de_premios=_kcal_de_premios(datos),
+            # Y lo que el dueño DECLARA que le da entra como gramos fijos: donde
+            # viajan las kcal de premios tienen que viajar los declarados, o el
+            # premio se pierde en este camino y en silencio.
+            gramos_fijos=_premios_en_el_plato(datos, al) or None,
         )
         no_se_pudo_forzar = ok
     else:
@@ -5199,6 +5214,10 @@ def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None, restringir_e
                 # función con otro modelo.
                 patologias=getattr(datos, "patologias", None),
                 kcal_de_premios=_kcal_de_premios(datos),
+                # Y lo que el dueño DECLARA que le da entra como gramos fijos: donde
+                # viajan las kcal de premios tienen que viajar los declarados, o el
+                # premio se pierde en este camino y en silencio.
+                gramos_fijos=_premios_en_el_plato(datos, al) or None,
             )
             if not ok:
                 break
@@ -7613,7 +7632,15 @@ def formular_autocompletar(datos: PeticionFormular):
             excluidos=excluidos or None,
             margenes_categoria=_margenes_f, max_suplementos=_supl_f, time_limit=20.0,
             forzar=list(fijos) or None,
-            gramos_fijos=fijos or None,
+            # ⚠️ LOS DOS A LA VEZ, Y MANDA EL PROFESIONAL (16 de septiembre de
+            # 2026). Aquí hay dos fuentes de gramos fijos: los que escribe quien
+            # formula (`fijos`) y los premios que el dueño declara. Se juntan en
+            # un solo diccionario, y si el mismo alimento sale en los dos gana
+            # el del profesional -- es quien firma la pauta y tiene el dato
+            # delante. Pasarlos como dos argumentos era un `keyword argument
+            # repeated` y no arrancaba ni el módulo; lo cazó `compile()`, que es
+            # lo que hay que usar y no `ast.parse()`, que esto no lo ve.
+            gramos_fijos={**_premios_en_el_plato(datos, al), **(fijos or {})} or None,
             patologias=datos.patologias,
             peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
             peso_objetivo_kg=_peso_de_referencia(datos)[0],
