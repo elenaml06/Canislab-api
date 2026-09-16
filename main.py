@@ -1151,6 +1151,53 @@ PREGUNTA_DE_LOS_PREMIOS = {
 
 
 
+def _premios_en_el_plato(datos, alimentos=None):
+    """`{alimento: gramos}` de lo que el dueño DECLARA que le da fuera de las comidas.
+
+    ⚠️ ESTO NO ES UNA DILUCIÓN: ES COMIDA (16 de septiembre de 2026). En cuanto
+    se sabe QUÉ premio se da, el problema desaparece -- entra en el menú con sus
+    gramos, sus kcal cuentan dentro de la ración y sus nutrientes también, y los
+    43 requisitos se miden sobre el total. No hay ninguna parte del día a ciegas,
+    así que no hay nada que escalar ni que apretar.
+
+    Es la salida que usa el formulador de Sean Delaney (coeditor de Fascetti &
+    Delaney, una de nuestras cuatro fuentes): «...no more than 10% of daily
+    calories IF NOT CALLED FOR AND ACCOUNTED FOR SPECIFICALLY IN THE RECIPE».
+
+    ⚠️ SOLO ALIMENTOS DEL CATÁLOGO, y no por comodidad: de una ficha sabemos su
+    composición y la rehace un auditor contra su fuente. Un nombre que no está
+    NO se ignora en silencio -- se dice en `premios_que_no_conocemos`, porque un
+    premio que el dueño cree declarado y que el motor no cuenta es peor que no
+    preguntarlo: el menú saldría verde dando por cubierto algo que no lo está.
+    """
+    crudos = getattr(datos, "premios_declarados", None)
+    if not isinstance(crudos, dict) or not crudos:
+        return {}
+    if alimentos is None:
+        alimentos = cargar_v2()[0]
+    salida = {}
+    for nombre, gramos in crudos.items():
+        if nombre not in alimentos:
+            continue
+        try:
+            g = float(gramos)
+        except (TypeError, ValueError):
+            continue
+        if g > 0:
+            salida[nombre] = g
+    return salida
+
+
+def _premios_declarados_que_no_conocemos(datos, alimentos=None):
+    """Los nombres declarados que NO están en el catálogo. Se DICEN, no se callan."""
+    crudos = getattr(datos, "premios_declarados", None)
+    if not isinstance(crudos, dict) or not crudos:
+        return []
+    if alimentos is None:
+        alimentos = cargar_v2()[0]
+    return sorted(n for n in crudos if n not in alimentos)
+
+
 def _kcal_de_premios(datos):
     """Las kcal de premios que declara la petición, saneadas.
 
@@ -1787,6 +1834,31 @@ class PeticionDER(BaseModel):
 # que nadie se entere. Es el mismo fallo que el tope de fosforo del renal al
 # editar, y la misma cura.
 class _ConPremios(BaseModel):
+    # ⚠️ EL PREMIO QUE SE DECLARA NO ES UN PREMIO: ES UN INGREDIENTE
+    # (16 de septiembre de 2026). Lo pidió Elena, y tiene toda la razón:
+    #
+    #     «tiene que haber una parte en la que elija lo que le da y se meta en
+    #      el plato»
+    #
+    # `{"Pavo pechuga con piel": 60.0}` -- gramos AL DÍA de lo que el dueño le
+    # da fuera de las comidas, pero eligiendo el alimento de nuestro catálogo.
+    # En cuanto se sabe QUÉ es, deja de hacer falta suponer nada: entra en el
+    # menú como gramos fijos, sus kcal cuentan dentro de la ración, y los 43
+    # requisitos se miden sobre el total. Ni se escalan mínimos ni se aprieta
+    # nada, porque no hay ninguna parte del día a ciegas.
+    #
+    # Es literalmente lo que hace el formulador de Sean Delaney -- coeditor de
+    # Fascetti & Delaney, una de nuestras cuatro fuentes -- en su propia
+    # herramienta: «Some of these can be selected as "Treats & Enticers" when
+    # creating a recipe (...) no more than 10% of daily calories IF NOT CALLED
+    # FOR AND ACCOUNTED FOR SPECIFICALLY IN THE RECIPE». Declarado = está en la
+    # receta. Ver `balanceit_instrucciones_2023.txt`.
+    #
+    # ⚠️ Y CONVIVE CON `kcal_de_premios`, no lo sustituye: lo que se declara
+    # entra en el plato, y lo que el dueño NO sabe o no quiere decir sigue
+    # siendo kcal a ciegas con su dilución. Los dos a la vez es el caso normal
+    # («le doy 60 g de pavo y alguna galleta suelta»).
+    premios_declarados: Optional[dict] = None
     # ⚠️ AÑADIDO (11 septiembre) — LOS PREMIOS, QUE DILUYEN LA RACION.
     #
     # Las kcal que el perro toma AL DIA fuera de su racion: premios, sobras de
@@ -3755,6 +3827,11 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
         ok_i, gramos_i = resolver_v2(
             datos.der_objetivo, datos.etapa_requisitos, al, req,
             datos.peso_perro_kg, dosis_maxima_fabricante,
+            # Lo que el dueño declara que le da SE METE EN EL PLATO, con sus
+            # gramos, y a partir de ahí es comida como cualquier otra: sus kcal
+            # cuentan en la ración y sus nutrientes también. Ver
+            # `premios_declarados`, arriba, y `_premios_en_el_plato`.
+            gramos_fijos=_premios_en_el_plato(datos, al) or None,
             excluidos=excluidos or None,
             margenes_categoria=(margenes if margenes is not None else _margenes_base),
             max_suplementos=(max_supl if max_supl is not None else _supl_base),
@@ -4282,16 +4359,28 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
             _pct_prem = _premios_kcal / _der_dia * 100
             return {
                 "factible": False,
+                # ⚠️ LO PRIMERO QUE SE OFRECE ES DECIR QUÉ PREMIO ES, NO BAJARLO
+                # (16 de septiembre de 2026). La primera versión de este texto
+                # decía «bájale los premios» y ya está, y Elena lo cortó:
+                # «¿pero para qué pones ese mensaje? si tiene que haber una
+                # parte en la que elija lo que le da y se meta en el plato».
+                #
+                # Tiene razón, y además es lo que hace la fuente: un premio
+                # DECLARADO deja de ser un premio y pasa a ser un ingrediente
+                # (`premios_declarados`). Lo que no cabe no es el premio -- es
+                # el premio DESCONOCIDO, porque obliga a formular a ciegas el
+                # 20 % del día. Decirle «bájaselo» a quien puede simplemente
+                # decirnos qué es sería mandarle a cambiar de vida por un
+                # hueco nuestro.
                 "motivo": (
-                    f"Con esa cantidad de premios no hay forma de que le quepa en el plato "
-                    f"todo lo que necesita. Ahora mismo los premios son el {_pct_prem:.0f} % "
-                    f"de lo que come al día, y su ración se queda con el resto — pero tiene "
-                    f"que seguir llevando TODO lo que necesita, porque de lo que lleva dentro "
-                    f"un premio no sabemos nada. || QUÉ HACER: bájale los premios a no más de "
-                    f"una décima parte de lo que come al día y vuelve a generar el menú. "
-                    f"|| Y si no quieres bajárselos, díselo a tu veterinario: si nos dice "
-                    f"exactamente qué premio le das, se puede meter dentro del menú y contar "
-                    f"lo que aporta."),
+                    f"Necesitamos saber QUÉ le das. Ahora mismo has dicho que los premios "
+                    f"son el {_pct_prem:.0f} % de lo que come al día, pero no qué son — y "
+                    f"sin saberlo tenemos que dar por hecho que no aportan nada, así que "
+                    f"todo lo que necesita tiene que caber en el resto del plato, y no cabe. "
+                    f"|| LO MEJOR: dinos qué le das (pollo, pavo, queso, lo que sea) y "
+                    f"cuánto, y lo metemos DENTRO del menú contando lo que aporta. Así no "
+                    f"hay que quitarle nada. || Y si no lo sabes: bájaselos a no más de una "
+                    f"décima parte de lo que come al día y vuelve a generar el menú."),
                 "los_premios_no_dejan_sitio": True,
                 "premios_pct_del_dia": round(_pct_prem, 1),
                 "premios_pct_recomendado": round(FRACCION_MAXIMA_DE_PREMIOS * 100),
@@ -4308,6 +4397,13 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
                                                datos.etapa_requisitos,
                                                datos.patologias,
                                                peso_perro_kg=datos.peso_perro_kg)
+    # ⚠️ EL DUEÑO TIENE QUE PODER VER QUÉ PARTE DEL PLATO ES LO QUE YA LE DA
+    # (16 de septiembre de 2026). Si declara 60 g de pavo y el menú los lleva
+    # dentro, enseñárselo sin separarlo se lee como «tengo que darle 60 g MÁS».
+    # Va como una clave aparte con los mismos nombres y gramos, para que la app
+    # los pueda marcar dentro de la lista en vez de repetirlos.
+    _prem_plato = _premios_en_el_plato(datos, al)
+    _prem_desconocidos = _premios_declarados_que_no_conocemos(datos, al)
     resultado = {
         "factible": True,
         "menu": gramos,
@@ -4342,6 +4438,20 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
         getattr(datos, "peldano", None) if _peldano_pedido
         else (relajaciones[-1] if relajaciones else PELDANO_ESTRICTO))
     resultado["peldano_lo_eligio_el_profesional"] = bool(_peldano_pedido)
+    # Lo que el dueño ya le da, DENTRO del plato y marcado como tal.
+    if _prem_plato:
+        resultado["premios_dentro_del_menu"] = _prem_plato
+    # ⚠️ Y LO QUE NO HEMOS PODIDO CONTAR SE DICE (regla 5: nunca en silencio).
+    # Un premio que el dueño cree declarado y que el motor no conoce es peor que
+    # no haberlo preguntado: el menú saldría verde dando por cubierto algo que no
+    # está contado. Va con qué hacer, no solo con el problema.
+    if _prem_desconocidos:
+        resultado["premios_que_no_conocemos"] = _prem_desconocidos
+        resultado.setdefault("avisos_extra", []).append(
+            "No hemos podido contar " + ", ".join(_prem_desconocidos) + ": no está en "
+            "nuestra lista de alimentos, así que no sabemos qué lleva dentro. Este menú "
+            "está hecho SIN contarlo. Si se lo das a menudo, elige en la lista algo "
+            "parecido y vuelve a generarlo, o cuéntaselo a tu veterinario.")
     return resultado
 
 
