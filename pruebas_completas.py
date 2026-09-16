@@ -20816,6 +20816,137 @@ if _m120 and int(_m120.group(1)) > 330:
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
+# ============================================================
+# BLOQUE 122 — EL PREMIO QUE SE DECLARA ES COMIDA, Y EL QUE NO SE DICE
+# ============================================================
+#
+# ⚠️ POR QUE EXISTE (16 de septiembre de 2026). Elena, viendo el menu que el
+# motor le daba a un cachorro de raza grande con el 20 % del dia en premios:
+#
+#     «un plato con 484 gramos de alcachofa me parece muy loco»
+#
+# Eran 484 g de alcachofa, el 44 % del plato, y seis botes. Salian del ultimo
+# peldano de la escalera, el que ponia el techo de lo accesorio en el 100 %.
+#
+# Y de ahi salio la pregunta que lo ordena todo, tambien suya: «¿para que pones
+# ese mensaje? si tiene que haber una parte en la que elija lo que le da y se
+# meta en el plato». Tenia razon: EN CUANTO SE SABE QUE ES EL PREMIO, EL
+# PROBLEMA DESAPARECE -- deja de haber una parte del dia a ciegas, asi que no
+# hay nada que escalar ni que apretar. Es lo que hace Balance It, el formulador
+# de Sean Delaney (coeditor de Fascetti & Delaney, una de nuestras cuatro
+# fuentes): «...no more than 10% of daily calories IF NOT CALLED FOR AND
+# ACCOUNTED FOR SPECIFICALLY IN THE RECIPE».
+#
+# Este bloque vigila las CUATRO mitades de eso, y las cuatro se comprueban con
+# el fallo puesto:
+#   1. el peldano del plato de hierba no vuelve
+#   2. un premio declarado entra DE VERDAD en el menu, con sus gramos
+#   3. uno que no conocemos NO se cuenta en silencio
+#   4. el mensaje de cuando no cabe ofrece DECIR CUAL ES antes que bajarlos
+# ============================================================
+print("\n=== BLOQUE 122: el premio declarado es comida, y el que no se dice ===")
+
+_al122, _req122 = _api.cargar_v2()
+
+_CACHORRO122 = {"modo": "automatico", "nombres_alimentos": [], "forzar_presencia": [],
+                "der_objetivo": 1581.0, "actividad": "normal",
+                "etapa_requisitos": "CachorroCrecimiento", "especies_excluidas": [],
+                "nombres_excluidos": [], "peso_perro_kg": 20.0, "patologias": [],
+                "categorias_excluidas": [], "peso_adulto_esperado_kg": 31.0,
+                "tamano": "Grande"}
+
+# --- 1. el peldano que permitia un plato de hierba NO vuelve ------------
+_claves122 = [p[2] for p in _api._escalera_de_relajacion(True)]
+if "tope_maximo_de_visceras_higado_y_verdura" in _claves122:
+    fallos.append(
+        "BLOQUE122: ha vuelto el peldano `tope_maximo_de_visceras_higado_y_verdura`, que pone "
+        "el techo de lo accesorio en el 100 % del plato. Es de donde salian los quince peores "
+        "menus del catalogo -- el record eran 3.676 g de coles de Bruselas -- y el que le daba "
+        "484 g de alcachofa al cachorro de Elena. Se quito el 16 de septiembre y costo UN menu "
+        "de 214, que era el peor de todos (`Gigante_Lactante#3`, 7.527 g con 2.141 g de albahaca)")
+# y la lista SERVIDA tiene que decir lo mismo que la que recorre el motor
+_publicos122 = [x.get("clave") for x in _api._peldanos_publicos(True)]
+if len(_publicos122) != len(_claves122):
+    fallos.append(f"BLOQUE122: la escalera que recorre el motor tiene {len(_claves122)} peldanos "
+                  f"y la que sirve `/relajacion` {len(_publicos122)}. Quien firma elige de la "
+                  f"servida y el motor aplica la otra")
+
+# --- 2. un premio DECLARADO entra de verdad en el menu ------------------
+#     214 g de corazon de pollo = ~317 kcal = el 20 % del dia de este cachorro,
+#     o sea EXACTAMENTE el caso que sin declarar no tiene menu.
+_d122 = dict(_CACHORRO122); _d122["premios_declarados"] = {"Corazón de pollo": 214.0}
+_r122 = _c_b5.post("/menu/v2", json=_d122).json()
+if not _r122.get("factible"):
+    fallos.append("BLOQUE122: declarando el premio (214 g de corazon de pollo) el cachorro de "
+                  "raza grande SIGUE sin menu. Declararlo tiene que quitar el problema entero: "
+                  "deja de haber una parte del dia a ciegas")
+else:
+    _g122 = _r122["menu"]
+    if abs((_g122.get("Corazón de pollo") or 0) - 214.0) > 0.6:
+        fallos.append(f"BLOQUE122: se declararon 214 g de corazon de pollo y el menu lleva "
+                      f"{_g122.get('Corazón de pollo')}. Un premio declarado son gramos FIJOS: "
+                      f"si el motor los mueve, lo que se le ensena al dueno no es lo que come")
+    if (_r122.get("premios_dentro_del_menu") or {}).get("Corazón de pollo") != 214.0:
+        fallos.append("BLOQUE122: el menu lleva el premio dentro pero no lo dice en "
+                      "`premios_dentro_del_menu`. Sin eso el dueno lee 214 g de corazon en la "
+                      "lista y entiende que tiene que darselos ADEMAS de los premios")
+    if _r122["ficha"]["semaforo"] != "verde":
+        fallos.append(f"BLOQUE122: el menu con premio declarado sale en "
+                      f"{_r122['ficha']['semaforo']}. Contar el premio no puede aflojar nada: "
+                      f"sus kcal y sus nutrientes entran en la racion y los 43 se miden sobre el total")
+
+# --- 3. un premio que NO conocemos no se cuenta EN SILENCIO -------------
+_d122b = dict(_CACHORRO122)
+_d122b["premios_declarados"] = {"Salchichas de pavo de marca inventada": 60.0}
+_r122b = _c_b5.post("/menu/v2", json=_d122b).json()
+if _r122b.get("factible"):
+    if "Salchichas de pavo de marca inventada" not in (_r122b.get("premios_que_no_conocemos") or []):
+        fallos.append(
+            "BLOQUE122: se ha declarado un premio que NO esta en el catalogo y el menu sale "
+            "verde sin decir que no se ha contado. Es peor que no preguntarlo: el dueno cree "
+            "que esta declarado y el menu da por cubierto algo que no lo esta")
+    _txt122 = " ".join(_r122b.get("avisos_extra") or [])
+    if "no está en" not in _txt122 and "no esta en" not in _txt122:
+        fallos.append("BLOQUE122: el premio desconocido sale en su lista pero NO en el canal "
+                      "que el dueno lee (`avisos_extra`). Un aviso que no se pinta no avisa")
+
+# --- 4. sin declarar y por encima del 10 %, se dice QUE HACER -----------
+_d122c = dict(_CACHORRO122); _d122c["premios_nivel"] = "mas_del_maximo"
+_r122c = _c_b5.post("/menu/v2", json=_d122c).json()
+if _r122c.get("factible"):
+    # No es un fallo por si solo -- pero entonces el menu tiene que ser COMIDA.
+    _g122c = _r122c["menu"]; _tot122 = sum(_g122c.values()) or 1.0
+    _verd122 = sum(g for n, g in _g122c.items()
+                   if _al122[n]["categoria"] == "Verduras y frutas")
+    if _verd122 / _tot122 > 0.35:
+        fallos.append(f"BLOQUE122: con premios al 20 % sale un menu con el "
+                      f"{_verd122/_tot122*100:.0f} % del plato de verdura. Eso no es comida: es "
+                      f"el caso de los 484 g de alcachofa otra vez")
+else:
+    if not _r122c.get("los_premios_no_dejan_sitio"):
+        fallos.append("BLOQUE122: el cachorro con el 20 % de premios se queda sin menu y NO se "
+                      "dice que la causa son los premios. El mensaje generico -«quita alguna "
+                      "restriccion»- es MENTIRA aqui: puede quitar todas las alergias y seguira "
+                      "sin salir")
+    _mot122 = (_r122c.get("motivo") or "").lower()
+    if "qué le das" not in _mot122 and "que le das" not in _mot122:
+        fallos.append("BLOQUE122: el mensaje de «los premios no dejan sitio» no ofrece DECIR "
+                      "QUE ES antes que bajarlos. Es lo que pidio Elena y lo que hace la fuente: "
+                      "a quien puede simplemente decirnos que premio da no se le manda cambiar "
+                      "de vida por un hueco nuestro")
+    # ⚠️ Y COMIDA, NO NUTRIENTES (regla del 14 de septiembre): este texto lo lee
+    #    un dueno, asi que no puede nombrar un nutriente ni una unidad del motor.
+    for _pal122 in ("1000 kcal", "mg/", "dilución", "dilucion", "nutriente"):
+        if _pal122 in _mot122:
+            fallos.append(f"BLOQUE122: el mensaje del dueno dice «{_pal122}». A quien lee esto "
+                          f"no le dice nada, y un aviso que no se entiende resta confianza")
+
+print(f"  escalera: {len(_claves122)} peldanos, sin el del plato de hierba")
+print(f"  premio declarado: {'entra y se dice' if _r122.get('premios_dentro_del_menu') else 'NO'}"
+      f" · desconocido: {'se dice' if _r122b.get('premios_que_no_conocemos') else 'NO'}")
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
 _tiempos_por_bloque.sort(reverse=True)
 _gastado = sum(t for t, _ in _tiempos_por_bloque)
 # ⚠️ Y CERRAR EL ÚLTIMO BLOQUE VA PEGADO AL GUARDIA, NO DONDE ESTABA (16 de
