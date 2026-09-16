@@ -9,6 +9,81 @@ Este archivo no se lee solo: se abre cuando hace falta el detalle de algo
 que ya se resolvió — por qué se decidió así, qué se midió, qué PR lo trajo.
 Nada de esto es agenda; es historial. Se separó el 6 de septiembre.
 
+## Lo que se midió el 16 de septiembre y no cambia código, pero contesta preguntas
+
+Tres medidas que estaban sueltas en una conversación y que se escriben aquí
+porque **contestan cosas que el repo daba por supuestas**.
+
+### 1 · Cairo ya sale por debajo del techo del libro, y lo arregló la curva
+
+Medido por la API con su perfil real (American Staffordshire, 20 kg hoy, 31 de
+adulto, `CachorroCrecimiento`, DER 1581):
+
+| Premios | Calcio | Peldaño | Botes |
+|---|---|---|---|
+| ninguno | **2733** | **estricto** | astoral MultiVital BARF 1,1 g |
+| alguno (5 %) | **2733** | **estricto** | astoral MultiVital BARF 1,1 g |
+| hasta el máximo (10 %) | 2817-2831 | proporcion_minima_de_todas_las_categorias | alga + astoral |
+
+El motor elige el **astoral** (100 mg de calcio por 100 g) y no el V-INTEGRA
+Cachorro (17.600), y queda **por debajo del techo de 2750** de la Tabla 17-1 de
+SACN5. Lo arregló la curva de crecimiento del 15 de septiembre: sin ella el
+motor se creía el peso adulto que le llegara, y con ella lo deriva (26,5 kg para
+el perro del BLOQUE 121, calcio **2747 con ella y 3957 sin ella**).
+
+⚠️ Y **más de la mitad del calcio de ese menú no viene del hueso**: viene del
+multivitamínico. Medido sobre el menú de 1430 kcal: V-INTEGRA Cachorro 12 g →
+**2.112 mg (52 %)**, carcasa de pollo 108 g → 1.777 mg (44 %), todo lo demás
+176 mg (4 %). El hueso se puede bajar; el bote no, porque bajarlo es quedarse
+sin las vitaminas.
+
+### 2 · ¿Hace falta suplemento sí o sí? Medido: no siempre, y lo que obliga es la FORMA
+
+Ocho perros (adulto 5/10/20/40 kg, cachorro 10 y 22, sénior, gestante):
+
+| Suplementos permitidos | Con menú |
+|---|---|
+| **0** | **1 de 8** |
+| 1 | 8 de 8 |
+| 2 | 8 de 8 |
+
+⚠️ Y el matiz que cambia la respuesta: al adulto de 20 kg, **soltando las
+proporciones BARF**, le sale menú **verde con cero suplementos**. O sea que lo
+que obliga al bote **no son los 43 requisitos: es la FORMA** (las proporciones
+BARF) más este catálogo. Regla 3 otra vez.
+
+Importa para lo que venga: **no se puede dar por supuesto que una dieta cocinada
+necesite los mismos suplementos que la cruda**. Hay que medirlo.
+
+### 3 · Cómo trata los premios un formulador de referencia, y por qué manda
+
+`balanceit_instrucciones_2023.txt`, el PDF público de Balance It, que fundó
+**Sean J. Delaney** — coeditor de *Applied Veterinary Clinical Nutrition*
+(Fascetti & Delaney), **una de las cuatro fuentes del motor** y de donde sale
+nuestro 10 % de premios. No es «otro producto»: es la misma persona que escribe
+la fuente que aplicamos, resolviendo el mismo problema en su herramienta.
+
+> «Some of these can be selected as "**Treats & Enticers**" when creating a
+> recipe as can other palatants. Any such addition should be limited to
+> tolerated and non-toxic foods […] that do not add up to being more than 10% of
+> daily calories **if not called for and accounted for specifically in the
+> recipe** above.»
+
+Son **dos reglas**, y la condición final es la que decide: el premio **declarado
+entra en la receta como un ingrediente más**, y el que no se declara se topa en
+el 10 % y la receta no se ajusta.
+
+⚠️ Y eso **descartó la salida que se iba a proponer** — subir los máximos de la
+ración igual que ya se suben los mínimos. Medido con fichas del catálogo como
+aproximación, si los 316 kcal de premios de ese cachorro fueran **carne**
+aportarían **350-789 mg de fósforo y 119-237 de sodio y casi nada de calcio**,
+o sea que **empeoran** el ratio Ca:P y el techo de sodio del día. Aflojar
+nuestro techo apoyándose en «el premio seguramente no aporta nada» habría
+aflojado justo por donde el premio ya empuja. Lo que hace hoy el motor —peor
+caso por los dos extremos— **es lo correcto cuando no se sabe qué lleva**.
+
+---
+
 ## El día que la batería tuvo razón cuatro veces — 15 de septiembre de 2026
 
 Todo lo de este apartado lo encontró la propia batería o una medida, no un
