@@ -2816,8 +2816,42 @@ def _escalera_de_relajacion(hay_comida_de_verdad=True):
             (_secundarias_por(2.0), 4, "tope_de_visceras_higado_y_verdura_al_doble"))
         peldanos.append(
             (_secundarias_por(3.0), 4, "tope_de_visceras_higado_y_verdura_al_triple"))
-        peldanos.append(
-            (sin_max_secundarias, 4, "tope_maximo_de_visceras_higado_y_verdura"))
+        # ⚠️ Y AQUÍ SE ACABA LA ESCALERA. EL PELDAÑO QUE LEVANTABA EL TECHO DEL
+        # TODO (`tope_maximo_de_visceras_higado_y_verdura`, 0-100 %) SE HA
+        # QUITADO EL 16 DE SEPTIEMBRE DE 2026, y lo pidió Elena viendo lo que
+        # producía:
+        #
+        #     «un plato con 484 gramos de alcachofa me parece muy loco»
+        #
+        # Era el menú del cachorro de raza grande al que le dan el 20 % del día
+        # en premios: 44 % del plato de alcachofa y SEIS botes distintos. Y no
+        # era un caso suelto -- este peldaño es de donde salían los quince
+        # peores de los 216 menús precalculados, con el récord en 3.676 g de
+        # coles de Bruselas.
+        #
+        # ⚠️ LO QUE CUESTA ESTÁ MEDIDO, Y NO ES UN MENÚ: ES EL PEOR MENÚ.
+        #   · Once perros de referencia (toy de 1,5 kg a lactante de 20, con
+        #     cachorro de raza grande y gestante): los ONCE salen exactamente
+        #     igual sin él. Ninguno lo estaba usando.
+        #   · De los 214 menús del catálogo con peldaño declarado, **UNO** lo
+        #     usaba: `Gigante_Lactante#3`, con 7.527 g de comida al día y
+        #     **2.141 g de albahaca**. O sea que quitarlo no quita un menú:
+        #     quita el peor menú del catálogo.
+        #   · El penúltimo peldaño (×3) deja la verdura hasta el 30 %, y los
+        #     siete menús que lo usan van a 22-28 % con el ingrediente mayor
+        #     siendo CONEJO, no una hierba. Eso es una ración, no un plato de
+        #     hierba.
+        #
+        # Y de paso arregla el reloj del BLOQUE 101: este peldaño costaba ~16 s
+        # de solver en el peor caso, y era la mitad de lo que hacía que la
+        # escalera no cupiera en el presupuesto.
+        #
+        # ⚠️ LO QUE **NO** ARREGLA, Y POR ESO NO SE QUEDA SOLO EN ESTO: al perro
+        # que ahora no saca menú hay que DECÍRSELO, y con comida y no con
+        # nutrientes. Un perro al que le dan el 20 % del día en premios no tiene
+        # un problema de formulación -- tiene un problema de premios, y la
+        # ración no puede arreglarlo: le quedan el 80 % de las kcal para meter
+        # el 100 % de los nutrientes. Ver `_por_que_no_cabe_con_premios`.
     return peldanos
 
 
@@ -2904,11 +2938,12 @@ PELDANOS_EN_CRISTIANO = {
         "Vísceras, hígado y verdura hasta el triple",
         "El techo de lo accesorio sube al triple — la verdura, del 10 % al 30 % del plato. "
         "Los mínimos de carne y hueso siguen intactos."),
-    "tope_maximo_de_visceras_higado_y_verdura": (
-        "Sin tope de vísceras, hígado y verdura",
-        "Se levanta el techo de lo accesorio — el 10 % de verdura es lo que suele bloquear "
-        "una pancreatitis. Los mínimos de carne y hueso siguen intactos: son lo que hace "
-        "que la ración siga siendo una ración."),
+    # ⚠️ AQUÍ HABÍA UN SEXTO, `tope_maximo_de_visceras_higado_y_verdura`, y se
+    # BORRA con su peldaño el 16 de septiembre de 2026. No se deja «por si
+    # acaso»: `_peldanos_publicos()` construye la lista recorriendo la escalera,
+    # así que una entrada que ya no tiene peldaño no la lee nadie -- y un texto
+    # muerto que parece vivo se lee y se cree, que es la lección de `modos.py`.
+    # El porqué del borrado está donde se quita el peldaño.
 }
 
 
@@ -4215,6 +4250,51 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
                      "fuente": x["fuente"],
                      "por_que": x["por_que"]}
                     for x in _l],
+                "se_intento_relajando": [p[2] for p in _escalera_de_relajacion(hay_comida)[1:]]}
+
+        # ⚠️ ANTES DEL MENSAJE GENÉRICO: SI LOS PREMIOS SE PASAN DEL 10 %, ESO ES
+        # LO QUE HAY QUE DECIR (16 de septiembre de 2026). Lo destapó Elena
+        # mirando lo que el motor le daba a un cachorro de raza grande con el
+        # 20 % del día en premios: «un plato con 484 gramos de alcachofa me
+        # parece muy loco».
+        #
+        # No es un problema de formulación: es un problema de PREMIOS, y la
+        # ración no puede arreglarlo. Con el 20 % del día en chuches le quedan
+        # el 80 % de las kcal para meter el 100 % de los nutrientes, porque de
+        # lo que lleva dentro un premio no sabemos nada y no se puede contar
+        # para cubrir nada (regla 3-bis). MEDIDO en ese cachorro: mismo perro,
+        # mismo peldaño estricto, misma ración de 1265 kcal --
+        #     DER 1581 sin premios ................. menú, verdura 10 %
+        #     DER 1265 sin premios declarados ...... menú, verdura  3 %
+        #     DER 1581 con 316 kcal de premios ..... SIN MENÚ
+        # o sea que no son las kcal: es que el día entero no cabe en el 80 %.
+        #
+        # Y el mensaje genérico de abajo -«quita alguna restricción»- es MENTIRA
+        # aquí, de la misma clase que la que ya está documentada para el reloj:
+        # puede quitar todas las alergias y seguirá sin salir. Lo único que lo
+        # arregla es bajar los premios.
+        #
+        # ⚠️ COMIDA, NO NUTRIENTES (regla del 14 de septiembre): ni «dilución»,
+        # ni «mg/1000 kcal», ni el nombre de un nutriente.
+        _premios_kcal = _kcal_de_premios(datos)
+        _der_dia = float(getattr(datos, "der_objetivo", None) or 0.0)
+        if _premios_kcal > 0 and _der_dia > 0 and (_premios_kcal / _der_dia) > FRACCION_MAXIMA_DE_PREMIOS:
+            _pct_prem = _premios_kcal / _der_dia * 100
+            return {
+                "factible": False,
+                "motivo": (
+                    f"Con esa cantidad de premios no hay forma de que le quepa en el plato "
+                    f"todo lo que necesita. Ahora mismo los premios son el {_pct_prem:.0f} % "
+                    f"de lo que come al día, y su ración se queda con el resto — pero tiene "
+                    f"que seguir llevando TODO lo que necesita, porque de lo que lleva dentro "
+                    f"un premio no sabemos nada. || QUÉ HACER: bájale los premios a no más de "
+                    f"una décima parte de lo que come al día y vuelve a generar el menú. "
+                    f"|| Y si no quieres bajárselos, díselo a tu veterinario: si nos dice "
+                    f"exactamente qué premio le das, se puede meter dentro del menú y contar "
+                    f"lo que aporta."),
+                "los_premios_no_dejan_sitio": True,
+                "premios_pct_del_dia": round(_pct_prem, 1),
+                "premios_pct_recomendado": round(FRACCION_MAXIMA_DE_PREMIOS * 100),
                 "se_intento_relajando": [p[2] for p in _escalera_de_relajacion(hay_comida)[1:]]}
 
         return {"factible": False,
