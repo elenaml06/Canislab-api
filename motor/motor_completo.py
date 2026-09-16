@@ -1126,6 +1126,52 @@ def _resolver_una_vez(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn
         if n not in TODAS_LAS_VINTEGRA or n == correcta
     ]
 
+    # ⚠️ LO QUE SE HA FIJADO EN GRAMOS TIENE QUE SER UNA VARIABLE (16 de
+    # septiembre de 2026). Los candidatos salen de `ACCESIBLES`, que es la lista
+    # de lo que se compra fácil en España -- y eso deja fuera 59 fichas del
+    # catálogo que existen y son perfectamente comestibles. Fijar los gramos de
+    # una de ellas fallaba con «no puede entrar en la ración de este paciente:
+    # está fuera por una alergia, por su patología o por una categoría
+    # excluida», que es una frase FALSA en ese caso: no está fuera por nada de
+    # eso, está fuera por no ser de súper.
+    #
+    # Lo destapó la pantalla de premios: el dueño declara lo que le da de verdad
+    # (jamón, queso, una salchicha) y eso NUNCA va a estar en la lista de lo que
+    # el motor ofrece por su cuenta -- precisamente porque no queremos que el
+    # motor le meta jamón serrano en una ración. Pero si lo DECLARA, tiene que
+    # poder contarse.
+    #
+    # ⚠️ Y LA DISTINCIÓN QUE HACE QUE ESTO NO SEA UN AGUJERO: la exclusión por
+    # ALERGIA o por PATOLOGÍA sigue ganando, porque eso no se decide aquí -- se
+    # decide en el techo a CERO de unas líneas más abajo, que no cede nunca
+    # (regla 4). Aquí solo se está diciendo «existe como variable»; si está
+    # prohibido para este perro, su techo es 0 y el problema sale infactible,
+    # que es lo que tiene que pasar.
+    # ⚠️ Y PASA POR EL FILTRO DE ALERGIAS ANTES DE ENTRAR, SIN EXCEPCION.
+    #    CASO REAL, y lo metí yo al escribir esto: sin esta línea, declarar
+    #    «corazón de pollo» como premio en un perro con POLLO EXCLUIDO devolvía
+    #    un menú VERDE con el corazón de pollo dentro. Es la regla 4 -- las
+    #    alergias y las categorías excluidas a mano no se tocan jamás, porque
+    #    pueden ser médicas -- y lo daba por hecho fiándome del techo a cero de
+    #    más abajo, que en este camino no llegaba a aplicarse. Un supuesto sin
+    #    comprobar en la dirección peligrosa.
+    #
+    #    Un premio excluido por alergia NO entra y el menú sale igual: si el
+    #    dueño declara algo a lo que su perro es alérgico, lo que hay que hacer
+    #    es decírselo, no meterlo en el plato.
+    if gramos_fijos:
+        _fijos_permitidos = list(gramos_fijos)
+        if excluidos:
+            _fijos_permitidos, _f_fijo, _a_fijo = filtrar(_fijos_permitidos, excluidos)
+        for _n_fijo in _fijos_permitidos:
+            _cat_fijo = alimentos.get(_n_fijo, {}).get("categoria")
+            if not _cat_fijo:
+                continue
+            if categorias_excluidas and _cat_fijo in categorias_excluidas:
+                continue
+            if not any(_n_fijo in _l for _l in candidatos_por_cat.values()):
+                candidatos_por_cat.setdefault(_cat_fijo, []).append(_n_fijo)
+
     nombres = []
     categoria_de = {}
     for cat, lista in candidatos_por_cat.items():
