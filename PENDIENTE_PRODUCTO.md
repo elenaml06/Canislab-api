@@ -2,6 +2,105 @@
 
 Parte de `PENDIENTE.md` (secciones 4 y 6), separado el 6 de septiembre.
 
+## ⚠️ HIDRATOS PARA LAS PATOLOGÍAS QUE TOPAN LA GRASA (16 de septiembre de 2026)
+
+**Lo pidió Elena**: «¿y si metemos hidratos pero solo para que se puedan usar en
+el caso de la pancreatitis o casos así necesarios? Además a lo mejor un
+veterinario luego quiere pautarlos».
+
+### Lo primero, porque cambia la expectativa: YA metemos hidratos y el motor YA los usa
+
+El menú de pancreatitis sale hoy con **389 g de boniato**, y el boniato tiene el
+**93 % de sus kcal en forma de hidrato**. Ese 49 % del plato *es* el hidrato. No
+faltan: están en forma de verdura.
+
+### Y la razón de por qué ese plato es así NO es un defecto del motor
+
+SACN5 cap.67 Tabla 67-3 topa en pancreatitis **la grasa a 37,5 g/1000 kcal** y
+**la proteína a 75**. Entre las dos solo llegan a **638 de cada 1000 kcal**:
+
+```
+  grasa    ≤ 37,5 g  ->  338 kcal
+  proteína ≤ 75,0 g  ->  300 kcal
+                         638 de 1000
+  => 362 kcal de cada 1000 (36 %) TIENEN que venir de HIDRATOS
+```
+
+Es aritmética, no forma. Un perro con pancreatitis necesita una dieta con
+hidratos, y una ración BARF apenas los tiene.
+
+### Lo que se ganaría, medido, y es menos de lo que parece
+
+| Para las 362 kcal de hidrato | Gramos |
+|---|---|
+| Boniato (lo que usa hoy) | 358 g |
+| **Arroz blanco cocido** | **278 g** |
+| Patata cocida | 416 g |
+| Avena cocida | 510 g |
+
+El arroz ahorra ~80 g sobre un plato de 798, o sea un **10 %**. La patata y la
+avena **empeoran**. Así que el argumento de los gramos no sostiene esto solo.
+
+### El argumento que SÍ lo sostiene, y es clínico
+
+A un perro con pancreatitis le conviene un hidrato **blando y muy digestible**, y
+358 g de boniato no es lo mismo que 278 g de arroz cocido aunque las kcal
+cuadren.
+
+### Cómo encajaría — y dos de las tres piezas YA EXISTEN
+
+1. ⚠️ **Tendrían que ser fichas COCINADAS**: el arroz crudo no lo digiere un
+   perro. O sea que **esto es la primera rebanada del apartado de abajo** (BARF
+   vs. comida cocinada), no un añadido suelto.
+2. **«Solo cuando haga falta» ya funciona**: una categoría que no esté en
+   `ACCESIBLES` el motor **no la elige nunca** por su cuenta. Lo único nuevo
+   sería que se active sola en las patologías con techo de grasa.
+3. **Lo del veterinario ya funciona desde el 16 de septiembre**: cualquier ficha
+   del catálogo se puede fijar en gramos aunque esté fuera del automático (ver
+   `gramos_fijos` y `premios_declarados`). En cuanto exista la ficha de arroz
+   cocido, se puede pautar sin tocar nada más.
+
+### Y de paso, lo que se midió ese día sobre el HUESO en estas patologías
+
+El mínimo del 20 % de hueso es criterio NUESTRO (regla 3) y no cede en ninguno de
+los nueve peldaños — y el hueso lleva grasa. Medido en las **siete** patologías
+que topan la grasa, con el mínimo puesto y quitado (adulto de 25 kg, DER 1040):
+
+| Patología | Hoy | Sin mínimo de hueso |
+|---|---|---|
+| **Hiperlipidemia** | peldaño 8, verdura **48,8 %** | peldaño 6, verdura **19,5 %** |
+| **Obesidad** | **SIN MENÚ** | peldaño 8, verdura 48,9 %, grasa 21,4 |
+| EPI · PLE · SIBO · enteropatía crónica | peldaño 2, verdura 9,7 % | peldaño 1, verdura 9,8 % |
+| **Pancreatitis** | peldaño 8, verdura 49,0 % | peldaño 8, verdura **49,0 %** — *no cambia* |
+
+⚠️ **La que originó la idea es justo la que NO mejora**, por la aritmética de
+arriba: el solver se gasta en carne la grasa que le libera el hueso. Aplicarlo
+diciendo que arregla la pancreatitis sería vender una mejora que no existe.
+
+⚠️ Y **lo de la obesidad hay que comprobarlo antes de afirmarlo**: puede ser un
+artefacto de la prueba, porque se le pasó un DER de mantenimiento a un perro que
+debería llevar DER de adelgazamiento.
+
+### De dónde NO sale nada de esto
+
+Elena pasó dos textos de tiendas de BARF sobre pancreatitis, linfangiectasia,
+SIBO y EPI. **Se comprobaron tres de sus afirmaciones contra SACN5 y las tres
+estaban mal**, así que no se usa ni una:
+
+| Lo que decía | Lo que dice la fuente |
+|---|---|
+| «Regla estricta: dejar reposar las enzimas 20 minutos» | cap.66: «**pre-incubation of the meal with pancreatic enzymes are also unnecessary**… adding digestive enzymes to food 20 to 30 minutes before feeding **did not improve the response**» (Pidgeon, 1980) |
+| Linfangiectasia: «0 % grasa animal», «MCT, única grasa permitida» | cap.58: «Limiting fat intake (i.e., **<15% dry matter**)» — que es el 37,5 que ya aplicamos. Y del MCT: «**previously thought**… **However, a study in dogs showed that some MCT absorption does occur via the lymphatics**» (Jensen, 1994), además de que empeora la palatabilidad y **no lleva ácidos grasos esenciales** |
+| SIBO: «50 % huesos carnosos» | cap.48: «**Fat restriction is also useful in small intestinal bacterial overgrowth**». El 50 % de cuello de pollo va justo en contra |
+
+Y la señal que vale más que las tres: el primer texto pedía **0-5 % de hueso**
+para pancreatitis y el segundo **50 %** para SIBO, y las dos patologías tienen
+techo de grasa en el mismo libro. Cuando dos consejos del mismo sitio se
+contradicen diez veces en la misma cifra, lo que falla no es el detalle: es que
+no salen de ninguna fuente.
+
+---
+
 ## ⚠️ ELEGIR ENTRE BARF Y COMIDA COCINADA (16 de septiembre de 2026)
 
 **Lo pidió Elena**, el mismo día: «quiero que dejes apuntado también hacer que
