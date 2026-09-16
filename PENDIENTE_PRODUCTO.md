@@ -2,6 +2,65 @@
 
 Parte de `PENDIENTE.md` (secciones 4 y 6), separado el 6 de septiembre.
 
+## ⚠️ ELEGIR ENTRE BARF Y COMIDA COCINADA (16 de septiembre de 2026)
+
+**Lo pidió Elena**, el mismo día: «quiero que dejes apuntado también hacer que
+se pueda seleccionar entre barf y comida cocinada y que completemos el catálogo
+y haya los cambios que haya que hacer en el motor para hacerlo también».
+
+**Lo primero que hay que saber, porque cambia el tamaño del trabajo: los 43
+requisitos NO cambian ni una cifra.** FEDIAF no habla de BARF ni de cocinado —
+habla de una **dieta completa**, y sus mínimos, sus máximos, el ratio Ca:P, los
+cinco topes crónicos, los topes por patología y los siete máximos legales de la
+UE son exactamente los mismos. O sea que **esto no es un motor nuevo**: es la
+regla 3 otra vez, la FORMA cede y la nutrición no.
+
+### Qué cambia de verdad, por sitios
+
+| | Cambia | Por qué |
+|---|---|---|
+| `requerimientos_v2_final.json`, `verificar.MAPA`, `seguridad.py`, `patologias.json`, los máximos legales | **nada** | son de una dieta completa, no de una forma de darla |
+| **Las proporciones** (`MARGENES_V2`, `_escalera_de_relajacion`) | **sí** | el hueso cocido **astilla**: una ración cocinada no lleva hueso carnoso, y su calcio sale de un suplemento. Hacen falta OTROS márgenes, no otro motor. ⚠️ Y la cáscara de huevo **ya está en el catálogo**, dos fichas (37.000 y 38.000 mg de calcio por 100 g, 0 kcal, casi nada de fósforo) |
+| **El catálogo** | **sí, y es el trabajo caro** | las fichas van por 100 g **tal cual se da**, o sea crudo. Al cocinar se pierde agua (concentra todo por 100 g) y se destruye parte del grupo B. Cada alimento cocinado es una **ficha nueva con su propia procedencia**, no un factor aplicado a la cruda |
+| **Tiaminasa, mercurio del pescado crudo, riesgo bacteriológico** | se **relajan** | cocinar destruye la tiaminasa. Los avisos de `revisar_seguridad` que dependen de que sea crudo tienen que saber en qué modo está |
+| **`como_se_da_cada_alimento.json` y los avisos al dueño** | sí | «se da crudo» deja de valer para todo |
+
+### Lo que juega a favor, y está comprobado
+
+**Las tres bases de composición YA publican las filas cocinadas.** Hoy el repo
+las esquiva **a propósito**: `fijar_identificadores.py` tiene un guardia de
+preparaciones («asad», «frit», «cocid», y desde el 13 de septiembre «horno»)
+justo para que no se cuelen — el caso de la `Perca` apuntando a «Perca, AL
+HORNO» en una ficha cruda. O sea que **el dato existe y sabemos dónde está**;
+lo que hay que hacer es dejar de esquivarlo y meterlo como fichas aparte.
+
+⚠️ Y con la misma regla de siempre: **una ficha cocinada no se deriva de la
+cruda aplicando un factor**. Eso sería inventarse la cifra. Se trae de su
+propia fila, con su `composicion_fuente` celda a celda, y `auditar_composicion.py`
+la rehace igual que a las demás.
+
+### Lo que hay que decidir antes de empezar, y no lo decide el asistente
+
+1. **¿Un catálogo o dos?** Fichas cocinadas aparte (`Pollo` y `Pollo cocido`)
+   o un campo en la misma ficha. Afecta a las ocho pantallas de
+   `alimentos_como_se_presentan.json` y a las 25 listas de `lo_que_la_app_pinta.json`.
+2. **¿Se puede mezclar?** Media ración cruda y media cocinada es una dieta real
+   y frecuente, y decide si el modo es del MENÚ o del ALIMENTO.
+3. **Qué grado de cocción.** «Cocido», «al horno» y «a la plancha» no dan los
+   mismos números, y las bases los publican por separado.
+
+### Y hay una medida de hoy que ordena la prioridad
+
+Medido el 16 de septiembre sobre 8 perros (adulto 5/10/20/40 kg, cachorro 10 y
+22, sénior, gestante): con **0 suplementos** sacan menú **1 de 8**, con 1 los
+8 de 8. Pero al adulto de 20 kg, **soltando las proporciones BARF**, le sale
+menú **verde con cero suplementos**. O sea que lo que obliga al bote no son los
+43 requisitos: es la FORMA. Y una dieta cocinada tiene **otra** forma, así que
+no se puede dar por supuesto que necesite los mismos suplementos que la cruda —
+hay que medirlo, no deducirlo.
+
+---
+
 ## 4. Producto — funcionalidades nuevas
 
 Ordenadas por dependencia: multi-perro va primero porque la cesta y los
