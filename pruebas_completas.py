@@ -20929,11 +20929,32 @@ else:
                       "restriccion»- es MENTIRA aqui: puede quitar todas las alergias y seguira "
                       "sin salir")
     _mot122 = (_r122c.get("motivo") or "").lower()
-    if "qué le das" not in _mot122 and "que le das" not in _mot122:
-        fallos.append("BLOQUE122: el mensaje de «los premios no dejan sitio» no ofrece DECIR "
-                      "QUE ES antes que bajarlos. Es lo que pidio Elena y lo que hace la fuente: "
-                      "a quien puede simplemente decirnos que premio da no se le manda cambiar "
-                      "de vida por un hueco nuestro")
+    # ⚠️ SE COMPRUEBA EL ORDEN, NO UNA FRASE (16 de septiembre de 2026, y la
+    #    primera version de esto NO CAZABA EL FALLO). Buscaba la cadena «que le
+    #    das», que aparece DOS veces en el texto -- al principio y en el «LO
+    #    MEJOR: dinos que le das» --, asi que rompiendo solo la primera el
+    #    bloque seguia verde. Es el BLOQUE 13 otra vez: una prueba del motor
+    #    convertida en prueba de redaccion.
+    #
+    #    Lo que de verdad hay que exigir es el HECHO: que ofrecer DECIR CUAL ES
+    #    venga ANTES que bajarlos. Ese es el orden que pidio Elena («si tiene
+    #    que haber una parte en la que elija lo que le da») y el que hace la
+    #    fuente. Si manana el texto se reescribe entero pero mantiene ese orden,
+    #    sigue estando bien; si lo invierte o quita la oferta, salta.
+    def _donde122(*trozos):
+        _p = [_mot122.find(t) for t in trozos if _mot122.find(t) >= 0]
+        return min(_p) if _p else None
+    _ofrecer122 = _donde122("dinos qué le das", "dinos que le das", "metemos dentro",
+                            "dentro del menú", "dentro del menu")
+    _bajar122 = _donde122("bájaselos", "bajaselos", "bájale", "bajale")
+    if _ofrecer122 is None:
+        fallos.append("BLOQUE122: el mensaje de «los premios no dejan sitio» NO ofrece decir que "
+                      "premio es para meterlo en el plato. A quien puede simplemente decirnos "
+                      "que le da no se le manda cambiar de vida por un hueco nuestro")
+    elif _bajar122 is not None and _bajar122 < _ofrecer122:
+        fallos.append("BLOQUE122: el mensaje ofrece BAJAR los premios antes que DECIR cuales "
+                      "son. El orden importa: bajarlos es el plan B, y es el que le cambia la "
+                      "vida al dueno; declararlos no le cuesta nada y resuelve el problema entero")
     # ⚠️ Y COMIDA, NO NUTRIENTES (regla del 14 de septiembre): este texto lo lee
     #    un dueno, asi que no puede nombrar un nutriente ni una unidad del motor.
     for _pal122 in ("1000 kcal", "mg/", "dilución", "dilucion", "nutriente"):
