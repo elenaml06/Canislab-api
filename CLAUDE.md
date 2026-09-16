@@ -111,10 +111,25 @@ con alguna, casi siempre el error está en el cambio.
    toy lo salva la escalera. La causa está medida y es de DATOS: **en el catálogo
    no hay un suplemento de vitamina E suelto**, solo los nueve multivitamínicos, y
    el motor deja meter dos. **La cifra NO se ha bajado** — se queda escrita con su
-   fuente, su conversión y su medida, y se pregunta, que es la regla. El día que
-   entre en el catálogo una ficha de vitamina E suelta se vuelve a poner a `true`
-   y la batería tiene que salir verde: esa es la comprobación de que el problema
-   era el catálogo y no la cifra. Está en `PENDIENTE_DECISIONES.md`, y el BLOQUE
+   fuente, su conversión y su medida, y se pregunta, que es la regla.
+   ⚠️ **Y ESA COMPROBACIÓN YA SE HA HECHO, Y SALIÓ QUE NO ERA EL CATÁLOGO** (16 de
+   septiembre de 2026). Aquí ponía que el día que entrara una ficha de vitamina E
+   suelta se volvería a poner a `true` «y la batería tiene que salir verde: esa es
+   la comprobación de que el problema era el catálogo y no la cifra». **Las dos
+   fichas entraron el 15 de septiembre** (MARNYS y Beaphar), están dentro, y con el
+   suelo encendido siguen saliendo **0 de 6** adultos y séniors con un solo bote —
+   infactible DEMOSTRADO, no por reloj. Con dos botes, 6 de 6 a 70,2 mg/1000 kcal.
+   Y metiendo a mano una tercera ficha para probar (napfcheck Vitamin Complete, 550
+   mg de d-α-tocoferol por 100 g) tampoco cambia nada.
+   **La causa es aritmética**: llegar a 67,1 mg/1000 kcal en una ración de 1100
+   kcal pide 73,8 mg, o sea **12,3 g del multivitamínico más rico** (napfcheck
+   proLEBER, 600 mg/100 g), 16,2 g del astoral o 55 g del NEKTON — y **la etiqueta
+   de cualquiera de ellos dice 1-4 g al día**. Las seis V-INTEGRA y el Nutratop
+   declaran **0**. O sea que **ninguna premezcla puede llevar ese suelo a su dosis
+   declarada, exista o no exista el producto: el segundo bote es ESTRUCTURAL**.
+   Eso cambia la pregunta para Adrián — ya no es «¿falta un producto?» sino «¿vale
+   la pena un segundo bote por una recomendación que no es un requisito?». Detalle
+   en `PREGUNTAS_ABIERTAS.md` P-45. Está en `PENDIENTE_DECISIONES.md`, y el BLOQUE
    57 vigila las dos mitades — que siga apagado y que el `por_que` siga contando
    las dos decisiones. En adulto son
    Existen porque una ración BARF de este motor salía **pegada al máximo de

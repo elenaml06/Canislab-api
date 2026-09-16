@@ -2930,6 +2930,97 @@ que el solver y el filtro final lo apliquen. El día que Adrián conteste se pon
 `por_etapa.Adulto.suelos_por_1000kcal.vitE` (y `Senior`), con el `por_que`
 entero. Lo vigila el **BLOQUE 57**.
 
+### ⚠️ LA PRUEBA QUE IBA A CONTESTAR ESTO YA SE HA HECHO, Y SALIÓ QUE NO (16 de septiembre de 2026)
+
+`CLAUDE.md` dice hoy, en dos sitios:
+
+> «El día que entre en el catálogo una ficha de vitamina E suelta se vuelve a
+> poner a `true` y la batería tiene que salir verde: **esa es la comprobación de
+> que el problema era el catálogo y no la cifra**.»
+
+**Esa comprobación ya se puede dar por hecha, y el resultado es el contrario.**
+Las dos fichas de vitamina E suelta (`MARNYS VITAHELP Vitamina E liquida` y
+`Beaphar Aceite de Germen de Trigo`) entraron el 15 de septiembre, están dentro,
+y con el suelo encendido:
+
+| | |
+|---|---|
+| Suelo encendido, **un solo bote** | **0 de 6** adultos y séniors — infactible **DEMOSTRADO**, no por reloj |
+| Suelo encendido, **dos botes** | 6 de 6 verde, a 70,2 mg/1000 kcal |
+
+Y con la ficha nueva metida a mano para probar (`napfcheck Vitamin Complete`,
+550 mg de d-α-tocoferol por 100 g) **no cambia nada**: sigue siendo 0 de 6 con un
+bote, y con dos el solver sigue eligiendo la MARNYS.
+
+**La causa es aritmética, no de catálogo.** Para llegar a 67,1 mg/1000 kcal en
+una ración de 1100 kcal hacen falta 73,8 mg de vitamina E, y eso son:
+
+| Multivitamínico | vitE mg/100 g | gramos que harían falta |
+|---|---|---|
+| napfcheck Novomineral proLEBER | 600 | **12,3 g/día** |
+| astoral MultiVital BARF | 456,4 | 16,2 g/día |
+| Homemadekun | 419,5 | 17,6 g/día |
+| NEKTON Dog Easy-BARF | 134,2 | 55,0 g/día |
+| Las seis V-INTEGRA y el Nutratop | **0** | imposible |
+
+Y **la dosis que declara la etiqueta de cualquiera de ellos es 1-4 g al día**.
+O sea que **ninguna premezcla puede llevar ese suelo a su dosis declarada**,
+exista o no exista el producto. **El segundo bote es ESTRUCTURAL.**
+
+**Eso cambia la pregunta que se le hace a Adrián**: ya no es «¿falta un
+producto?» sino **«¿vale la pena un segundo bote por una recomendación que no es
+un requisito?»**. Y el coste de producto sigue siendo el medido el 15: con el
+suelo puesto, **0 de 6** adultos y séniors sacan menú con un solo bote.
+
+---
+
+### P-47 · El catálogo no tiene ficha de zinc, cobre, selenio ni manganeso
+
+| | |
+|---|---|
+| **Dueño** | **Elena** (es de catálogo y de compra) |
+| **¿Bloquea?** | No, pero explica tres cosas a la vez |
+| **Abierta desde** | 16 de septiembre de 2026 |
+
+Hay ficha suelta de **Calcio** (2), **Hierro** (1), **Yodo** (2), **Vitamina B**
+(2), **Vitamina E** (2), **Omega-3** (4) y **Fibra** (1). De **zinc, cobre,
+selenio y manganeso, ninguna**.
+
+O sea que **la única forma que tiene el motor de meter zinc es un
+multivitamínico**, y todos traen calcio. Medido sobre nueve productos —los diez
+del catálogo más `cdVet Fit-BARF MicroMineral`, `napfcheck Novomineral Balance`,
+`Sensitiv`, `BARF Complete` y `Dibaq Sense`— **ninguno baja del 15 % de calcio**,
+y siete están entre el 15 y el 21 %. No es casualidad: **existen para dietas
+caseras SIN hueso**, donde el calcio lo tiene que poner el bote. Este motor
+formula CON hueso, así que ese calcio es lastre.
+
+⚠️ Y el motor tiene la patología **`dermatosis_por_zinc`**, cuyo propio aviso
+dice «zinc por boca», **sin ninguna ficha de zinc en el catálogo**.
+
+**Candidato español encontrado y SIN MEDIR**: `Dermovital Zinc` (Stangest,
+España), comprimido de 1,3 g con **25 mg de zinc** (quelato de aminoácidos) y
+12,5 µg de selenio, **sin calcio declarado**. Lleva además aceite de borraja y
+de pescado (EPA 10,8 · DHA 7,2 mg por comprimido) y complejo B, así que no es
+zinc puro: es un suplemento de piel.
+
+---
+
+### P-48 · Solo entran productos que se vendan en España
+
+| | |
+|---|---|
+| **Quién lo decidió** | **Elena**, 16 de septiembre de 2026: «solo pueden ser cosas que se vendan en España, ¿vale? Ya sea en Amazon o en cualquier otra tienda» |
+| **Estado** | **cerrada** — es una regla, no una pregunta. Se escribe aquí porque no estaba escrita en ningún sitio |
+
+Ya era como funcionaba el catálogo de hecho (el yoduro potásico declara
+«ostrovit.es, envío España») pero no estaba dicho.
+
+**Primer descartado por esta regla:** `napfcheck Vitamin Complete`. Su tienda
+(vetbiom.com) tiene la web traducida al español, pero **su propia página de
+envíos** lista cinco zonas —Alemania/Austria, Benelux, Polonia/Chequia, Francia
+y Dinamarca— y dice «We currently only ship to the countries listed above».
+**España no está.**
+
 ---
 
 ### P-46 · La rotación de proteína no llega al cachorro, y hacerla dura cambia los menús de todos
