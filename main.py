@@ -4169,6 +4169,38 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
     # No es un número fino: es que a la segunda le tiene que quedar al menos
     # tanto como a la primera, porque es la que no puede fallar.
     _MITAD_PARA_LA_MEJORA = 0.5
+    # ⚠️ Y SOLO SE REPARTE CUANDO HAY ALGO QUE PROTEGER (16 de septiembre de
+    # 2026, por la tarde, y me lo devolvió la batería). El reparto se puso para
+    # que la segunda vuelta no se quedara sin reloj -- pero LA SEGUNDA VUELTA
+    # SOLO PUEDE DAR ALGO DISTINTO SI HAY UN TECHO DEL LIBRO SUBIDO, que es el
+    # cachorro de raza grande con premios. Para todos los demás las dos vueltas
+    # son EL MISMO PROBLEMA, así que reservarle la mitad a la segunda no protege
+    # nada y le quita la mitad a la primera.
+    #
+    # CASO REAL: el toy de 1,5 kg necesita 25,7 s y sale en el peldaño 2 (está
+    # medido el 15 de septiembre). Con el reparto puesto a ciegas se quedaba con
+    # 20 s de los 40 y salía 1 de 3 -- «el cálculo está tardando más de lo
+    # normal» --, y la segunda vuelta que le robaba el tiempo no podía darle
+    # nada que la primera no tuviera ya.
+    #
+    # `cedidos_ante_fediaf` contesta esto sin resolver nada: devuelve los techos
+    # del libro que se han caído por cruzarse con el suelo que sí se aplica. Si
+    # está vacío, no hay nada que soltar y la primera vuelta se queda con el
+    # presupuesto entero.
+    try:
+        from recomendaciones import cedidos_ante_fediaf as _cedidos_rep
+        from verificar import der_efectiva_de as _derefe_rep
+        _hay_techo_que_soltar = bool(_cedidos_rep(
+            datos.etapa_requisitos, req,
+            _derefe_rep(datos.der_objetivo, datos.peso_perro_kg),
+            datos.peso_adulto_esperado_kg,
+            (datos.der_objetivo / max(1.0, datos.der_objetivo - _kcal_de_premios(datos)))))
+    except Exception:
+        # Ante la duda, repartir: es el lado que no deja a nadie sin la segunda
+        # vuelta, y solo cuesta reloj al caso raro.
+        _hay_techo_que_soltar = True
+    if not _hay_techo_que_soltar:
+        _MITAD_PARA_LA_MEJORA = 1.0
     if not ok and not _peldano_pedido:
         for margenes_peldano, supl_peldano, que_se_suelta in _escalera_de_relajacion(hay_comida)[1:]:
             if tiempo_restante() <= 1.5:
