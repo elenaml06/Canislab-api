@@ -6930,7 +6930,15 @@ for _ in range(3):
         _norojo43toy += 1
 if _sin43toy:
     fallos.append(f"BLOQUE43 toy 1,5 kg: {_sin43toy} de 3 veces no sale menú con el presupuesto "
-                  f"de verdad ({_api.PRESUPUESTO_SEGUNDOS} s) y la escalera entera. Medido el 15 "
+                  # ⚠️ NO SE INTERPOLA `_api.PRESUPUESTO_SEGUNDOS`: ES UNA VARIABLE
+                  # LOCAL de `_resolver_menu_v2_interno`, no un atributo del módulo,
+                  # así que esto lanzaba AttributeError Y TUMBABA LA BATERÍA ENTERA
+                  # (16 de septiembre de 2026). Y lo peor es CUÁNDO: esta línea solo
+                  # se evalúa cuando el fallo SALTA, así que estuvo escrita y sana
+                  # mientras el bloque salía verde, y el día que encontró algo se
+                  # llevó por delante los 79 bloques que venían detrás. Un mensaje
+                  # de error que revienta es peor que el error.
+                  f"de verdad y la escalera entera. Medido el 15 "
                   f"de septiembre tardaba 25,7 s y salía 3 de 3 en el peldaño 2: si ahora no "
                   f"sale, o se ha encarecido un peldaño de arriba o se ha cerrado el de abajo. "
                   f"En Render, ~4,5 veces más lento, esto es la diferencia entre dar menú y "

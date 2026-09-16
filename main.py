@@ -2888,6 +2888,28 @@ def _escalera_de_relajacion(hay_comida_de_verdad=True):
             (_secundarias_por(2.0), 4, "tope_de_visceras_higado_y_verdura_al_doble"))
         peldanos.append(
             (_secundarias_por(3.0), 4, "tope_de_visceras_higado_y_verdura_al_triple"))
+        # ⚠️ Y UN ÚLTIMO PELDAÑO **ACOTADO**, QUE NO EXISTÍA Y HACE FALTA
+        # (16 de septiembre de 2026, por la tarde). Al quitar el que ponía el
+        # techo de lo accesorio en el 100 % medí lo que costaba sobre ONCE
+        # PERROS SANOS y sobre los 216 menús del catálogo, y salió gratis. Lo
+        # que NO medí es la población que de verdad lo usaba, y la batería me lo
+        # devolvió entero:
+        #     BLOQUE 9  ·· dos perros sin menú por una regla de FORMA
+        #     BLOQUE 20 ·· editar un menú CON PATOLOGÍA devolvía 500
+        #     BLOQUE 43 ·· el toy de 1,5 kg se quedaba sin menú
+        # O sea: medí la población fácil y concluí sobre todas.
+        #
+        # El caso que lo explica mejor lo tiene escrito el propio BLOQUE 9: en
+        # PANCREATITIS la grasa se topa por debajo de 20 g/1000 kcal, «y para
+        # llegar ahí hay que diluir con lo único que no engorda: verdura». Ese
+        # perro NECESITA el techo suelto.
+        #
+        # Así que lo que estaba mal no era que el peldaño existiera: era que NO
+        # TENÍA TECHO. Éste lo pone en x5 -- la verdura llega al 50 % del plato
+        # y no al 100 %, que es lo que producía los 484 g de alcachofa y los
+        # 2.141 g de albahaca. Sigue habiendo un límite, y sigue siendo comida.
+        peldanos.append(
+            (_secundarias_por(5.0), 4, "tope_de_visceras_higado_y_verdura_al_quintuple"))
         # ⚠️ Y AQUÍ SE ACABA LA ESCALERA. EL PELDAÑO QUE LEVANTABA EL TECHO DEL
         # TODO (`tope_maximo_de_visceras_higado_y_verdura`, 0-100 %) SE HA
         # QUITADO EL 16 DE SEPTIEMBRE DE 2026, y lo pidió Elena viendo lo que
@@ -3010,6 +3032,11 @@ PELDANOS_EN_CRISTIANO = {
         "Vísceras, hígado y verdura hasta el triple",
         "El techo de lo accesorio sube al triple — la verdura, del 10 % al 30 % del plato. "
         "Los mínimos de carne y hueso siguen intactos."),
+    "tope_de_visceras_higado_y_verdura_al_quintuple": (
+        "Vísceras, hígado y verdura hasta el quíntuple",
+        "El techo de lo accesorio sube al quíntuple — la verdura, del 10 % al 50 % del plato. "
+        "Es el último de la escalera, y sigue teniendo techo: los mínimos de carne y hueso "
+        "siguen intactos."),
     # ⚠️ AQUÍ HABÍA UN SEXTO, `tope_maximo_de_visceras_higado_y_verdura`, y se
     # BORRA con su peldaño el 16 de septiembre de 2026. No se deja «por si
     # acaso»: `_peldanos_publicos()` construye la lista recorriendo la escalera,
