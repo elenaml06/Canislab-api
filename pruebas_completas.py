@@ -7695,6 +7695,7 @@ def _cubre_b49(gramos, clave, der, etapa, peso):
     return None, _f.get("semaforo")
 
 _yodos_b49, _caidos_b49, _cortos_b49 = [], 0, []
+_relojes_b49 = 0
 _infactibles_b49 = set()
 for _der_b49, _peso_b49 in ((300, 3), (200, 1.5), (250, 2.2), (400, 4.5)):
     for _sem_b49 in range(1, 6):
@@ -7733,6 +7734,31 @@ for _der_b49, _peso_b49 in ((300, 3), (200, 1.5), (250, 2.2), (400, 4.5)):
             _der_b49, "Adulto", _al_b49, _req_b49, _peso_b49, _api.dosis_maxima_fabricante,
             margenes_categoria=_api.MARGENES_V2, max_suplementos=2, time_limit=15,
             semilla_aleatoria=_sem_b49, estado_del_solver=_est_b49)
+        # ⚠️ Y HAY UN TERCER ESTADO, QUE NO ES NINGUNO DE LOS DOS: «SE ME ACABÓ
+        #    EL RELOJ» (16 de septiembre de 2026). Medido con la batería entera
+        #    corriendo encima, este bloque acusaba a 1 de 20 -- y al repetirlo en
+        #    una máquina en reposo se ve lo que pasa: el toy de 1,5 kg con DER 200
+        #    sale `status 2` (imposible DEMOSTRADO) con las semillas 1, 2 y 5, y
+        #    con la 3 y la 4 se planta en los 15,0 s clavados sin llegar a
+        #    demostrarlo. Es el MISMO caso y la MISMA imposibilidad; lo único que
+        #    cambia es si al solver le dio tiempo a probarla.
+        #
+        #    Contar eso como «caído» es medir el reloj de la máquina y llamarlo
+        #    fallo del motor, que es la regla que este fichero lleva escrita
+        #    cuatro veces y que el propio comentario de aquí arriba ya cuenta
+        #    para el `time_limit=8`. La salida no es subir otra vez el listón: es
+        #    PREGUNTARLO OTRA VEZ CON TIEMPO DE SOBRA y quedarse con esa
+        #    respuesta. Si con 90 s sigue sin demostrar nada ni dar menú,
+        #    entonces sí es del motor y cuenta.
+        if not _ok_b49 and _est_b49.get("status") == 1:
+            _est2_b49 = {}
+            _ok_b49, _g_b49 = _api.resolver_v2(
+                _der_b49, "Adulto", _al_b49, _req_b49, _peso_b49,
+                _api.dosis_maxima_fabricante, margenes_categoria=_api.MARGENES_V2,
+                max_suplementos=2, time_limit=90, semilla_aleatoria=_sem_b49,
+                estado_del_solver=_est2_b49)
+            _relojes_b49 += 1
+            _est_b49 = _est2_b49
         if not _ok_b49 and _est_b49.get("status") == 2:
             _infactibles_b49.add((_der_b49, _peso_b49))
             continue
@@ -7772,6 +7798,11 @@ for _der_inf49, _peso_inf49 in sorted(_infactibles_b49):
               f"demostrado, lo cierran el techo LEGAL de selenio y el tope de un "
               f"multivitamínico) y CON menú verde en «{_r_inf49.get('peldano')}»")
 
+if _relojes_b49:
+    # Se DICE, no se calla: que haga falta el reintento no es un fallo, pero si
+    # empieza a hacer falta siempre es que algo se ha puesto lento de verdad.
+    print(f"  {_relojes_b49} de 20 se quedaron sin reloj en 15 s y se han vuelto a "
+          f"preguntar con 90 s -- el veredicto es el de la segunda")
 if _caidos_b49:
     fallos.append(
         f"BLOQUE49: {_caidos_b49} de 20 menús de perros pequeños no salen o no están verdes. "
@@ -12964,9 +12995,26 @@ def _espia_76(*_a76, **_k76):
     #    Con la clave completa: 0 repetidos de 18. Y sigue cazando lo que existe
     #    para cazar, porque lo que el bucle de reintentos repite es la llamada
     #    IDÉNTICA, con los mismos `soltar`, `forzar` y `preferir`.
+    #    ⚠️ Y EL 16 DE SEPTIEMBRE HUBO QUE AÑADIRLE UNA DIMENSIÓN MÁS, por
+    #    exactamente el mismo motivo y con el mismo síntoma: 9 repetidos de 27.
+    #    El 15 de septiembre la API pasó a recorrer la escalera DOS veces --
+    #    la primera con el techo del libro puesto y, solo si no sale menú en
+    #    ningún peldaño, otra entera soltándolo (`soltar_el_techo_si_no_cabe`).
+    #    Soltar ese techo es UNA RESTRICCIÓN MENOS, así que el mismo peldaño de
+    #    la segunda pasada NO es el mismo problema: puede tener menú donde el de
+    #    la primera salió imposible, que es justo para lo que existe la segunda
+    #    pasada. Sin esta clave, los nueve peldaños de la segunda vuelta se
+    #    contaban como nueve repeticiones de la primera.
+    #
+    #    La regla que deja, y ya va la segunda vez: **el día que se le añade al
+    #    solver una dimensión que cambia el problema, hay que añadirla aquí**.
+    #    Si no, este guardia acusa a un camino que no repite nada -- y un rojo
+    #    que acusa al motor cuando el motor acierta enseña a desconfiar de la
+    #    batería.
     _clave76 = (repr(sorted((_marg76 or {}).items())), _k76.get("max_suplementos"),
                 repr(_k76.get("soltar_limites_patologia")), repr(_k76.get("forzar")),
-                repr(_k76.get("preferir")), repr(_k76.get("restringir_a_elegidos")))
+                repr(_k76.get("preferir")), repr(_k76.get("restringir_a_elegidos")),
+                repr(_k76.get("soltar_el_techo_si_no_cabe")))
     _llamadas_76.append((_clave76, bool((_est or {}).get("infactible_demostrado"))))
     return _r76
 
@@ -20464,52 +20512,6 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 _cerrar_el_ultimo_bloque()
 
-# ⚠️ ¿SE HAN EJECUTADO TODOS LOS BLOQUES QUE HAY ESCRITOS? (14 de septiembre).
-#
-# CASO REAL, y lo cometí yo el mismo día que se escribe esto: el BLOQUE 111 se
-# añadió **al final del fichero**, o sea DESPUÉS del `sys.exit()` de aquí abajo.
-# La batería entera salió «✅ TODO EN VERDE» sin haberlo ejecutado nunca, y el
-# bloque tampoco aparecía en la lista de tiempos — que es donde se habría visto
-# si alguien la hubiera leído entera. Con `probar_bloques.py 111` salía verde,
-# porque ese script EXTRAE el bloque y lo corre suelto.
-#
-# Es la peor forma de esta familia: un guardia escrito, probado con el fallo
-# puesto, y **inerte**. Peor que no tenerlo, porque parece que alguien mira.
-#
-# Se compara lo que hay ESCRITO en el fuente (las cabeceras «=== BLOQUE N») contra lo
-# que de verdad ha impreso su cabecera. Cuesta leer un fichero y no depende de
-# que nadie se acuerde de nada, que es la misma regla con la que se miden los
-# tiempos aquí arriba.
-import re as _re_fin
-with open(__file__, encoding="utf-8") as _f_fin:
-    _fuente_fin = _f_fin.read()
-# ⚠️ EL PATRÓN TIENE QUE ACEPTAR EL SALTO DE LÍNEA DE DELANTE, y la primera
-# versión no lo hacía: escribir el salto dentro de la cadena, antes del «===»,
-# es la forma más común en este fichero, y anclando el patrón a `print("===`
-# se contaban 67 de 104. Un guardia que solo mira dos tercios
-# de lo que hay es otra forma de salir verde sin mirar. El envoltorio de `print`
-# de arriba hace `lstrip()`, así que aquí se acepta lo mismo que acepta él.
-_escritos_fin = set(_re_fin.findall(r'"(?:\\n)*\s*=== BLOQUE (\d+)', _fuente_fin))
-_corridos_fin = set()
-for _, _nom_fin in _tiempos_por_bloque:
-    _m_fin = _re_fin.match(r"=== BLOQUE (\d+)", _nom_fin)
-    if _m_fin:
-        _corridos_fin.add(_m_fin.group(1))
-# ⚠️ LOS QUE PUEDEN FALTAR CON MOTIVO son los que necesitan el repo de fuentes
-# al lado, y ya llevan su propio aviso arriba. Se descuentan LEYENDO SU LISTA,
-# no copiándolos aquí: dos listas del mismo conjunto se desincronizan.
-_con_motivo_fin = set()
-if not _hay_fuentes:
-    for _b_fin in _BLOQUES_QUE_NECESITAN_FUENTES:
-        _m2_fin = _re_fin.match(r"(\d+)", str(_b_fin))
-        if _m2_fin:
-            _con_motivo_fin.add(_m2_fin.group(1))
-_faltan_fin = sorted(_escritos_fin - _corridos_fin - _con_motivo_fin, key=int)
-if _faltan_fin:
-    fallos.append(
-        f"BLOQUES ESCRITOS Y NO EJECUTADOS: {', '.join(_faltan_fin)}. Están en el fichero y la "
-        f"batería no ha pasado por ellos -- casi siempre porque se añadieron DESPUÉS del "
-        f"`sys.exit()` del final. Un guardia inerte es peor que no tenerlo: sale verde igual")
 
 # ============================================================
 # BLOQUE 119 — LAS CIFRAS DE `CLAUDE.md`, CONTRA EL MOTOR VIVO (Y SU UNIDAD)
@@ -20817,6 +20819,63 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 _tiempos_por_bloque.sort(reverse=True)
 _gastado = sum(t for t, _ in _tiempos_por_bloque)
+# ⚠️ Y ESTE GUARDIA TIENE QUE SER LO ÚLTIMO DEL FICHERO, Y EL 16 DE SEPTIEMBRE
+#    NO LO ERA -- o sea que cayó en SU PROPIO fallo, en espejo (medido: acusó a
+#    los BLOQUES 119, 120 y 121 de «escritos y no ejecutados» mientras los tres
+#    corrían cinco líneas más abajo, con su cabecera impresa y su resultado en
+#    pantalla). Estaba escrito ANTES que ellos, así que cuando miraba todavía no
+#    habían pasado. Un guardia que se coloca en medio no mide lo que hay: mide lo
+#    que hay POR ENCIMA de él. Va aquí, pegado al recuento de tiempos, porque ese
+#    recuento es lo que lee, y los dos tienen que ver el fichero entero.
+
+# ⚠️ ¿SE HAN EJECUTADO TODOS LOS BLOQUES QUE HAY ESCRITOS? (14 de septiembre).
+#
+# CASO REAL, y lo cometí yo el mismo día que se escribe esto: el BLOQUE 111 se
+# añadió **al final del fichero**, o sea DESPUÉS del `sys.exit()` de aquí abajo.
+# La batería entera salió «✅ TODO EN VERDE» sin haberlo ejecutado nunca, y el
+# bloque tampoco aparecía en la lista de tiempos — que es donde se habría visto
+# si alguien la hubiera leído entera. Con `probar_bloques.py 111` salía verde,
+# porque ese script EXTRAE el bloque y lo corre suelto.
+#
+# Es la peor forma de esta familia: un guardia escrito, probado con el fallo
+# puesto, y **inerte**. Peor que no tenerlo, porque parece que alguien mira.
+#
+# Se compara lo que hay ESCRITO en el fuente (las cabeceras «=== BLOQUE N») contra lo
+# que de verdad ha impreso su cabecera. Cuesta leer un fichero y no depende de
+# que nadie se acuerde de nada, que es la misma regla con la que se miden los
+# tiempos aquí arriba.
+import re as _re_fin
+with open(__file__, encoding="utf-8") as _f_fin:
+    _fuente_fin = _f_fin.read()
+# ⚠️ EL PATRÓN TIENE QUE ACEPTAR EL SALTO DE LÍNEA DE DELANTE, y la primera
+# versión no lo hacía: escribir el salto dentro de la cadena, antes del «===»,
+# es la forma más común en este fichero, y anclando el patrón a `print("===`
+# se contaban 67 de 104. Un guardia que solo mira dos tercios
+# de lo que hay es otra forma de salir verde sin mirar. El envoltorio de `print`
+# de arriba hace `lstrip()`, así que aquí se acepta lo mismo que acepta él.
+_escritos_fin = set(_re_fin.findall(r'"(?:\\n)*\s*=== BLOQUE (\d+)', _fuente_fin))
+_corridos_fin = set()
+for _, _nom_fin in _tiempos_por_bloque:
+    _m_fin = _re_fin.match(r"=== BLOQUE (\d+)", _nom_fin)
+    if _m_fin:
+        _corridos_fin.add(_m_fin.group(1))
+# ⚠️ LOS QUE PUEDEN FALTAR CON MOTIVO son los que necesitan el repo de fuentes
+# al lado, y ya llevan su propio aviso arriba. Se descuentan LEYENDO SU LISTA,
+# no copiándolos aquí: dos listas del mismo conjunto se desincronizan.
+_con_motivo_fin = set()
+if not _hay_fuentes:
+    for _b_fin in _BLOQUES_QUE_NECESITAN_FUENTES:
+        _m2_fin = _re_fin.match(r"(\d+)", str(_b_fin))
+        if _m2_fin:
+            _con_motivo_fin.add(_m2_fin.group(1))
+_faltan_fin = sorted(_escritos_fin - _corridos_fin - _con_motivo_fin, key=int)
+if _faltan_fin:
+    fallos.append(
+        f"BLOQUES ESCRITOS Y NO EJECUTADOS: {', '.join(_faltan_fin)}. Están en el fichero y la "
+        f"batería no ha pasado por ellos -- casi siempre porque se añadieron DESPUÉS del "
+        f"`sys.exit()` del final. Un guardia inerte es peor que no tenerlo: sale verde igual")
+
+
 print("\nDÓNDE SE VA EL TIEMPO — los diez bloques más caros:")
 for _t, _nombre in _tiempos_por_bloque[:10]:
     print(f"  {_t:6.0f}s  {100*_t/_gastado:4.1f}%  {_nombre[4:70]}")
