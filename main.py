@@ -3990,10 +3990,37 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
     # cambiarle la decision sin decirselo, que es lo contrario de por que
     # existe poder elegirlo. Si en ese peldano no hay menu, se dice que no en
     # ese peldano -- y el elige otro.
+    # ⚠️ LA MEJORA NO PUEDE COMERSE EL PRESUPUESTO DE LA RESPUESTA (16 de
+    # septiembre de 2026). CASO REAL, y el fallo lo introduje yo el día 15.
+    #
+    # Desde ese día la escalera se recorre DOS veces: ésta, con el techo del
+    # libro puesto, y otra entera soltándolo. Las dos hacen falta y en ese orden
+    # -- antes `resolver()` soltaba el techo DENTRO del peldaño 0 y la escalera
+    # no bajaba nunca. Pero no son lo mismo: **esta primera es una MEJORA** (da
+    # un menú más pegado al consejo del libro) y **la segunda es la RESPUESTA**
+    # (es la que garantiza que el perro come). Perder la primera cuesta calidad;
+    # perder la segunda cuesta la comida.
+    #
+    # MEDIDO con el cachorro de raza grande al que le dan el 20 % del día en
+    # premios, peldaño a peldaño y con 120 s cada uno:
+    #     peldaños 0 a 6 .... infactible DEMOSTRADO, 0,2 s cada uno
+    #     peldaño 7 ......... infactible DEMOSTRADO, 17,2 s
+    #     peldaño 8 ......... MENÚ, 16,4 s, calcio 4114
+    # O sea ~35 s por vuelta y ~70 s las dos, contra un presupuesto de 40. Por
+    # eso el BLOQUE 101 salía verde en una máquina y rojo en otra un 39 % más
+    # lenta: la primera vuelta se comía el reloj y la segunda -- la que tenía la
+    # respuesta -- no llegaba a pisar el peldaño 8.
+    #
+    # Así que la primera vuelta se queda con LA MITAD del presupuesto como mucho.
+    # No es un número fino: es que a la segunda le tiene que quedar al menos
+    # tanto como a la primera, porque es la que no puede fallar.
+    _MITAD_PARA_LA_MEJORA = 0.5
     if not ok and not _peldano_pedido:
         for margenes_peldano, supl_peldano, que_se_suelta in _escalera_de_relajacion(hay_comida)[1:]:
             if tiempo_restante() <= 1.5:
                 break  # sin tiempo: mejor no factible que un timeout de Render
+            if (time.time() - t_inicio_total) >= PRESUPUESTO_SEGUNDOS * _MITAD_PARA_LA_MEJORA:
+                break  # se acabó lo que se le presta a la MEJORA: manda la RESPUESTA
             ok, gramos, ficha_intento = _intentar_generacion(
                 forzar, None, margenes=margenes_peldano, max_supl=supl_peldano,
                 soltar_techo_libro=False)
