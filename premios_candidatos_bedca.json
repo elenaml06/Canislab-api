@@ -1,0 +1,1920 @@
+{
+ "_meta": {
+  "que_es": "Las 13 fichas candidatas a PREMIO, bajadas de BEDCA el 16 de septiembre de 2026. TODAVIA NO SON DEL CATALOGO.",
+  "por_que_existe": "Elena, 16 de septiembre: «necesitamos tener fichas de los premios tambien en el catalogo de alimento. Vas a tener que ver que se le suele dar como un premio a un perro y meter esos alimentos en las fichas usando BEDCA, USDA, CIQUAL, todo lo que tengamos». Se bajaron las 13 y se guardan AQUI, en crudo y con su identificador, para que el trabajo no viva en una maquina: convertirlas en fichas del catalogo es la parte que queda y tiene una decision de diseno dentro.",
+  "de_donde": "BEDCA, via `contrastar_fuentes.bedca_ficha(id)`. Se puede rehacer.",
+  "ojo_con_la_energia": "BEDCA publica la energia SOLO EN KILOJULIOS. El campo «energía, total» de aqui son kJ y hay que dividir entre 4,184. Comprobado contra el catalogo: el Conejo dice 548 en BEDCA y 132 kcal en nuestra ficha, y 548/4,184 = 131,0. Si se cargara tal cual, la energia -- que es el DIVISOR de los 43 requisitos -- saldria 4,2 veces alta y los 43 se desplazarian a la vez.",
+  "lo_que_BEDCA_llena": "25 claves del motor: proteina, grasa, fibra, linoleico, linolenico, araquidonico, calcio, fosforo, potasio, sodio, magnesio, hierro, zinc, yodo, selenio, vitA, vitD, vitE, tiamina, riboflavina, niacina, vitB6, folato, vitB12 y energia.",
+  "lo_que_NO_llena_y_seria_hueco_declarado": "cobre, manganeso, cloruro, colina, acidoPantotenico, EPA, DHA, purinas, taurina, lcarnitina y los 12 aminoacidos. Para los aminoacidos y los acidos grasos la regla del repo es que NO se copian: se transfieren por gramo de proteina o de grasa.",
+  "la_decision_que_falta": "¿Categoria nueva «Premios» o una marca `es_premio` en la ficha? El BLOQUE 117 exige que toda categoria del catalogo sea comida o suplemento declarado, asi que una categoria nueva es una TERCERA CLASE que toca el modelo entero. La marca es mucho mas barata -- el motor ya no elige lo que no esta en `ACCESIBLES`, comprobado el 16 de septiembre con el cerebro de ternera y la sepia -- pero deja un cabo suelto: Personalizar puede elegir del catalogo completo dentro de una categoria, y esconder sin cerrar la puerta es decorado.",
+  "ojo_con_el_sodio": "El jamon serrano declara 2.130 mg de sodio por 100 g y el chorizo va por ahi. Eso es justo lo que hace que contar el premio SIRVA para algo: si se pasa del techo, el menu no sale y se dice. Pero tambien es por lo que estos alimentos NO pueden entrar en el automatico."
+ },
+ "candidatos": {
+  "Jamón serrano": {
+   "bedca_id": 2273,
+   "nombre_bedca": "Jamón serrano",
+   "datos": {
+    "alcohol (etanol)": [
+     "0",
+     "AR"
+    ],
+    "energía, total": [
+     "1329.2",
+     "BE"
+    ],
+    "grasa, total (lipidos totales)": [
+     "22.6",
+     "AR"
+    ],
+    "proteina, total": [
+     "28.8",
+     "AR"
+    ],
+    "agua (humedad)": [
+     "39.9",
+     "AR"
+    ],
+    "carbohidratos": [
+     "0.2",
+     "AR"
+    ],
+    "fibra, dietetica total": [
+     "0",
+     "AR"
+    ],
+    "ácido graso 12:0 (láurico)": [
+     "0.02",
+     "AR"
+    ],
+    "ácido graso 14:0 (ácido mirístico)": [
+     "0.01",
+     "AR"
+    ],
+    "ácido graso 16:0 (ácido palmítico)": [
+     "2.314",
+     "AR"
+    ],
+    "ácido graso 18:0 (ácido esteárico)": [
+     "1.039",
+     "AR"
+    ],
+    "ácido graso 18:1 n-9 cis (ácido oléico)": [
+     "5.974",
+     "AR"
+    ],
+    "ácido graso 18:2": [
+     "0.708",
+     "AR"
+    ],
+    "ácido graso 18:3": [
+     "0.068",
+     "AR"
+    ],
+    "ácido graso 20:4 n-6  (ácido araquidónico)": [
+     "0.11",
+     "AR"
+    ],
+    "ácidos grasos, monoinsaturados totales": [
+     "11.06",
+     "AR"
+    ],
+    "ácidos grasos, poliinsaturados totales": [
+     "2.58",
+     "AR"
+    ],
+    "ácidos grasos saturados totales": [
+     "7.94",
+     "AR"
+    ],
+    "colesterol": [
+     "84",
+     "AR"
+    ],
+    "Vitamina A equivalentes de retinol de actividades de retinos y carotenoides": [
+     "0",
+     "LZ"
+    ],
+    "Vitamina D": [
+     "0.6",
+     "AR"
+    ],
+    "Viamina E equivalentes de alfa tocoferol de actividades de vitámeros E": [
+     "0.2",
+     "AR"
+    ],
+    "folato, total": [
+     "2",
+     "AR"
+    ],
+    "equivalentes de niacina, totales": [
+     "8",
+     "AR"
+    ],
+    "riboflavina": [
+     "0.25",
+     "AR"
+    ],
+    "tiamina": [
+     "1",
+     "AR"
+    ],
+    "Vitamina B-12": [
+     "0.6",
+     "AR"
+    ],
+    "Vitamina B-6, Total": [
+     "0.5",
+     "AR"
+    ],
+    "Vitamina C (ácido ascórbico)": [
+     "0",
+     "LZ"
+    ],
+    "calcio": [
+     "9",
+     "AR"
+    ],
+    "hierro, total": [
+     "1.7",
+     "AR"
+    ],
+    "potasio": [
+     "250",
+     "AR"
+    ],
+    "magnesio": [
+     "22",
+     "AR"
+    ],
+    "sodio": [
+     "2130",
+     "AR"
+    ],
+    "fósforo": [
+     "167",
+     "AR"
+    ],
+    "ioduro": [
+     "11.4",
+     "AR"
+    ],
+    "selenio, total": [
+     "12.1",
+     "AR"
+    ],
+    "zinc (cinc)": [
+     "2.1",
+     "AR"
+    ]
+   }
+  },
+  "Jamón cocido": {
+   "bedca_id": 965,
+   "nombre_bedca": "Jamón cocido, categoría s/e",
+   "datos": {
+    "alcohol (etanol)": [
+     "0",
+     "LZ"
+    ],
+    "energía, total": [
+     "474.8",
+     "BE"
+    ],
+    "grasa, total (lipidos totales)": [
+     "3",
+     "AR"
+    ],
+    "proteina, total": [
+     "21",
+     "AR"
+    ],
+    "agua (humedad)": [
+     "75.6",
+     "AR"
+    ],
+    "carbohidratos": [
+     "0.4",
+     "AR"
+    ],
+    "fibra, dietetica total": [
+     "0",
+     "AR"
+    ],
+    "ácidos grasos, monoinsaturados totales": [
+     "1.4",
+     "AR"
+    ],
+    "ácidos grasos, poliinsaturados totales": [
+     "0.36",
+     "AR"
+    ],
+    "ácidos grasos saturados totales": [
+     "1.1",
+     "AR"
+    ],
+    "colesterol": [
+     "50",
+     "AR"
+    ],
+    "Vitamina A equivalentes de retinol de actividades de retinos y carotenoides": [
+     "",
+     "TR"
+    ],
+    "Vitamina D": [
+     "0.7",
+     "AR"
+    ],
+    "Viamina E equivalentes de alfa tocoferol de actividades de vitámeros E": [
+     "0.08",
+     "AR"
+    ],
+    "biotina": [
+     "3",
+     "AR"
+    ],
+    "folato, total": [
+     "0.2",
+     "AR"
+    ],
+    "equivalentes de niacina, totales": [
+     "11.4",
+     "AR"
+    ],
+    "ácido pantoténico (vitamina B5)": [
+     "1.03",
+     "AR"
+    ],
+    "riboflavina": [
+     "0.18",
+     "AR"
+    ],
+    "tiamina": [
+     "0.46",
+     "AR"
+    ],
+    "Vitamina B-12": [
+     "0.7",
+     "AR"
+    ],
+    "Vitamina B-6, Total": [
+     "0.2",
+     "AR"
+    ],
+    "Vitamina C (ácido ascórbico)": [
+     "19",
+     "AR"
+    ],
+    "calcio": [
+     "9.6",
+     "AR"
+    ],
+    "hierro, total": [
+     "2.1",
+     "AR"
+    ],
+    "potasio": [
+     "270",
+     "AR"
+    ],
+    "magnesio": [
+     "17.5",
+     "AR"
+    ],
+    "sodio": [
+     "970",
+     "AR"
+    ],
+    "fósforo": [
+     "239",
+     "AR"
+    ],
+    "cobre": [
+     "0.12",
+     "AR"
+    ],
+    "ioduro": [
+     "10.9",
+     "AR"
+    ],
+    "selenio, total": [
+     "11",
+     "AR"
+    ],
+    "zinc (cinc)": [
+     "2.8",
+     "AR"
+    ]
+   }
+  },
+  "Salchicha tipo frankfurt": {
+   "bedca_id": 2309,
+   "nombre_bedca": "Salchicha, tipo \"frankfurt\"",
+   "datos": {
+    "alcohol (etanol)": [
+     "0",
+     "AR"
+    ],
+    "energía, total": [
+     "1200",
+     "BE"
+    ],
+    "grasa, total (lipidos totales)": [
+     "26",
+     "AR"
+    ],
+    "proteina, total": [
+     "12.7",
+     "AR"
+    ],
+    "agua (humedad)": [
+     "56.4",
+     "AR"
+    ],
+    "carbohidratos": [
+     "1.3",
+     "AR"
+    ],
+    "fibra, dietetica total": [
+     "0.1",
+     "AR"
+    ],
+    "ácido graso 12:0 (láurico)": [
+     "0.027",
+     "AR"
+    ],
+    "ácido graso 14:0 (ácido mirístico)": [
+     "0.381",
+     "AR"
+    ],
+    "ácido graso 16:0 (ácido palmítico)": [
+     "5.999",
+     "AR"
+    ],
+    "ácido graso 18:0 (ácido esteárico)": [
+     "3.024",
+     "AR"
+    ],
+    "ácido graso 18:1 n-9 cis (ácido oléico)": [
+     "8.375",
+     "AR"
+    ],
+    "ácido graso 18:2": [
+     "3.788",
+     "AR"
+    ],
+    "ácido graso 18:3": [
+     "0.275",
+     "AR"
+    ],
+    "ácido graso 20:4 n-6  (ácido araquidónico)": [
+     "0.057",
+     "AR"
+    ],
+    "ácidos grasos, monoinsaturados totales": [
+     "12.02",
+     "AR"
+    ],
+    "ácidos grasos, poliinsaturados totales": [
+     "2.96",
+     "AR"
+    ],
+    "ácidos grasos saturados totales": [
+     "9.33",
+     "AR"
+    ],
+    "ácidos grasos, trans totales": [
+     "0.2997",
+     "AR"
+    ],
+    "colesterol": [
+     "65",
+     "AR"
+    ],
+    "Vitamina A equivalentes de retinol de actividades de retinos y carotenoides": [
+     "15",
+     "AR"
+    ],
+    "Vitamina D": [
+     "0.2",
+     "AR"
+    ],
+    "Viamina E equivalentes de alfa tocoferol de actividades de vitámeros E": [
+     "0.15",
+     "AR"
+    ],
+    "folato, total": [
+     "3",
+     "AR"
+    ],
+    "equivalentes de niacina, totales": [
+     "2.4",
+     "AR"
+    ],
+    "riboflavina": [
+     "0.2",
+     "AR"
+    ],
+    "tiamina": [
+     "0.3",
+     "AR"
+    ],
+    "Vitamina B-12": [
+     "0.5",
+     "AR"
+    ],
+    "Vitamina B-6, Total": [
+     "0.1",
+     "AR"
+    ],
+    "Vitamina C (ácido ascórbico)": [
+     "0",
+     "LZ"
+    ],
+    "calcio": [
+     "20",
+     "AR"
+    ],
+    "hierro, total": [
+     "1",
+     "AR"
+    ],
+    "potasio": [
+     "170",
+     "AR"
+    ],
+    "magnesio": [
+     "11",
+     "AR"
+    ],
+    "sodio": [
+     "900",
+     "AR"
+    ],
+    "fósforo": [
+     "173",
+     "AR"
+    ],
+    "ioduro": [
+     "6.9",
+     "AR"
+    ],
+    "selenio, total": [
+     "8.3",
+     "AR"
+    ],
+    "zinc (cinc)": [
+     "1.4",
+     "AR"
+    ]
+   }
+  },
+  "Salchicha de pollo fresca": {
+   "bedca_id": 2308,
+   "nombre_bedca": "Salchicha de pollo fresca",
+   "datos": {
+    "alcohol (etanol)": [
+     "0",
+     "AR"
+    ],
+    "energía, total": [
+     "1278.04",
+     "BE"
+    ],
+    "grasa, total (lipidos totales)": [
+     "28.1",
+     "AR"
+    ],
+    "proteina, total": [
+     "13.12",
+     "AR"
+    ],
+    "agua (humedad)": [
+     "55.41",
+     "AR"
+    ],
+    "carbohidratos": [
+     "0.9",
+     "AR"
+    ],
+    "fibra, dietetica total": [
+     "0",
+     "AR"
+    ],
+    "ácido graso 12:0 (láurico)": [
+     "0.012",
+     "AR"
+    ],
+    "ácido graso 14:0 (ácido mirístico)": [
+     "0.164",
+     "AR"
+    ],
+    "ácido graso 16:0 (ácido palmítico)": [
+     "2.892",
+     "AR"
+    ],
+    "ácido graso 18:0 (ácido esteárico)": [
+     "1.542",
+     "AR"
+    ],
+    "ácido graso 18:1 n-9 cis (ácido oléico)": [
+     "4.021",
+     "AR"
+    ],
+    "ácido graso 18:3": [
+     "1.107",
+     "AR"
+    ],
+    "ácido graso 20:4 n-6  (ácido araquidónico)": [
+     "0.044",
+     "AR"
+    ],
+    "ácido graso 22:6 n-3 (ácido docosahexaenóico)": [
+     "0.005",
+     "AR"
+    ],
+    "ácidos grasos, monoinsaturados totales": [
+     "13",
+     "AR"
+    ],
+    "ácidos grasos, poliinsaturados totales": [
+     "2.602",
+     "AR"
+    ],
+    "ácidos grasos saturados totales": [
+     "10.545",
+     "AR"
+    ],
+    "ácidos grasos, trans totales": [
+     "0.118",
+     "AR"
+    ],
+    "colesterol": [
+     "67",
+     "AR"
+    ],
+    "Vitamina A equivalentes de retinol de actividades de retinos y carotenoides": [
+     "0",
+     "AR"
+    ],
+    "Vitamina D": [
+     "0",
+     "AR"
+    ],
+    "Viamina E equivalentes de alfa tocoferol de actividades de vitámeros E": [
+     "0",
+     "AR"
+    ],
+    "folato, total": [
+     "3.4",
+     "AR"
+    ],
+    "equivalentes de niacina, totales": [
+     "4.56",
+     "AR"
+    ],
+    "riboflavina": [
+     "0.16",
+     "AR"
+    ],
+    "tiamina": [
+     "0.18",
+     "AR"
+    ],
+    "Vitamina B-12": [
+     "1.51",
+     "AR"
+    ],
+    "Vitamina B-6, Total": [
+     "0.16",
+     "AR"
+    ],
+    "Vitamina C (ácido ascórbico)": [
+     "0",
+     "AR"
+    ],
+    "calcio": [
+     "34.54",
+     "AR"
+    ],
+    "hierro, total": [
+     "1.44",
+     "AR"
+    ],
+    "potasio": [
+     "210",
+     "AR"
+    ],
+    "magnesio": [
+     "9.42",
+     "AR"
+    ],
+    "sodio": [
+     "1060",
+     "AR"
+    ],
+    "fósforo": [
+     "150",
+     "AR"
+    ],
+    "ioduro": [
+     "1.77",
+     "AR"
+    ],
+    "selenio, total": [
+     "11.5",
+     "AR"
+    ],
+    "zinc (cinc)": [
+     "2.62",
+     "AR"
+    ]
+   }
+  },
+  "Pavo fiambre": {
+   "bedca_id": 2286,
+   "nombre_bedca": "Pavo, fiambre",
+   "datos": {
+    "alcohol (etanol)": [
+     "0",
+     "AR"
+    ],
+    "energía, total": [
+     "614.7",
+     "BE"
+    ],
+    "grasa, total (lipidos totales)": [
+     "9.4",
+     "AR"
+    ],
+    "proteina, total": [
+     "15.3",
+     "AR"
+    ],
+    "agua (humedad)": [
+     "74.07",
+     "AR"
+    ],
+    "carbohidratos": [
+     "0.4",
+     "AR"
+    ],
+    "fibra, dietetica total": [
+     "0",
+     "AR"
+    ],
+    "ácidos grasos, monoinsaturados totales": [
+     "3.146",
+     "AR"
+    ],
+    "ácidos grasos, poliinsaturados totales": [
+     "2.342",
+     "AR"
+    ],
+    "ácidos grasos saturados totales": [
+     "2.783",
+     "AR"
+    ],
+    "colesterol": [
+     "76",
+     "AR"
+    ],
+    "Vitamina A equivalentes de retinol de actividades de retinos y carotenoides": [
+     "0",
+     "AR"
+    ],
+    "Vitamina D": [
+     "",
+     "TR"
+    ],
+    "Viamina E equivalentes de alfa tocoferol de actividades de vitámeros E": [
+     "",
+     "TR"
+    ],
+    "folato, total": [
+     "",
+     "TR"
+    ],
+    "equivalentes de niacina, totales": [
+     "",
+     "TR"
+    ],
+    "riboflavina": [
+     "",
+     "TR"
+    ],
+    "tiamina": [
+     "",
+     "TR"
+    ],
+    "Vitamina B-12": [
+     "",
+     "TR"
+    ],
+    "Vitamina B-6, Total": [
+     "",
+     "TR"
+    ],
+    "Vitamina C (ácido ascórbico)": [
+     "0",
+     "AR"
+    ],
+    "calcio": [
+     "40",
+     "AR"
+    ],
+    "hierro, total": [
+     "1.25",
+     "AR"
+    ],
+    "potasio": [
+     "216",
+     "AR"
+    ],
+    "magnesio": [
+     "22",
+     "AR"
+    ],
+    "sodio": [
+     "1004",
+     "AR"
+    ],
+    "fósforo": [
+     "266",
+     "AR"
+    ],
+    "ioduro": [
+     "2",
+     "AR"
+    ],
+    "selenio, total": [
+     "",
+     "TR"
+    ],
+    "zinc (cinc)": [
+     "2.32",
+     "AR"
+    ]
+   }
+  },
+  "Pollo fiambre": {
+   "bedca_id": 2293,
+   "nombre_bedca": "Pollo, fiambre",
+   "datos": {
+    "alcohol (etanol)": [
+     "0",
+     "AR"
+    ],
+    "energía, total": [
+     "583.75",
+     "BE"
+    ],
+    "grasa, total (lipidos totales)": [
+     "5.6",
+     "AR"
+    ],
+    "proteina, total": [
+     "19.85",
+     "AR"
+    ],
+    "agua (humedad)": [
+     "71.5",
+     "AR"
+    ],
+    "carbohidratos": [
+     "2.3",
+     "AR"
+    ],
+    "fibra, dietetica total": [
+     "0",
+     "AR"
+    ],
+    "ácidos grasos, monoinsaturados totales": [
+     "2.336",
+     "AR"
+    ],
+    "ácidos grasos, poliinsaturados totales": [
+     "0.973",
+     "AR"
+    ],
+    "ácidos grasos saturados totales": [
+     "1.452",
+     "AR"
+    ],
+    "colesterol": [
+     "59",
+     "AR"
+    ],
+    "Vitamina A equivalentes de retinol de actividades de retinos y carotenoides": [
+     "0",
+     "AR"
+    ],
+    "Vitamina D": [
+     "",
+     "TR"
+    ],
+    "Viamina E equivalentes de alfa tocoferol de actividades de vitámeros E": [
+     "",
+     "TR"
+    ],
+    "folato, total": [
+     "",
+     "TR"
+    ],
+    "equivalentes de niacina, totales": [
+     "",
+     "TR"
+    ],
+    "riboflavina": [
+     "",
+     "TR"
+    ],
+    "tiamina": [
+     "",
+     "TR"
+    ],
+    "Vitamina B-12": [
+     "",
+     "TR"
+    ],
+    "Vitamina B-6, Total": [
+     "",
+     "TR"
+    ],
+    "Vitamina C (ácido ascórbico)": [
+     "0",
+     "AR"
+    ],
+    "calcio": [
+     "17",
+     "AR"
+    ],
+    "hierro, total": [
+     "1.58",
+     "AR"
+    ],
+    "potasio": [
+     "302",
+     "AR"
+    ],
+    "magnesio": [
+     "24",
+     "AR"
+    ],
+    "sodio": [
+     "1196",
+     "AR"
+    ],
+    "fósforo": [
+     "248",
+     "AR"
+    ],
+    "ioduro": [
+     "6.3",
+     "AR"
+    ],
+    "selenio, total": [
+     "",
+     "TR"
+    ],
+    "zinc (cinc)": [
+     "1.13",
+     "AR"
+    ]
+   }
+  },
+  "Queso fresco de Burgos": {
+   "bedca_id": 2507,
+   "nombre_bedca": "Queso fresco de burgos",
+   "datos": {
+    "alcohol (etanol)": [
+     "0",
+     "LZ"
+    ],
+    "energía, total": [
+     "823.1",
+     "BE"
+    ],
+    "grasa, total (lipidos totales)": [
+     "15.4",
+     "AR"
+    ],
+    "proteina, total": [
+     "12.4",
+     "AR"
+    ],
+    "agua (humedad)": [
+     "68.4",
+     "AR"
+    ],
+    "carbohidratos": [
+     "2.5",
+     "AR"
+    ],
+    "fibra, dietetica total": [
+     "0",
+     "AR"
+    ],
+    "ácidos grasos, monoinsaturados totales": [
+     "4.28",
+     "AR"
+    ],
+    "ácidos grasos, poliinsaturados totales": [
+     "0.74",
+     "AR"
+    ],
+    "ácidos grasos saturados totales": [
+     "9.46",
+     "AR"
+    ],
+    "colesterol": [
+     "14.5",
+     "AR"
+    ],
+    "Vitamina A equivalentes de retinol de actividades de retinos y carotenoides": [
+     "194",
+     "AR"
+    ],
+    "Vitamina D": [
+     "0",
+     "AR"
+    ],
+    "Viamina E equivalentes de alfa tocoferol de actividades de vitámeros E": [
+     "0.56",
+     "AR"
+    ],
+    "folato, total": [
+     "14",
+     "AR"
+    ],
+    "equivalentes de niacina, totales": [
+     "4.1",
+     "AR"
+    ],
+    "riboflavina": [
+     "0.17",
+     "AR"
+    ],
+    "tiamina": [
+     "0.02",
+     "AR"
+    ],
+    "Vitamina B-12": [
+     "0.66",
+     "AR"
+    ],
+    "Vitamina B-6, Total": [
+     "0.08",
+     "AR"
+    ],
+    "Vitamina C (ácido ascórbico)": [
+     "0",
+     "AR"
+    ],
+    "calcio": [
+     "338",
+     "AR"
+    ],
+    "hierro, total": [
+     "0.5",
+     "AR"
+    ],
+    "potasio": [
+     "121",
+     "AR"
+    ],
+    "magnesio": [
+     "16",
+     "AR"
+    ],
+    "sodio": [
+     "272",
+     "AR"
+    ],
+    "fósforo": [
+     "170",
+     "AR"
+    ],
+    "ioduro": [
+     "4.8",
+     "AR"
+    ],
+    "selenio, total": [
+     "14.5",
+     "AR"
+    ],
+    "zinc (cinc)": [
+     "1.3",
+     "AR"
+    ]
+   }
+  },
+  "Queso manchego": {
+   "bedca_id": 2508,
+   "nombre_bedca": "Queso manchego",
+   "datos": {
+    "alcohol (etanol)": [
+     "0",
+     "AR"
+    ],
+    "energía, total": [
+     "1622.39",
+     "BE"
+    ],
+    "grasa, total (lipidos totales)": [
+     "30.4",
+     "AR"
+    ],
+    "proteina, total": [
+     "28.77",
+     "AR"
+    ],
+    "agua (humedad)": [
+     "40.3",
+     "AR"
+    ],
+    "carbohidratos": [
+     "0.5",
+     "AR"
+    ],
+    "fibra, dietetica total": [
+     "0",
+     "AR"
+    ],
+    "ácido graso 12:0 (láurico)": [
+     "0.034",
+     "AR"
+    ],
+    "ácido graso 14:0 (ácido mirístico)": [
+     "0.061",
+     "AR"
+    ],
+    "ácido graso 16:0 (ácido palmítico)": [
+     "0.1925",
+     "AR"
+    ],
+    "ácido graso 18:0 (ácido esteárico)": [
+     "0.051",
+     "AR"
+    ],
+    "ácido graso 18:1 n-9 cis (ácido oléico)": [
+     "0.1384",
+     "AR"
+    ],
+    "ácido graso 18:2": [
+     "0.0136",
+     "AR"
+    ],
+    "ácido graso 18:3": [
+     "0.155",
+     "AR"
+    ],
+    "ácido graso 20:4 n-6  (ácido araquidónico)": [
+     "0.055",
+     "AR"
+    ],
+    "ácidos grasos, monoinsaturados totales": [
+     "9",
+     "AR"
+    ],
+    "ácidos grasos, poliinsaturados totales": [
+     "0.763",
+     "AR"
+    ],
+    "ácidos grasos saturados totales": [
+     "18.9",
+     "AR"
+    ],
+    "ácidos grasos, trans totales": [
+     "1.47",
+     "AR"
+    ],
+    "colesterol": [
+     "87.8",
+     "AR"
+    ],
+    "Vitamina A equivalentes de retinol de actividades de retinos y carotenoides": [
+     "360",
+     "AR"
+    ],
+    "Vitamina D": [
+     "0.28",
+     "AR"
+    ],
+    "Viamina E equivalentes de alfa tocoferol de actividades de vitámeros E": [
+     "0.62",
+     "AR"
+    ],
+    "folato, total": [
+     "21.3",
+     "AR"
+    ],
+    "equivalentes de niacina, totales": [
+     "4.6",
+     "AR"
+    ],
+    "riboflavina": [
+     "0.3",
+     "AR"
+    ],
+    "tiamina": [
+     "0.04",
+     "AR"
+    ],
+    "Vitamina B-12": [
+     "1.5",
+     "AR"
+    ],
+    "Vitamina B-6, Total": [
+     "0.2",
+     "AR"
+    ],
+    "Vitamina C (ácido ascórbico)": [
+     "0",
+     "AR"
+    ],
+    "calcio": [
+     "765",
+     "AR"
+    ],
+    "hierro, total": [
+     "0.64",
+     "AR"
+    ],
+    "potasio": [
+     "100",
+     "AR"
+    ],
+    "magnesio": [
+     "36",
+     "AR"
+    ],
+    "sodio": [
+     "670",
+     "AR"
+    ],
+    "fósforo": [
+     "520",
+     "AR"
+    ],
+    "ioduro": [
+     "34",
+     "AR"
+    ],
+    "selenio, total": [
+     "1.6",
+     "AR"
+    ],
+    "zinc (cinc)": [
+     "4",
+     "AR"
+    ]
+   }
+  },
+  "Queso curado": {
+   "bedca_id": 2502,
+   "nombre_bedca": "Queso curado, genérico",
+   "datos": {
+    "alcohol (etanol)": [
+     "0",
+     "LZ"
+    ],
+    "energía, total": [
+     "1874.76",
+     "BE"
+    ],
+    "grasa, total (lipidos totales)": [
+     "34",
+     "AR"
+    ],
+    "proteina, total": [
+     "35.77",
+     "AR"
+    ],
+    "agua (humedad)": [
+     "27",
+     "AR"
+    ],
+    "carbohidratos": [
+     "0.51",
+     "AR"
+    ],
+    "fibra, dietetica total": [
+     "0",
+     "LZ"
+    ],
+    "ácidos grasos, monoinsaturados totales": [
+     "9.9",
+     "AR"
+    ],
+    "ácidos grasos, poliinsaturados totales": [
+     "1",
+     "AR"
+    ],
+    "ácidos grasos saturados totales": [
+     "21.3",
+     "AR"
+    ],
+    "colesterol": [
+     "74.4",
+     "AR"
+    ],
+    "Vitamina A equivalentes de retinol de actividades de retinos y carotenoides": [
+     "234",
+     "AR"
+    ],
+    "Vitamina D": [
+     "0.9",
+     "AR"
+    ],
+    "Viamina E equivalentes de alfa tocoferol de actividades de vitámeros E": [
+     "0.61",
+     "AR"
+    ],
+    "folato, total": [
+     "21.8",
+     "AR"
+    ],
+    "equivalentes de niacina, totales": [
+     "8.2",
+     "AR"
+    ],
+    "riboflavina": [
+     "0.33",
+     "AR"
+    ],
+    "tiamina": [
+     "0.04",
+     "AR"
+    ],
+    "Vitamina B-12": [
+     "1.5",
+     "AR"
+    ],
+    "Vitamina B-6, Total": [
+     "0.2",
+     "AR"
+    ],
+    "Vitamina C (ácido ascórbico)": [
+     "0",
+     "LZ"
+    ],
+    "calcio": [
+     "848",
+     "AR"
+    ],
+    "hierro, total": [
+     "0.75",
+     "AR"
+    ],
+    "potasio": [
+     "82",
+     "AR"
+    ],
+    "magnesio": [
+     "33.5",
+     "AR"
+    ],
+    "sodio": [
+     "620",
+     "AR"
+    ],
+    "fósforo": [
+     "470",
+     "AR"
+    ],
+    "ioduro": [
+     "4.1",
+     "AR"
+    ],
+    "selenio, total": [
+     "12",
+     "AR"
+    ],
+    "zinc (cinc)": [
+     "3.2",
+     "AR"
+    ]
+   }
+  },
+  "Crema de cacahuete": {
+   "bedca_id": 979,
+   "nombre_bedca": "Crema de cacahuete",
+   "datos": {
+    "alcohol (etanol)": [
+     "0",
+     "LZ"
+    ],
+    "energía, total": [
+     "2508.73",
+     "BE"
+    ],
+    "grasa, total (lipidos totales)": [
+     "50.9414",
+     "BE"
+    ],
+    "proteina, total": [
+     "25.5",
+     "AR"
+    ],
+    "agua (humedad)": [
+     "1.2",
+     "AR"
+    ],
+    "carbohidratos": [
+     "11.2",
+     "BE"
+    ],
+    "fibra, dietetica total": [
+     "7",
+     "AR"
+    ],
+    "almidón, total": [
+     "5.5",
+     "AR"
+    ],
+    "azucares, totales": [
+     "5.7",
+     "AR"
+    ],
+    "ácido graso 12:0 (láurico)": [
+     "0",
+     "AR"
+    ],
+    "ácido graso 14:0 (ácido mirístico)": [
+     "0.02",
+     "AR"
+    ],
+    "ácido graso 16:0 (ácido palmítico)": [
+     "4.741",
+     "AR"
+    ],
+    "ácido graso 18:0 (ácido esteárico)": [
+     "2.181",
+     "AR"
+    ],
+    "ácido graso 18:1 n-9 cis (ácido oléico)": [
+     "24.812",
+     "AR"
+    ],
+    "ácido graso 18:2": [
+     "12.215",
+     "AR"
+    ],
+    "ácido graso 18:3": [
+     "0.027",
+     "AR"
+    ],
+    "ácido graso 20:4 n-6  (ácido araquidónico)": [
+     "0.018",
+     "AR"
+    ],
+    "ácido graso 20:5 (ácido eicosapentaenóico)": [
+     "0",
+     "AR"
+    ],
+    "ácido graso 22:6 n-3 (ácido docosahexaenóico)": [
+     "0",
+     "AR"
+    ],
+    "ácidos grasos, monoinsaturados totales": [
+     "25.8",
+     "AR"
+    ],
+    "ácidos grasos, poliinsaturados totales": [
+     "12.8",
+     "AR"
+    ],
+    "ácidos grasos saturados totales": [
+     "10.1",
+     "AR"
+    ],
+    "colesterol": [
+     "0",
+     "LZ"
+    ],
+    "Vitamina A equivalentes de retinol de actividades de retinos y carotenoides": [
+     "0",
+     "LZ"
+    ],
+    "Vitamina D": [
+     "0",
+     "LZ"
+    ],
+    "Viamina E equivalentes de alfa tocoferol de actividades de vitámeros E": [
+     "5",
+     "AR"
+    ],
+    "folato, total": [
+     "67",
+     "AR"
+    ],
+    "equivalentes de niacina, totales": [
+     "15",
+     "AR"
+    ],
+    "riboflavina": [
+     "0.1",
+     "AR"
+    ],
+    "tiamina": [
+     "0.15",
+     "AR"
+    ],
+    "Vitamina B-12": [
+     "0",
+     "LZ"
+    ],
+    "Vitamina B-6, Total": [
+     "0.5",
+     "AR"
+    ],
+    "Vitamina C (ácido ascórbico)": [
+     "0",
+     "AR"
+    ],
+    "calcio": [
+     "40",
+     "AR"
+    ],
+    "hierro, total": [
+     "2",
+     "AR"
+    ],
+    "potasio": [
+     "750",
+     "AR"
+    ],
+    "magnesio": [
+     "180",
+     "AR"
+    ],
+    "sodio": [
+     "313",
+     "AR"
+    ],
+    "fósforo": [
+     "366",
+     "AR"
+    ],
+    "ioduro": [
+     "0.5",
+     "AR"
+    ],
+    "selenio, total": [
+     "4.1",
+     "AR"
+    ],
+    "zinc (cinc)": [
+     "3",
+     "AR"
+    ]
+   }
+  },
+  "Pan blanco de barra": {
+   "bedca_id": 2160,
+   "nombre_bedca": "Pan blanco, de barra",
+   "datos": {
+    "alcohol (etanol)": [
+     "0",
+     "LZ"
+    ],
+    "energía, total": [
+     "999.3",
+     "BE"
+    ],
+    "grasa, total (lipidos totales)": [
+     "1.6",
+     "AR"
+    ],
+    "proteina, total": [
+     "8.3",
+     "AR"
+    ],
+    "agua (humedad)": [
+     "34.6",
+     "AR"
+    ],
+    "carbohidratos": [
+     "47",
+     "AR"
+    ],
+    "fibra, dietetica total": [
+     "3.5",
+     "AR"
+    ],
+    "ácidos grasos, monoinsaturados totales": [
+     "0.28",
+     "AR"
+    ],
+    "ácidos grasos, poliinsaturados totales": [
+     "0.34",
+     "AR"
+    ],
+    "ácidos grasos saturados totales": [
+     "0.39",
+     "AR"
+    ],
+    "colesterol": [
+     "0",
+     "LZ"
+    ],
+    "Vitamina A equivalentes de retinol de actividades de retinos y carotenoides": [
+     "0",
+     "AR"
+    ],
+    "Vitamina D": [
+     "0",
+     "AR"
+    ],
+    "Viamina E equivalentes de alfa tocoferol de actividades de vitámeros E": [
+     "",
+     "TR"
+    ],
+    "folato, total": [
+     "23",
+     "AR"
+    ],
+    "equivalentes de niacina, totales": [
+     "1.7",
+     "AR"
+    ],
+    "riboflavina": [
+     "0.05",
+     "AR"
+    ],
+    "tiamina": [
+     "0.08",
+     "AR"
+    ],
+    "Vitamina B-12": [
+     "0",
+     "AR"
+    ],
+    "Vitamina B-6, Total": [
+     "0.06",
+     "AR"
+    ],
+    "Vitamina C (ácido ascórbico)": [
+     "0",
+     "AR"
+    ],
+    "calcio": [
+     "56",
+     "AR"
+    ],
+    "hierro, total": [
+     "1.6",
+     "AR"
+    ],
+    "potasio": [
+     "120",
+     "AR"
+    ],
+    "magnesio": [
+     "25",
+     "AR"
+    ],
+    "sodio": [
+     "650",
+     "AR"
+    ],
+    "fósforo": [
+     "90",
+     "AR"
+    ],
+    "ioduro": [
+     "4.7",
+     "AR"
+    ],
+    "selenio, total": [
+     "28",
+     "AR"
+    ],
+    "zinc (cinc)": [
+     "0.6",
+     "AR"
+    ]
+   }
+  },
+  "Galleta": {
+   "bedca_id": 2673,
+   "nombre_bedca": "Galleta, genérico",
+   "datos": {
+    "alcohol (etanol)": [
+     "0",
+     "LZ"
+    ],
+    "energía, total": [
+     "2013.68",
+     "BE"
+    ],
+    "grasa, total (lipidos totales)": [
+     "21.77",
+     "AR"
+    ],
+    "proteina, total": [
+     "6.76",
+     "AR"
+    ],
+    "agua (humedad)": [
+     "3.29",
+     "AR"
+    ],
+    "carbohidratos": [
+     "64.31",
+     "AR"
+    ],
+    "fibra, dietetica total": [
+     "3.21",
+     "AR"
+    ],
+    "ácido graso 12:0 (láurico)": [
+     "1.982",
+     "AR"
+    ],
+    "ácido graso 14:0 (ácido mirístico)": [
+     "1.142",
+     "AR"
+    ],
+    "ácido graso 16:0 (ácido palmítico)": [
+     "4.234",
+     "AR"
+    ],
+    "ácido graso 18:0 (ácido esteárico)": [
+     "2.016",
+     "AR"
+    ],
+    "ácido graso 18:1 n-9 cis (ácido oléico)": [
+     "4.704",
+     "AR"
+    ],
+    "ácido graso 18:2": [
+     "1.428",
+     "AR"
+    ],
+    "ácido graso 18:3": [
+     "0.067",
+     "AR"
+    ],
+    "ácidos grasos, monoinsaturados totales": [
+     "7.95",
+     "AR"
+    ],
+    "ácidos grasos, poliinsaturados totales": [
+     "2.37",
+     "AR"
+    ],
+    "ácidos grasos saturados totales": [
+     "10.27",
+     "AR"
+    ],
+    "ácidos grasos, trans totales": [
+     "0.302",
+     "AR"
+    ],
+    "colesterol": [
+     "50.17",
+     "AR"
+    ],
+    "Vitamina A equivalentes de retinol de actividades de retinos y carotenoides": [
+     "0.2",
+     "AR"
+    ],
+    "Vitamina D": [
+     "0.34",
+     "AR"
+    ],
+    "Viamina E equivalentes de alfa tocoferol de actividades de vitámeros E": [
+     "1.81",
+     "AR"
+    ],
+    "folato, total": [
+     "9.25",
+     "AR"
+    ],
+    "equivalentes de niacina, totales": [
+     "2.23",
+     "AR"
+    ],
+    "riboflavina": [
+     "0.11",
+     "AR"
+    ],
+    "tiamina": [
+     "0.1",
+     "AR"
+    ],
+    "Vitamina B-12": [
+     "",
+     "BL"
+    ],
+    "Vitamina B-6, Total": [
+     "0.07",
+     "AR"
+    ],
+    "Vitamina C (ácido ascórbico)": [
+     "0.09",
+     "AR"
+    ],
+    "calcio": [
+     "96",
+     "AR"
+    ],
+    "hierro, total": [
+     "2.05",
+     "AR"
+    ],
+    "potasio": [
+     "169.75",
+     "AR"
+    ],
+    "magnesio": [
+     "29.83",
+     "AR"
+    ],
+    "sodio": [
+     "409.9",
+     "AR"
+    ],
+    "fósforo": [
+     "124.42",
+     "AR"
+    ],
+    "ioduro": [
+     "",
+     "TR"
+    ],
+    "selenio, total": [
+     "5.24",
+     "AR"
+    ],
+    "zinc (cinc)": [
+     "0.77",
+     "AR"
+    ]
+   }
+  },
+  "Chorizo": {
+   "bedca_id": 2264,
+   "nombre_bedca": "Chorizo",
+   "datos": {
+    "alcohol (etanol)": [
+     "0",
+     "AR"
+    ],
+    "energía, total": [
+     "1346",
+     "BE"
+    ],
+    "grasa, total (lipidos totales)": [
+     "23.1",
+     "AR"
+    ],
+    "proteina, total": [
+     "27",
+     "AR"
+    ],
+    "agua (humedad)": [
+     "47",
+     "AR"
+    ],
+    "carbohidratos": [
+     "1.9",
+     "AR"
+    ],
+    "fibra, dietetica total": [
+     "0",
+     "AR"
+    ],
+    "ácido graso 12:0 (láurico)": [
+     "0.023",
+     "AR"
+    ],
+    "ácido graso 14:0 (ácido mirístico)": [
+     "0.298",
+     "AR"
+    ],
+    "ácido graso 16:0 (ácido palmítico)": [
+     "4.979",
+     "AR"
+    ],
+    "ácido graso 18:0 (ácido esteárico)": [
+     "2.541",
+     "AR"
+    ],
+    "ácido graso 18:1 n-9 cis (ácido oléico)": [
+     "6.764",
+     "AR"
+    ],
+    "ácido graso 18:2": [
+     "2.545",
+     "AR"
+    ],
+    "ácido graso 18:3": [
+     "0.151",
+     "AR"
+    ],
+    "ácido graso 20:4 n-6  (ácido araquidónico)": [
+     "0.036",
+     "AR"
+    ],
+    "ácidos grasos, monoinsaturados totales": [
+     "11",
+     "AR"
+    ],
+    "ácidos grasos, poliinsaturados totales": [
+     "2.502",
+     "AR"
+    ],
+    "ácidos grasos saturados totales": [
+     "9.6",
+     "AR"
+    ],
+    "ácidos grasos, trans totales": [
+     "0.17",
+     "AR"
+    ],
+    "colesterol": [
+     "72.6",
+     "AR"
+    ],
+    "Vitamina A equivalentes de retinol de actividades de retinos y carotenoides": [
+     "",
+     "TR"
+    ],
+    "Vitamina D": [
+     "",
+     "TR"
+    ],
+    "Viamina E equivalentes de alfa tocoferol de actividades de vitámeros E": [
+     "0.29",
+     "AR"
+    ],
+    "folato, total": [
+     "0.9",
+     "AR"
+    ],
+    "equivalentes de niacina, totales": [
+     "7.1",
+     "AR"
+    ],
+    "riboflavina": [
+     "0.15",
+     "AR"
+    ],
+    "tiamina": [
+     "0.33",
+     "AR"
+    ],
+    "Vitamina B-12": [
+     "0.9",
+     "AR"
+    ],
+    "Vitamina B-6, Total": [
+     "0.14",
+     "AR"
+    ],
+    "Vitamina C (ácido ascórbico)": [
+     "0",
+     "AR"
+    ],
+    "calcio": [
+     "18.4",
+     "AR"
+    ],
+    "hierro, total": [
+     "2.1",
+     "AR"
+    ],
+    "potasio": [
+     "180",
+     "AR"
+    ],
+    "magnesio": [
+     "10.3",
+     "AR"
+    ],
+    "sodio": [
+     "1060",
+     "AR"
+    ],
+    "fósforo": [
+     "270",
+     "AR"
+    ],
+    "ioduro": [
+     "10.9",
+     "AR"
+    ],
+    "selenio, total": [
+     "21.1",
+     "AR"
+    ],
+    "zinc (cinc)": [
+     "1.2",
+     "AR"
+    ]
+   }
+  }
+ }
+}
