@@ -164,7 +164,41 @@ _LARGO_MINIMO = 25
 # applies» cuando la fuente dice «instead the nutritional maximum, WHEN INCLUDED
 # IN THE RELEVANT TABLES, should be taken into account». Una condicion borrada.
 SIN_DECIR_DECLARADAS = 0          # citas que no dicen de que fuente salen
-SIN_TEXTO_DECLARADAS = 20         # citan una fuente que no esta en el repo.
+SIN_TEXTO_DECLARADAS = 3          # citan una fuente que no esta en el repo.
+                                  # ⚠️ 20 -> 3 EL 16 DE SEPTIEMBRE, Y ES LA
+                                  # UNICA VEZ QUE ESTE NUMERO HA BAJADO POR
+                                  # TRABAJO Y NO POR BAJARSE UN PDF. Elena:
+                                  # «verificar BIEN QUE TODAS LAS FUENTES ESTEN
+                                  # BIEN CERRADAS Y QUE TODAS LAS CITAS SE HAYAN
+                                  # COGIDO BIEN». De las 20 que quedaban, CUATRO
+                                  # fuentes decidian un limite que el motor
+                                  # aplica, asi que se fue a sus paginas y se
+                                  # verificaron una a una:
+                                  #   · Merck (la grasa de la pancreatitis): las
+                                  #     dos frases, exactas, en su apartado
+                                  #     «Treatment of Pancreatitis in Dogs and
+                                  #     Cats».
+                                  #   · Center et al. (el cobre de la
+                                  #     hepatopatia): titulo, doi, volumen,
+                                  #     numero y paginas CLAVADOS contra PubMed
+                                  #     (PMID 41275602).
+                                  #   · Cavanaugh (el sodio cardiaco por
+                                  #     estadio): las cuatro frases de estadio,
+                                  #     exactas -- y ademas se rehicieron las
+                                  #     CINCO cifras del motor contra ellas.
+                                  # Viven en `fuentes_web_verificadas.txt`, que
+                                  # este auditor indexa por estar en la raiz.
+                                  # ⚠️ LAS 3 QUE QUEDAN SON TODAS DE PURINA
+                                  # INSTITUTE, y NO se han podido verificar: su
+                                  # pagina y el articulo espejo de dvm360
+                                  # devuelven 403 desde aqui. Un resumen de
+                                  # buscador SI las devuelve palabra por
+                                  # palabra, y eso NO cuenta -- es exactamente
+                                  # el error del 15 de septiembre con la nota al
+                                  # pie de AAFCO. Deciden la grasa de la
+                                  # diabetes. El intento esta escrito en
+                                  # `fuentes_web_verificadas.txt` para que nadie
+                                  # lo repita a ciegas.
                                   # ⚠️ 16 -> 20 el 14 de septiembre, al entrar
                                   # cuatro documentos mas (ver DOCUMENTOS). Las
                                   # cuatro nuevas citan Merck, IRIS y estudios
@@ -492,7 +526,23 @@ _EN_EL_REPO = ("fediaf", "sacn5", "small animal clinical nutrition", "nrc",
                # MAL COPIADA: se habia escrito desde un resumen de busqueda y no
                # desde el documento, y decia «will have a ratio greater than 0.6:1»
                # donde AAFCO escribe «will have a ratio of > 0.6:1».
-               "aafco")
+               "aafco",
+               # ⚠️ LAS TRES QUE SE VERIFICARON A MANO CONTRA SU PAGINA (16 de
+               # septiembre de 2026). De las 20 citas que quedaban en la casilla
+               # de «no se puede comprobar aqui», estas tres fuentes deciden un
+               # limite que el motor aplica de verdad: la grasa de la
+               # pancreatitis (Merck), el cobre de la hepatopatia (Center) y el
+               # sodio cardiaco por estadio (Cavanaugh). Se fue a las tres
+               # paginas, se copiaron las frases citadas y se guardaron en
+               # `fuentes_web_verificadas.txt`, que este auditor indexa por estar
+               # en la raiz. Ahora sus citas se comprueban literales.
+               #
+               # ⚠️ Y LAS QUE **NO** SE PUDIERON VERIFICAR NO ENTRAN AQUI: Purina
+               # Institute y dvm360 devuelven 403, y MyVetDiet es software de
+               # pago. Meterlas seria decir que estan comprobadas cuando no lo
+               # estan. Se quedan en `_FUERA`, con el intento escrito en ese mismo
+               # fichero para que nadie lo repita a ciegas.
+               "merck", "cavanaugh", "center")
 # ⚠️ «purina institute» Y NO «purina» A SECAS (12 de septiembre). La marca se
 # llama igual que el nutriente en español y en ingles («purinas», «purine»), asi
 # que con la clave corta cualquier parrafo sobre purinas se atribuia a la marca y
@@ -506,8 +556,14 @@ _EN_EL_REPO = ("fediaf", "sacn5", "small animal clinical nutrition", "nrc",
 # MyVetDiet no puede estarlo, es software de pago --, asi que sus citas van a la
 # casilla de «no se puede comprobar aqui». Sin esto, «myvetdiet» no casaba con
 # nada y la frase se atribuia a la FCI, que era la otra fuente del parrafo.
-_FUERA = ("acvim", "merck", "purina institute", "today's veterinary", "cavanaugh",
-          "center", "consenso", "orden foral", "orden ayg",
+# ⚠️ «merck», «cavanaugh» y «center» SALEN DE AQUI el 16 de septiembre de 2026:
+# se verificaron a mano contra su pagina y sus frases viven ya en
+# `fuentes_web_verificadas.txt`, asi que pasan a comprobarse como cualquier otra.
+# Las que se quedan es porque NO se han podido verificar, y eso esta escrito con
+# su motivo en ese mismo fichero: Purina Institute y dvm360 dan 403 y MyVetDiet
+# es software de pago.
+_FUERA = ("acvim", "purina institute", "today's veterinary",
+          "consenso", "orden foral", "orden ayg",
           "myvetdiet", "waltham", "royal canin", "pet diet designer")
 
 
