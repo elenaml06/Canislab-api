@@ -103,6 +103,85 @@ no salen de ninguna fuente.
 
 ## ⚠️ ELEGIR ENTRE BARF Y COMIDA COCINADA (16 de septiembre de 2026)
 
+### ⚠️ LO PRIMERO QUE HAY QUE SABER: EL MOTOR TIENE ESCRITO QUE NO SABE DISTINGUIRLO
+
+`motor/seguridad.py`, con sus palabras:
+
+> «el motor **no tiene concepto de "crudo vs cocinado"**, así que no puede
+> garantizar que el usuario los cocine de verdad; lo más consistente es que
+> activen la misma restricción del 10 % que el pescado, **cubriendo el caso de
+> que alguien los dé crudos**»
+
+Eso es de la gamba y el langostino, que hoy cargan con el tope de la tiaminasa
+**por si acaso**. O sea que el interruptor no es solo una funcionalidad nueva:
+**quita un «por si acaso» que hoy aprieta a alimentos que no lo necesitan.**
+
+### Cómo lo pidió Elena (16 de septiembre de 2026)
+
+> «serían dos cosas distintas, el usuario tiene que poder elegir, o el
+> veterinario, si quiere hacer menú barf o cocinado, y en función [de eso] que le
+> proponga los ingredientes correctos para cada caso»
+
+O sea: **no es «añadir arroz al catálogo»**. Es que el catálogo tenga dos caras y
+el motor sepa en cuál está.
+
+### Qué cambia al girar el interruptor
+
+| | En BARF (hoy) | En cocinado |
+|---|---|---|
+| **Tiaminasa** (arenque, caballa, sardina, boquerón, atún, gamba, langostino) | tope del 10 % de las kcal | **se levanta** — «la cocción la destruye», y está escrito en `seguridad.py` |
+| **Avidina** de la clara de huevo | tope del 5 % | **se levanta** — la cocción la desnaturaliza |
+| **Parásitos del pescado crudo** | avisos de congelación | **se levantan** |
+| **Riesgo bacteriológico y la higiene en casa** | panel de avisos | **se levanta** |
+| ⚠️ **Hueso carnoso** | mínimo del 20 % | **PROHIBIDO** — el hueso cocido astilla |
+| **El calcio** | del hueso | de la **cáscara de huevo** (ya hay dos fichas) |
+| **Las fichas** | crudas, por 100 g tal cual se da | **otras fichas**, con su propia procedencia |
+| **Los 43 requisitos, los topes crónicos, los de patología, los máximos legales** | — | **no cambian ni una cifra** |
+
+### ⚠️ Y LA ASIMETRÍA QUE HAY QUE DISEÑAR CON CUIDADO, PORQUE ES LA PELIGROSA
+
+Equivocarse en la dirección «creo que es cocinado y era crudo» quita unos topes y
+el perro come pescado con tiaminasa. Malo.
+
+Equivocarse en la otra —«creo que es crudo y lo van a cocinar»— **mete hueso
+carnoso en un menú que se va a cocinar**, y el hueso cocido **astilla**. Eso es
+un daño físico inmediato, no una carencia a largo plazo. El repo ya tiene
+documentado que el hueso es el **cuarto daño documentado**: 46 de 60 cuerpos
+extraños esofágicos retirados a perros eran hueso (SACN5 cap.50).
+
+De ahí tres reglas de diseño:
+
+1. **El modo por defecto es BARF**, que es lo que el motor hace hoy.
+2. **En modo cocinado, las fichas de hueso carnoso no son candidatas jamás** — no
+   «se evitan»: no existen. Es una exclusión dura, como una alergia (regla 4), no
+   una proporción que ceda (regla 3).
+3. **El modo viaja con el menú y se guarda con él.** Un menú generado en un modo
+   y editado en otro es exactamente el fallo del 24 de agosto con las patologías:
+   el camino de edición no recibía el dato y tiraba el tope.
+
+### Lo que juega a favor, y está comprobado
+
+Las tres bases **ya publican las filas cocinadas**. Hoy el repo las esquiva **a
+propósito**: `fijar_identificadores.py` tiene un guardia de preparaciones
+(«asad», «frit», «cocid», y «horno» desde el caso de la `Perca`). El dato existe
+y sabemos dónde está; lo que hay que hacer es dejar de esquivarlo y meterlo como
+fichas aparte.
+
+⚠️ Y con la regla de siempre: **una ficha cocinada no se deriva de la cruda
+aplicando un factor**. Se trae de su propia fila, con su `composicion_fuente`
+celda a celda, y `auditar_composicion.py` la rehace igual que a las demás.
+
+### Lo que hay que decidir antes de empezar, y no lo decide el asistente
+
+1. **¿Un catálogo o dos?** Fichas aparte (`Pollo` y `Pollo cocido`) o un campo en
+   la misma ficha. Afecta a las ocho pantallas de
+   `alimentos_como_se_presentan.json` y a las 25 listas de `lo_que_la_app_pinta.json`.
+2. **¿Se puede mezclar?** Media ración cruda y media cocinada es una dieta real y
+   frecuente, y decide si el modo es del MENÚ o del ALIMENTO.
+3. **Qué grado de cocción.** «Cocido», «al horno» y «a la plancha» no dan los
+   mismos números, y las bases los publican por separado.
+
+
 **Lo pidió Elena**, el mismo día: «quiero que dejes apuntado también hacer que
 se pueda seleccionar entre barf y comida cocinada y que completemos el catálogo
 y haya los cambios que haya que hacer en el motor para hacerlo también».
