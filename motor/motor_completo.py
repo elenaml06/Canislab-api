@@ -80,6 +80,34 @@ def _es_crecimiento(etapa):
     return e in ("CachorroJoven", "CachorroCrecimiento")
 
 
+def la_patologia_topa_la_grasa(patologias, etapa="Adulto"):
+    """¿Alguna de las patologías marcadas le pone techo a la grasa?
+
+    Se DERIVA de `patologias.json` a través de `topes_de_patologias`, que es la
+    función que llama el solver, y no de una lista escrita a mano: una lista
+    copiada se queda parada el día que entre una patología nueva con techo de
+    grasa, y no daría ningún error -- el menú saldría verde igual.
+
+    Hoy son siete: obesidad (22,5), hiperlipidemia (30), y pancreatitis, EPI,
+    SIBO, enteropatía crónica y linfangiectasia (37,5).
+
+    ⚠️ VIVE AQUÍ Y NO EN `main.py` desde el 17 de septiembre de 2026, y no es
+    colocación: la usan LAS DOS PUNTAS y tienen que decir lo mismo. `main` la
+    llama para soltar el suelo del hueso y para abrir el techo de los hidratos
+    en la escalera; el SOLVER la llama para decidir si los hidratos son
+    candidatos siquiera. Si cada uno tuviera la suya, el motor podría construir
+    un menú con arroz que el filtro final tira, que es el fallo del 8 de
+    septiembre con los suelos de patología.
+    """
+    if not patologias:
+        return False
+    try:
+        topes, pct_grasa, _av, _su = topes_de_patologias(list(patologias), etapa)
+    except Exception:
+        return False
+    return bool(topes.get("grasa") is not None or pct_grasa)
+
+
 def topes_de_patologias(patologias, etapa="Adulto", para_el_dueno=False):
     """Devuelve (topes_por_1000kcal, pct_kcal_grasa, avisos_extra,
     suelos_por_1000kcal) ya resueltos para esta etapa y esta combinación de
@@ -761,6 +789,9 @@ def _resolver_una_vez(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn
             # kelp antes de resolverlo, así que el tope apretado entra por aquí
             # en la segunda pasada.
             _apretar_yodo_por_kelp=False,
+            # La respuesta del dueño a «¿quieres hidratos?». None = no ha
+            # contestado. Ver `main.PeticionMenu.con_hidratos`.
+            con_hidratos=None,
             # ⚠️ El interruptor de la penalización de compra, para poder MEDIR
             # el mismo perro con y sin ella. No es un plan B de viabilidad y no
             # hace falta que lo sea: la penalización vive en el OBJETIVO, no en
@@ -921,9 +952,49 @@ def _resolver_una_vez(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn
     # usuario fuerza un alimento concreto o pide "todo el/la X" y eso no
     # está en la lista curada, se añade igualmente desde el catálogo
     # completo, siempre que exista de verdad y sea de esa categoría.
+    # ⚠️ EN BARF NO ENTRAN HIDRATOS, Y SOLO ENTRAN DONDE LA PATOLOGÍA LOS PIDE
+    # (17 de septiembre de 2026). Lo decidió Elena al ver la primera medida:
+    # «en barf deberíamos quitar los hidratos, y que solo entren en patologias
+    # que los requieran no?».
+    #
+    # Y tiene razón por lo que la medida enseñaba: con los cinco cereales como
+    # candidatos libres y el techo en el 40 %, el perro SANO se llevaba un
+    # tercio del plato en quinoa (adulto de 20 kg, 212 g; gigante de 50 kg,
+    # 458 g). El MILP los elige porque son baratos por gramo y fáciles de
+    # comprar — es lo mismo que le hacía elegir 651 g de albahaca. Bajar el
+    # techo al 10 % lo tapaba, pero seguía metiendo arroz en el plato de un
+    # perro que no lo necesita, y este motor calcula BARF.
+    #
+    # ⚠️ ES UNA RESTRICCIÓN DEL AUTOMÁTICO, NO UNA EXCLUSIÓN, y la diferencia es
+    # justo la que este fichero ya tiene escrita el 5 de agosto sobre
+    # `ACCESIBLES`: lo que el usuario elige A MANO se añade igual desde el
+    # catálogo entero, doce líneas más abajo. Excluirlos de verdad haría que
+    # elegir arroz en Personalizar no hiciera nada — y lo que se elige a mano se
+    # respeta (regla 5). Comprobado: con `forzar` el bucle los mete igual.
+    #
+    # DÓNDE SÍ ENTRAN: en las siete que topan la grasa, derivadas con la MISMA
+    # función que usa la escalera para soltar el suelo del hueso. Es la misma
+    # aritmética por sus dos lados: con grasa ≤ 37,5 g y proteína ≤ 75 g por
+    # 1000 kcal, 362 de cada 1000 kcal solo pueden venir de hidratos.
+    #
+    # ⚠️ Y LA RESPUESTA DEL DUEÑO MANDA SOBRE LAS DOS COSAS (17 de septiembre de
+    # 2026, misma tanda). Un `False` los quita AUNQUE la patología los pida:
+    # excluir comida es suyo y no se toca (regla 4), y lo que cuesta se dice en
+    # vez de cambiárselo en silencio. Un `True` los mete aunque no haya nada
+    # marcado, que es lo que hará falta el día que el modo cocinado exista.
+    _CAT_HIDRATOS = "Cereales y tubérculos"
+    if con_hidratos is False:
+        _hidratos_los_pide_la_patologia = False
+    elif con_hidratos is True:
+        _hidratos_los_pide_la_patologia = True
+    else:
+        _hidratos_los_pide_la_patologia = la_patologia_topa_la_grasa(patologias, etapa)
+
     candidatos_por_cat = {}
     for cat, lista in ACCESIBLES.items():
         disp = [n for n in lista if n in alimentos]
+        if cat == _CAT_HIDRATOS and not _hidratos_los_pide_la_patologia:
+            disp = []          # el automático no los propone; `forzar` sí los mete
         if excluidos:
             disp, _f, _a = filtrar(disp, excluidos)
 

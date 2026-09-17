@@ -2038,6 +2038,24 @@ class PeticionMenu(_ConPremios):
     # se cumplen matemáticamente y el calcio ya es un candidato
     # disponible sin necesidad de forzarlo aparte.
     categorias_excluidas: Optional[list] = None
+    # ⚠️ LA PREGUNTA DE LOS HIDRATOS (17 de septiembre de 2026). La pidió Elena:
+    # «también tendría que haber una pregunta de si quieres que tu menú, ya sea
+    # barf o comida cocinada, lleve hidratos o no».
+    #
+    # TRES estados y no dos, y el tercero es el que importa:
+    #   True  -> los quiere: entran aunque el perro no tenga nada
+    #   False -> NO los quiere: no entran NUNCA, ni con una patología que los
+    #            pida, y si eso cuesta un peldaño o un menú SE DICE. Es la regla
+    #            4 leída al derecho: lo que el dueño excluye a mano no se toca.
+    #   None  -> no ha contestado: el automático NO los propone (esto calcula
+    #            BARF y un BARF no lleva hidratos) salvo que la patología los
+    #            pida, que es donde la aritmética obliga.
+    #
+    # ⚠️ NO es lo mismo que meter «Cereales y tubérculos» en
+    # `categorias_excluidas`, aunque el False haga lo mismo: eso es una
+    # exclusión de catálogo y esto es una PREGUNTA que se le hace a todo el
+    # mundo. Un dueño que no contesta no está excluyendo nada.
+    con_hidratos: Optional[bool] = None
     # ⚠️ AÑADIDO (5 agosto, madrugada) — CAMBIO DE ARQUITECTURA PEDIDO
     # EXPRESAMENTE: presupuesto semanal RESTANTE de seguridad crónica
     # (tiaminasa/mercurio/vitD/yodo/selenio), calculado por
@@ -2133,6 +2151,9 @@ class PeticionCambiarAlimento(_ConPremios):
     # -- si el perro no puede masticar hueso carnoso, esa exclusión debe
     # respetarse también al editar, no solo al generar por primera vez.
     categorias_excluidas: Optional[list] = None
+    # La pregunta de los hidratos. Tres estados; el porqué está escrito entero
+    # en `PeticionMenu`, que es donde nació.
+    con_hidratos: Optional[bool] = None
 
 
 class PeticionAnadirQuitarAlimento(_ConPremios):
@@ -2174,6 +2195,9 @@ class PeticionAnadirQuitarAlimento(_ConPremios):
     # patología que aprieta, constantemente. Afectaba a "Añadir suplemento"
     # desde agosto y a la papelera de quitar un alimento desde hoy mismo.
     categorias_excluidas: Optional[list] = None
+    # La pregunta de los hidratos. Tres estados; el porqué está escrito entero
+    # en `PeticionMenu`, que es donde nació.
+    con_hidratos: Optional[bool] = None
 
 
 # ⚠️ AÑADIDO (20 agosto) — CASO 3: EL PERRO CAMBIA DE CATEGORÍA.
@@ -2207,6 +2231,9 @@ class PeticionRevalidar(_ConPremios):
     patologias: Optional[list] = None
     especies_excluidas: list[str] = []
     categorias_excluidas: Optional[list] = None
+    # La pregunta de los hidratos. Tres estados; el porqué está escrito entero
+    # en `PeticionMenu`, que es donde nació.
+    con_hidratos: Optional[bool] = None
 
     @property
     def menu_actual(self):
@@ -2769,25 +2796,14 @@ def _hay_comida_de_verdad(al, excluidos=None, categorias_excluidas=None):
     return bool(quedan)
 
 
-def _la_patologia_topa_la_grasa(patologias, etapa="Adulto"):
-    """¿Alguna de las patologías marcadas le pone techo a la grasa?
-
-    Se DERIVA de `patologias.json` a través de la misma función que llama el
-    solver (`topes_de_patologias`), no de una lista escrita a mano: una lista
-    copiada se queda parada el día que entre una patología nueva con techo de
-    grasa, y no daría ningún error -- el menú saldría verde igual. Es la regla 6
-    aplicada dentro del motor.
-
-    Hoy son siete: obesidad (22,5), hiperlipidemia (30), y pancreatitis, EPI,
-    SIBO, enteropatía crónica y linfangiectasia (37,5).
-    """
-    if not patologias:
-        return False
-    try:
-        topes, pct_grasa, _av, _su = topes_de_patologias(list(patologias), etapa)
-    except Exception:
-        return False
-    return bool(topes.get("grasa") is not None or pct_grasa)
+# ⚠️ YA NO SE DEFINE AQUÍ (17 de septiembre de 2026): vive en
+# `motor_completo.la_patologia_topa_la_grasa`, porque desde hoy la usan LAS DOS
+# PUNTAS y tienen que decir lo mismo. Aquí decide si se suelta el suelo del
+# hueso y si se abre el techo de los hidratos en la escalera; dentro del SOLVER
+# decide si los hidratos son candidatos siquiera. Dos copias de esa condición
+# serían un motor construyendo menús que el filtro final tira, que es
+# exactamente el fallo del 8 de septiembre con los suelos de patología.
+from motor_completo import la_patologia_topa_la_grasa as _la_patologia_topa_la_grasa
 
 
 def _escalera_de_relajacion(hay_comida_de_verdad=True, patologias=None, etapa="Adulto"):
@@ -3495,6 +3511,7 @@ def endpoint_menu_semana(datos: PeticionMenu, numero_de_menus: int = 1):
                 datos.der_objetivo, datos.etapa_requisitos, datos.peso_perro_kg,
                 origen="/menu/semana", al=al, req=req,
                 patologias=datos.patologias,
+                con_hidratos=getattr(datos, "con_hidratos", None),
                 peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
                 peso_objetivo_kg=_peso_de_referencia(datos)[0],
                 kcal_de_premios=_kcal_de_premios(datos))
@@ -3625,6 +3642,29 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
             "tu perro le toca un plato más ligero, y el hueso es de lo que más engorda. "
             "El calcio se lo damos por otro lado — normalmente cáscara de huevo o el "
             "complemento que veas en la lista. No le añadas hueso por tu cuenta.")
+    # ⚠️ SI EL MENÚ LLEVA HIDRATOS, SE DICE QUE VAN COCIDOS (17 de septiembre de
+    # 2026). Lo pidió Elena en la misma frase que la pregunta: «y en barf avisar
+    # de que los hidratos van siempre cocinados, no crudos».
+    #
+    # Y hace falta de verdad, porque aquí el hábito juega en contra: en una
+    # ración BARF TODO va crudo, así que quien ve «arroz» en la lista de un menú
+    # crudo puede darlo tal cual. Las cinco fichas lo dicen en su
+    # `aviso_al_comprar` y ese texto sale por dos puertas —`GET /alimentos` y
+    # `problemas_seguridad`—, pero las dos hablan de UN alimento; esto habla del
+    # PLATO, que es lo que el dueño tiene delante.
+    #
+    # COMIDA, NO NUTRIENTES (regla del 14 de septiembre): se dice qué hacer y
+    # cuándo pesarlo, no una palabra de hidratos de carbono.
+    _hidr = sorted(n for n in (resultado.get("menu") or {})
+                   if (_al_pr.get(n) or {}).get("categoria") == "Cereales y tubérculos")
+    if _hidr:
+        resultado["hidratos_en_el_menu"] = _hidr
+        resultado.setdefault("avisos_extra", []).append(
+            "⚠️ " + ", ".join(_hidr) + ": esto va COCIDO, nunca crudo, aunque el resto "
+            "del menú sea crudo. Hiérvelo en agua, sin sal, y déjalo enfriar. Y los "
+            "gramos de la lista son de producto YA COCIDO: pésalo después de "
+            "cocinarlo, no antes — crudo pesa mucho menos y le estarías dando el "
+            "triple.")
     _plato = _premios_en_el_plato(datos, _al_pr)
     if _plato:
         resultado["premios_dentro_del_menu"] = _plato
@@ -4339,6 +4379,7 @@ def _resolver_menu_v2_crudo(datos: PeticionMenu):
             soltar_el_techo_si_no_cabe=soltar_techo_libro,
             forzar=forzar_este, preferir=preferir,
             patologias=datos.patologias, restringir_especie=datos.restringir_especie,
+            con_hidratos=getattr(datos, "con_hidratos", None),
             peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
             peso_objetivo_kg=_peso_de_referencia(datos)[0],
             evitar_especies=datos.evitar_especies,
@@ -4380,6 +4421,7 @@ def _resolver_menu_v2_crudo(datos: PeticionMenu):
                 soltar_el_techo_si_no_cabe=soltar_techo_libro,
                 forzar=forzar_este, preferir=preferir,
                 patologias=datos.patologias, restringir_especie=datos.restringir_especie,
+                con_hidratos=getattr(datos, "con_hidratos", None),
                 peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
             peso_objetivo_kg=_peso_de_referencia(datos)[0],
                 evitar_especies=datos.evitar_especies,
@@ -4488,6 +4530,7 @@ def _resolver_menu_v2_crudo(datos: PeticionMenu):
                 max_suplementos=max_supl, time_limit=tiempo_de_un_intento(),
                 forzar=forzar_este, preferir=preferir,
                 patologias=datos.patologias, restringir_especie=datos.restringir_especie,
+                con_hidratos=getattr(datos, "con_hidratos", None),
                 peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
                 peso_objetivo_kg=_peso_de_referencia(datos)[0],
                 evitar_especies=datos.evitar_especies,
@@ -4637,6 +4680,7 @@ def _resolver_menu_v2_crudo(datos: PeticionMenu):
             margenes_categoria=_margenes_base, max_suplementos=_supl_base,
             time_limit=tiempo_de_un_intento(),
             patologias=datos.patologias,
+            con_hidratos=getattr(datos, "con_hidratos", None),
             categorias_excluidas=datos.categorias_excluidas,
             peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
             peso_objetivo_kg=_peso_de_referencia(datos)[0],
@@ -7606,6 +7650,9 @@ class PeticionFormular(_ConPremios):
     especies_excluidas: list[str] = []
     nombres_excluidos: Optional[list] = None
     categorias_excluidas: Optional[list] = None
+    # La pregunta de los hidratos. Tres estados; el porqué está escrito entero
+    # en `PeticionMenu`, que es donde nació.
+    con_hidratos: Optional[bool] = None
     # Solo para autocompletar: si el total de gramos lo fija él.
     gramos_totales: Optional[float] = None
     # ⚠️ AÑADIDO (8 septiembre) — EL PELDAÑO DE LA ESCALERA.
@@ -8301,6 +8348,7 @@ def formular_autocompletar(datos: PeticionFormular):
             # lo que hay que usar y no `ast.parse()`, que esto no lo ve.
             gramos_fijos={**_premios_en_el_plato(datos, al), **(fijos or {})} or None,
             patologias=datos.patologias,
+            con_hidratos=getattr(datos, "con_hidratos", None),
             peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
             peso_objetivo_kg=_peso_de_referencia(datos)[0],
             categorias_excluidas=datos.categorias_excluidas,
@@ -8355,6 +8403,7 @@ def formular_autocompletar(datos: PeticionFormular):
                 margenes_categoria=_margenes_f, max_suplementos=_supl_f, time_limit=12.0,
                 forzar=list(fijos) or None,
                 patologias=datos.patologias,
+                con_hidratos=getattr(datos, "con_hidratos", None),
                 peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
                 peso_objetivo_kg=_peso_de_referencia(datos)[0],
                 categorias_excluidas=datos.categorias_excluidas,
@@ -8488,6 +8537,9 @@ class PeticionFirmar(_ConPremios):
     especies_excluidas: list[str] = []
     nombres_excluidos: Optional[list] = None
     categorias_excluidas: Optional[list] = None
+    # La pregunta de los hidratos. Tres estados; el porqué está escrito entero
+    # en `PeticionMenu`, que es donde nació.
+    con_hidratos: Optional[bool] = None
     firmante: Firmante
     # Lo que identifica al paciente EN EL DOCUMENTO. Se copia, no se apunta:
     # la ficha del perro cambia y lo firmado no puede cambiar con ella.
@@ -9810,6 +9862,63 @@ def endpoint_vocabulario():
                     "límite clínico --, y van dichos en la etiqueta del veterinario. || Se "
                     "pregunta en porcentaje y no en kcal porque nadie sabe las calorías de la "
                     "galleta que le da a su perro, y la fuente habla justo en esa unidad."),
+        },
+        # ── LOS HIDRATOS ─────────────────────────────────────────────────
+        # ⚠️ LA PREGUNTA VIVE AQUÍ Y NO EN LA APP (17 de septiembre de 2026).
+        # La pidió Elena: «también tendría que haber una pregunta de si quieres
+        # que tu menú, ya sea barf o comida cocinada, lleve hidratos o no». Y va
+        # por `GET /vocabulario` por lo de siempre (regla 6): si las respuestas
+        # las escribiera la app, el día que el motor añada un estado la app se
+        # queda con su lista vieja y el usuario elige algo que el motor no sabe
+        # recibir. La cadena es FUENTE manda -> MOTOR la implementa -> APP la
+        # ofrece.
+        #
+        # ⚠️ Aquí NO hay ninguna cifra de fuente, y se dice: que una ración BARF
+        # no lleve hidratos es criterio NUESTRO, igual que el 20 % de hueso
+        # (regla 3). Lo que sí sale de una fuente es el otro lado -- que con la
+        # grasa topada en 37,5 g y la proteína en 75 g por 1000 kcal el resto de
+        # la energía solo puede venir de hidratos --, y esas dos cifras viven en
+        # `patologias.json` con su cita.
+        "hidratos": {
+            "de_donde": ("Criterio NUESTRO, no de ninguna fuente: este motor calcula BARF y una "
+                         "ración BARF no lleva hidratos. Lo que sí es de fuente es cuándo hacen "
+                         "falta — SACN5 5ª ed. topa la grasa en siete patologías (Tabla 67-3 y "
+                         "las suyas), y con la grasa y la proteína topadas la energía que queda "
+                         "solo puede venir de hidratos."),
+            "como_llega_al_motor": ("`con_hidratos`, con TRES estados. No es lo mismo que meter "
+                                    "«Cereales y tubérculos» en `categorias_excluidas`: eso es "
+                                    "una exclusión de catálogo y esto es una pregunta que se le "
+                                    "hace a todo el mundo."),
+            "categoria_del_motor": "Cereales y tubérculos",
+            "estados": [
+                {"clave": None, "valor": None,
+                 "dueno": {"titulo": "No he contestado",
+                           "ejemplo": "el menú sale sin arroz ni patata, salvo que la enfermedad "
+                                      "de tu perro obligue a llevarlos"},
+                 "veterinario": {"titulo": "Sin respuesta (por omisión)",
+                                 "detalle": "Los cereales y tubérculos NO son candidatos del "
+                                            "automático, salvo que alguna patología marcada tope "
+                                            "la grasa."}},
+                {"clave": "no", "valor": False,
+                 "dueno": {"titulo": "No, sin arroz ni patata",
+                           "ejemplo": "ni aunque su enfermedad los pida — si eso deja el plato "
+                                      "peor, te lo decimos"},
+                 "veterinario": {"titulo": "Excluidos",
+                                 "detalle": "No entran NUNCA, ni con una patología que los pida. "
+                                            "Lo que el dueño excluye a mano no se toca (regla 4), "
+                                            "y lo que cuesta se dice."}},
+                {"clave": "si", "valor": True,
+                 "dueno": {"titulo": "Sí, puede llevarlos",
+                           "ejemplo": "arroz, patata o avena, siempre cocidos"},
+                 "veterinario": {"titulo": "Permitidos",
+                                 "detalle": "Entran como candidatos aunque no haya ninguna "
+                                            "patología marcada, con el techo de la categoría."}},
+            ],
+            "ojo": ("⚠️ Van SIEMPRE cocidos, nunca crudos, y los gramos del menú son de producto "
+                    "YA COCIDO. En una ración BARF todo lo demás va crudo, así que el hábito juega "
+                    "en contra: quien vea «arroz» en la lista puede darlo tal cual. El menú lo "
+                    "dice en `avisos_extra` cuando lleva alguno, y cada ficha lo dice en su "
+                    "`aviso_al_comprar`."),
         },
         # ── LA CONDICION CORPORAL ────────────────────────────────────────
         # Es UN SOLO numero y UNA SOLA formula: los cinco escalones del dueño
