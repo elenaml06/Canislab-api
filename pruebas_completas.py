@@ -18510,8 +18510,13 @@ if "§7.6.2.4" in " ".join(_rot107(_gr107, _al107) or []):
 # deja de mirar.
 sys.path.insert(0, "motor")
 import patologias as _pat107
+from motor_completo import avisos_de_patologias as _avisos107_fn
 _NUTRIENTES_QUE_NO_DICEN_NADA_107 = (
-    "vitamina E", "L-carnitina", "carnitina", "omega-6", "linoleico",
+    # ⚠️ «omega-3» ENTRA EL 17 DE SEPTIEMBRE, y faltaba: estaba «omega-6» y no
+    # su pareja, así que un aviso que dijera «se le sube el omega-3» pasaba. Al
+    # dueño se le habla de PESCADO AZUL y de ACEITE DE PESCADO, que es lo que
+    # compra.
+    "vitamina E", "L-carnitina", "carnitina", "omega-6", "omega-3", "linoleico",
     "araquidónico", "taurina", "arginina", "magnesio", "selenio", "yodo",
     "zinc", "potasio", "folato", "colina", "niacina", "riboflavina",
     "molibdeno", "manganeso", "aminoácido", "tiamina", "biotina",
@@ -18538,6 +18543,76 @@ for _k107n, _h107n, _t107n in _sucios107n[:6]:
                   f"COMIDA, NO NUTRIENTES -- «menos sal» y «más pescado azul» se entienden y se "
                   f"compran; esto inquieta en vez de tranquilizar, que es lo contrario de para lo "
                   f"que está el aviso")
+# ⚠️ Y LA CUARTA PUERTA (17 de septiembre de 2026). Todo lo de arriba lee
+#    `avisos.dueno or avisos.general`, o sea el aviso PRINCIPAL -- y lo que el
+#    dueño lee no es eso: es lo que devuelve `avisos_de_patologias()`, que pega
+#    el principal MÁS todos los avisos SUELTOS. Por ese hueco se habían colado
+#    DOS textos de `oxalato` con la CITA LITERAL EN INGLÉS dentro («The
+#    following guidelines are appropriate for all nonhypercalcemic CaOx stone
+#    formers…»), que es exactamente lo que Elena mandó fuera el 13 de
+#    septiembre, y cuatro textos más que nombraban nutrientes.
+#
+#    O sea la lección de siempre, por cuarta vez: **un texto se vigila por la
+#    puerta por la que SALE, no por dónde está escrito.**
+#
+# ⚠️ Y LA EXCEPCIÓN NO SOBRA, porque sin ella este guardia acusa a tres avisos
+#    que están bien. La regla 1 de Elena --«pedirle algo que no está en el
+#    plato»-- obliga a nombrar el potasio que hay que medir en sangre, el zinc
+#    que le pauta el veterinario y la taurina de la analítica. Nombrar un
+#    nutriente para MANDARLE A SU VETERINARIO no es hablarle en jerga: es
+#    decirle qué pedir. Lo que se prohíbe es contarle el ajuste que hizo el
+#    motor, que es la quinta categoría, la que no es una razón.
+_A_SU_VETERINARIO_107 = ("veterinario", "analítica", "analitica", "en sangre",
+                         "pauta", "pregúntale", "preguntale", "laboratorio")
+_puerta107, _ingles107 = [], []
+import re as _re107c
+# ⚠️ Y LAS SEIS ETAPAS, no solo adulto: el registro `dueno_crecimiento` es
+#    OTRO texto, y el 15 de septiembre ya se escapó por ahí uno de la artrosis
+#    que nombraba la vitamina E. Con solo «Adulto» este guardia no lo vería --
+#    y de hecho el 17 de septiembre encontró uno: el de `reaccion_adversa_alimento`,
+#    que le decía a un dueño «ni el refuerzo de omega-3».
+for _k107p, _et107p in [(_k, _e) for _k in sorted(_crudo107n)
+                        for _e in ("Adulto", "CachorroJoven", "CachorroCrecimiento",
+                                   "Senior", "Gestante", "Lactante")]:
+    # ⚠️ Y NO SE PEGAN LOS AVISOS ANTES DE MIRARLOS. `avisos_de_patologias`
+    #    devuelve una LISTA -- el principal y cada suelto --, y juntarlos con un
+    #    espacio hace que un bloque acabe pegado al del aviso de al lado: el
+    #    texto sucio pasaba porque el aviso VECINO decía «tu veterinario».
+    #    Comprobado, con el fallo puesto: pegados, 0 fallos; sueltos, salta.
+    _avs107p = _avisos107_fn([_k107p], _et107p)
+    _t107p = " ".join(_avs107p)
+    if not _t107p:
+        continue
+    # una cita entre comillas angulares con palabras inglesas dentro no es
+    # nuestra prosa: es la fuente, sin traducir, en la pantalla del dueño
+    for _c107p in _re107c.findall(r"«[^»]*»", _t107p):
+        if _re107c.search(r"\b(?:the|and|of|is|are|for|with|that|should|not|only)\b",
+                          _c107p, _re107c.I):
+            _ingles107.append((_k107p, _c107p[:90]))
+    # ⚠️ SE CORTA POR `||` Y NO POR FRASES, y la primera versión lo hacía por
+    #    frases: así acusaba a `cardiopatia_c` y a `dcm_taurina_respondedora`,
+    #    que están BIEN -- su bloque dice «pregúntale a tu veterinario cada
+    #    cuánto quiere mirarle el POTASIO en sangre» y la frase siguiente, que
+    #    es la que lo justifica, ya no nombra al veterinario. El bloque es la
+    #    unidad en la que un aviso manda a alguien a algún sitio; la frase, no.
+    for _tro107 in [_b for _a in _avs107p for _b in _a.split("||")]:
+        if not _tro107:
+            continue
+        _hay107p = [_x for _x in _NUTRIENTES_QUE_NO_DICEN_NADA_107 if _x.lower() in _tro107.lower()]
+        _hay107p += [_x.replace(r"\b", "") for _x in _SUELTAS_107 if _re107c.search(_x, _tro107)]
+        if _hay107p and not any(_y in _tro107.lower() for _y in _A_SU_VETERINARIO_107):
+            _puerta107.append((_k107p, _hay107p, _tro107[:110]))
+for _k107p, _h107p, _t107p in _puerta107[:6]:
+    fallos.append(f"BLOQUE107: por la puerta del DUEÑO de «{_k107p}» sale «{_t107p}…», que nombra "
+                  f"{_h107p} sin mandarle a su veterinario a por nada. Eso es contarle el ajuste "
+                  f"que hizo el motor, que es la unica de las cinco razones que NO es una razon. "
+                  f"Y ojo con donde se arregla: casi siempre no es el aviso principal sino un "
+                  f"aviso SUELTO al que le falta su registro `dueno_`")
+for _k107p, _c107p in _ingles107[:4]:
+    fallos.append(f"BLOQUE107: al dueño de «{_k107p}» se le sirve una cita LITERAL EN INGLÉS: "
+                  f"{_c107p}… Eso es lo que Elena mando fuera el 13 de septiembre, y sale por la "
+                  f"puerta de los avisos SUELTOS, que hasta hoy no miraba nadie")
+
 # Y que el TÉCNICO siga teniéndolos: si el aviso del veterinario perdiera los
 # nutrientes, esto no sería reescribir para el dueño sino vaciar los dos.
 _vet107n = " ".join((( _crudo107n.get(_k) or {}).get("avisos") or {}).get("general") or ""
