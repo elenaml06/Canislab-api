@@ -21960,6 +21960,220 @@ print(f"  prescripción: {len(_r126['excepciones'])} excepción declarada · "
 print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
+# ---------------------------------------------------------------------------
+# BLOQUE 127 — EN BARF NO ENTRAN HIDRATOS, Y SOLO ENTRAN DONDE HACEN FALTA
+# ============================================================
+#
+# ⚠️ POR QUÉ EXISTE (17 de septiembre de 2026). Elena, al ver la primera medida
+# de la categoría nueva: «en barf deberíamos quitar los hidratos, y que solo
+# entren en patologias que los requieran no?».
+#
+# Y la medida le daba la razón: con los cinco cereales como candidatos libres y
+# el techo en el 40 %, el perro SANO se llevaba un TERCIO del plato en quinoa
+# —adulto de 20 kg, 212 g; gigante de 50 kg, 458 g—. El MILP los elige porque
+# son baratos por gramo y fáciles de comprar, que es exactamente lo que le hacía
+# elegir 651 g de albahaca. Bajar el techo al 10 % lo tapaba y seguía metiendo
+# arroz en el plato de un perro que no lo necesita, y este motor calcula BARF.
+#
+# LO QUE SE VIGILA, y son CINCO cosas que se pueden romper por separado:
+#
+#   1. el perro SANO no se lleva ni un gramo de cereal
+#   2. la patología que TOPA LA GRASA sí (las siete, derivadas del JSON)
+#   3. `con_hidratos=False` los quita AUNQUE la patología los pida -- lo que el
+#      dueño excluye a mano no se toca (regla 4)
+#   4. `con_hidratos=True` los mete aunque no haya ninguna patología
+#   5. elegir uno A MANO funciona igual (regla 5): `ACCESIBLES` es la lista de
+#      lo que propone el AUTOMÁTICO y nunca puede impedir una elección expresa
+#
+# Y una sexta que no es del solver sino del texto: si el menú lleva hidratos, el
+# dueño tiene que leer que van COCIDOS y que los gramos son de producto ya
+# cocido. En una ración BARF todo lo demás va crudo, así que el hábito juega en
+# contra: quien ve «arroz» en la lista puede darlo tal cual.
+#
+# ⚠️ Y LA SÉPTIMA ES LA QUE MÁS CALLA: que `la_patologia_topa_la_grasa` siga
+# siendo UNA función. Vivía en `main.py` y hoy la usan las DOS puntas —la
+# escalera para soltar el suelo del hueso y abrir el techo, y el SOLVER para
+# decidir si los hidratos son candidatos—. Dos copias serían un motor
+# construyendo menús que el filtro final tira, que es el fallo del 8 de
+# septiembre con los suelos de patología.
+print("\n=== BLOQUE 127: en BARF no entran hidratos ===")
+
+import motor_completo as _mc127
+_CAT_H127 = "Cereales y tubérculos"
+_al127, _ = _api.cargar_v2()
+_CEREALES_127 = sorted(n for n, a in _al127.items() if a.get("categoria") == _CAT_H127)
+if len(_CEREALES_127) < 3:
+    fallos.append(f"BLOQUE127: solo hay {len(_CEREALES_127)} fichas en «{_CAT_H127}». O han "
+                  f"desaparecido o la categoría se llama de otra forma, y en los dos casos este "
+                  f"bloque dejó de vigilar nada sin decirlo")
+
+
+def _menu127(patologias=(), con_hidratos=None, forzar=None, der=1000.0, peso=22.0, modo=None):
+    cuerpo = {"nombres_alimentos": list(forzar or []), "der_objetivo": der,
+              "etapa_requisitos": "Adulto", "peso_perro_kg": peso,
+              "patologias": list(patologias)}
+    if modo:
+        cuerpo["modo"] = modo
+    if con_hidratos is not None:
+        cuerpo["con_hidratos"] = con_hidratos
+    if forzar:
+        cuerpo["forzar_presencia"] = list(forzar)
+    r = _c.post("/menu/v2", json=cuerpo)
+    return r.json() if r.status_code == 200 else {"factible": False, "http": r.status_code}
+
+
+def _cereal_en127(d):
+    return {n: g for n, g in (d.get("menu") or {}).items() if n in _CEREALES_127}
+
+
+# ── 1 · el perro SANO, en cinco formas distintas ────────────────────────────
+for _nom127, _peso127, _der127 in (("adulto 20 kg", 20.0, 950.0), ("toy 3 kg", 3.0, 260.0),
+                                   ("gigante 50 kg", 50.0, 2100.0)):
+    _d127 = _menu127(der=_der127, peso=_peso127)
+    if not _d127.get("factible"):
+        print(f"  ⚠️ {_nom127} sin menú, no se puede comprobar (no se acusa a nadie)")
+        continue
+    _c127 = _cereal_en127(_d127)
+    if _c127:
+        fallos.append(f"BLOQUE127: el perro SANO «{_nom127}» se lleva {_c127} en el plato. El "
+                      f"automático NO debe proponer hidratos a un perro que no los necesita: "
+                      f"esto calcula BARF")
+
+# ── 2 · las que TOPAN LA GRASA sí, y la lista se DERIVA del JSON ────────────
+_TOPAN127 = sorted(k for k, v in json.load(open("patologias.json", encoding="utf-8"))["patologias"].items()
+                   if "grasa" in (v.get("topes_por_1000kcal") or {}))
+if len(_TOPAN127) < 5:
+    fallos.append(f"BLOQUE127: solo {len(_TOPAN127)} patologías topan la grasa y eran siete. Si "
+                  f"de verdad han bajado, este bloque hay que releerlo; si es que la clave del "
+                  f"tope cambió de nombre, la derivación se quedó parada sin decirlo")
+_con_cereal_127 = 0
+for _p127 in _TOPAN127:
+    _d127 = _menu127(patologias=(_p127,))
+    if not _d127.get("factible"):
+        fallos.append(f"BLOQUE127: «{_p127}» topa la grasa y no saca menú. Con la grasa y la "
+                      f"proteína topadas, la energía que queda solo puede venir de hidratos — si "
+                      f"aun así no sale, la categoría no está llegando al solver")
+        continue
+    if _cereal_en127(_d127):
+        _con_cereal_127 += 1
+if _TOPAN127 and _con_cereal_127 == 0:
+    fallos.append(f"BLOQUE127: NINGUNA de las {len(_TOPAN127)} patologías que topan la grasa usa "
+                  f"hidratos. Para eso entró la categoría; si no los usa ninguna, o no son "
+                  f"candidatos o el techo no se está abriendo")
+
+# ── 3 y 4 · la respuesta del dueño manda sobre las dos cosas ────────────────
+_no127 = _menu127(patologias=("pancreatitis",), con_hidratos=False)
+if _no127.get("factible") and _cereal_en127(_no127):
+    fallos.append(f"BLOQUE127: el dueño dijo que NO quiere hidratos y el menú de la pancreatitis "
+                  f"lleva {_cereal_en127(_no127)}. Lo que el dueño excluye a mano no se toca "
+                  f"(regla 4), ni aunque la patología lo pida")
+if not _no127.get("factible"):
+    print("  ⚠️ con `con_hidratos=False` la pancreatitis se queda sin menú — está medido que sale, "
+          "así que si esto se repite hay que mirarlo")
+_si127 = _menu127(con_hidratos=True)
+if not _si127.get("factible"):
+    fallos.append("BLOQUE127: con `con_hidratos=True` el perro SANO se queda sin menú. Permitir un "
+                  "alimento más no puede quitar soluciones: es un techo que sube, no un suelo")
+# ⚠️ Y AQUÍ NO SE EXIGE QUE EL MENÚ LOS LLEVE, A PROPÓSITO. Un `True` los hace
+#    CANDIDATOS, no obligatorios, así que «este menú lleva quinoa» es una
+#    propiedad INCIDENTAL del menú que devuelve el solver -- y este fichero
+#    tiene escrito cuatro veces lo que pasa al afirmarlas: el bloque se pone
+#    rojo cuando el motor acierta, y una batería de la que se desconfía se mira
+#    por encima. Medido el día que se escribió: con `True` el adulto sano saca
+#    unas veces quinoa y otras ninguno, y las dos cosas son correctas.
+#
+#    Lo que SÍ es determinista es la fontanería, y es lo que de verdad se
+#    rompe: que `main` le pase la respuesta al solver y que el solver la LEA.
+#    Se mira el fuente y el BYTECODE, que es la lección del BLOQUE 86 -- contar
+#    apariciones en el texto da verde con la línea `import` y una mención en un
+#    docstring.
+_fuente127 = open("main.py", encoding="utf-8").read()
+_pasa127 = _fuente127.count('con_hidratos=getattr(datos, "con_hidratos", None)')
+if _pasa127 < 4:
+    fallos.append(f"BLOQUE127: `main.py` solo le pasa `con_hidratos` al solver en {_pasa127} "
+                  f"llamadas. Eran seis: si se cae de una, ese camino contesta la pregunta del "
+                  f"dueño ignorándola, y el menú sale verde igual")
+if "con_hidratos" not in _mc127._resolver_una_vez.__code__.co_varnames:
+    fallos.append("BLOQUE127: `_resolver_una_vez` ya no recibe `con_hidratos`. La pregunta llegaría "
+                  "hasta la puerta del solver y se quedaría fuera")
+
+# ── 5 · lo que se elige A MANO entra igual (regla 5) ────────────────────────
+_amano127 = _CEREALES_127[0] if _CEREALES_127 else None
+if _amano127:
+    # ⚠️ CON `modo: "personalizar"`, QUE ES COMO LO MANDA LA APP. Sin el modo,
+    #    `nombres_alimentos` y `forzar_presencia` se IGNORAN los dos -- está
+    #    escrito en `PeticionMenu` desde el 25 de agosto-- y la primera versión
+    #    de este bloque acusó al motor de no respetar una elección a mano
+    #    cuando lo que estaba mal era la petición. Comprobado: con el modo
+    #    puesto, el arroz entra a 31 g en un perro sano.
+    _f127 = _menu127(forzar=[_amano127], modo="personalizar")
+    if _f127.get("factible") and _amano127 not in (_f127.get("menu") or {}):
+        fallos.append(f"BLOQUE127: se pidió «{_amano127}» expresamente, el perro está sano y no "
+                      f"está en el menú. `ACCESIBLES` es la lista de lo que propone el AUTOMÁTICO "
+                      f"y NUNCA puede impedir una elección a mano — es la decisión escrita en "
+                      f"`motor_completo.py` el 5 de agosto")
+
+# ── 6 · si lleva hidratos, se dice que van cocidos Y cuándo se pesan ────────
+_conh127 = _menu127(patologias=("pancreatitis",))
+if _conh127.get("factible") and _cereal_en127(_conh127):
+    _txt127 = " ".join(str(x) for x in (_conh127.get("avisos_extra") or []))
+    _b127 = _txt127.lower()
+    if not any(x in _b127 for x in ("cocido", "cocinarlo", "hervir", "hiérvelo", "hiervelo")):
+        fallos.append("BLOQUE127: el menú lleva hidratos y NO dice que van cocidos. En una ración "
+                      "BARF todo lo demás va crudo, así que quien lea «arroz» puede darlo crudo")
+    # ⚠️ SE BUSCA LA BASE, NO LA PALABRA «PESA», y la diferencia costó una vuelta.
+    #    La primera versión buscaba «pesa» y el propio aviso termina diciendo
+    #    «crudo PESA mucho menos», así que con la frase útil borrada el bloque
+    #    seguía verde: la palabra estaba, dentro de otra frase. Es la familia del
+    #    «epa» dentro de «reparte» del BLOQUE 107 y del «purina» dentro de
+    #    «purinas» de `auditar_citas.py`. Lo que hay que encontrar es la BASE —
+    #    que los gramos son de producto YA COCIDO —, que es lo que el BLOQUE 123
+    #    le exige a la ficha y lo único que quita la ambigüedad de la báscula.
+    if not any(x in _b127 for x in ("ya cocido", "ya cocida", "ya cocidos", "ya cocidas",
+                                    "después de cocinarlo", "despues de cocinarlo")):
+        fallos.append("BLOQUE127: el menú lleva hidratos, dice que van cocidos y NO dice cuál es la "
+                      "BASE de los gramos. 100 g de arroz crudo son unos 300 g cocido: sin decir "
+                      "que la lista va en cocido, el dueño le puede dar el triple")
+
+# ── 7 · UNA sola función, no dos ───────────────────────────────────────────
+if not hasattr(_mc127, "la_patologia_topa_la_grasa"):
+    fallos.append("BLOQUE127: `la_patologia_topa_la_grasa` ya no está en `motor_completo`. La usan "
+                  "la escalera Y el solver; si cada uno se hace la suya, el motor construye menús "
+                  "con arroz que el filtro final tira")
+elif _api._la_patologia_topa_la_grasa is not _mc127.la_patologia_topa_la_grasa:
+    fallos.append("BLOQUE127: `main` ha vuelto a tener SU PROPIA copia de "
+                  "`la_patologia_topa_la_grasa`. Son dos condiciones que tienen que decir lo "
+                  "mismo, y dos copias no dan ningún error el día que se separan")
+
+# ── 8 · y la categoría existe en las cuatro puntas, no solo en el catálogo ──
+if _CAT_H127 not in _api.CATEGORIAS_QUE_ELIGE_EL_USUARIO:
+    fallos.append(f"BLOQUE127: «{_CAT_H127}» no está en `CATEGORIAS_QUE_ELIGE_EL_USUARIO`, así que "
+                  f"elegir hidratos a mano en Personalizar no haría nada y el menú saldría verde "
+                  f"igual — es el fallo de las tres semanas de las seis categorías")
+from constructor import MARGENES as _MARG127
+if _CAT_H127 not in _MARG127:
+    fallos.append(f"BLOQUE127: «{_CAT_H127}» no tiene margen en `constructor.MARGENES`, de donde "
+                  f"se derivan los nueve peldaños de la escalera")
+elif _MARG127[_CAT_H127][0] != 0.0:
+    fallos.append(f"BLOQUE127: «{_CAT_H127}» tiene un SUELO de {_MARG127[_CAT_H127][0]}. Es la "
+                  f"única categoría que no debe tener ninguno: un BARF no lleva hidratos, y un "
+                  f"suelo metería arroz en el plato de todos los perros")
+_voc127 = _c.get("/vocabulario").json()
+if "hidratos" not in _voc127:
+    fallos.append("BLOQUE127: `GET /vocabulario` no sirve la pregunta de los hidratos, así que la "
+                  "app tendría que inventarse las respuestas — regla 6")
+else:
+    _est127 = [e.get("valor") for e in (_voc127["hidratos"].get("estados") or [])]
+    if sorted((str(x) for x in _est127)) != ["False", "None", "True"]:
+        fallos.append(f"BLOQUE127: la pregunta de los hidratos sirve los estados {_est127} y "
+                      f"tienen que ser TRES (sí, no y sin contestar). Con dos, «no he contestado» "
+                      f"y «no quiero» se vuelven lo mismo, y no lo son")
+
+print(f"  cereales en el catálogo: {len(_CEREALES_127)} · patologías que topan la grasa: "
+      f"{len(_TOPAN127)}, de ellas {_con_cereal_127} usan hidratos")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
+
+
 _tiempos_por_bloque.sort(reverse=True)
 _gastado = sum(t for t, _ in _tiempos_por_bloque)
 # ⚠️ Y CERRAR EL ÚLTIMO BLOQUE VA PEGADO AL GUARDIA, NO DONDE ESTABA (16 de

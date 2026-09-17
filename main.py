@@ -3511,7 +3511,6 @@ def endpoint_menu_semana(datos: PeticionMenu, numero_de_menus: int = 1):
                 datos.der_objetivo, datos.etapa_requisitos, datos.peso_perro_kg,
                 origen="/menu/semana", al=al, req=req,
                 patologias=datos.patologias,
-                con_hidratos=getattr(datos, "con_hidratos", None),
                 peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
                 peso_objetivo_kg=_peso_de_referencia(datos)[0],
                 kcal_de_premios=_kcal_de_premios(datos))
