@@ -3094,6 +3094,47 @@ el mecanismo está puesto y la especie a evitar le llega al solver.
 
 ---
 
+## P-50 · Tres cosas que sé de los hidratos y que NINGUNA fuente del repo dice
+
+*(17 de septiembre de 2026. Las preguntó Elena el día que entraron los cinco
+primeros hidratos: «tienes que tener cuidado con alimentos que sean tóxicos y
+eso vale??». Están aquí y no aplicadas porque aplicarlas sería inventarme la
+cifra, que es la regla — y porque las tres tienen fuente en la literatura
+humana y ninguna en las 98 fuentes que vive en el repo de al lado.)*
+
+**Lo que sí está comprobado, y por eso estas tres son lo único que queda:**
+
+| | |
+|---|---|
+| Lista de tóxicos de FEDIAF §7.7 y de la WSAVA (uva, chocolate, cebolla, ajo, macadamia, xilitol, alcohol, cafeína) | **ninguno de los cinco** |
+| Tabla 40-3 de SACN5, la de oxalato alto para el perro con urolitos de calcio | **ninguno de los cinco**. El boniato sí está, «Sweet potatoes (H)», y ya estaba en `OXALATO_ALTO` |
+| La tabla de al lado, la de lo permitido | pone **«Potatoes, white»** y **«Rice»** entre lo bajo en oxalato — «*Low in oxalate, but not low in calcium content*» |
+
+**1 · La patata cruda, verde o germinada lleva solanina.** Es cierto y es de
+manual, y **«solanin» no aparece ni una vez en las 98 fuentes del repo**
+(grepeado). Hoy se cubre por la vía que ya existe y sin citar a nadie: la ficha
+es `preparacion: "cocido"` y su `aviso_al_comprar` dice que nunca cruda, verde
+ni germinada. Lo que falta es la fuente que lo respalde, y con ella se podría
+decidir si además va a una lista dura.
+
+**2 · La quinoa y el oxalato.** En nutrición humana es un alimento de oxalato
+alto, y la Tabla 40-3 de SACN5 —que es la fuente del motor para esto— **no la
+nombra**. No se ha metido en `OXALATO_ALTO` porque eso sería aplicar una cifra
+que nuestra fuente no da. Si se confirma, la quinoa saldría del plato de los dos
+urolitos de calcio, que es donde hoy el motor ya saca el boniato y otros dieciséis.
+
+**3 · El arsénico inorgánico del arroz.** Se acumula en el grano, y más en el
+integral que en el blanco. En el repo, NRC 2006 nombra el arsénico como mineral
+traza y **no dice nada del arroz**.
+
+⚠️ **Y las tres tienen la misma forma que el aviso del cerebro de ternera**: son
+condiciones de la COMPRA y de la COCINA, donde el motor no está. Si se aplican,
+el sitio es `aviso_al_comprar`, que sale por las dos puertas.
+
+**Dueño: Adrián (Ecocan)**, con el resto de las de catálogo.
+
+---
+
 ## Cerradas
 
 *(Cuando una pregunta se contesta, se mueve aquí con la respuesta, la fecha y

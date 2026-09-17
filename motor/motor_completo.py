@@ -528,6 +528,10 @@ MINIMO_POR_CATEGORIA_PORCION = {
     "Pescados y mariscos": 40.0,
     "Hueso carnoso": 25.0,
     "Verduras y frutas": 15.0,
+    # Una ración de arroz o de patata cocidos por debajo de 30 g no es una
+    # porción: es una cucharada que nadie va a pesar. Y como se pesan YA
+    # COCIDOS, 30 g son unos 10 g de grano seco.
+    "Cereales y tubérculos": 30.0,
     # Vísceras e hígado van aparte y bajos a propósito: su propio límite de
     # dosis los mantiene pequeños (el hígado ronda el 5 % de la ración), así
     # que exigirles 25 g dejaría sin menú a los perros pequeños.

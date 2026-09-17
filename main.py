@@ -3047,8 +3047,28 @@ def _escalera_de_relajacion(hay_comida_de_verdad=True, patologias=None, etapa="A
     # afecta a los NUEVE por igual, incluido el estricto, así que un peldaño
     # nuevo lo hereda sin acordarse de nada. El porqué y las medidas, en el
     # docstring de esta función.
+    # ⚠️ Y LA OTRA MITAD DEL MISMO ARREGLO: SI LA PATOLOGÍA TOPA LA GRASA, SE
+    # ABRE EL TECHO DE LOS HIDRATOS (17 de septiembre de 2026). Es la misma
+    # condición, el mismo sitio y el mismo motivo que el suelo del hueso, y las
+    # dos cosas son la misma aritmética vista por sus dos lados: con la grasa
+    # topada en 37,5 g y la proteína en 75 g por 1000 kcal, **362 de cada 1000
+    # kcal solo pueden venir de hidratos**. Sin esto, lo que entra en su sitio
+    # es verdura, y a la pancreatitis le salía el 49 % del plato en hierba.
+    #
+    # Medido, adulto de 22 kg con cada una de las siete:
+    #
+    #     pancreatitis   858 g · 49 % verdura · peldaño x3  ->  662 g ·  8 % · ESTRICTO
+    #     obesidad      1087 g · 49 % verdura              ->  912 g · 20 %
+    #     hiperlipidemia 1109 g · 20 % verdura             ->  837 g · 10 %
+    #     EPI · SIBO · linfangiectasia · enteropatía: los cuatro SUBEN de peldaño
+    #
+    # El 40 % es NUESTRO, como todas las proporciones de BARF (regla 3), y por
+    # eso va aquí y no en `MARGENES`: fuera de estas siete el techo se queda en
+    # el 10 % de la verdura, porque un BARF con un tercio de arroz no es un BARF.
     if _la_patologia_topa_la_grasa(patologias, etapa):
-        peldanos = [({c: ((0.0 if c == "Hueso carnoso" else mn), mx)
+        peldanos = [({c: ((0.0 if c == "Hueso carnoso" else mn),
+                          (TECHO_HIDRATOS_SI_LA_GRASA_ESTA_TOPADA
+                           if c == "Cereales y tubérculos" else mx))
                       for c, (mn, mx) in m.items()}, supl, cl)
                     for m, supl, cl in peldanos]
     return peldanos
@@ -3204,6 +3224,13 @@ def listar_peldanos():
     }
 
 
+# ⚠️ EL TECHO DE HIDRATOS QUE SE ABRE CUANDO LA GRASA ESTÁ TOPADA. Es NUESTRO,
+# no de ninguna fuente: es una proporción de BARF (regla 3). Vive aquí y no en
+# `constructor.MARGENES` porque ahí está el techo del perro SANO, que es el 10 %
+# de la verdura. Ver `_escalera_de_relajacion`, donde se aplica, y el BLOQUE 127.
+TECHO_HIDRATOS_SI_LA_GRASA_ESTA_TOPADA = 0.40
+
+
 def _aviso_de_lo_que_falta(gramos, al, categorias_excluidas=None):
     """
     Qué categorías del BARF se han quedado fuera del menú. Se dice en
@@ -3216,12 +3243,23 @@ def _aviso_de_lo_que_falta(gramos, al, categorias_excluidas=None):
     # explicarle: ya sabe por qué no está. El aviso es solo para lo que
     # falta SIN que nadie lo pidiera.
     a_proposito = set(categorias_excluidas or [])
-    ausentes = [c for c in MARGENES_V2 if c not in presentes and c not in a_proposito]
+    # ⚠️ SOLO SE ECHA DE MENOS LO QUE TIENE SUELO, Y SE DERIVA DEL SUELO (17 de
+    # septiembre de 2026). Los «Cereales y tubérculos» entraron con el mínimo en
+    # CERO a propósito: una ración BARF no lleva ninguno y eso está bien. Sin
+    # esta derivación, TODO menú normal le diría al dueño «este menú no lleva
+    # cereales», que no es información — es ruido que sugiere que falta algo
+    # cuando no falta nada, y esa es justo la quinta razón que el 14 de
+    # septiembre se mandó fuera de los avisos del dueño.
+    #
+    # Se deriva y no se escribe una lista aparte por lo de siempre: una lista a
+    # mano no da error cuando se queda corta, se queda parada.
+    ausentes = [c for c, (mn, _mx) in MARGENES_V2.items()
+                if mn > 0 and c not in presentes and c not in a_proposito]
     if not ausentes:
         return None
     nombres = {"Hueso carnoso": "hueso carnoso", "Carne muscular": "carne muscular",
                "Verduras y frutas": "verdura o fruta", "Vísceras": "vísceras",
-               "Hígado": "hígado"}
+               "Hígado": "hígado", "Cereales y tubérculos": "arroz, patata o avena"}
     lista = [nombres.get(c, c.lower()) for c in ausentes]
     if len(lista) == 1:
         que = lista[0]
@@ -3537,6 +3575,14 @@ def endpoint_menu_semana(datos: PeticionMenu, numero_de_menus: int = 1):
 CATEGORIAS_QUE_ELIGE_EL_USUARIO = (
     "Carne muscular", "Pescados y mariscos", "Hueso carnoso",
     "Vísceras", "Hígado", "Verduras y frutas",
+    # ⚠️ LA SÉPTIMA (17 de septiembre de 2026). Entra aquí y no en la lista de
+    # las que van libres porque los hidratos SÍ se eligen: son comida que se
+    # compra y se cocina, no la herramienta con la que el motor cierra los 43
+    # requisitos. Y en cuanto está aquí, esta tupla tiene que volver a coincidir
+    # con `CATEGORIAS` de `App.jsx` — el día que dejen de coincidir, elegir
+    # cereales no hará nada y nadie se enterará, porque el menú sale verde
+    # igual. Ya pasó con tres de las seis anteriores durante tres semanas.
+    "Cereales y tubérculos",
 )
 
 

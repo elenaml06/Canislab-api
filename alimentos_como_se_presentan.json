@@ -106,6 +106,23 @@
    }
   },
   {
+   "clave": "Cereales y tubérculos",
+   "categorias_del_motor": [
+    "Cereales y tubérculos"
+   ],
+   "segundo_nivel": "especie",
+   "la_elige_el_usuario": true,
+   "dueno": {
+    "titulo": "Arroz, patata y avena",
+    "ejemplo": "arroz blanco cocido, patata cocida, copos de avena cocidos",
+    "ojo": "Estos se dan SIEMPRE cocidos, y los gramos del menú son de producto YA COCIDO: pésalos después de cocinarlos, no antes."
+   },
+   "veterinario": {
+    "titulo": "Cereales y tubérculos (hidratos)",
+    "detalle": "Única categoría del motor SIN mínimo: una ración BARF no lleva ninguno y eso es correcto. Existe para la ración con la grasa topada — con grasa ≤ 37,5 g y proteína ≤ 75 g por 1000 kcal, el resto de la energía solo puede venir de hidratos. Las fichas se pesan YA COCIDAS, al revés que el boniato, la berenjena y el espárrago verde."
+   }
+  },
+  {
    "clave": "Extras",
    "categorias_del_motor": [
     "Extras"
