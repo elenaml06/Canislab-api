@@ -711,6 +711,78 @@ cuándo pesarlo, sin el porqué, y sin servirlo en la pantalla del dueño.
 `PENDIENTE_PRODUCTO.md`**, que daba por hecho que el arroz sería «la primera ficha
 cocinada del catálogo». No lo sería: ya hay tres, y llevan meses ahí.
 
+### Los hidratos: fuera del BARF, dentro donde la grasa está topada
+
+*(17 de septiembre de 2026.)* Entran cinco fichas en una categoría nueva,
+`Cereales y tubérculos`: **arroz blanco cocido, arroz integral cocido, patata
+cocida, copos de avena cocidos y quinoa cocida**. Las cinco se dan **cocidas** y
+se **pesan cocidas**, que es lo contrario del Boniato, la Berenjena y el
+Espárrago verde —esos se dan cocidos y se pesan CRUDOS, porque su composición
+sale de la fila cruda—. Cada ficha lo declara en `se_pesa` y lo vigila el
+BLOQUE 123.
+
+**Por qué una categoría propia y no «Verduras y frutas»**: esa tiene el techo en
+el 10 % del plato desde el 5 de agosto —lo bajó Elena al ver 384 g de canónigos—
+y a una pancreatitis le hacen falta **362 de cada 1000 kcal en hidratos** por
+pura aritmética, con la grasa topada en 37,5 g y la proteína en 75.
+
+⚠️ **EN BARF NO ENTRAN, Y ESO ES LA DECISIÓN.** Elena, viendo la primera medida:
+«en barf deberíamos quitar los hidratos, y que solo entren en patologias que los
+requieran no?». Y la medida le daba la razón: con los cinco como candidatos
+libres y el techo en el 40 %, el perro **sano** se llevaba un tercio del plato en
+quinoa (adulto de 20 kg, 212 g; gigante de 50 kg, 458 g). El MILP los elige
+porque son baratos por gramo y fáciles de comprar — **es lo mismo que le hacía
+elegir 651 g de albahaca**.
+
+| | sin la categoría | con la categoría |
+|---|---|---|
+| los **siete perros sanos** (adulto, sénior, cachorro, toy, gigante, gestante, lactante) | 0 % | **0 %, los siete** |
+| **pancreatitis** | 765 g · **48 % verdura** · peldaño ×3 | 786 g · 10 % · **ESTRICTO** |
+| **obesidad** | 1056 g · **48 % verdura** | 917 g · 20 % |
+| **hiperlipidemia** | 1103 g · 20 % verdura | 835 g · 10 % |
+| EPI · SIBO · linfangiectasia · enteropatía | peldaño ×2 | **suben de peldaño** |
+
+⚠️ **ES UNA RESTRICCIÓN DEL AUTOMÁTICO, NO UNA EXCLUSIÓN**, y la diferencia es la
+que `motor_completo.py` ya tiene escrita del 5 de agosto sobre `ACCESIBLES`: lo
+que el usuario elige **a mano** se añade igual desde el catálogo entero.
+Comprobado: con `modo: "personalizar"` el arroz entra a 31 g en un perro sano.
+Excluirlos de verdad haría que elegir arroz no hiciera nada, y lo que se elige a
+mano se respeta (regla 5).
+
+**La pregunta tiene TRES estados y no dos**, que es lo que la hace servir: *sin
+contestar* (no entran salvo que la patología los pida), *no* (no entran **nunca**,
+ni con una patología que los pida — regla 4, y lo que cuesta se dice) y *sí*
+(entran aunque el perro no tenga nada). Con dos estados, «no he contestado» y «no
+quiero» serían lo mismo, y no lo son. La sirve `GET /vocabulario` en los dos
+registros — regla 6 — y ahí va dicho que **aquí no hay ninguna cifra de fuente**:
+que un BARF no lleve hidratos es criterio NUESTRO, igual que el 20 % de hueso.
+
+⚠️ **Y SE DICE QUE VAN COCIDOS, porque el hábito juega en contra**: en una ración
+BARF todo lo demás va crudo, así que quien vea «arroz» en la lista puede darlo
+tal cual. Y lo que más importa no es eso sino la **base**: los gramos son de
+producto **ya cocido**, y 100 g de arroz crudo son unos 300 g cocido.
+
+**Lo que se comprobó de las fuentes, porque Elena preguntó por los tóxicos**:
+ninguno de los cinco está en la lista de FEDIAF §7.7 ni en la de la WSAVA, ni en
+la Tabla 40-3 de SACN5 (la de oxalato alto) — y la tabla de al lado, la de lo
+permitido, pone «Potatoes, white» y «Rice» entre lo bajo en oxalato. Las tres
+cosas que sé y que **ninguna fuente del repo dice** —la solanina de la patata
+cruda, el oxalato de la quinoa y el arsénico del arroz— están en
+`PREGUNTAS_ABIERTAS.md` **P-50**, escritas y NO aplicadas.
+
+⚠️ **Y LO QUE ENCONTRÓ COMPROBAR LAS FICHAS**, que es por lo que existe
+`auditar_cocinados.py`: `bedca:2661` se llama «Arroz, hervido» y declara **4,12 %
+de agua, menos que su propia fila de arroz crudo** — describe arroz seco con el
+nombre del hervido, y se descarta entera; `bedca:1009` da **15 veces más selenio
+que su propia fila cruda**, y el selenio se baja a USDA; y USDA publica **0,015 g
+de DHA en la quinoa**, que una planta no fabrica. **Seis avisos más eran de la
+herramienta y no de los datos**: la fila cruda de referencia que elegí era «Riz
+blanc ÉTUVÉ» —vaporizado— y la de USDA era la cocida y enriquecida. Es el
+araquidónico 20:4 otra vez, y por eso `FILA_CRUDA` lleva ahora el **nombre
+literal** de cada fila y el script lo comprueba antes de comparar.
+
+Lo vigila el **BLOQUE 127**, comprobado con el fallo puesto de seis formas.
+
 ### Endpoints: cuáles usa la app y cuáles no
 
 Los que llama el frontend hoy: `/menu/v2`, `/menu/semana`,
