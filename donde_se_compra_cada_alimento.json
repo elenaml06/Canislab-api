@@ -872,27 +872,27 @@
   "Arroz blanco cocido": {
    "categoria": "Cereales y tubérculos",
    "donde": "supermercado",
-   "precio_orientativo": "barato"
+   "precio_orientativo": "corriente"
   },
   "Arroz integral cocido": {
    "categoria": "Cereales y tubérculos",
    "donde": "supermercado",
-   "precio_orientativo": "barato"
+   "precio_orientativo": "corriente"
   },
   "Patata cocida": {
    "categoria": "Cereales y tubérculos",
    "donde": "supermercado",
-   "precio_orientativo": "barato"
+   "precio_orientativo": "corriente"
   },
   "Copos de avena cocidos": {
    "categoria": "Cereales y tubérculos",
    "donde": "supermercado",
-   "precio_orientativo": "barato"
+   "precio_orientativo": "corriente"
   },
   "Quinoa cocida": {
    "categoria": "Cereales y tubérculos",
    "donde": "supermercado",
-   "precio_orientativo": "barato"
+   "precio_orientativo": "corriente"
   }
  }
 }

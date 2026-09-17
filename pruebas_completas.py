@@ -17291,6 +17291,54 @@ else:
                       f"declara una PREPARACIÓN que la ficha no tiene. Cocinar pierde agua y "
                       f"concentra todo lo demás por 100 g, así que esa fila describe otro "
                       f"alimento: " + " · ".join(_cocinadas100[:4]))
+    # ⚠️ Y LA EQUIVALENCIA DE PREPARACIONES NO PUEDE SER UN CHEQUE EN BLANCO
+    # (17 de septiembre de 2026). Desde hoy una ficha COCIDA acepta una fila que
+    # diga «cuit», «cooked» o «hervida», porque las tres dicen lo mismo y hasta
+    # ahora el guardia acusába al emparejamiento CORRECTO — doce rojos el día
+    # que entraron los hidratos.
+    #
+    # El riesgo de ese arreglo es el contrario: que «la ficha es cocida» pase a
+    # valer para CUALQUIER palabra de cocina. No vale — freír no es cocer, y una
+    # fila frita o ahumada describe otro alimento por 100 g —, y eso se
+    # comprueba aquí en vez de suponerse, porque si la equivalencia se abriera
+    # el bloque de arriba saldría verde sin vigilar nada.
+    _prueba100 = next((f for f in _cat100
+                       if str(f.get("preparacion") or "").lower().startswith("cocid")), None)
+    if _prueba100 is None:
+        fallos.append("BLOQUE104: no hay ninguna ficha COCIDA en el catálogo, así que la "
+                      "equivalencia de preparaciones no se puede comprobar. Si se han quitado "
+                      "todas, esta comprobación sobra; si no, algo va mal")
+    else:
+        _nm100 = _prueba100["nombre"]
+        # Lo que TIENE que aceptar (la misma cocción, en los tres idiomas)…
+        for _buena100 in ("Riz blanc, cuit, non salé", "Rice, white, cooked",
+                          "Arroz blanco, hervido"):
+            if _fid100.preparacion_incompatible(_nm100, _prueba100, _buena100):
+                fallos.append(f"BLOQUE104: «{_nm100}» es una ficha COCIDA y el guardia rechaza "
+                              f"«{_buena100}», que es su misma cocción dicha en otro idioma. "
+                              f"Así acusaba al emparejamiento correcto")
+        # …y lo que NO puede aceptar, que es lo que de verdad protege.
+        for _mala100, _esperada100 in (("Rice, white, fried", "frito"),
+                                       ("Riz blanc, fume", "ahumado"),
+                                       ("Rice, white, roasted", "asado"),
+                                       ("Rice, white, steamed", "al vapor"),
+                                       ("Riz blanc, cuit a la vapeur", "al vapor en francés"),
+                                       ("Arroz blanco, congelado", "congelado")):
+            if not _fid100.preparacion_incompatible(_nm100, _prueba100, _mala100):
+                fallos.append(f"BLOQUE104: «{_nm100}» es COCIDA y el guardia ACEPTA "
+                              f"«{_mala100}» ({_esperada100}), que es otro tratamiento y otro "
+                              f"alimento por 100 g. La equivalencia se ha vuelto un cheque en "
+                              f"blanco: sirve para decir que cocer es cocer, no para dar por "
+                              f"bueno cualquier emparejamiento de una ficha cocinada")
+        # Y una ficha CRUDA sigue rechazando una fila cocida, que es de donde
+        # viene todo esto (la Perca al horno del 13 de septiembre).
+        _cruda100 = next((f for f in _cat100 if not f.get("preparacion")), None)
+        if _cruda100 is not None and not _fid100.preparacion_incompatible(
+                _cruda100["nombre"], _cruda100, "Saumon, cuit"):
+            fallos.append(f"BLOQUE104: «{_cruda100['nombre']}» es una ficha CRUDA y el guardia "
+                          f"acepta una fila cocida. La equivalencia se está aplicando a fichas "
+                          f"que no declaran preparación")
+
     print(f"  emparejadas con una fila cocinada: {len(_cocinadas100)} "
           f"(+{len(_aceptadas100)} aceptadas con su motivo escrito)")
 
@@ -20928,8 +20976,20 @@ else:
 # `CAT_SUPLEMENTO` no la cuenta nadie — ni el tope de suplementos, ni la
 # dosificación por peso, ni el aviso de composición.
 _cats_del_catalogo117 = {a.get("categoria") for a in al.values() if a.get("categoria")}
-_COMIDA_117 = {"Carne muscular", "Hueso carnoso", "Vísceras", "Hígado",
-               "Pescados y mariscos", "Verduras y frutas", "Extras"}
+# ⚠️ LA LISTA DE LO QUE ES COMIDA SE DERIVA, y se derivaba a mano hasta el 17
+# de septiembre — cuando entró «Cereales y tubérculos» este guardia se puso
+# rojo, que es lo que tenía que hacer: obligó a DECLARAR que los hidratos son
+# comida y no un suplemento. Pero la lista escrita a mano dentro de una prueba
+# es la misma forma de fallo que la prueba vigila, así que ahora las que llevan
+# proporción BARF salen de `MARGENES`: meter una categoría ahí, con su techo y
+# su suelo, ES declararla comida, y se declara en el sitio donde decide algo.
+#
+# Las DOS que se quedan escritas no están en `MARGENES` a propósito y por
+# motivos distintos: el PESCADO no tiene proporción BARF propia (entra dentro de
+# la carne) y los EXTRAS van siempre libres porque son la herramienta con la que
+# el motor cierra los 43 requisitos (regla 5).
+from constructor import MARGENES as _MARG117
+_COMIDA_117 = set(_MARG117) | {"Pescados y mariscos", "Extras"}
 _huerfanas117 = sorted(_cats_del_catalogo117 - set(_CAT117) - _COMIDA_117)
 if _huerfanas117:
     fallos.append(

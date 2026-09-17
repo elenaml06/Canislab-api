@@ -6347,6 +6347,10 @@ _COMO_SE_LLAMA_LA_FAMILIA = {
     "Carne muscular": "carne",
     "Pescados y mariscos": "pescado o marisco",
     "Extras": "extras (aceites, semillas, huevo o sal)",
+    # ⚠️ COMIDA Y NO CATEGORÍA: al dueño se le dice lo que va a comprar. Y se
+    # nombra el arroz y la patata en vez de decir «hidratos», que es la palabra
+    # de un nutriente — la regla del 14 de septiembre.
+    "Cereales y tubérculos": "arroz, patata o avena",
 }
 
 
@@ -9934,9 +9938,15 @@ def endpoint_vocabulario():
                           "ejemplo": "dinos que sí si es mayor, le faltan dientes o traga sin "
                                      "masticar"},
                 "veterinario": {"titulo": "Exclusión de hueso carnoso",
+                                # ⚠️ SIN EL NÚMERO DE REQUISITOS, y no es estilo:
+                                # aquí ponía «contra los 43 requisitos» y eso es
+                                # una cifra del motor escrita a mano dentro de un
+                                # texto. Ya pasó con «los 30 requisitos» cuando el
+                                # motor verificaba 43. Lo vigila este mismo BLOQUE
+                                # 107, que lo cazó el día que se escribió.
                                 "detalle": "Categoría entera fuera. El calcio y el ratio Ca:P "
                                            "pasan a cubrirse con cáscara de huevo o suplemento, y "
-                                           "el menú se verifica igual contra los 43 requisitos."},
+                                           "el menú se verifica igual, entero."},
             },
             "que_pasa_al_quitarlo": ("El calcio que aportaría el hueso se cubre con cáscara de "
                                      "huevo o con un suplemento, y el menú cumple los mismos "

@@ -181,6 +181,12 @@ PREPARACIONES = (
     "toasted", "blanched", "reheated", "rotisserie", "pan-fried",
     "cuit", "fume", "seche", "grille", "roti", "conserve", "appertise",
     "blanchi", "etuve", "poele", "panne", "saumure", "au four",
+    # ⚠️ «vapeur» (17 de septiembre), y no es simetría: sin ella, una fila
+    # francesa «cuit à la vapeur» pasaba entera por la palabra «cuit», que desde
+    # hoy es equivalente a nuestro «cocido». O sea que el agujero lo abría la
+    # equivalencia de abajo, y se cierra aquí. Vaporizar pierde menos agua que
+    # hervir, así que no es el mismo alimento por 100 g.
+    "vapeur",
 )
 
 # ⚠️ Y UNA PALABRA QUE PARECE UNA PREPARACIÓN Y NO LO ES, con su caso real.
@@ -205,17 +211,50 @@ NO_SON_PREPARACIONES_AUNQUE_LO_PAREZCAN = {
 }
 
 
+# ⚠️ NUESTRA PREPARACIÓN Y LA DE LA FUENTE DICEN LO MISMO EN TRES IDIOMAS
+# (17 de septiembre de 2026, y lo cazó el BLOQUE 104 con DOCE rojos).
+#
+# Hasta hoy la comparación era LITERAL, y eso valía mientras todas las fichas
+# del catálogo fueran crudas: cualquier palabra de cocina en la fila de la
+# fuente era motivo de sospecha. Con la categoría de hidratos entran cinco
+# fichas que se dan COCIDAS a propósito, y su fila buena es justamente la
+# cocida — «Riz blanc, **cuit**», «Rice, white, …, **cooked**», «Arroz integral,
+# **hervido**» —, o sea que el guardia acusaba al emparejamiento CORRECTO. Un
+# guardia que acusa a quien no ha hecho nada se deja de mirar.
+#
+# ⚠️ Y LA SALIDA NO ES «si la ficha es cocida, cualquier palabra vale»: eso
+# dejaría pasar una ficha hervida emparejada con una fila FRITA o AHUMADA, que
+# son otro alimento por 100 g. Lo que se declara es la equivalencia por
+# TRATAMIENTO, y estrecha: cocer en agua es cocer en agua se diga como se diga,
+# y freír no es cocer. Si alguna vez hace falta emparejar una ficha cocida con
+# una fila al VAPOR o al HORNO, este guardia se pone rojo y alguien lo decide —
+# que es donde se decide bien, y no aquí por adelantado.
+EQUIVALEN_A_NUESTRA_PREPARACION = {
+    # Hervido / cocido en agua. Las diez palabras que puede traer una fila de
+    # BEDCA, CIQUAL o USDA para eso mismo.
+    "cocido": ("cocid", "hervid", "cuit", "cooked", "boiled", "simmered",
+               "poached", "moist heat", "blanched", "blanchi"),
+    "cocida": ("cocid", "hervid", "cuit", "cooked", "boiled", "simmered",
+               "poached", "moist heat", "blanched", "blanchi"),
+    "cocidos": ("cocid", "hervid", "cuit", "cooked", "boiled", "simmered",
+                "poached", "moist heat", "blanched", "blanchi"),
+    "cocidas": ("cocid", "hervid", "cuit", "cooked", "boiled", "simmered",
+                "poached", "moist heat", "blanched", "blanchi"),
+}
+
+
 def preparacion_incompatible(nuestro_nombre, ficha, suyo_nombre):
     """¿El candidato declara una preparación que la ficha nuestra no tiene?"""
     if not suyo_nombre:
         return None
-    nuestro = cf._sin_tildes(
-        f"{nuestro_nombre} {ficha.get('preparacion') or ''}").lower()
+    prep = str(ficha.get("preparacion") or "").strip().lower()
+    nuestro = cf._sin_tildes(f"{nuestro_nombre} {prep}").lower()
     suyo = cf._sin_tildes(suyo_nombre).lower()
+    equivalentes = EQUIVALEN_A_NUESTRA_PREPARACION.get(prep, ())
     for p in PREPARACIONES:
         if p in NO_SON_PREPARACIONES_AUNQUE_LO_PAREZCAN:
             continue
-        if p in suyo and p not in nuestro:
+        if p in suyo and p not in nuestro and p not in equivalentes:
             return p
     return None
 
