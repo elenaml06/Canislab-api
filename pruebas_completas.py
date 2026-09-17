@@ -21255,29 +21255,7 @@ print(f"  premio declarado: {'entra y se dice' if _r122.get('premios_dentro_del_
 print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
-_tiempos_por_bloque.sort(reverse=True)
-_gastado = sum(t for t, _ in _tiempos_por_bloque)
-# ⚠️ Y CERRAR EL ÚLTIMO BLOQUE VA PEGADO AL GUARDIA, NO DONDE ESTABA (16 de
-#    septiembre de 2026, y costó una vuelta entera de batería). Un bloque solo
-#    entra en `_tiempos_por_bloque` cuando alguien lo CIERRA, y al último lo
-#    cierra esta llamada. Al mover el guardia se quedó atrás, así que el guardia
-#    miraba una lista a la que todavía le faltaba el bloque de arriba y lo acusaba
-#    de no haberse ejecutado -- con su resultado impreso tres líneas antes. Es el
-#    mismo fallo que la vez anterior en su tercera cara: no basta con que el
-#    guardia sea lo último, es que **lo que lee tiene que estar completo cuando
-#    lo lee**. Los dos van juntos y en este orden, siempre.
-_cerrar_el_ultimo_bloque()
 
-# ⚠️ Y ESTE GUARDIA TIENE QUE SER LO ÚLTIMO DEL FICHERO, Y EL 16 DE SEPTIEMBRE
-#    NO LO ERA -- o sea que cayó en SU PROPIO fallo, en espejo (medido: acusó a
-#    los BLOQUES 119, 120 y 121 de «escritos y no ejecutados» mientras los tres
-#    corrían cinco líneas más abajo, con su cabecera impresa y su resultado en
-#    pantalla). Estaba escrito ANTES que ellos, así que cuando miraba todavía no
-#    habían pasado. Un guardia que se coloca en medio no mide lo que hay: mide lo
-#    que hay POR ENCIMA de él. Va aquí, pegado al recuento de tiempos, porque ese
-#    recuento es lo que lee, y los dos tienen que ver el fichero entero.
-
-# ⚠️ ¿SE HAN EJECUTADO TODOS LOS BLOQUES QUE HAY ESCRITOS? (14 de septiembre).
 # ============================================================
 # BLOQUE 123 — UN ALIMENTO QUE HAY QUE COCINAR DICE EN QUÉ SE PESA
 # ============================================================
@@ -21399,6 +21377,30 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tm
 
 
 #
+
+_tiempos_por_bloque.sort(reverse=True)
+_gastado = sum(t for t, _ in _tiempos_por_bloque)
+# ⚠️ Y CERRAR EL ÚLTIMO BLOQUE VA PEGADO AL GUARDIA, NO DONDE ESTABA (16 de
+#    septiembre de 2026, y costó una vuelta entera de batería). Un bloque solo
+#    entra en `_tiempos_por_bloque` cuando alguien lo CIERRA, y al último lo
+#    cierra esta llamada. Al mover el guardia se quedó atrás, así que el guardia
+#    miraba una lista a la que todavía le faltaba el bloque de arriba y lo acusaba
+#    de no haberse ejecutado -- con su resultado impreso tres líneas antes. Es el
+#    mismo fallo que la vez anterior en su tercera cara: no basta con que el
+#    guardia sea lo último, es que **lo que lee tiene que estar completo cuando
+#    lo lee**. Los dos van juntos y en este orden, siempre.
+_cerrar_el_ultimo_bloque()
+
+# ⚠️ Y ESTE GUARDIA TIENE QUE SER LO ÚLTIMO DEL FICHERO, Y EL 16 DE SEPTIEMBRE
+#    NO LO ERA -- o sea que cayó en SU PROPIO fallo, en espejo (medido: acusó a
+#    los BLOQUES 119, 120 y 121 de «escritos y no ejecutados» mientras los tres
+#    corrían cinco líneas más abajo, con su cabecera impresa y su resultado en
+#    pantalla). Estaba escrito ANTES que ellos, así que cuando miraba todavía no
+#    habían pasado. Un guardia que se coloca en medio no mide lo que hay: mide lo
+#    que hay POR ENCIMA de él. Va aquí, pegado al recuento de tiempos, porque ese
+#    recuento es lo que lee, y los dos tienen que ver el fichero entero.
+
+# ⚠️ ¿SE HAN EJECUTADO TODOS LOS BLOQUES QUE HAY ESCRITOS? (14 de septiembre).
 # CASO REAL, y lo cometí yo el mismo día que se escribe esto: el BLOQUE 111 se
 # añadió **al final del fichero**, o sea DESPUÉS del `sys.exit()` de aquí abajo.
 # La batería entera salió «✅ TODO EN VERDE» sin haberlo ejecutado nunca, y el
@@ -21456,6 +21458,23 @@ if _tarde_fin:
         f"guardia, asi que cuando mira todavia no han corrido y las acusa de inertes teniendo "
         f"razon el motor. El guardia va SIEMPRE lo ultimo del fichero")
 _cierre_fin = _fuente_fin.rfind("\n_cerrar_el_ultimo_bloque()")
+# ⚠️ Y LA TERCERA CONDICIÓN, DEL 17 DE SEPTIEMBRE DE 2026: ninguna cabecera de
+#    bloque puede quedar ENTRE esa llamada y este guardia. Las dos de arriba no
+#    la cubren -- el BLOQUE 123 estaba escrito justo ahí, o sea después del
+#    cierre y antes del guardia, así que no había ninguna cabecera «después del
+#    guardia» y el cierre sí estaba «antes»: las dos condiciones en verde y el
+#    bloque acusado de muerto teniendo razón el motor. Un bloque escrito ahí
+#    corre, imprime y comprueba, pero su cabecera cierra el bloque ANTERIOR y al
+#    suyo ya no lo cierra nadie, así que no entra en el recuento.
+if _cierre_fin != -1:
+    _enmedio_fin = [c for c in _cabeceras_fin if _cierre_fin < c < _yo_fin]
+    if _enmedio_fin:
+        fallos.append(
+            f"BLOQUE-GUARDIA: hay {len(_enmedio_fin)} cabeceras «=== BLOQUE» escritas ENTRE "
+            f"`_cerrar_el_ultimo_bloque()` y este guardia. Ese bloque corre y comprueba, pero "
+            f"nadie cierra su cronometro, asi que no entra en `_tiempos_por_bloque` y el "
+            f"guardia lo acusa de no haberse ejecutado -- teniendo razon el motor. Va ANTES "
+            f"del recuento de tiempos, con los demas")
 if _cierre_fin == -1 or _cierre_fin > _yo_fin:
     fallos.append(
         "BLOQUE-GUARDIA: `_cerrar_el_ultimo_bloque()` no esta ANTES de este guardia. Un bloque "
