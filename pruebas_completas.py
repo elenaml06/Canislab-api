@@ -8189,13 +8189,31 @@ else:
         # Esto se actualiza en vez de relajarse a propósito. Un test que
         # aceptara «cualquier límite» dejaría de vigilar lo único que importa
         # aquí: que el motor sepa NOMBRAR lo que bloquea.
-        _esperados52 = {("pancreatitis", "grasa")}
+        # ⚠️ REMEDIDO OTRA VEZ EL 16 DE SEPTIEMBRE, Y VUELVEN A SER DOS. Y es la
+        # noticia buena que la nota de arriba pedía escribir en vez de tapar.
+        #
+        # Ese día se soltó el SUELO del hueso (20 %) en las siete patologías que
+        # topan la grasa -- ver `_escalera_de_relajacion` --, y el hueso es lo
+        # más graso del plato: con su suelo fuera, el modelo deja de estar tan
+        # apretado y soltar la PROTEÍNA de la renal vuelve a desbloquear, igual
+        # que soltar la grasa de la pancreatitis.
+        #
+        # O sea que el motor no ha perdido precisión: ha ganado holgura, y ahora
+        # puede nombrar los DOS límites que de verdad chocan en vez de uno --
+        # que es exactamente lo que este bloque existe para conseguir. Al
+        # veterinario le sirve más: le dice las dos cifras que puede negociar.
+        #
+        # Y el histórico entero se queda escrito porque cuenta cómo se mueve
+        # esto: 8-sep («renal», fósforo) · 9-sep («renal», potasio) · 11-sep un
+        # solo culpable (la grasa) · 16-sep dos (la grasa y la proteína).
+        _esperados52 = {("pancreatitis", "grasa"), ("renal", "proteina")}
         if _esperados52 != _pares52:
-            fallos.append(f"BLOQUE52: el motor señala {sorted(_pares52)} y lo remedido el 11 de "
-                          f"septiembre es {sorted(_esperados52)} -- el único de los diez límites "
-                          f"activos que al soltarlo SÍ da menú. Si ha vuelto a moverse, mira qué "
-                          f"restricción nueva ha entrado antes de tocar este número; y si ahora "
-                          f"son dos o más, es una noticia buena que hay que escribir, no tapar")
+            fallos.append(f"BLOQUE52: el motor señala {sorted(_pares52)} y lo remedido el 16 de "
+                          f"septiembre es {sorted(_esperados52)} -- los límites que al soltarlos "
+                          f"SÍ dan menú. Si ha vuelto a moverse, mira qué restricción nueva ha "
+                          f"entrado antes de tocar este número; que sean MÁS es una noticia "
+                          f"buena que hay que escribir, y que sean MENOS quiere decir que el "
+                          f"modelo se ha apretado y hay que saber con qué")
         for _x52 in _choque52:
             # Sin fuente, un veterinario no puede ir a comprobarlo, y entonces
             # el mensaje vuelve a ser una afirmación de la app sin respaldo.
@@ -17930,6 +17948,17 @@ try:
     for _n101b in ("hasta_el_maximo", "mas_del_maximo"):
         _d101b = dict(_CAIRO101); _d101b["premios_nivel"] = _n101b
         _r101b = _c_b5.post("/menu/v2", json=_d101b).json()
+        # ⚠️ Y CON EL 20 % SIN DECLARAR, NO HAY MENÚ Y NO ES CULPA DEL PLAN B
+        #    (16 de septiembre de 2026). Desde hoy ese caso contesta que hay que
+        #    decir QUÉ premio es -- ver la mitad 1 de este bloque -- y eso pasa
+        #    antes de que la holgura del techo pinte nada. Acusar aquí al plan B
+        #    sería acusarle de un «no hay menú» que decide otra cosa.
+        #
+        #    El caso que el plan B protege de verdad es el de 10 %, que es el
+        #    de Cairo tal cual y el que la fuente sí permite: ése sigue exigido
+        #    sin excusa.
+        if _n101b == "mas_del_maximo" and _r101b.get("los_premios_no_dejan_sitio"):
+            continue
         if not _r101b.get("factible"):
             fallos.append(f"BLOQUE101: con una holgura imposible y premios «{_n101b}» el perro se "
                           f"queda SIN MENÚ. El plan B no está funcionando, y sin plan B esa "

@@ -600,6 +600,66 @@ el fallo puesto, ocho rojos— y `tests/catalogo-en-orden.spec.js`, que llama a 
 **misma** función que pinta (`arbolOrdenado`, en `texto.js` y no en `App.jsx`
 para que se pueda probar sin levantar la app).
 
+### El hueso es lo más graso del plato, y su suelo es NUESTRO
+
+*(16 de septiembre de 2026.)* Elena, viendo que a una pancreatitis le salía medio
+plato de verdura: «**prueba a que en esas patologias que limitan la grasa se
+elimine el hueso** a ver si sale un menú razonable sin un 50% de verdura, y si
+hay otras patologías que dan el mismo error dimelo que busco info». Y al ver la
+medida: «vale, si funciona lo podemos aplicar, **las proporciones son nuestras y
+las movemos como queremos**».
+
+**Son siete patologías las que topan la grasa**, y se derivan de
+`patologias.json` —no hay lista escrita a mano—: obesidad (22,5 g/1000 kcal),
+hiperlipidemia (30), y pancreatitis, EPI, SIBO, enteropatía crónica y
+linfangiectasia (37,5).
+
+**Por qué choca**: el hueso carnoso es lo más graso y lo que más fósforo trae,
+así que exigir un 20 % del plato es justo lo contrario de lo que pide una ración
+con la grasa topada. Lo que salía en su lugar era diluir con verdura hasta la
+mitad del plato — o ningún menú.
+
+| patología (adulto 20-25 kg) | tal cual | sin el suelo de hueso |
+|---|---|---|
+| **obesidad** 25→20 kg | **SIN MENÚ en los 9 peldaños** | menú verde |
+| **hiperlipidemia** | peldaño ×5, **49 % verdura** | peldaño ×2 · 51 % carne · 28 % pescado · 20 % verdura |
+| **EPI · SIBO · linfangiectasia · enteropatía** | peldaño 2 | **peldaño 1** |
+| **pancreatitis** | peldaño ×5, 48 % verdura | igual |
+
+**Ninguna empeora**, y lo que entra en el sitio del hueso es **pescado**, no
+verdura. Barrido entero por la API: **39 formulables, 0 sin menú, 0 no verdes**.
+
+⚠️ **Se suelta el SUELO, no el techo.** El hueso puede seguir entrando y de hecho
+entra en tres de las siete (2,7-4,1 %): lo que se quita es la OBLIGACIÓN.
+
+⚠️ **Y el calcio pasa a salir de otro sitio, que es lo que Elena apuntó antes de
+que se midiera** («igual si metes un suplemento que tenga calcio o cascara de
+huevo o algo asi llega mejor???»). Medido: cáscara de huevo 41-91 % del calcio
+del menú, o el multivitamínico.
+
+⚠️ **Y SOLO AHÍ, porque en el perro sano ese suelo está MORDIENDO**: sin él, el
+adulto de 20 kg baja de 20 % a 10 % de hueso y el sénior de 21 % a 12 %. O sea
+que es lo que mantiene la ración con forma de BARF. Esto no se enciende «porque
+total no cambia nada»: cambia, y por eso va atado a la patología que lo
+justifica.
+
+⚠️ **El suelo de CARNE MUSCULAR (10 %) se queda.** Sin los dos, el último peldaño
+monta una ración de hígado, verdura y botes que cumple los requisitos en el papel
+y no es comida — lo tiró el BLOQUE 9 la primera vez que se intentó.
+
+⚠️ **Y SE DICE**, en `suelo_de_hueso_suelto_por_patologia` y en el canal del
+dueño, con comida y no con nutrientes: «este menú lleva poco hueso, o ninguno, y
+es a propósito… no le añadas hueso por tu cuenta». La regla 3 permite mover una
+proporción de BARF porque es criterio nuestro; lo que no permite es moverla en
+silencio, porque quien mire el plato va a ver poco hueso y lo va a leer como un
+fallo.
+
+⚠️ **Y la obesidad era REGRESIÓN MÍA, comprobada contra `origin/main`.** Al
+acotar el último peldaño en ×5 —los 484 g de alcachofa— dejé fuera a la única
+patología que necesitaba más del 50 % de verdura. El BLOQUE 61 lo cazó, y su
+perro de referencia (20 kg, DER 950, **sin peso objetivo**) no es un perro obeso:
+el obeso de verdad (25→20 kg, DER 830) no sacaba menú **ni en `main`**.
+
 ### Endpoints: cuáles usa la app y cuáles no
 
 Los que llama el frontend hoy: `/menu/v2`, `/menu/semana`,

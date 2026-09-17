@@ -9,6 +9,67 @@ Este archivo no se lee solo: se abre cuando hace falta el detalle de algo
 que ya se resolvió — por qué se decidió así, qué se midió, qué PR lo trajo.
 Nada de esto es agenda; es historial. Se separó el 6 de septiembre.
 
+## El suelo de hueso en las siete patologías que topan la grasa (16-sep-2026)
+
+Lo pidió Elena —«prueba a que en esas patologias que limitan la grasa se elimine
+el hueso a ver si sale un menú razonable sin un 50% de verdura»— y lo autorizó
+al ver la medida: «las proporciones son nuestras y las movemos como queremos».
+El resumen y el porqué están en `CLAUDE.md`; aquí quedan las medidas enteras,
+que son lo que no cabe allí.
+
+**Cómo se midió**: `resolver` directo, peldaño a peldaño, 60 s cada uno, catálogo
+real, soltando SOLO el suelo de `Hueso carnoso` (20 %) y dejando el de
+`Carne muscular` (10 %).
+
+| patología | tal cual | sin el suelo de hueso |
+|---|---|---|
+| **obesidad** 25→20 kg, DER 830 | SIN MENÚ en los 9 peldaños | verde, peldaño ×5 · 47 % verdura · 34 % carne · 18 % pescado |
+| **hiperlipidemia** 20 kg | peldaño ×5 · 49 % verdura | peldaño ×2 · 51 % carne · 28 % pescado · 20 % verdura |
+| **pancreatitis** 25 kg | peldaño ×5 · 48 % verdura | peldaño ×5 · 49 % verdura |
+| **EPI** 25 kg | peldaño 2 · 58 % carne · 20 % hueso | peldaño 1 · 59 % carne · 24 % pescado |
+| **linfangiectasia** 25 kg | peldaño 2 | peldaño 1 |
+| **SIBO** 25 kg | peldaño 2 | peldaño 1 |
+| **enteropatía crónica** 25 kg | peldaño 2 | peldaño 1 |
+
+**De dónde sale el calcio cuando no hay hueso** — y lo acertó Elena antes de que
+se midiera («igual si metes un suplemento que tenga calcio o cascara de huevo o
+algo asi llega mejor???»):
+
+| patología | hueso | calcio del menú | el 90 % sale de |
+|---|---|---|---|
+| obesidad 25→20 | 0,0 % | 2055 mg/1000 kcal | napfcheck Novomineral proLEBER **86 %** |
+| hiperlipidemia | 0,0 % | 1999 | Cáscara de huevo PAWS & PATCH 63 % + V-INTEGRA 24 % |
+| pancreatitis | 0,0 % | 1503 | napfcheck Novomineral proLEBER **91 %** |
+| EPI | 2,7 % | 1883 | Cáscara de huevo 47 % + V-INTEGRA 24 % + carcasa 21 % |
+| linfangiectasia | 4,1 % | 1962 | Cáscara de huevo 41 % + carcasa 28 % + V-INTEGRA 25 % |
+| SIBO | 2,7 % | 1884 | Cáscara de huevo 47 % + V-INTEGRA 24 % + carcasa 21 % |
+| enteropatía | 0,0 % | 1534 | Cáscara de huevo casera **91 %** |
+
+**El perro SANO sí se movería, y por eso esto no se enciende para todos:**
+
+| perro | tal cual | sin el suelo |
+|---|---|---|
+| adulto 20 kg | hueso 20 % | hueso **10 %** |
+| sénior 8 kg | hueso 21 % | hueso **12 %** |
+| cachorro 10 kg | hueso 21 % | hueso 20 % |
+
+**Barrido final por la API**: 39 patologías formulables, **0 sin menú y 0 no
+verdes**.
+
+### Lo que descartó cada sospechoso, antes de llegar al hueso
+
+La obesidad no sacaba menú y había tres candidatos. Se quitaron uno a uno,
+peldaño a peldaño:
+
+| qué se quita | resultado |
+|---|---|
+| el techo del LIBRO (fósforo 2000 del adulto sano) | **sin menú en los 9 peldaños** — no es él |
+| los límites de la PATOLOGÍA enteros | menú verde en los 9 |
+| solo el suelo de fibra de la obesidad (30 g/1000 kcal) | menú en el último |
+
+O sea: **grasa ≤ 22,5 + fibra ≥ 30 + suelo de hueso 20 %**, y de los tres el
+único que es NUESTRO es el del hueso.
+
 ## Lo que se midió el 16 de septiembre y no cambia código, pero contesta preguntas
 
 Tres medidas que estaban sueltas en una conversación y que se escriben aquí
