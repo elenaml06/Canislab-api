@@ -22304,6 +22304,155 @@ print(f"  cereales en el catálogo: {len(_CEREALES_127)} · patologías que topa
 print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
+# ---------------------------------------------------------------------------
+# BLOQUE 128 — CRUDO O COCINADO, Y EL HUESO COCIDO NO EXISTE
+# ============================================================
+#
+# ⚠️ POR QUÉ EXISTE (17 de septiembre de 2026). Elena: «serían dos cosas
+# distintas, el usuario tiene que poder elegir, o el veterinario, si quiere
+# hacer menú barf o cocinado, y en función [de eso] que le proponga los
+# ingredientes correctos para cada caso».
+#
+# ⚠️ LA ASIMETRÍA QUE ORDENA TODO ESTE BLOQUE. Equivocarse en «creo que es
+# cocinado y era crudo» quita unos topes y el perro come pescado con tiaminasa:
+# malo, y a largo plazo. Equivocarse al revés mete HUESO CARNOSO en un plato que
+# se va a cocinar, y el hueso cocido ASTILLA — daño físico inmediato. SACN5
+# cap.50: 46 de 60 cuerpos extraños esofágicos retirados a perros eran hueso.
+#
+# Por eso el hueso en cocinado NO se evita: NO EXISTE, como una alergia (regla
+# 4) y no como una proporción que cede (regla 3). Y por eso la comprobación se
+# repite DESPUÉS del `forzar`: lo que el usuario elige a mano manda sobre
+# `ACCESIBLES` —que es comodidad nuestra— y nunca sobre esto.
+#
+# ⚠️ Y LO QUE **NO** CAMBIA, que es la mitad que hay que vigilar igual: los 43
+# requisitos, el ratio Ca:P, los cinco topes crónicos, los de patología y los
+# siete máximos legales son los mismos. FEDIAF no habla de BARF ni de cocinado:
+# habla de una dieta completa. Un menú cocinado sale VERDE o no sale.
+print("\n=== BLOQUE 128: crudo o cocinado ===")
+
+import accesibles as _acc128
+_al128, _ = _api.cargar_v2()
+_ANIMALES_128 = ("Carne muscular", "Pescados y mariscos", "Vísceras", "Hígado")
+_HUESO_128 = [n for n, a in _al128.items() if a.get("categoria") == "Hueso carnoso"]
+_COCINADAS_128 = [n for n, a in _al128.items()
+                  if a.get("categoria") in _ANIMALES_128
+                  and str(a.get("preparacion") or "crudo").lower() != "crudo"]
+if len(_COCINADAS_128) < 5:
+    fallos.append(f"BLOQUE128: solo hay {len(_COCINADAS_128)} fichas ANIMALES cocinadas en el "
+                  f"catálogo. Con menos de cinco no se puede montar una ración cocinada —carne, "
+                  f"pescado, hígado y víscera— y este bloque dejaría de vigilar nada sin decirlo")
+
+# ── 1 · la derivación: el hueso NUNCA vale cocinado ─────────────────────────
+for _n128 in _HUESO_128:
+    if "cocinado" in _acc128.modos_de(_al128[_n128]):
+        fallos.append(f"BLOQUE128: «{_n128}» es hueso carnoso y `modos_de` dice que vale COCINADO. "
+                      f"El hueso cocido astilla: esto es lo único de todo el modo que no admite "
+                      f"matices")
+for _n128 in _COCINADAS_128:
+    if "crudo" in _acc128.modos_de(_al128[_n128]):
+        fallos.append(f"BLOQUE128: «{_n128}» es una ficha COCIDA y `modos_de` la da por válida en "
+                      f"crudo. Sus cifras son de alimento cocido: en un menú crudo declararían un "
+                      f"agua y una energía que ese plato no tiene")
+
+def _menu128(modo=None, forzar=None, peso=22.0, der=1000.0, etapa="Adulto", pat=()):
+    cuerpo = {"nombres_alimentos": list(forzar or []), "der_objetivo": der,
+              "etapa_requisitos": etapa, "peso_perro_kg": peso, "patologias": list(pat)}
+    if modo:
+        cuerpo["modo_de_preparacion"] = modo
+    if forzar:
+        cuerpo["modo"] = "personalizar"
+        cuerpo["forzar_presencia"] = list(forzar)
+    r = _c.post("/menu/v2", json=cuerpo)
+    return r.json() if r.status_code == 200 else {"factible": False, "http": r.status_code}
+
+def _mal128(d):
+    """Lo que NUNCA puede estar en un menú cocinado."""
+    g = d.get("menu") or {}
+    hueso = [n for n in g if n in _HUESO_128]
+    crudo = [n for n in g if _al128.get(n, {}).get("categoria") in _ANIMALES_128
+             and str(_al128[n].get("preparacion") or "crudo").lower() == "crudo"]
+    return hueso, crudo
+
+# ── 2 · sale menú, y sale VERDE ────────────────────────────────────────────
+_salen128 = 0
+for _etq128, _peso128, _der128, _etapa128 in (("adulto 22 kg", 22.0, 1000.0, "Adulto"),
+                                              ("toy 3 kg", 3.0, 260.0, "Adulto"),
+                                              ("cachorro 10 kg", 10.0, 1100.0, "CachorroCrecimiento"),
+                                              ("sénior 40 kg", 40.0, 1800.0, "Senior")):
+    _d128 = _menu128("cocinado", peso=_peso128, der=_der128, etapa=_etapa128)
+    if not _d128.get("factible"):
+        continue
+    _salen128 += 1
+    _h128, _cr128 = _mal128(_d128)
+    if _h128:
+        fallos.append(f"BLOQUE128: el menú COCINADO de «{_etq128}» lleva hueso: {_h128}. El hueso "
+                      f"cocido astilla — esto es daño físico inmediato, no una carencia")
+    if _cr128:
+        fallos.append(f"BLOQUE128: el menú COCINADO de «{_etq128}» lleva comida animal CRUDA: "
+                      f"{_cr128}. Sus cifras son de alimento crudo, así que ese plato no es el que "
+                      f"dice la lista")
+    _sem128 = (_d128.get("verificado") or {}).get("semaforo")
+    if _sem128 and not _api._es_verde(_sem128):
+        fallos.append(f"BLOQUE128: el menú COCINADO de «{_etq128}» sale «{_sem128}». Los 43 "
+                      f"requisitos NO cambian con la preparación: un menú cocinado sale verde o no "
+                      f"sale")
+if _salen128 == 0:
+    fallos.append("BLOQUE128: NINGUNO de los cuatro perros saca menú cocinado. Si la funcionalidad "
+                  "no da un solo menú, ofrecerla es peor que no tenerla — es la misma regla del "
+                  "BLOQUE 61 con las patologías formulables")
+
+# ── 3 · ni eligiéndolo A MANO entra el hueso ───────────────────────────────
+if _HUESO_128:
+    _f128 = _menu128("cocinado", forzar=[_HUESO_128[0]])
+    if _f128.get("factible") and _HUESO_128[0] in (_f128.get("menu") or {}):
+        fallos.append(f"BLOQUE128: se eligió «{_HUESO_128[0]}» A MANO en un menú cocinado y ha "
+                      f"entrado. Lo que se elige a mano manda sobre `ACCESIBLES`, que es comodidad "
+                      f"nuestra, y NUNCA sobre la seguridad de la preparación")
+
+# ── 4 · la simetría: en crudo no entra una ficha cocida de carne ────────────
+_d128c = _menu128("crudo")
+if _d128c.get("factible"):
+    _intrusas = [n for n in (_d128c.get("menu") or {}) if n in _COCINADAS_128]
+    if _intrusas:
+        fallos.append(f"BLOQUE128: el menú CRUDO lleva fichas cocidas de carne o pescado: "
+                      f"{_intrusas}")
+
+# ── 5 · el modo viaja en la respuesta y SE DICE ────────────────────────────
+_d128m = _menu128("cocinado")
+if _d128m.get("factible"):
+    if _d128m.get("modo_de_preparacion") != "cocinado":
+        fallos.append("BLOQUE128: el menú no dice en qué modo salió. Un menú generado en un modo y "
+                      "EDITADO en otro es el fallo del 24 de agosto con las patologías, y aquí "
+                      "metería hueso crudo en un plato que se va a cocer")
+    _txt128 = " ".join(str(x) for x in ((_d128m.get("avisos_extra") or [])
+                                        + (_d128m.get("problemas_seguridad") or []))).lower()
+    if not any(x in _txt128 for x in ("cocinad", "cocid", "hervid")):
+        fallos.append("BLOQUE128: el menú cocinado no le dice al dueño que hay que cocinarlo")
+    if "hueso" not in _txt128:
+        fallos.append("BLOQUE128: el menú cocinado NO dice que no lleva hueso a propósito. Quien "
+                      "mire el plato va a ver que falta y se lo va a añadir — que es justo lo "
+                      "peligroso. Es la misma regla que el suelo de hueso suelto del 16 de "
+                      "septiembre: se mueve la forma, pero nunca en silencio")
+_d128r = _menu128("crudo")
+if _d128r.get("factible") and _d128r.get("modo_de_preparacion") != "crudo":
+    fallos.append("BLOQUE128: un menú sin modo pedido tiene que decir «crudo», que es lo que este "
+                  "motor ha hecho siempre")
+
+# ── 6 · y el vocabulario lo sirve, para que la app no se lo invente ────────
+_voc128 = _c.get("/vocabulario").json()
+if "modo_de_preparacion" not in _voc128:
+    fallos.append("BLOQUE128: `GET /vocabulario` no sirve los modos, así que la app tendría que "
+                  "escribirlos — regla 6")
+else:
+    _cl128 = [m.get("clave") for m in (_voc128["modo_de_preparacion"].get("modos") or [])]
+    if sorted(_cl128) != ["cocinado", "crudo"]:
+        fallos.append(f"BLOQUE128: el vocabulario sirve los modos {_cl128} y son dos: crudo y "
+                      f"cocinado")
+
+print(f"  fichas animales cocinadas: {len(_COCINADAS_128)} · perros con menú cocinado: {_salen128}/4")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
+
+
 _tiempos_por_bloque.sort(reverse=True)
 _gastado = sum(t for t, _ in _tiempos_por_bloque)
 # ⚠️ Y CERRAR EL ÚLTIMO BLOQUE VA PEGADO AL GUARDIA, NO DONDE ESTABA (16 de

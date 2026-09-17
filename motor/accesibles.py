@@ -26,6 +26,19 @@ menú necesita algo que no se encuentra fácil, no se va a preparar.
 """
 
 CARNE = [
+    # ⚠️ LAS COCINADAS VAN EN LA MISMA LISTA QUE LAS CRUDAS (17 de septiembre de
+    # 2026), y quien decide en qué modo vale cada una es `modos_de`, no la
+    # pertenencia a esta lista. Meterlas en una lista aparte habría sido una
+    # segunda copia del mismo conjunto, que es el fallo que este fichero lleva
+    # avisado desde el 5 de agosto.
+    #
+    # ⚠️ Y AQUÍ SE CAYÓ AL ESTRENAR EL MODO: las once fichas cocinadas entraron
+    # al catálogo y NO a esta lista, así que en modo cocinado el solver solo
+    # veía verdura y suplementos -- «infactible» en los cuatro perros de prueba,
+    # y la causa no era nutrición ni proporciones: era que la comida no estaba
+    # ofrecida. Es literalmente lo que avisa la cabecera de este fichero.
+    "Pollo muslo cocido", "Jarrete de ternera cocido", "Vaca para guisar cocida",
+    "Corazón de vaca cocido", "Corazón de pavo cocido",
     "Pollo con piel (sin hueso)", "Pollo muslo con piel", "Pollo pechuga con piel",
     "Pollo muslo sin piel", "Pollo pechuga sin piel", "Pollo ala con piel (sin hueso)",
     "Pavo pechuga sin piel", "Pavo pechuga con piel", "Pavo muslo con piel", "Pavo",
@@ -88,6 +101,7 @@ HUESO = [
 ]
 
 PESCADO = [
+    "Bacalao cocido", "Salmón cocido", "Trucha cocida",
     # ⚠️ CORREGIDO (5 agosto): se quitaron Sepia, Pulpo, Gamba roja,
     # Langostinos y Calamar. La propia app ya avisaba de esto en
     # INSTRUCCIONES_POR_CATEGORIA ("los mariscos, SIEMPRE cocinados"), pero
@@ -101,6 +115,7 @@ PESCADO = [
 ]
 
 VISCERAS = [
+    "Riñón de vaca cocido",
     "Riñón de vaca", "Riñón de cordero",
     # ⚠️ CORREGIDO (5 agosto, madrugada) — el pulmón vuelve aquí: a
     # diferencia de lengua/molleja/corazón (donde todas las fuentes
@@ -193,7 +208,8 @@ VISCERAS = [
 # auditar_catalogo.py: con 3 alergias solo quedaban 2 hígados disponibles, y
 # el hígado es una categoría con mínimo obligatorio, así que quedarse sin
 # ninguno deja al perro sin menú. Con pavo y pato pasa de 2 a 4.
-HIGADO = ["Hígado de vaca", "Hígado de pollo", "Hígado de pavo", "Hígado de pato",
+HIGADO = [
+    "Hígado de vaca cocido", "Hígado de pollo cocido","Hígado de vaca", "Hígado de pollo", "Hígado de pavo", "Hígado de pato",
           "Hígado de conejo", "Hígado de cordero"]
 
 # Berro se QUITÓ del catálogo (tóxico, clasificación ASPCA). Kiwi se quitó
@@ -242,6 +258,73 @@ ACCESIBLES = {
     "Verduras y frutas": VERDURA,
     "Cereales y tubérculos": CEREALES,
 }
+
+
+# ─── CRUDO O COCINADO ────────────────────────────────────────────────────────
+#
+# ⚠️ POR QUÉ EXISTE (17 de septiembre de 2026). Elena: «serían dos cosas
+# distintas, el usuario tiene que poder elegir, o el veterinario, si quiere
+# hacer menú barf o cocinado, y en función [de eso] que le proponga los
+# ingredientes correctos para cada caso».
+#
+# Y `motor/seguridad.py` llevaba escrito desde agosto que el motor «no tiene
+# concepto de crudo vs cocinado», con la consecuencia puesta: la gamba y el
+# langostino cargan con el tope de la tiaminasa POR SI ACASO, porque no había
+# forma de saber si se cocinan de verdad.
+#
+# ⚠️ QUÉ SIGNIFICA «COCINADO» AQUÍ, Y ES UNA DEFINICIÓN, NO UN DETALLE: que la
+# parte ANIMAL va cocida — hervida o al vapor, sin grasa añadida y sin sal. Es
+# donde vive toda la diferencia de seguridad (bacterias, parásitos, tiaminasa,
+# avidina y el hueso), y es el único grado que Elena eligió: «solo hervido».
+# La verdura sigue pudiendo ir cruda y triturada en los dos modos, que es lo
+# que hace cualquier dieta casera cocinada. ⚠️ ESO ÚLTIMO ESTÁ SIN CONFIRMAR
+# con ella: va escrito aquí y en PREGUNTAS_ABIERTAS.md en vez de decidido en
+# silencio.
+#
+# ⚠️ LA ASIMETRÍA QUE HACE QUE EL HUESO SEA OTRA COSA. Equivocarse en «creo que
+# es cocinado y era crudo» quita unos topes y el perro come pescado con
+# tiaminasa: malo, y a largo plazo. Equivocarse al revés mete HUESO CARNOSO en
+# un menú que se va a cocinar, y el hueso cocido ASTILLA: daño físico
+# inmediato. SACN5 cap.50 lo tiene contado -- 46 de 60 cuerpos extraños
+# esofágicos retirados a perros eran hueso. Por eso el hueso no es «se evita»
+# en cocinado: NO EXISTE, como una alergia (regla 4), y no como una proporción
+# que cede (regla 3).
+MODO_CRUDO = "crudo"
+MODO_COCINADO = "cocinado"
+MODOS = (MODO_CRUDO, MODO_COCINADO)
+
+# Las categorías donde la preparación cambia el ALIMENTO y su seguridad.
+# Fuera de estas, una ficha vale en los dos modos: un aceite, una cáscara de
+# huevo, un bote de vitaminas o una verdura no cambian porque el plato lleve
+# la carne cocida.
+CATEGORIAS_ANIMALES = ("Carne muscular", "Pescados y mariscos", "Vísceras", "Hígado")
+
+
+def modos_de(ficha):
+    """En qué modos vale esta ficha. Se DERIVA, no se escribe ficha a ficha.
+
+    Una lista escrita a mano se queda parada el día que entre una ficha nueva,
+    y no daría ningún error -- el alimento simplemente no saldría, o saldría
+    donde no debe. La derivación son tres reglas:
+
+      · «Hueso carnoso» -> SOLO crudo, siempre. El hueso cocido astilla.
+      · categoría animal -> el modo que diga su `preparacion`.
+      · todo lo demás    -> los dos.
+    """
+    cat = (ficha or {}).get("categoria")
+    if cat == "Hueso carnoso":
+        return (MODO_CRUDO,)
+    if cat in CATEGORIAS_ANIMALES:
+        prep = str((ficha or {}).get("preparacion") or "").strip().lower()
+        return (MODO_COCINADO,) if prep and prep != "crudo" else (MODO_CRUDO,)
+    return MODOS
+
+
+def vale_en(ficha, modo):
+    """¿Esta ficha se puede usar en este modo? Sin modo, vale todo."""
+    if not modo:
+        return True
+    return modo in modos_de(ficha)
 
 
 def disponibles(alimentos, excluidos=None):

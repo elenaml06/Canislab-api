@@ -792,6 +792,8 @@ def _resolver_una_vez(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn
             # La respuesta del dueño a «¿quieres hidratos?». None = no ha
             # contestado. Ver `main.PeticionMenu.con_hidratos`.
             con_hidratos=None,
+            # «crudo» (por omisión) o «cocinado». Ver `accesibles.modos_de`.
+            modo_de_preparacion=None,
             # ⚠️ El interruptor de la penalización de compra, para poder MEDIR
             # el mismo perro con y sin ella. No es un plan B de viabilidad y no
             # hace falta que lo sea: la penalización vive en el OBJETIVO, no en
@@ -899,7 +901,7 @@ def _resolver_una_vez(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn
     _factor_premios = (der / der_racion) if der_racion > 0 else 1.0
 
 
-    from accesibles import ACCESIBLES
+    from accesibles import ACCESIBLES, vale_en, MODO_COCINADO
     from exclusiones import filtrar
 
     if cuantos_max is None:
@@ -990,9 +992,25 @@ def _resolver_una_vez(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn
     else:
         _hidratos_los_pide_la_patologia = la_patologia_topa_la_grasa(patologias, etapa)
 
+    # ⚠️ EL MODO FILTRA ANTES QUE NADA, Y ES UNA EXCLUSIÓN DURA (17 de septiembre
+    # de 2026). No es una preferencia ni una penalización: en cocinado, una
+    # ficha cruda de carne NO EXISTE, y el HUESO no existe en absoluto. Va aquí,
+    # en la lista de candidatos, y no en el objetivo ni en un filtro posterior,
+    # porque el hueso cocido astilla y eso es daño físico inmediato -- la misma
+    # categoría que una alergia (regla 4), no una proporción que cede (regla 3).
+    #
+    # ⚠️ Y AQUÍ NO HAY PUERTA DE ATRÁS POR `forzar`: lo que el usuario elige a
+    # mano manda sobre `ACCESIBLES` —que es comodidad nuestra— y NO sobre esto.
+    # Elegir a mano un hueso crudo para un menú que se va a cocinar es
+    # exactamente el error que este filtro existe para impedir, así que la
+    # comprobación se repite abajo, después del `forzar`.
+    _modo = modo_de_preparacion or None
+
     candidatos_por_cat = {}
     for cat, lista in ACCESIBLES.items():
         disp = [n for n in lista if n in alimentos]
+        if _modo:
+            disp = [n for n in disp if vale_en(alimentos.get(n), _modo)]
         if cat == _CAT_HIDRATOS and not _hidratos_los_pide_la_patologia:
             disp = []          # el automático no los propone; `forzar` sí los mete
         if excluidos:
@@ -1048,6 +1066,22 @@ def _resolver_una_vez(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn
                 # fallo de quien llama, y cerrarle la categoría entera por un
                 # nombre mal escrito sería peor.
                 disp = []
+
+        # ⚠️ Y EL MODO VUELVE A FILTRAR AQUÍ, AL FINAL, DESPUÉS DE TODAS LAS
+        # PUERTAS QUE AÑADEN CANDIDATOS (17 de septiembre de 2026). La primera
+        # versión lo puso DENTRO del `if forzar:` y el BLOQUE 128 lo cazó: hay
+        # más caminos que meten comida en `disp` —«todo el/la especie» y
+        # `restringir_a_elegidos` la toman del CATÁLOGO ENTERO—, así que eligiendo
+        # el hueso a mano seguía entrando en un menú cocinado. Es la misma
+        # lección que el comentario de aquí abajo sobre las alergias: un filtro
+        # que no va al final no es un filtro, es un filtro de uno de los
+        # caminos.
+        #
+        # `ACCESIBLES` cede ante una elección expresa porque es comodidad
+        # nuestra. La seguridad de la preparación no cede: el hueso cocido
+        # astilla.
+        if _modo:
+            disp = [n for n in disp if vale_en(alimentos.get(n), _modo)]
 
         # ⚠️ CORREGIDO (21 agosto) — FALLO GRAVE ENCONTRADO POR UNA PRUEBA
         # NUEVA: LAS ALERGIAS SE PODÍAN SALTAR FORZANDO UN ALIMENTO.
@@ -2564,9 +2598,23 @@ def _resolver_una_vez(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn
         # exclusión explícita: su mínimo se ignora, en vez de dejar el
         # problema matemáticamente irresoluble.
         categorias_con_candidato = {categoria_de[n] for n in nombres if techos[idx[n]] > 0}
+        # ⚠️ Y «SIN NINGÚN CANDIDATO» INCLUYE «SIN NINGÚN MIEMBRO» (17 de
+        # septiembre de 2026). Esto exigía `any(categoria_de[n] == cat ...)`, o
+        # sea que la categoría siguiera teniendo miembros en la lista aunque
+        # todos con techo 0. Cubría el caso de agosto —el urato deja los cuatro
+        # hígados con techo 0— y NO el de una categoría que no llega a la lista.
+        #
+        # CASO REAL: el modo COCINADO filtra el hueso carnoso ANTES, en los
+        # candidatos, porque el hueso cocido astilla. Entonces no hay ni un
+        # miembro, `any(...)` es falso, la categoría no se declara vaciada, el
+        # techo de la carne no sube para ocupar su sitio —y los techos suman
+        # 0,98 contra un plato que tiene que sumar 1—. Infactible SIEMPRE, a
+        # cualquier peso y en los nueve peldaños, por aritmética y no por
+        # nutrición: medido, 0 de 4 perros con menú en cocinado.
+        #
+        # Las dos situaciones son la misma: no hay de dónde sacar esa categoría.
         categorias_vaciadas_efectivo = {
-            cat for cat in margenes_categoria
-            if any(categoria_de[n] == cat for n in nombres) and cat not in categorias_con_candidato
+            cat for cat in margenes_categoria if cat not in categorias_con_candidato
         }
         categorias_excluidas_efectivo = set(categorias_excluidas or []) | categorias_vaciadas_efectivo
         # ⚠️ AÑADIDO (5 agosto, madrugada) — CASO REAL ENCONTRADO

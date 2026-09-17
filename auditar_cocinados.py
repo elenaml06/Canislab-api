@@ -83,6 +83,23 @@ FILA_CRUDA = {
     ("ciqual", "9313"): ("9311", "Flocon d'avoine"),
     ("usda",   "173905"): ("173904", "Cereals, oats, regular and quick, not fortified, dry"),
     ("ciqual", "9341"): ("9340", "Quinoa, cru"),
+    # ── LAS ONCE COCINADAS (17 de septiembre de 2026) ───────────────────────
+    ("ciqual", "36030"): ("36024", "Poulet, cuisse, viande, cru"),
+    ("ciqual", "6581"):  ("6583",  "Veau, jarret, cru"),
+    ("ciqual", "6230"):  ("6231",  "Boeuf, à bourguignon ou pot-au-feu, cru"),
+    ("bedca",  "973"):   ("2265",  "Corazon de vaca, crudo"),
+    ("ciqual", "40057"): ("40055", "Coeur, dinde, cru"),
+    ("ciqual", "26025"): ("26043", "Cabillaud, cru"),
+    ("ciqual", "26217"): ("26036", "Saumon, cru, élevage"),
+    # ⚠️ EMPAREJAMIENTO APROXIMADO Y DECLARADO: la fila cocida es la trucha
+    #    genérica y la cruda es la de cría. CIQUAL no publica una cruda
+    #    genérica, y la de MAR («Truite de mer, crue») es otro pez. Se compara
+    #    contra la de cría, que es lo que se vende, y la diferencia entra en el
+    #    margen que este script ya tolera.
+    ("ciqual", "27007"): ("27008", "Truite d'élevage, crue"),
+    ("ciqual", "40105"): ("40104", "Foie, génisse, cru"),
+    ("ciqual", "40116"): ("40111", "Foie, poulet, cru"),
+    ("ciqual", "40403"): ("40402", "Rognon, boeuf, cru"),
     ("usda",   "168917"): ("168874", "Quinoa, uncooked"),
 }
 AGUA = {"bedca": "agua (humedad)", "ciqual": "Eau (g/100 g)", "usda": "Water"}

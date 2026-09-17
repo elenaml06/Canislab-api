@@ -2056,6 +2056,13 @@ class PeticionMenu(_ConPremios):
     # exclusión de catálogo y esto es una PREGUNTA que se le hace a todo el
     # mundo. Un dueño que no contesta no está excluyendo nada.
     con_hidratos: Optional[bool] = None
+    # ⚠️ CRUDO O COCINADO (17 de septiembre de 2026). «crudo» por omisión, que es
+    # lo que este motor ha hecho siempre. En «cocinado» la parte ANIMAL va
+    # hervida o al vapor, y eso cambia QUÉ alimentos son candidatos: las fichas
+    # cocidas en vez de las crudas, y el HUESO CARNOSO no existe -- el hueso
+    # cocido astilla, y eso es daño físico inmediato, no una carencia. La regla
+    # se deriva en `accesibles.modos_de`, no se escribe ficha a ficha.
+    modo_de_preparacion: Optional[str] = None
     # ⚠️ AÑADIDO (5 agosto, madrugada) — CAMBIO DE ARQUITECTURA PEDIDO
     # EXPRESAMENTE: presupuesto semanal RESTANTE de seguridad crónica
     # (tiaminasa/mercurio/vitD/yodo/selenio), calculado por
@@ -2154,6 +2161,8 @@ class PeticionCambiarAlimento(_ConPremios):
     # La pregunta de los hidratos. Tres estados; el porqué está escrito entero
     # en `PeticionMenu`, que es donde nació.
     con_hidratos: Optional[bool] = None
+    # Crudo o cocinado. El porqué, también en `PeticionMenu`.
+    modo_de_preparacion: Optional[str] = None
 
 
 class PeticionAnadirQuitarAlimento(_ConPremios):
@@ -2198,6 +2207,8 @@ class PeticionAnadirQuitarAlimento(_ConPremios):
     # La pregunta de los hidratos. Tres estados; el porqué está escrito entero
     # en `PeticionMenu`, que es donde nació.
     con_hidratos: Optional[bool] = None
+    # Crudo o cocinado. El porqué, también en `PeticionMenu`.
+    modo_de_preparacion: Optional[str] = None
 
 
 # ⚠️ AÑADIDO (20 agosto) — CASO 3: EL PERRO CAMBIA DE CATEGORÍA.
@@ -2234,6 +2245,8 @@ class PeticionRevalidar(_ConPremios):
     # La pregunta de los hidratos. Tres estados; el porqué está escrito entero
     # en `PeticionMenu`, que es donde nació.
     con_hidratos: Optional[bool] = None
+    # Crudo o cocinado. El porqué, también en `PeticionMenu`.
+    modo_de_preparacion: Optional[str] = None
 
     @property
     def menu_actual(self):
@@ -2806,7 +2819,8 @@ def _hay_comida_de_verdad(al, excluidos=None, categorias_excluidas=None):
 from motor_completo import la_patologia_topa_la_grasa as _la_patologia_topa_la_grasa
 
 
-def _escalera_de_relajacion(hay_comida_de_verdad=True, patologias=None, etapa="Adulto"):
+def _escalera_de_relajacion(hay_comida_de_verdad=True, patologias=None, etapa="Adulto",
+                            modo_de_preparacion=None):
     """Peldaños (margenes, max_suplementos, qué se soltó), de más
     estricto a menos. El primero es exactamente lo de siempre.
 
@@ -3081,6 +3095,22 @@ def _escalera_de_relajacion(hay_comida_de_verdad=True, patologias=None, etapa="A
     # El 40 % es NUESTRO, como todas las proporciones de BARF (regla 3), y por
     # eso va aquí y no en `MARGENES`: fuera de estas siete el techo se queda en
     # el 10 % de la verdura, porque un BARF con un tercio de arroz no es un BARF.
+    # ⚠️ Y EN MODO COCINADO EL SUELO DEL HUESO NO PUEDE EXIGIRSE, PORQUE NO HAY
+    # HUESO (17 de septiembre de 2026). No es una relajación por conveniencia:
+    # en cocinado el hueso carnoso NO ES CANDIDATO —el hueso cocido astilla— y
+    # un suelo del 20 % sobre una categoría vacía deja el problema infactible
+    # SIEMPRE, a cualquier peso y en los nueve peldaños. Medido antes de
+    # ponerlo: con el suelo puesto, 0 menús en cocinado.
+    #
+    # El calcio pasa a salir de la cáscara de huevo o del suplemento, que es
+    # exactamente lo que ya hace la ración de las siete patologías que topan la
+    # grasa desde el 16 de septiembre — y allí está medido que funciona
+    # (41-91 % del calcio del menú lo pone la cáscara).
+    if str(modo_de_preparacion or "").strip().lower() == "cocinado":
+        peldanos = [({c: ((0.0 if c == "Hueso carnoso" else mn), mx)
+                      for c, (mn, mx) in m.items()}, supl, cl)
+                    for m, supl, cl in peldanos]
+
     if _la_patologia_topa_la_grasa(patologias, etapa):
         peldanos = [({c: ((0.0 if c == "Hueso carnoso" else mn),
                           (TECHO_HIDRATOS_SI_LA_GRASA_ESTA_TOPADA
@@ -3704,6 +3734,23 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
             "gramos de la lista son de producto YA COCIDO: pésalo después de "
             "cocinarlo, no antes — crudo pesa mucho menos y le estarías dando el "
             "triple.")
+    # ⚠️ EL MODO VIAJA CON EL MENÚ Y SE DICE (17 de septiembre de 2026). Va en la
+    # puerta única, igual que los premios y el suelo del hueso, porque un menú
+    # generado en un modo y EDITADO en otro es exactamente el fallo del 24 de
+    # agosto con las patologías: el camino de edición no recibía el dato y
+    # tiraba el tope. Aquí sería peor — metería hueso crudo en un plato que se
+    # va a cocinar.
+    _modo_m = str(getattr(datos, "modo_de_preparacion", None) or "crudo").strip().lower()
+    resultado["modo_de_preparacion"] = _modo_m
+    if _modo_m == "cocinado":
+        resultado.setdefault("avisos_extra", []).append(
+            "Este menú es para dárselo COCINADO: la carne, el pescado y las vísceras van hervidas "
+            "o al vapor, en agua y sin sal, y los gramos de la lista son de comida YA COCINADA — "
+            "pésala después de cocinarla, no antes. La verdura puede ir cruda y triturada.")
+        resultado.setdefault("problemas_seguridad", []).append(
+            "⚠️ En un menú cocinado NO entra hueso, y es a propósito: el hueso cocido se astilla y "
+            "puede clavarse o hacer un tapón. No se lo añadas tú. El calcio se lo damos por otro "
+            "lado — con el complemento o la cáscara de huevo que veas en la lista.")
     _plato = _premios_en_el_plato(datos, _al_pr)
     if _plato:
         resultado["premios_dentro_del_menu"] = _plato
@@ -4419,6 +4466,7 @@ def _resolver_menu_v2_crudo(datos: PeticionMenu):
             forzar=forzar_este, preferir=preferir,
             patologias=datos.patologias, restringir_especie=datos.restringir_especie,
             con_hidratos=getattr(datos, "con_hidratos", None),
+            modo_de_preparacion=getattr(datos, "modo_de_preparacion", None),
             peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
             peso_objetivo_kg=_peso_de_referencia(datos)[0],
             evitar_especies=datos.evitar_especies,
@@ -4461,6 +4509,7 @@ def _resolver_menu_v2_crudo(datos: PeticionMenu):
                 forzar=forzar_este, preferir=preferir,
                 patologias=datos.patologias, restringir_especie=datos.restringir_especie,
                 con_hidratos=getattr(datos, "con_hidratos", None),
+            modo_de_preparacion=getattr(datos, "modo_de_preparacion", None),
                 peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
             peso_objetivo_kg=_peso_de_referencia(datos)[0],
                 evitar_especies=datos.evitar_especies,
@@ -4570,6 +4619,7 @@ def _resolver_menu_v2_crudo(datos: PeticionMenu):
                 forzar=forzar_este, preferir=preferir,
                 patologias=datos.patologias, restringir_especie=datos.restringir_especie,
                 con_hidratos=getattr(datos, "con_hidratos", None),
+            modo_de_preparacion=getattr(datos, "modo_de_preparacion", None),
                 peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
                 peso_objetivo_kg=_peso_de_referencia(datos)[0],
                 evitar_especies=datos.evitar_especies,
@@ -4607,7 +4657,8 @@ def _resolver_menu_v2_crudo(datos: PeticionMenu):
     # una vez en la edición y una sola edición tiraba el tope»). Así que se
     # calcula UNA vez, aquí, y todo lo de abajo lee esta variable.
     _escalera_de_este_perro = _escalera_de_relajacion(
-        _hay_comida_para_peldano, datos.patologias, datos.etapa_requisitos)
+        _hay_comida_para_peldano, datos.patologias, datos.etapa_requisitos,
+        getattr(datos, "modo_de_preparacion", None))
 
     # ⚠️ Y CON PREMIOS POR ENCIMA DE LO QUE RECOMIENDA LA FUENTE Y SIN DECIR
     # CUÁLES SON, LA ESCALERA NO LLEGA A LOS PELDAÑOS DEL PLATO DE HIERBA
@@ -4720,6 +4771,7 @@ def _resolver_menu_v2_crudo(datos: PeticionMenu):
             time_limit=tiempo_de_un_intento(),
             patologias=datos.patologias,
             con_hidratos=getattr(datos, "con_hidratos", None),
+            modo_de_preparacion=getattr(datos, "modo_de_preparacion", None),
             categorias_excluidas=datos.categorias_excluidas,
             peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
             peso_objetivo_kg=_peso_de_referencia(datos)[0],
@@ -6045,7 +6097,8 @@ def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None, restringir_e
             ok_quieto = False
             gramos_quieto = ficha_quieto = None
             for _marg_q, _supl_q, _q_suelta in _escalera_de_relajacion(
-                    _hay_comida_ed, datos.patologias, datos.etapa_requisitos):
+                    _hay_comida_ed, datos.patologias, datos.etapa_requisitos,
+                    getattr(datos, "modo_de_preparacion", None)):
                 ok_quieto, gramos_quieto, ficha_quieto = _intentar(
                     list(forzar or []) + _de_antes, margen_intentos=1,
                     margenes=_marg_q, max_supl=_supl_q,
@@ -6188,7 +6241,8 @@ def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None, restringir_e
                                        getattr(datos, "categorias_excluidas", None))
     if not ok:
         for margenes_peldano, supl_peldano, que_se_suelta in _escalera_de_relajacion(
-                hay_comida, datos.patologias, datos.etapa_requisitos)[1:]:
+                hay_comida, datos.patologias, datos.etapa_requisitos,
+                getattr(datos, "modo_de_preparacion", None))[1:]:
             ok, gramos, ficha = _intentar(forzar, margen_intentos=2,
                                           margenes=margenes_peldano, max_supl=supl_peldano)
             if ok:
@@ -7696,6 +7750,8 @@ class PeticionFormular(_ConPremios):
     # La pregunta de los hidratos. Tres estados; el porqué está escrito entero
     # en `PeticionMenu`, que es donde nació.
     con_hidratos: Optional[bool] = None
+    # Crudo o cocinado. El porqué, también en `PeticionMenu`.
+    modo_de_preparacion: Optional[str] = None
     # Solo para autocompletar: si el total de gramos lo fija él.
     gramos_totales: Optional[float] = None
     # ⚠️ AÑADIDO (8 septiembre) — EL PELDAÑO DE LA ESCALERA.
@@ -8406,6 +8462,7 @@ def formular_autocompletar(datos: PeticionFormular):
             gramos_fijos={**_premios_en_el_plato(datos, al), **(fijos or {})} or None,
             patologias=datos.patologias,
             con_hidratos=getattr(datos, "con_hidratos", None),
+            modo_de_preparacion=getattr(datos, "modo_de_preparacion", None),
             peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
             peso_objetivo_kg=_peso_de_referencia(datos)[0],
             categorias_excluidas=datos.categorias_excluidas,
@@ -8461,6 +8518,7 @@ def formular_autocompletar(datos: PeticionFormular):
                 forzar=list(fijos) or None,
                 patologias=datos.patologias,
                 con_hidratos=getattr(datos, "con_hidratos", None),
+            modo_de_preparacion=getattr(datos, "modo_de_preparacion", None),
                 peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
                 peso_objetivo_kg=_peso_de_referencia(datos)[0],
                 categorias_excluidas=datos.categorias_excluidas,
@@ -8597,6 +8655,8 @@ class PeticionFirmar(_ConPremios):
     # La pregunta de los hidratos. Tres estados; el porqué está escrito entero
     # en `PeticionMenu`, que es donde nació.
     con_hidratos: Optional[bool] = None
+    # Crudo o cocinado. El porqué, también en `PeticionMenu`.
+    modo_de_preparacion: Optional[str] = None
     firmante: Firmante
     # Lo que identifica al paciente EN EL DOCUMENTO. Se copia, no se apunta:
     # la ficha del perro cambia y lo firmado no puede cambiar con ella.
@@ -9957,6 +10017,40 @@ def endpoint_vocabulario():
                                  "pantalla), quitar los hidratos ya lo pregunta `con_hidratos`, y "
                                  "quitar vísceras o pescado no es «no puede comer» sino «no "
                                  "quiero comprarlo», que es otra pregunta y todavía no se hace."),
+        },
+        # ── CRUDO O COCINADO ─────────────────────────────────────────────
+        "modo_de_preparacion": {
+            "de_donde": ("Criterio NUESTRO en lo que toca a la forma, y de fuente en lo único que "
+                         "no se negocia: el hueso. SACN5 5ª ed., cap. 50 — 46 de 60 cuerpos "
+                         "extraños esofágicos retirados a perros eran hueso. El hueso COCIDO "
+                         "astilla, así que en modo cocinado no es candidato: es una exclusión "
+                         "dura, como una alergia, no una proporción que ceda."),
+            "por_omision": "crudo",
+            "que_significa_cocinado": ("La parte ANIMAL va cocida: hervida o al vapor, en agua, sin "
+                                       "grasa añadida y sin sal. Es el único grado que hay, y es "
+                                       "donde vive toda la diferencia de seguridad. La verdura "
+                                       "puede ir cruda y triturada en los dos modos."),
+            "modos": [
+                {"clave": "crudo",
+                 "dueno": {"titulo": "Cruda (BARF)",
+                           "ejemplo": "como se la das ahora: carne, hueso carnoso y víscera crudos"},
+                 "veterinario": {"titulo": "Ración cruda (BARF)",
+                                 "detalle": "Lo que este motor calcula desde siempre. El hueso "
+                                            "carnoso aporta el calcio y fija el ratio Ca:P."}},
+                {"clave": "cocinado",
+                 "dueno": {"titulo": "Cocinada",
+                           "ejemplo": "la carne y el pescado hervidos o al vapor, sin sal; sin "
+                                      "hueso, porque cocido se astilla"},
+                 "veterinario": {"titulo": "Ración cocinada",
+                                 "detalle": "Fichas cocidas en vez de crudas y hueso carnoso fuera "
+                                            "del catálogo de candidatos. El calcio pasa a la "
+                                            "cáscara de huevo o al suplemento. Los 43 requisitos, "
+                                            "los topes crónicos, los de patología y los máximos "
+                                            "legales NO cambian ni una cifra."}},
+            ],
+            "ojo": ("⚠️ Los gramos de un menú cocinado son de comida YA COCINADA: pésala después de "
+                    "cocinarla. Y el modo viaja CON el menú: uno generado crudo y editado en "
+                    "cocinado metería hueso crudo en un plato que se va a cocer."),
         },
         # ── LOS HIDRATOS ─────────────────────────────────────────────────
         # ⚠️ LA PREGUNTA VIVE AQUÍ Y NO EN LA APP (17 de septiembre de 2026).
