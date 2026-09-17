@@ -22449,6 +22449,60 @@ else:
         fallos.append(f"BLOQUE128: el vocabulario sirve los modos {_cl128} y son dos: crudo y "
                       f"cocinado")
 
+# ── 7 · Y EL TEXTO DE «CÓMO DARLO», QUE ES LA PUERTA POR LA QUE SE LEE ─────
+# ⚠️ AGUJERO DE VERDAD, encontrado el 17 de septiembre mirando la pantalla y no
+# el repo: con el modo cocinado puesto, «Cómo darlo» servía el texto de CRUDO.
+# Un muslo de pollo hervido con «Cruda. En trozos, no picada» encima, un riñón
+# cocido con «Crudas», y un salmón recién cocido con «Crudo SOLO si se ha
+# congelado antes». O sea el texto diciendo lo CONTRARIO del plato, y justo en
+# la pantalla que se abre para saber cómo se prepara.
+#
+# Es la lección de la tercera puerta: un texto se vigila por la puerta por la
+# que SALE. El `aviso_al_comprar` de cada ficha ya decía «se compra crudo y se
+# da cocido» — y al lado, más grande, la instrucción de la categoría decía
+# «Cruda». Van tres.
+import re as _re128
+_ALIM128 = _c.get("/alimentos").json()
+_COC_CAT_128 = _ALIM128.get("como_se_da_por_categoria_cocinado") or {}
+_CRU_CAT_128 = _ALIM128.get("como_se_da_por_categoria") or {}
+for _cat128 in _ANIMALES_128:
+    _t128 = _COC_CAT_128.get(_cat128)
+    if not _t128:
+        fallos.append(f"BLOQUE128: `GET /alimentos` no sirve el «cómo darlo» COCINADO de "
+                      f"«{_cat128}», así que la app enseñaría el de crudo sobre un plato "
+                      f"hervido. Las cuatro categorías animales lo necesitan; las demás no, "
+                      f"porque en ellas el modo no cambia nada")
+        continue
+    # La mitad que de verdad protege: que no diga «crudo». Se mira la palabra
+    # suelta, no la subcadena: «se compra CRUDO y se da cocido» es correcto y
+    # dice «crudo» — lo que no puede es MANDAR darlo crudo.
+    _malas128 = [w for w in ("cruda", "crudas", "crudos")
+                 if _re128.search(r"\b%s\b" % w, _t128.lower())]
+    if _malas128:
+        fallos.append(f"BLOQUE128: el «cómo darlo» cocinado de «{_cat128}» dice "
+                      f"{_malas128} — es el texto de crudo, o uno escrito copiándolo")
+    if _t128 == _CRU_CAT_128.get(_cat128):
+        fallos.append(f"BLOQUE128: el «cómo darlo» cocinado de «{_cat128}» es LITERALMENTE el "
+                      f"de crudo. Declararlo sin cambiarlo deja el agujero abierto y encima "
+                      f"parece que alguien lo miró")
+
+# Y las fichas cocidas tienen que tener su propia instrucción: sin ella la app
+# solo enseña la de la categoría, y quien tiene que deshuesar un muslo DESPUÉS
+# de cocerlo no lo lee en ningún sitio.
+_PORALIM_128 = {}
+for _p128 in _ALIM128.get("pantallas") or []:
+    for _lista128 in (_p128.get("grupos") or {}).values():
+        for _a128 in _lista128:
+            if _a128.get("como_se_da"):
+                _PORALIM_128[_a128["nombre"]] = _a128["como_se_da"]
+_sin128 = [n for n in _COCINADAS_128 if not (_PORALIM_128.get(n) or {}).get("como")]
+if _sin128:
+    fallos.append(f"BLOQUE128: {len(_sin128)} fichas cocidas no dicen cómo se dan: "
+                  f"{sorted(_sin128)[:4]}. Son alimentos que hay que COCINAR, y la instrucción "
+                  f"de la categoría no puede decir que un muslo se deshuesa después de hervirlo")
+
+print(f"  cómo darlo cocinado: {len(_COC_CAT_128)}/4 categorías · "
+      f"{len(_COCINADAS_128) - len(_sin128)}/{len(_COCINADAS_128)} fichas con instrucción propia")
 print(f"  fichas animales cocinadas: {len(_COCINADAS_128)} · perros con menú cocinado: {_salen128}/4")
 print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 

@@ -10746,6 +10746,25 @@ def listar_alimentos():
         # El texto general de cada pantalla, que la app enseña SIEMPRE, y el
         # del alimento solo si existe. Los dos vivian en la app.
         "como_se_da_por_categoria": _COMO_SE_DA["por_categoria"],
+        # ⚠️ Y EL MISMO TEXTO PARA UN MENÚ COCINADO, QUE NO ES UN AÑADIDO: ES
+        # UN AGUJERO DEL MODO COCINADO (17 de septiembre de 2026).
+        #
+        # Con el modo cocinado puesto, la pantalla «Cómo darlo» seguía sirviendo
+        # el texto de crudo: «Cruda. En trozos, no picada» sobre un muslo de
+        # pollo HERVIDO, «Crudas» sobre un riñón cocido, y «Crudo SOLO si se ha
+        # congelado antes» sobre un salmón que se acaba de cocer. O sea que el
+        # texto decía lo CONTRARIO del plato, y justo en la pantalla que se abre
+        # para saber cómo se prepara.
+        #
+        # Es la lección de la tercera puerta otra vez: un texto se vigila por la
+        # puerta por la que SALE. `aviso_al_comprar` de cada ficha cocida ya
+        # decía «se compra crudo y se da cocido» — y al lado, más grande, la
+        # instrucción de la categoría decía «Cruda».
+        #
+        # Van las CUATRO categorías animales y solo esas: en verdura, extras,
+        # suplementos y cereales el modo no cambia nada, y el hueso carnoso no
+        # existe en cocinado. Lo que falte, la app lo sirve de la de arriba.
+        "como_se_da_por_categoria_cocinado": _COMO_SE_DA.get("por_categoria_cocinado", {}),
         # ⚠️ SE DICE, no se esconde: un alimento cuya categoria no esta
         # declarada no aparece en ninguna pantalla, y eso tiene que verse.
         "sin_pantalla": sorted(sueltos),

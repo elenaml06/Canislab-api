@@ -20,7 +20,8 @@
    "Espinazo de cordero",
    "Patas de conejo",
    "Rabo de toro"
-  ]
+  ],
+  "las_dos_formas_de_dar_lo_mismo": "⚠️ 17-sep-2026. `por_categoria` es cómo se da en CRUDO y `por_categoria_cocinado` cómo se da en COCINADO, y solo están escritas las CUATRO categorías animales porque son las únicas en las que el modo cambia algo. || Nació de un agujero de verdad, no de una mejora: con el modo cocinado puesto, la pantalla «Cómo darlo» seguía diciendo «Cruda. En trozos, no picada» sobre un muslo de pollo hervido, «Crudas» sobre un riñón cocido y «Crudo SOLO si se ha congelado antes» sobre un salmón que se acababa de hervir. O sea: el texto decía justo lo contrario del plato, y en la pantalla en la que se lee CÓMO SE PREPARA. || Las otras cinco NO se escriben, y es una decisión: en verdura, extras, suplementos y cereales el modo no cambia nada (los cereales ya van cocidos en los dos), y el HUESO CARNOSO no existe en cocinado — cocido se astilla —, así que darle un texto de cocinado sería escribir cómo dar algo que el motor no va a poner nunca. Lo que falte se sirve de `por_categoria`, que es el comportamiento correcto."
  },
  "por_categoria": {
   "Carne muscular": "Cruda. En trozos, no picada — picada tiene más riesgo bacteriano.",
@@ -267,6 +268,56 @@
   "Arroz integral cocido": "Hiérvelo en agua sin sal hasta que esté MUY blando —el integral tarda casi el doble que el blanco—, escúrrelo y déjalo enfriar. Los gramos del menú son de arroz YA COCIDO: pésalo después, no antes.",
   "Patata cocida": "Hiérvela en agua sin sal hasta que se deshaga al pincharla, y pélala. ⚠️ NUNCA cruda ni verde ni germinada: la patata cruda y los brotes llevan solanina. Los gramos del menú son de patata YA COCIDA y pelada: pésala después, no antes.",
   "Copos de avena cocidos": "Cuécelos en AGUA, sin leche, sin azúcar y sin sal, hasta que queden como unas gachas blandas. Los gramos del menú son de avena YA COCIDA: pésala después, no antes.",
-  "Quinoa cocida": "Enjuágala bien bajo el grifo antes de cocerla —así se va el amargor de fuera— y hiérvela en agua sin sal. Los gramos del menú son de quinoa YA COCIDA y escurrida: pésala después, no antes."
+  "Quinoa cocida": "Enjuágala bien bajo el grifo antes de cocerla —así se va el amargor de fuera— y hiérvela en agua sin sal. Los gramos del menú son de quinoa YA COCIDA y escurrida: pésala después, no antes.",
+  "Pollo muslo cocido": {
+   "pieza": "un muslo mediano crudo pesa unos 110 g y se queda en unos 80 g cocido",
+   "como": "Hervido en agua sin sal, sin piel, hasta que no quede rosa junto al hueso. Se deshuesa DESPUÉS de cocerlo y se trocea. El hueso cocido no se le da: se tira."
+  },
+  "Jarrete de ternera cocido": {
+   "pieza": "un jarrete entero crudo son unos 400-600 g",
+   "como": "Hervido en agua sin sal hasta que esté tierno, sin el hueso — se deshuesa después de cocerlo y el hueso se tira. Troceado, no picado."
+  },
+  "Vaca para guisar cocida": {
+   "pieza": "un filete de guisar crudo son unos 120-150 g",
+   "como": "Hervida en agua sin sal hasta que no quede roja por dentro, en trozos, no picada."
+  },
+  "Corazón de vaca cocido": {
+   "pieza": "un corazón entero crudo son 1,5-2 kg; se compra en trozos",
+   "como": "Hervido en agua sin sal, en trozos. Quítale la grasa dura y los tubos de fuera antes de cocerlo."
+  },
+  "Corazón de pavo cocido": {
+   "pieza": "un corazón de pavo crudo pesa unos 20-25 g",
+   "como": "Hervido en agua sin sal, entero o partido por la mitad."
+  },
+  "Bacalao cocido": {
+   "pieza": "un lomo crudo son unos 150 g",
+   "como": "Al vapor o hervido, sin sal, hasta que se separe en láminas. ⚠️ FRESCO, nunca el salado ni el desalado: el bacalao en salazón lleva muchísima sal. Quítale las espinas."
+  },
+  "Salmón cocido": {
+   "pieza": "un lomo crudo son unos 130-150 g",
+   "como": "Hervido o al vapor, sin sal, hasta que se separe en láminas. Quítale la piel y pásale los dedos para buscar las espinas finas del centro. Aquí no hace falta congelarlo antes: eso es solo para darlo crudo."
+  },
+  "Trucha cocida": {
+   "pieza": "una trucha entera cruda son unos 200-250 g, y se queda en la mitad limpia",
+   "como": "Al vapor o hervida, sin sal. Quítale la piel, la cabeza y la espina central, y revisa las espinas pequeñas."
+  },
+  "Hígado de vaca cocido": {
+   "pieza": "un filete de hígado crudo son unos 100 g",
+   "como": "Hervido en agua sin sal, en trozos pequeños — se da en poca cantidad, no hace falta trocear más de la cuenta."
+  },
+  "Hígado de pollo cocido": {
+   "pieza": "un hígado de pollo crudo pesa unos 30 g",
+   "como": "Hervido en agua sin sal, unos minutos, hasta que pierda el color por dentro. En trozos pequeños."
+  },
+  "Riñón de vaca cocido": {
+   "pieza": "un riñón entero crudo son unos 400-500 g",
+   "como": "Hervido en agua sin sal, en trozos pequeños. Quítale la grasa y los conductos blancos del centro antes de cocerlo; si huele fuerte, cámbiale el agua a media cocción."
+  }
+ },
+ "por_categoria_cocinado": {
+  "Carne muscular": "Cocida: hervida o al vapor, en agua y sin sal, sin aceite y sin nada más. En trozos, no picada. Se hace hasta que no quede rojo por dentro. ⚠️ Los gramos del menú son de carne YA COCIDA — pésala después de cocinarla, no antes: al cocerse pierde agua, así que antes de cocinarla pesa bastante más para la misma cantidad de comida. El agua de la cocción se tira.",
+  "Vísceras": "Cocidas: hervidas en agua sin sal, en trozos pequeños. ⚠️ Los gramos del menú son de víscera YA COCIDA — pésala después de cocinarla.",
+  "Hígado": "Cocido: hervido en agua sin sal, en trozos pequeños — se da en poca cantidad, no hace falta trocear más de la cuenta. ⚠️ Los gramos del menú son de hígado YA COCIDO — pésalo después de cocinarlo.",
+  "Pescados y mariscos": "Cocido: hervido o al vapor, sin sal. Aquí no hace falta congelarlo antes — eso es solo para darlo crudo; cocinándolo el riesgo de parásitos desaparece. Quítale las espinas antes de dárselo. ⚠️ Los gramos del menú son de pescado YA COCIDO — pésalo después de cocinarlo."
  }
 }
