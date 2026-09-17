@@ -9301,7 +9301,10 @@
    "vitB12": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2370 · «Berenjena» · columna «Vitamina B-12» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía.",
    "vitD": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2370 · «Berenjena» · columna «Vitamina D» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía.",
    "yodo": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2370 · «Berenjena» · columna «ioduro» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía."
-  }
+  },
+  "se_pesa": "en crudo",
+  "se_pesa_por_que": "Su composición sale de la fila CRUDA de la fuente que manda (bedca:2370, usda:169228), y el catálogo va por 100 g de alimento TAL CUAL SE PESA. Si los gramos se midieran cocidos, la cuenta sería otra: medido contra USDA, 100 g de boniato hervido son 76 kcal y 100 g de boniato crudo son 101.",
+  "aviso_al_comprar": "A la berenjena hay que dársela COCIDA — cruda es indigesta. Pero los gramos de la lista son de berenjena CRUDA, así que pésala ANTES de cocinarla."
  },
  {
   "nombre": "Boniato",
@@ -9398,7 +9401,10 @@
    "treonina": "usda:168482 · «Sweet potato, raw, unprepared» · columna «Threonine» = 0.083 G · transferido por gramo de proteina: ×(1.2/1.57) → 0.063439 g · 2026-09-15",
    "triptofano": "usda:168482 · «Sweet potato, raw, unprepared» · columna «Tryptophan» = 0.031 G · transferido por gramo de proteina: ×(1.2/1.57) → 0.023694 g · 2026-09-15",
    "valina": "usda:168482 · «Sweet potato, raw, unprepared» · columna «Valine» = 0.086 G · transferido por gramo de proteina: ×(1.2/1.57) → 0.065732 g · 2026-09-15"
-  }
+  },
+  "se_pesa": "en crudo",
+  "se_pesa_por_que": "Su composición sale de la fila CRUDA de la fuente que manda (bedca:731, usda:168482), y el catálogo va por 100 g de alimento TAL CUAL SE PESA. Si los gramos se midieran cocidos, la cuenta sería otra: medido contra USDA, 100 g de boniato hervido son 76 kcal y 100 g de boniato crudo son 101.",
+  "aviso_al_comprar": "Al boniato hay que dárselo COCIDO — crudo es duro e indigesto. Pero ojo: los gramos de la lista son de boniato CRUDO, así que pésalo ANTES de cocerlo. Si lo pesas después de cocido te quedas corto, porque al cocer coge agua: 100 g de boniato crudo se quedan en unos 130 g cocido."
  },
  {
   "nombre": "Canónigos",
@@ -10252,7 +10258,10 @@
    "treonina": "usda:168389 · «Asparagus, raw» · columna «Threonine» = 0.084 G · transferido por gramo de proteina: ×(2.9/2.2) → 0.110727 g · 2026-09-15",
    "triptofano": "usda:168389 · «Asparagus, raw» · columna «Tryptophan» = 0.027 G · transferido por gramo de proteina: ×(2.9/2.2) → 0.035591 g · 2026-09-15",
    "valina": "usda:168389 · «Asparagus, raw» · columna «Valine» = 0.115 G · transferido por gramo de proteina: ×(2.9/2.2) → 0.151591 g · 2026-09-15"
-  }
+  },
+  "se_pesa": "en crudo",
+  "se_pesa_por_que": "Su composición sale de la fila CRUDA de la fuente que manda (bedca:1179, usda:168389), y el catálogo va por 100 g de alimento TAL CUAL SE PESA. Si los gramos se midieran cocidos, la cuenta sería otra: medido contra USDA, 100 g de boniato hervido son 76 kcal y 100 g de boniato crudo son 101.",
+  "aviso_al_comprar": "Al espárrago hay que dárselo COCIDO — crudo es duro e indigesto. Pero los gramos de la lista son de espárrago CRUDO, así que pésalo ANTES de cocinarlo."
  },
  {
   "nombre": "Grelo",

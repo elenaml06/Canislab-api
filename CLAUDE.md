@@ -660,6 +660,57 @@ patología que necesitaba más del 50 % de verdura. El BLOQUE 61 lo cazó, y su
 perro de referencia (20 kg, DER 950, **sin peso objetivo**) no es un perro obeso:
 el obeso de verdad (25→20 kg, DER 830) no sacaba menú **ni en `main`**.
 
+### El boniato se da COCIDO y se pesa CRUDO, y nadie lo decía
+
+*(17 de septiembre de 2026.)* Salió preparando el modo cocinado, y no es una
+pregunta de futuro: **es un fallo que está en producción hoy.**
+
+**TRES fichas del catálogo llevan `preparacion: "cocido"`** desde siempre, con la
+nota «⚠️ DAR SIEMPRE COCIDO, no crudo: crudo es indigesto/duro y da riesgo de
+obstrucción» — **Boniato, Berenjena y Espárrago verde** —, y su composición sale
+de la fila **CRUDA** de la fuente que manda. No es una sospecha: `bedca:731` se
+llama literalmente **«Boniato, CRUDO»** y da 422,5 kJ = **101,0 kcal**, que son
+los 101 de la ficha clavados.
+
+O sea: el menú dice «616 g de boniato», el propio catálogo dice que hay que
+cocinarlo, y **no dice si esos gramos son antes o después de cocinar.**
+
+| por 100 g tal cual se pesa | kcal |
+|---|---|
+| boniato **CRUDO** (`usda:168482`, y es lo que aplica el catálogo vía BEDCA) | **101** |
+| boniato **HERVIDO** (`usda:168484`) | **76** |
+| boniato al horno (`usda:168483`) | 90 |
+
+En el peor menú del catálogo (616 g) eso son **154 kcal** de diferencia. Y el
+boniato sale en **27 de los 216** precalculados (mediana 43 g), y es el grueso
+del plato de la **pancreatitis** (389 g) — que se lo come justamente porque su
+grasa está topada y hay que diluir con algo que no engorde.
+
+⚠️ **Lo que está mal NO es la cifra: es que no se dice la BASE.** Gramos crudos
+con composición cruda es correcto y coherente. Lo que no puede pasar es que quien
+tiene la báscula delante no sepa cuál de las dos cosas le están pidiendo. Así que
+**no se toca ningún número**: se declara (`se_pesa` + `se_pesa_por_que`, que es lo
+que permite rehacerlo contra la fila de la fuente) y **se dice donde se lee**, por
+`aviso_al_comprar`.
+
+⚠️ **Y AL PONERLE EL GUARDIA SALIÓ QUE `aviso_al_comprar` SOLO LO VEÍA UN
+VETERINARIO.** Ese campo nació el 13 de septiembre con el motivo escrito de que
+«sale por las DOS puertas», y una de las dos estaba a medias: se servía en
+`por_categoria` —la lista que lee el **formulador del veterinario**— y **no en
+`pantallas`**, que es **Personalizar**, o sea donde el dueño elige la comida a
+mano. Así que el aviso escrito para quien está delante del mostrador —«si te
+ofrecen sesos de vaca, NO valen»— no lo leía quien va a comprar. Es la regla 6 por
+el lado que no se ve: el motor sirve un texto perfecto y no lo lee nadie.
+
+Lo vigila el **BLOQUE 123**, con las dos mitades —que la ficha declare la base y
+que lo diga por el canal que lee quien pesa— y comprobado con el fallo puesto de
+**cuatro** formas: sin `se_pesa`, con un aviso que dice «dáselo cocido» y no dice
+cuándo pesarlo, sin el porqué, y sin servirlo en la pantalla del dueño.
+
+⚠️ **Y esto cambia la primera frase del apartado de comida cocinada de
+`PENDIENTE_PRODUCTO.md`**, que daba por hecho que el arroz sería «la primera ficha
+cocinada del catálogo». No lo sería: ya hay tres, y llevan meses ahí.
+
 ### Endpoints: cuáles usa la app y cuáles no
 
 Los que llama el frontend hoy: `/menu/v2`, `/menu/semana`,

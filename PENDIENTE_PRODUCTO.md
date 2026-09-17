@@ -52,6 +52,31 @@ cuadren.
 1. ⚠️ **Tendrían que ser fichas COCINADAS**: el arroz crudo no lo digiere un
    perro. O sea que **esto es la primera rebanada del apartado de abajo** (BARF
    vs. comida cocinada), no un añadido suelto.
+
+   ⚠️ **Y NO SERÍA LA PRIMERA FICHA COCINADA: YA HAY TRES** (17 de septiembre de
+   2026). Boniato, Berenjena y Espárrago verde llevan `preparacion: "cocido"`
+   desde siempre. Lo que salió al mirarlo es que su composición es la de la fila
+   **CRUDA** —`bedca:731` se llama «Boniato, CRUDO»— y que el menú no decía si
+   los gramos son antes o después de cocinar: 101 kcal/100 g crudo contra 76
+   hervido, en un plato que lleva hasta 616 g. Arreglado el mismo día declarando
+   la base (`se_pesa`) y diciéndolo por `aviso_al_comprar`; el detalle está en
+   `CLAUDE.md` y lo vigila el BLOQUE 123.
+
+   **Eso adelanta media rebanada del modo cocinado**: el catálogo ya sabe decir
+   en qué estado se da un alimento y en qué estado se pesa. Lo que sigue sin
+   existir es que el MOTOR sepa elegir entre unos y otros, que es lo de abajo.
+
+   ⚠️ **Y la fuente del arroz ya está elegida y medida**, con una trampa dentro:
+   la fila de BEDCA que parece la buena —`bedca:2661`, que se llama **«Arroz,
+   hervido»**— declara **4,12 % de agua** y **392 kcal/100 g**, o sea que son
+   cifras de arroz **SECO**. Un arroz hervido con un 4 % de agua no existe. Se
+   baja al mandato 4, `usda:169757` «Rice, white, long-grain, regular,
+   **unenriched**, cooked **without salt**» (130 kcal, 68,4 % de agua), y la
+   excepción hay que declararla en `fuentes_de_composicion.json`: un mandato que
+   se salta en silencio deja una cifra sin procedencia. *Unenriched* porque las
+   «enriched» llevan hierro, tiamina, niacina y folato AÑADIDOS —eso no es un
+   alimento, es un alimento fortificado— y *without salt* porque el sodio decide
+   en cardiopatía y en renal.
 2. **«Solo cuando haga falta» ya funciona**: una categoría que no esté en
    `ACCESIBLES` el motor **no la elige nunca** por su cuenta. Lo único nuevo
    sería que se active sola en las patologías con techo de grasa.

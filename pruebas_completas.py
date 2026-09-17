@@ -21278,6 +21278,126 @@ _cerrar_el_ultimo_bloque()
 #    recuento es lo que lee, y los dos tienen que ver el fichero entero.
 
 # ⚠️ ¿SE HAN EJECUTADO TODOS LOS BLOQUES QUE HAY ESCRITOS? (14 de septiembre).
+# ============================================================
+# BLOQUE 123 — UN ALIMENTO QUE HAY QUE COCINAR DICE EN QUÉ SE PESA
+# ============================================================
+#
+# ⚠️ POR QUÉ EXISTE (17 de septiembre de 2026). El catálogo tiene TRES fichas con
+# `preparacion: "cocido"` y la nota «⚠️ DAR SIEMPRE COCIDO, no crudo» — Boniato,
+# Berenjena y Espárrago verde — y su composición sale de la fila **CRUDA** de la
+# fuente que manda. No es una sospecha: `bedca:731` se llama literalmente
+# **«Boniato, CRUDO»** y da 422,5 kJ = 101,0 kcal, que son los 101 de la ficha
+# clavados.
+#
+# O sea que el menú dice «616 g de boniato», el propio catálogo dice que hay que
+# cocinarlo, y **nadie dice si esos gramos son antes o después de cocinar**. Y no
+# es lo mismo, medido contra USDA por 100 g tal cual se pesa:
+#
+#     boniato CRUDO (168482) ....... 101 kcal (la cifra del catálogo, vía BEDCA)
+#     boniato HERVIDO (168484) ......  76 kcal
+#     boniato al HORNO (168483) .....  90 kcal
+#
+# En el peor menú del catálogo (616 g) eso son **154 kcal** de diferencia, y el
+# boniato sale en **27 de los 216** precalculados — y es el grueso del plato de
+# la pancreatitis, que se lo come justamente porque su grasa está topada.
+#
+# ⚠️ Y LO QUE ESTÁ MAL NO ES LA CIFRA: es que no se dice la BASE. Los gramos
+# crudos con composición cruda son correctos y coherentes. Lo que no puede pasar
+# es que quien pesa no sepa cuál de las dos cosas le están pidiendo.
+#
+# Lo que se exige, y son las dos mitades:
+#   1. una ficha que haya que cocinar DECLARA en qué se pesa (`se_pesa`) y por qué
+#   2. y lo DICE por el canal que lee quien compra y pesa (`aviso_al_comprar`),
+#      que ya sale por las dos puertas desde el 13 de septiembre
+#
+# Sin la 1 no se puede auditar; sin la 2 vive en una nota técnica que no lee
+# nadie — que es exactamente la lección del cerebro de ternera.
+print("\n=== BLOQUE 123: lo que hay que cocinar dice en qué se pesa ===")
+
+_al123, _ = _api.cargar_v2()
+_HAY_QUE_COCINARLO_123 = [n for n, a in _al123.items()
+                          if str(a.get("preparacion") or "").strip().lower()
+                          not in ("", "crudo")]
+if not _HAY_QUE_COCINARLO_123:
+    fallos.append("BLOQUE123: no hay ninguna ficha con `preparacion` distinta de crudo. O han "
+                  "desaparecido las tres que había (Boniato, Berenjena, Espárrago verde) o el "
+                  "campo se llama de otra forma, y en los dos casos este bloque dejó de vigilar "
+                  "nada sin decirlo")
+for _n123 in _HAY_QUE_COCINARLO_123:
+    _f123 = _al123[_n123]
+    _base123 = str(_f123.get("se_pesa") or "").strip().lower()
+    if not _base123:
+        fallos.append(f"BLOQUE123: «{_n123}» hay que dárselo {_f123.get('preparacion')!r} y la "
+                      f"ficha NO dice en qué se pesa. Sus gramos en el menú son ambiguos: 100 g "
+                      f"de boniato crudo son 101 kcal y 100 g hervido son 76")
+    elif "crudo" not in _base123 and "cocid" not in _base123 and "cocin" not in _base123:
+        fallos.append(f"BLOQUE123: «{_n123}» declara `se_pesa: {_base123!r}`, que no dice ni "
+                      f"crudo ni cocinado. Una base que no se entiende no es una base")
+    if not _f123.get("se_pesa_por_que"):
+        fallos.append(f"BLOQUE123: «{_n123}» dice en qué se pesa y NO dice por qué. La base "
+                      f"tiene que poder rehacerse contra la fila de la fuente, que es lo único "
+                      f"que separa un dato de una afirmación")
+    _av123 = str(_f123.get("aviso_al_comprar") or "")
+    if not _av123:
+        fallos.append(f"BLOQUE123: «{_n123}» hay que cocinarlo y no lo dice por el canal que lee "
+                      f"quien compra. Una condición que solo vive en una nota técnica no la lee "
+                      f"quien está en la cocina con la báscula — es la lección del cerebro de "
+                      f"ternera")
+    else:
+        # ⚠️ NO BASTA CON QUE HAYA TEXTO: tiene que decir las DOS cosas, porque un
+        #    aviso que solo dice «dáselo cocido» deja el peso igual de ambiguo que
+        #    antes, y ése es justamente el fallo que este bloque existe para cerrar.
+        _b123 = _av123.lower()
+        if not any(x in _b123 for x in ("cocid", "cocin", "hervid", "horno")):
+            fallos.append(f"BLOQUE123: el aviso de «{_n123}» no dice que hay que cocinarlo")
+        if not any(x in _b123 for x in ("pesa", "pésa", "pesar", "báscula", "bascula")):
+            fallos.append(f"BLOQUE123: el aviso de «{_n123}» dice que hay que cocinarlo y NO "
+                          f"dice cuándo se pesa. Con eso el dueño sigue sin saber si los "
+                          f"gramos de la lista son antes o después")
+
+# --- y que salga por las DOS puertas, que es lo que lo hace servir -----------
+#
+# Es la misma forma del BLOQUE 51 y por el mismo motivo: con solo el menú, quien
+# elige el alimento a mano no lee nada hasta el final; con solo `GET /alimentos`,
+# quien deja elegir al motor no lo lee nunca.
+_r123 = _c.get("/alimentos").json()
+def _todos_los_alimentos_123(o, acc=None):
+    acc = [] if acc is None else acc
+    if isinstance(o, dict):
+        if o.get("nombre"):
+            acc.append(o)
+        for v in o.values():
+            _todos_los_alimentos_123(v, acc)
+    elif isinstance(o, list):
+        for v in o:
+            _todos_los_alimentos_123(v, acc)
+    return acc
+_servidos123 = {x["nombre"]: x for x in _todos_los_alimentos_123(_r123) if "nombre" in x}
+for _n123 in _HAY_QUE_COCINARLO_123:
+    _x123 = _servidos123.get(_n123)
+    if _x123 is None:
+        fallos.append(f"BLOQUE123: «{_n123}» no lo sirve `GET /alimentos`, así que quien lo "
+                      f"elige a mano no puede leer su aviso")
+    elif not _x123.get("aviso_al_comprar"):
+        fallos.append(f"BLOQUE123: «{_n123}» tiene aviso en el catálogo y `GET /alimentos` lo "
+                      f"sirve SIN él. El texto existe y no lo lee nadie, que es la regla 6 por "
+                      f"el lado que no se ve")
+
+# Y por la otra puerta: con el alimento dentro de un menú, en el canal del dueño.
+_men123 = {_HAY_QUE_COCINARLO_123[0]: 50.0} if _HAY_QUE_COCINARLO_123 else {}
+if _men123:
+    _seg123 = _api._seguridad_completa(_men123, _al123, 1000.0, "Adulto", [], peso_perro_kg=20.0)
+    _txt123 = " ".join(str(x) for x in (_seg123 or []))
+    if _HAY_QUE_COCINARLO_123[0].lower().split()[0] not in _txt123.lower():
+        fallos.append(f"BLOQUE123: con «{_HAY_QUE_COCINARLO_123[0]}» DENTRO del menú, el canal "
+                      f"del dueño (`problemas_seguridad`) no dice nada de cómo pesarlo. Es la "
+                      f"puerta que la app ya pinta en los ocho caminos")
+
+print(f"  {len(_HAY_QUE_COCINARLO_123)} fichas que hay que cocinar, todas con su base de peso "
+      f"declarada y dicha")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
+
+
 #
 # CASO REAL, y lo cometí yo el mismo día que se escribe esto: el BLOQUE 111 se
 # añadió **al final del fichero**, o sea DESPUÉS del `sys.exit()` de aquí abajo.
