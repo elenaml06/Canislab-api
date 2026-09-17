@@ -3214,10 +3214,24 @@ def _aviso_de_lo_que_falta(gramos, al, categorias_excluidas=None):
             "y todos los límites de seguridad.")
 
 
+# Lo que se le da a UN menú suelto. Ver `_resolver_menu_v2_crudo`.
+PRESUPUESTO_SEGUNDOS_MENU_UNICO = 40.0
+
 # El total de segundos que se reparte entre los menús de UNA semana. Vive aquí
 # y no dentro del endpoint para que una prueba pueda darle holgura: ver el
 # comentario largo en `endpoint_menu_semana`.
-PRESUPUESTO_SEGUNDOS_SEMANA = 70.0
+#
+# ⚠️ SUBIDO DE 70 A 85 EL 16 DE SEPTIEMBRE DE 2026, Y ES UN TECHO, NO UN COSTE
+# -- el bucle sale en cuanto tiene los menús, así que a nadie le hace esperar
+# más. Los 70 se pusieron el 15 sin medir una semana difícil, y la primera que
+# se midió no cabía: la de Cairo con premios daba **2 de 7 menús** y, antes de
+# arreglar el reparto, **0 de 7**. En `origin/main`, que no tenía ningún techo,
+# esa misma semana tarda 42,6 s y la de premios al 20 % llega a 86,3.
+#
+# 85 y no más porque lo que este número protege es real: Render documenta 100 s
+# como máximo de una petición, y pasarse de ahí no es un mensaje que se pueda
+# leer -- es un corte de conexión.
+PRESUPUESTO_SEGUNDOS_SEMANA = 85.0
 
 MARGEN_SEGURIDAD_CRONICA_MENU_UNICO = 0.75  # mismo criterio que el de /menu/semana
 
@@ -3289,9 +3303,31 @@ def endpoint_menu_semana(datos: PeticionMenu, numero_de_menus: int = 1):
 
         for i in range(n):
             dias_este = dias_por_menu[i]
+            # ⚠️ EL PRIMER MENÚ NO PUEDE QUEDARSE CON UNA SÉPTIMA PARTE (16 de
+            # septiembre de 2026, por la noche, y lo encontró la batería de la
+            # APP DE VERDAD, no la del motor).
+            #
+            # El reparto era «lo que queda, entre los que faltan», o sea 10 s
+            # para el primero de siete. Y los siete menús de una semana NO
+            # cuestan lo mismo: el PRIMERO se resuelve de cero y los demás son
+            # variaciones suyas, mucho más baratas. Medido en `origin/main`, que
+            # no tenía techo: la semana de Cairo entera son 42,6 s, de los que
+            # su primer menú se lleva ~20 y los otros seis ~3,7 cada uno.
+            #
+            # Con 10 s el primero no llega, y si el primero falla SE CAE LA
+            # SEMANA ENTERA -- el aviso de «se generaron N de 7» solo existe si
+            # ya había alguno. Medido en esta rama antes de arreglarlo: la
+            # semana de Cairo daba **0 menús** donde `main` da 7.
+            #
+            # Así que al primero se le da lo que se le daría a un menú suelto, y
+            # el resto se reparten lo que quede. El total sigue acotado por
+            # `PRESUPUESTO_SEGUNDOS_SEMANA`, que es lo que protege de los 100 s
+            # de Render.
             _queda_semana = PRESUPUESTO_SEGUNDOS_SEMANA - (time.time() - _t_inicio_semana)
             _presupuesto_segundos_este = max(
-                SEGUNDOS_MINIMOS_POR_MENU_SEMANA, _queda_semana / max(1, n - i))
+                SEGUNDOS_MINIMOS_POR_MENU_SEMANA,
+                min(_queda_semana, PRESUPUESTO_SEGUNDOS_MENU_UNICO) if i == 0
+                else _queda_semana / max(1, n - i))
             dias_restantes_incluido_este = sum(dias_por_menu[i:])
             presupuesto_para_este = _presupuesto_para_menu_actual(
                 presupuesto_restante, dias_restantes_incluido_este)
@@ -3489,7 +3525,11 @@ def _respuesta_de_premios_sin_sitio(datos, hay_comida, se_agoto_el_tiempo=False)
     if not (_kcal_prem > 0 and _der_dia > 0):
         return None
     _fraccion = _kcal_prem / _der_dia
-    if _fraccion <= FRACCION_MAXIMA_DE_PREMIOS:
+    # ⚠️ CON TOLERANCIA, PORQUE 0,10 NO PUEDE SALIR «POR ENCIMA DEL 10 %». Con un
+    # `>` pelado, `1581 * 0.10 / 1581` da 0,10000000000000002 en coma flotante y
+    # el nivel que la fuente RECOMIENDA se trataba como si se pasara. Medido: la
+    # semana de Cairo con «hasta_el_maximo» perdía sus siete menús por esto.
+    if _fraccion <= FRACCION_MAXIMA_DE_PREMIOS + 1e-6:
         return None
     _pct = _fraccion * 100
     # ⚠️ LO PRIMERO QUE SE OFRECE ES DECIR QUÉ PREMIO ES, NO BAJARLO (16 de
@@ -3651,11 +3691,21 @@ def _resolver_menu_v2_crudo(datos: PeticionMenu):
     # 40 s deja 60 de margen sobre los 100 s que Render documenta como tiempo
     # máximo de petición, y son ~8,9 s de esta máquina, por encima de los 8 s
     # donde las dos filas de arriba ya salen 10 de 10.
-    PRESUPUESTO_SEGUNDOS = 40.0
+    PRESUPUESTO_SEGUNDOS = globals().get("PRESUPUESTO_SEGUNDOS_MENU_UNICO", 40.0)
     # Quien orquesta varias generaciones dentro de una misma petición
     # (ver /menu/varios-perros) reparte el tiempo. Solo puede apretar.
     if datos.presupuesto_segundos is not None:
         PRESUPUESTO_SEGUNDOS = max(3.0, min(PRESUPUESTO_SEGUNDOS, float(datos.presupuesto_segundos)))
+
+    # ⚠️ CON POCO RELOJ NO SE INTENTA LA MEJORA, NI SIQUIERA LA PRIMERA VUELTA
+    # (16 de septiembre de 2026). Ver el comentario largo de
+    # `_MITAD_PARA_LA_MEJORA`, abajo: con 10 s por menú --que es lo que reparte
+    # `/menu/semana` entre siete-- partir el presupuesto en dos deja las dos
+    # mitades sin llegar, y la que no puede fallar es la segunda. Medido con
+    # Cairo: la semana pasaba de 7 menús a 0.
+    SEGUNDOS_MINIMOS_PARA_INTENTAR_LA_MEJORA = 20.0
+    _APRETAR_EL_TECHO_DEL_LIBRO = (
+        PRESUPUESTO_SEGUNDOS >= SEGUNDOS_MINIMOS_PARA_INTENTAR_LA_MEJORA)
 
     def tiempo_restante():
         """
@@ -4302,13 +4352,13 @@ def _resolver_menu_v2_crudo(datos: PeticionMenu):
     if restriccion:
         # NIVEL 1: solo lo elegido a mano en carne/pescado/hueso, nada más
         ok, gramos, ficha_intento = _intentar_generacion(forzar, restriccion,
-                                                         soltar_techo_libro=False)
+                                                         soltar_techo_libro=not _APRETAR_EL_TECHO_DEL_LIBRO)
         if not ok:
             # NIVEL 2: se afloja la restricción de especie, pero se
             # sigue forzando que lo elegido esté presente -- el motor
             # puede añadir OTRA especie más si de verdad hace falta
             ok, gramos, ficha_intento = _intentar_generacion(forzar, None,
-                                                             soltar_techo_libro=False)
+                                                             soltar_techo_libro=not _APRETAR_EL_TECHO_DEL_LIBRO)
             if ok:
                 # ⚠️ aviso solo si de verdad se añadió algo que el
                 # usuario no pidió en esas categorías -- comparando
@@ -4324,7 +4374,7 @@ def _resolver_menu_v2_crudo(datos: PeticionMenu):
                     )
     else:
         ok, gramos, ficha_intento = _intentar_generacion(forzar, None,
-                                                         soltar_techo_libro=False)
+                                                         soltar_techo_libro=not _APRETAR_EL_TECHO_DEL_LIBRO)
 
     if not ok and datos.modo == "personalizar":
         # igual que hacía /menu (el viejo): si forzar lo elegido a mano
@@ -4447,6 +4497,27 @@ def _resolver_menu_v2_crudo(datos: PeticionMenu):
         _hay_techo_que_soltar = True
     if not _hay_techo_que_soltar:
         _MITAD_PARA_LA_MEJORA = 1.0
+    # ⚠️ Y CON POCO RELOJ, LA MEJORA NO SE INTENTA SIQUIERA (16 de septiembre de
+    # 2026, por la noche, y esto lo encontró la batería de la APP DE VERDAD --
+    # no la del motor).
+    #
+    # CASO REAL MEDIDO, y es el de Cairo otra vez: `/menu/semana` reparte 70 s
+    # entre SIETE menús, o sea ~10 s cada uno. Partir 10 s en dos mitades deja
+    # 5 s para la mejora y 5 para la respuesta, y su menú cuesta más que eso:
+    #
+    #     un solo menú por `/menu/v2` (40 s) ....... 19,7 s, SALE
+    #     la semana de 7 en esta rama .............. 0 menús, «está tardando»
+    #     la misma semana en `origin/main` ......... 7 menús, 42,6 s
+    #
+    # O sea que la mejora, que existe para dar un menú MÁS PEGADO al consejo del
+    # libro, estaba costando el menú entero. Es su propio comentario llevado al
+    # final: perder la mejora cuesta calidad y perder la respuesta cuesta la
+    # comida, así que cuando no caben las dos, se va la mejora.
+    #
+    # El umbral son 20 s -- por debajo, ninguna de las dos vueltas tendría los
+    # 10 s que hace falta para recorrer la escalera de un perro difícil.
+    if not _APRETAR_EL_TECHO_DEL_LIBRO:
+        _MITAD_PARA_LA_MEJORA = 0.0
     if not ok and not _peldano_pedido:
         for margenes_peldano, supl_peldano, que_se_suelta in _escalera_de_este_perro[1:]:
             if tiempo_restante() <= 1.5:
@@ -4455,7 +4526,7 @@ def _resolver_menu_v2_crudo(datos: PeticionMenu):
                 break  # se acabó lo que se le presta a la MEJORA: manda la RESPUESTA
             ok, gramos, ficha_intento = _intentar_generacion(
                 forzar, None, margenes=margenes_peldano, max_supl=supl_peldano,
-                soltar_techo_libro=False)
+                soltar_techo_libro=not _APRETAR_EL_TECHO_DEL_LIBRO)
             if ok:
                 relajaciones.append(que_se_suelta)
                 break
@@ -4534,10 +4605,33 @@ def _resolver_menu_v2_crudo(datos: PeticionMenu):
         # cuando el presupuesto se agotaba en la vía del catálogo, a
         # propósito: el mismo motivo tiene que decir lo mismo.
         if time.time() - t_inicio_total >= PRESUPUESTO_SEGUNDOS - 1.5:
-            # ⚠️ Y SI LO QUE SE ACABÓ EL RELOJ INTENTANDO ES CUADRAR UNOS PREMIOS
-            # QUE NO SABEMOS QUÉ SON, ESO ES LO QUE HAY QUE DECIR. Ver
-            # `_respuesta_de_premios_sin_sitio`: «inténtalo de nuevo en un
-            # momento» promete algo que no va a pasar.
+            # ⚠️ AQUÍ NO SE CULPA A LOS PREMIOS, Y COSTÓ UNA VUELTA ATRÁS (16 de
+            # septiembre de 2026, por la noche). Durante un rato esta puerta
+            # devolvió el texto de `_respuesta_de_premios_sin_sitio`, con el
+            # argumento de que «inténtalo de nuevo en un momento» promete algo
+            # que no va a pasar. Y LO ROMPIÓ, en el caso que más importa:
+            #
+            #     `/menu/semana` reparte un total entre los SIETE menús, así que
+            #     a cada uno le tocan ~10 s y quedarse sin reloj es lo NORMAL.
+            #     Medido: Cairo con premios «hasta_el_maximo» --el 10 %, o sea
+            #     justo lo que la fuente recomienda-- pasó a recibir «no cabe»
+            #     en 12,9 s, cuando su menú existe y sale.
+            #
+            # O sea que se estaba convirtiendo «no me ha dado tiempo» en «no hay
+            # sitio», que es afirmar lo que no se ha demostrado, y encima quitar
+            # menús que sí existen.
+            #
+            # ⚠️ LAS DOS CAUSAS ESTÁN ARREGLADAS Y LA PUERTA VUELVE, PERO
+            # DICIENDO OTRA COSA. Eran (1) la comparación en coma flotante, que
+            # hacía que el 10 % exacto contara como «por encima del 10 %», y (2)
+            # el reparto de la semana, que le daba 10 s al primer menú. Con las
+            # dos puestas, aquí solo llega quien de verdad se pasa de lo que
+            # recomienda la fuente.
+            #
+            # Y lo que se AFIRMA cambia según la puerta, porque si no sería
+            # mentira: con la escalera recorrida se dice que NO CABE; aquí, que
+            # no hemos podido. Lo que se OFRECE es lo mismo, porque ayuda igual
+            # -- decir qué premio es lo saca del terreno de lo desconocido.
             _sin_sitio_reloj = _respuesta_de_premios_sin_sitio(datos, hay_comida, True)
             if _sin_sitio_reloj is not None:
                 return _sin_sitio_reloj
