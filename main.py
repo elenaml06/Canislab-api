@@ -9961,6 +9961,9 @@ def endpoint_vocabulario():
                                     "una exclusión de catálogo y esto es una pregunta que se le "
                                     "hace a todo el mundo."),
             "categoria_del_motor": "Cereales y tubérculos",
+            # El titular, ya en el registro del dueño, para que la app no lo escriba.
+            "pregunta_dueno": "¿Quieres que su menú pueda llevar arroz, patata o avena?",
+            "pregunta_veterinario": "Hidratos de carbono en la ración",
             "estados": [
                 {"clave": None, "valor": None,
                  "dueno": {"titulo": "No he contestado",
