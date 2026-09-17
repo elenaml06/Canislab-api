@@ -8332,7 +8332,21 @@ def formular_autocompletar(datos: PeticionFormular):
     # cambiarle la decision a quien la ha tomado, que es lo contrario de por
     # que se puede elegir. Con peldaño elegido se prueba ese y solo ese.
     if datos.peldano and _peldano_por_clave(datos.peldano, _hay_comida_f):
-        _escalones_f = [(_peldano_por_clave(datos.peldano, _hay_comida_f) + (datos.peldano,))]
+        # ⚠️ CON LAS PATOLOGÍAS Y LA ETAPA, Y ANTES NO IBAN (17 de septiembre de
+        # 2026). `_peldano_por_clave` las acepta desde el 16 y este camino —el
+        # del veterinario que ELIGE un peldaño— las dejaba fuera, así que no se
+        # le soltaba el suelo del hueso a las siete patologías que topan la
+        # grasa ni se le abría el techo de los hidratos. Resultado medido: un
+        # perro OBESO de 25 kg no sacaba ración por el formulador ni pidiendo el
+        # último peldaño, y sí la saca por el generador del dueño.
+        #
+        # «El veterinario no puede tener menos margen que el tutor» — y lo peor
+        # es la forma del fallo: la escalera existía, el peldaño existía, y lo
+        # que faltaba era pasarle el dato. Lo cazó el BLOQUE 45 el día que dejó
+        # de tener su caso duro escrito a mano.
+        _escalones_f = [(_peldano_por_clave(datos.peldano, _hay_comida_f,
+                                            datos.patologias, datos.etapa_requisitos)
+                         + (datos.peldano,))]
     else:
         _escalones_f = [(m, sup, k or PELDANO_ESTRICTO)
                         for m, sup, k in _escalera_de_relajacion(

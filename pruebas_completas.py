@@ -7326,17 +7326,58 @@ for _m45b, _s45b, _k45b in _api._escalera_de_relajacion(True):
 print(f"  la escalera tiene {len(_api._escalera_de_relajacion(True))} peldaños y ninguno aprieta "
       f"lo que solto el anterior")
 
-# El caso real: pancreatitis en un adulto de 25 kg.
-_CUERPO_45 = {"nombres_alimentos": [], "modo": "automatico", "der_objetivo": 1040.0,
-              "peso_perro_kg": 25.0, "etapa_requisitos": "Adulto",
-              "patologias": ["pancreatitis"], "presupuesto_segundos": 30.0}
+# El caso real. ⚠️ Y SE BUSCA, NO SE ESCRIBE (17 de septiembre de 2026).
+#
+# Aquí estaba clavada la pancreatitis de un adulto de 25 kg, con la mitad de
+# este bloque apoyada en que ese caso NO tiene solución en el peldaño estricto.
+# Dejó de ser verdad el día que entró la categoría de hidratos: con la grasa
+# topada, el arroz le da la ración SIN bajar de peldaño —medido, pasa de
+# peldaño ×3 y 48 % de verdura a ESTRICTO y 10 %—, y entonces este bloque se
+# ponía rojo **acusando al motor de haber mejorado**. Eso es lo peor que puede
+# hacer una batería: enseña a desconfiar de ella, y una batería de la que se
+# desconfía se mira por encima.
+#
+# Lo que el bloque quiere afirmar no es «la pancreatitis no cabe en estricto»:
+# es que ELEGIR UN PELDAÑO SE RESPETA, y que cuando en el elegido no hay menú
+# se dice en vez de bajar por detrás. Para eso hace falta un caso duro, y se
+# BUSCA uno entre varios candidatos en vez de dar por eterno el de un día.
+def _un_caso_duro_45():
+    """Un perro que NO saca menú en el peldaño estricto, buscado ahora."""
+    for _pat45, _peso45, _der45 in (("obesidad", 25.0, 830.0), ("pancreatitis", 25.0, 1040.0),
+                                    ("hiperlipidemia", 25.0, 1040.0), ("renal", 25.0, 1040.0),
+                                    ("linfoma", 25.0, 1040.0), ("epi", 25.0, 1040.0)):
+        cuerpo = {"nombres_alimentos": [], "modo": "automatico", "der_objetivo": _der45,
+                  "peso_perro_kg": _peso45, "etapa_requisitos": "Adulto",
+                  "patologias": [_pat45], "presupuesto_segundos": 30.0}
+        libre = _c.post("/menu/v2", json=cuerpo).json()
+        if not libre.get("factible"):
+            continue                      # sin menú ni bajando: no sirve de caso
+        rec = _c.post("/menu/v2", json={**cuerpo, "peldano": "estricto"}).json()
+        if not rec.get("factible"):
+            return cuerpo, _pat45
+    return None, None
+
+_CUERPO_45, _PAT_DURA_45 = _un_caso_duro_45()
+if _CUERPO_45 is None:
+    # ⚠️ Y SI NINGUNO ES DURO, SE DICE. Un bloque que no encuentra su caso no
+    #    está comprobando nada, y callarlo es dejar una prueba inerte -- que es
+    #    peor que no tenerla, porque parece que alguien mira.
+    fallos.append("BLOQUE45: no se ha encontrado NINGÚN caso que se quede sin menú en el peldaño "
+                  "estricto, así que la mitad de este bloque no ha comprobado nada. O el motor ha "
+                  "mejorado tanto que hay que buscar el caso duro en otro sitio, o algo está "
+                  "dejando bajar de peldaño cuando se pide uno concreto")
+    _CUERPO_45 = {"nombres_alimentos": [], "modo": "automatico", "der_objetivo": 1040.0,
+                  "peso_perro_kg": 25.0, "etapa_requisitos": "Adulto",
+                  "patologias": ["pancreatitis"], "presupuesto_segundos": 30.0}
+else:
+    print(f"  el caso duro de hoy es «{_PAT_DURA_45}»: sale menú bajando y NO en el estricto")
 
 # a) Sin elegir nada: la escalera baja sola, como siempre, y ahora ademas
 #    DICE en que peldano ha salido -- antes "no dice nada" y "estricto" se
 #    leian igual, y quien firma necesita poder afirmar lo segundo.
 _sola45 = _c.post("/menu/v2", json=dict(_CUERPO_45)).json()
 if not _sola45.get("factible"):
-    fallos.append("BLOQUE45: sin elegir peldano no sale menu para la pancreatitis de 25 kg. La "
+    fallos.append(f"BLOQUE45: sin elegir peldano no sale menu para el caso duro ({_PAT_DURA_45}). La "
                   "escalera automatica existe justo para este caso.")
 elif not _sola45.get("peldano"):
     fallos.append("BLOQUE45: el menu no dice en que peldano ha salido. 'No dice nada' y "
@@ -7348,7 +7389,7 @@ elif _sola45.get("peldano_lo_eligio_el_profesional"):
 #    elegir signifique algo.
 _estricto45 = _c.post("/menu/v2", json={**_CUERPO_45, "peldano": "estricto"}).json()
 if _estricto45.get("factible"):
-    fallos.append("BLOQUE45: con el peldano 'estricto' elegido ha salido menu para una "
+    fallos.append(f"BLOQUE45: con el peldano 'estricto' elegido ha salido menu para el caso duro "
                   "pancreatitis de 25 kg. Ese caso NO tiene solucion con las proporciones "
                   "completas: si sale, es que se ha bajado de peldano por detras -- o sea que "
                   "elegir no sirve de nada.")
@@ -7387,8 +7428,15 @@ else:
         fallos.append(f"BLOQUE45: el menu del ultimo peldano sale en {_f45}. Un peldano suelta "
                       f"las proporciones de BARF, que son criterio nuestro; los 43 requisitos "
                       f"de FEDIAF no se tocan en ninguno.")
+    # ⚠️ LOS TOPES SON LOS DEL CASO QUE SE ESTÁ MIRANDO, NO UNA LISTA ESCRITA A
+    #    MANO (17 de septiembre de 2026). Aquí ponía `["pancreatitis"]` de
+    #    literal, y desde que el caso duro se BUSCA el menú puede ser de otra
+    #    patología — así que el bloque comparaba un menú de obesidad contra los
+    #    topes de la pancreatitis y acusaba de romper un límite que a ese perro
+    #    no se le aplica. Una lista copiada al lado de un caso que cambia es un
+    #    falso positivo esperando.
     _rotos45 = _api._tope_patologia_roto(_ultimo45.get("menu") or {}, al,
-                                         ["pancreatitis"], "Adulto")
+                                         list(_CUERPO_45["patologias"]), "Adulto")
     if _rotos45:
         fallos.append(f"BLOQUE45: el menu del ultimo peldano rompe un tope de patologia: "
                       f"{_rotos45}. Los topes por patologia son restricciones duras y no "
@@ -7420,8 +7468,15 @@ if not _raro45.get("factible"):
 #   · SIN peldano elegido, recorre la escalera y DICE donde salio
 #   · CON peldano elegido, prueba ese y solo ese -- bajar seria cambiarle la
 #     decision a quien la ha tomado (CLAUDE.md, `GET /relajacion`)
-_form45 = {"gramos_por_alimento": {}, "der_objetivo": 1040.0, "peso_perro_kg": 25.0,
-           "etapa_requisitos": "Adulto", "patologias": ["pancreatitis"]}
+# ⚠️ EL MISMO CASO DURO QUE ARRIBA, Y POR EL MISMO MOTIVO: aquí estaba clavada
+#    la pancreatitis de 25 kg, y desde que entró la categoría de hidratos ese
+#    caso SÍ tiene solución en el peldaño estricto —con la grasa topada, el
+#    arroz se la da sin bajar—, así que estas tres comprobaciones acusaban al
+#    formulador de mentir sobre el peldaño cuando lo que había pasado es que el
+#    motor había mejorado.
+_form45 = {"gramos_por_alimento": {}, "der_objetivo": _CUERPO_45["der_objetivo"],
+           "peso_perro_kg": _CUERPO_45["peso_perro_kg"],
+           "etapa_requisitos": "Adulto", "patologias": list(_CUERPO_45["patologias"])}
 _ULTIMO45 = _ULTIMO_PELDANO_45   # el último de la escalera, por su sitio
 _auto_libre45 = _c.post("/formular/autocompletar", json=dict(_form45)).json()
 _auto_estricto45 = _c.post("/formular/autocompletar",
@@ -7431,7 +7486,7 @@ _auto_ultimo45 = _c.post("/formular/autocompletar",
 
 if not _auto_libre45.get("factible"):
     fallos.append("BLOQUE45: autocompletar SIN peldano elegido no saca racion para la "
-                  "pancreatitis de 25 kg, y bajando de peldano si sale. Probar uno y rendirse es "
+                  f"el caso duro ({_PAT_DURA_45}) de 25 kg, y bajando de peldano si sale. Probar uno y rendirse es "
                   "lo que dejaba al veterinario con menos margen que al tutor.")
 else:
     if _auto_libre45.get("peldano") == "estricto":
