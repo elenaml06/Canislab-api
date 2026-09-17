@@ -18511,6 +18511,7 @@ if "§7.6.2.4" in " ".join(_rot107(_gr107, _al107) or []):
 sys.path.insert(0, "motor")
 import patologias as _pat107
 from motor_completo import avisos_de_patologias as _avisos107_fn
+from motor_completo import topes_de_patologias as _topes107_fn
 _NUTRIENTES_QUE_NO_DICEN_NADA_107 = (
     # ⚠️ «omega-3» ENTRA EL 17 DE SEPTIEMBRE, y faltaba: estaba «omega-6» y no
     # su pareja, así que un aviso que dijera «se le sube el omega-3» pasaba. Al
@@ -21560,6 +21561,231 @@ print(f"  presupuesto {_presu124:.0f}s · un intento se lleva como mucho el "
       f"{_frac124*100:.0f}% ({_presu124*_frac124:.0f}s), asi que siempre queda para bajar")
 print(f"  semana {_api.PRESUPUESTO_SEGUNDOS_SEMANA:.0f}s = {_primero124:.0f} el primero "
       f"+ {_minimo124:.0f}x6 de mínimo para los otros seis")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
+
+
+# ---------------------------------------------------------------------------
+# BLOQUE 125 — UN AVISO NO PUEDE PROMETER UN AJUSTE QUE EL MENÚ NO HACE
+#
+# ⚠️ CASO REAL, MEDIDO CONTRA EL MOTOR DESPLEGADO (17 de septiembre de 2026).
+# El aviso de la `artrosis` decía «lleva más pescado azul y menos sal». Las dos
+# mitades se midieron, cuatro tiradas por celda, perro de 35 kg:
+#
+#     pescado azul (EPA+DHA)   sano 0-1   ·  artrosis 3-4   -> VERDAD
+#     fósforo                  sano 1998  ·  artrosis 1365-1741 -> VERDAD
+#     SAL (sodio)              sano 504-668 · artrosis 576-763  -> **FALSO, y al revés**
+#
+# El tope de sodio de la artrosis son 1000 mg/1000 kcal y una ración normal de
+# este motor va a 537 de mediana: el tope **no muerde nunca**, así que nada
+# empuja la sal hacia abajo y el menú puede salir con MÁS que el de un perro
+# sano. Lo mismo le pasaba a `cardiopatia` sin estadiar y a `cardiopatia_b2`,
+# cuyo tope (738,6) también está por encima de lo que lleva un menú normal.
+#
+# Y es peor que la jerga que vigila el BLOQUE 107: un aviso que nombra un
+# nutriente inquieta, pero uno que promete un ajuste que no existe TRANQUILIZA
+# sobre algo que no está puesto -- y quien lo lee puede ser quien firma.
+#
+# Lo que se vigila es barato y no resuelve ni un menú: si el texto del dueño
+# dice que baja algo, el tope de ese nutriente tiene que estar POR DEBAJO de lo
+# que lleva una ración sana de verdad, medida sobre los menús precalculados.
+# ---------------------------------------------------------------------------
+print("\n=== BLOQUE 125: un aviso no promete un ajuste que el menú no hace ===")
+
+import statistics as _st125
+from constructor import valor_nutriente as _vn125
+from main import PeticionMenu as _Peticion125
+_CAT125 = {a["nombre"]: a for a in json.load(open("alimentos_v3_final.json"))}
+_MEN125 = json.load(open("catalogo_menus.json"))["CATALOGO"]
+_SANOS125 = [v["gramos"] for v in _MEN125.values() if v.get("etapa") == "Adulto"]
+if len(_SANOS125) < 3:
+    fallos.append(f"BLOQUE125: solo {len(_SANOS125)} menús de adulto sano en el catálogo. Con "
+                  f"tan pocos la referencia no vale y este bloque no vigila nada")
+
+def _por1000_125(gramos, clave):
+    kcal = sum(g * float(_CAT125[n].get("energia") or 0) / 100.0
+               for n, g in gramos.items() if n in _CAT125)
+    if not kcal:
+        return None
+    tot = sum(g * float(_vn125(_CAT125[n].get("nutrientes") or {}, clave) or 0) / 100.0
+              for n, g in gramos.items() if n in _CAT125)
+    return tot / kcal * 1000.0
+
+# La frase que promete, y el nutriente que tendría que moverse para cumplirla.
+_PROMESAS_125 = (
+    (("menos sal", "baja la sal", "bajarle la sal", "quitarle la sal", "la sal lo más baja"),
+     "sodio", "la sal"),
+    (("menos grasa", "baja la grasa", "bajado la grasa", "bajar la grasa"), "grasa", "la grasa"),
+)
+_mediana125 = {}
+for _, _nut125, _ in _PROMESAS_125:
+    _v125 = [x for x in (_por1000_125(g, _nut125) for g in _SANOS125) if x is not None]
+    _mediana125[_nut125] = _st125.median(_v125) if _v125 else None
+
+def _lo_promete_125(texto, frases):
+    """¿El texto PROMETE eso, o dice justo lo contrario?
+
+    ⚠️ Lo primero que falló al escribir esto: `addison` dice «a un perro con
+    Addison NO hay que quitarle la sal», `cardiopatia_a` dice «ni siquiera
+    bajarle la sal» y `cardiopatia_c` dice «no se le han quitado ni grasa ni
+    calorías». Los tres salían acusados de prometer lo contrario de lo que
+    dicen. Es la familia del «purina» dentro de «purinas» y del «EPA» dentro de
+    «reparte»: una comprobación que acusa a quien no ha hecho nada se deja de
+    mirar, y entonces deja de servir también para lo que sí caza.
+    """
+    for _f in frases:
+        _i = texto.find(_f)
+        while _i != -1:
+            _antes = texto[max(0, _i - 45):_i]
+            if not any(_neg in _antes for _neg in
+                       (" no ", "no hay", "ni ", "nunca", "tampoco", "sin ")):
+                return True
+            _i = texto.find(_f, _i + 1)
+    return False
+
+
+_promesas_rotas_125 = []
+for _k125 in sorted(_crudo107n):
+    _av125 = _crudo107n[_k125].get("avisos") or {}
+    _t125 = (_av125.get("dueno") or _av125.get("general") or "").lower()
+    if not _t125:
+        continue
+    _topes125, _pct125, _a125, _s125 = _topes107_fn([_k125], "Adulto")
+    for _frases125, _nut125, _comida125 in _PROMESAS_125:
+        # ⚠️ Y LA PROMESA TIENE QUE SER AFIRMATIVA, que es lo primero que falló al
+        #    escribir esto: `addison` dice «a un perro con Addison NO hay que
+        #    quitarle la sal» y `cardiopatia_a` dice «ni siquiera bajarle la
+        #    sal», y los dos salían acusados de prometer lo contrario de lo que
+        #    dicen. Es la familia del «purina» dentro de «purinas» y del «EPA»
+        #    dentro de «reparte»: una comprobación que acusa a quien no ha hecho
+        #    nada se deja de mirar.
+        if not _lo_promete_125(_t125, _frases125):
+            continue
+        _tope125 = (_topes125 or {}).get(_nut125)
+        _med125 = _mediana125.get(_nut125)
+        if _med125 is None:
+            continue
+        if _tope125 is None:
+            _promesas_rotas_125.append(
+                f"«{_k125}» le dice al dueño que le baja {_comida125} y NO tiene ningún tope de "
+                f"{_nut125}: no hay nada que lo baje")
+        elif _tope125 >= _med125:
+            _promesas_rotas_125.append(
+                f"«{_k125}» le dice al dueño que le baja {_comida125}, pero su tope de "
+                f"{_nut125} ({_tope125:.0f}) está POR ENCIMA de lo que ya lleva una ración sana "
+                f"({_med125:.0f} de mediana): ese tope no muerde, así que el menú puede salir "
+                f"igual o peor que el de un perro sano")
+for _r125 in _promesas_rotas_125[:6]:
+    fallos.append(f"BLOQUE125: {_r125}. Un aviso que nombra un nutriente inquieta; uno que "
+                  f"promete un ajuste que no existe TRANQUILIZA sobre algo que no está puesto, "
+                  f"y quien lo lee puede ser quien firma")
+
+# ⚠️ Y LA OTRA MITAD: LA PROMESA DE COMIDA. El aviso de `diabetes` decía «se ha
+#    quitado LA FRUTA del menú» y de las diez frutas del catálogo salen tres.
+#
+# ⚠️ Y AQUÍ HAY **DOS MECANISMOS**, Y MIRAR UNO SOLO ES PEOR QUE NO MIRAR
+#    NINGUNO. La primera versión de esta mitad solo leía
+#    `restricciones_patologia` de la ficha del alimento, así que acusó a
+#    `oxalato` de prometer una exclusión que no hacía -- y la hace: sus 20
+#    alimentos viven en `seguridad.OXALATO_ALTO` (la columna de oxalato de la
+#    Tabla 40-3 de SACN5, sus «H = high; avoid feeding», más tres por criterio
+#    clínico) y los quita `resolver()`. Medido: el adulto sano de 22 kg sale con
+#    boniato dentro y el mismo perro con `oxalato` no lleva ninguno de los 20.
+#
+#    Por creerme ese rojo estuve a punto de borrar un aviso que decía la verdad.
+#    Un guardia que acusa cuando el motor acierta es peor que no tenerlo, y esta
+#    vez casi cambia un dato de producción. Los dos mecanismos son:
+#
+#      · `restricciones_patologia` en la ficha del alimento (diabetes,
+#        hipotiroidismo, pancreatitis, reaccion_adversa_alimento)
+#      · las listas de `seguridad.py`, que aplica el solver
+#
+#    y la lista de listas se LEE del módulo, no se copia aquí: una copia se
+#    queda parada el día que entre la undécima.
+_QUITA_125 = ("se le han quitado", "se ha quitado", "se le ha quitado", "quedan fuera",
+              "se quedan fuera", "se le quitan")
+_excluye125 = {}
+for _a125 in json.load(open("alimentos_v3_final.json")):
+    for _k in (_a125.get("restricciones_patologia") or []):
+        _excluye125.setdefault(_k, []).append(_a125["nombre"])
+# el segundo mecanismo: qué patología dispara qué lista de `seguridad.py`. El
+# emparejamiento se lee del FUENTE del solver, que es quien las aplica.
+import seguridad as _seg125
+_fuente125 = open("motor/motor_completo.py", encoding="utf-8").read()
+_LISTAS125 = {_n: _v for _n, _v in vars(_seg125).items()
+              if _n.isupper() and isinstance(_v, (list, tuple, set, frozenset))
+              and _v and all(isinstance(_x, str) for _x in _v)}
+# ⚠️ Y SOLO LAS CONDICIONADAS. Hay listas que el solver aplica a TODO perro
+#    --la borraja, el tejido tiroideo de los cuellos, los tóxicos del §7.7 de
+#    FEDIAF-- y ésas no son «lo que se le quita por su patología»: contarlas
+#    aquí haría que cualquier patología pareciera tener exclusión propia, y el
+#    guardia dejaría de mirar nada. Se empareja solo lo que va detrás de un
+#    `if "<clave>" in (patologias ...)`, y en la MISMA condición (200 caracteres,
+#    no 900: con la ventana ancha, `oxalato` se llevaba también las tres de
+#    todos).
+_por_patologia_125 = {}
+for _k125 in _crudo107n:
+    for _guarda125 in (f'"{_k125}" in (patologias', f"'{_k125}' in (patologias"):
+        _trozos125 = _fuente125.split(_guarda125)[1:]
+        for _tr125 in _trozos125:
+            for _n125 in _LISTAS125:
+                if _n125 in _tr125[:200]:
+                    _por_patologia_125.setdefault(_k125, set()).add(_n125)
+
+_sin_quitar_125 = []
+for _k125 in sorted(_crudo107n):
+    _av125 = _crudo107n[_k125].get("avisos") or {}
+    _t125 = (_av125.get("dueno") or _av125.get("general") or "").lower()
+    if not _t125 or not _lo_promete_125(_t125, _QUITA_125):
+        continue
+    if not _excluye125.get(_k125) and not _por_patologia_125.get(_k125):
+        _sin_quitar_125.append(_k125)
+for _k125 in _sin_quitar_125[:4]:
+    fallos.append(f"BLOQUE125: el aviso del dueño de «{_k125}» dice que se le ha quitado algo "
+                  f"del menú y no hay NINGUNO de los dos mecanismos detrás: ni un alimento del "
+                  f"catálogo con «{_k125}» en `restricciones_patologia`, ni una lista de "
+                  f"`seguridad.py` que el solver le aplique")
+
+# ⚠️ Y LA MITAD QUE MIDE, porque leer el fuente NO BASTA y está comprobado:
+#    desconectando a mano la línea que quita los altos en oxalato de los
+#    candidatos, la comprobación de arriba seguía en verde -- el nombre de la
+#    lista sigue apareciendo en otro sitio del fichero. Es la lección del BLOQUE
+#    86: una comprobación que cuenta palabras no vigila que se ejecuten.
+#
+#    Lo que sí es exacto: **FORZAR** uno de los alimentos que esa patología
+#    manda evitar y exigir que no acabe en el plato. Con el control al lado --el
+#    mismo perro sin la patología-- porque si el alimento no entrara nunca, este
+#    test saldría verde sin vigilar nada.
+_FORZADO_125 = "Boniato"          # «Sweet potatoes (H)» de la Tabla 40-3
+def _mete_125(patologias):
+    _d = _Peticion125(nombres_alimentos=[_FORZADO_125], modo="personalizar",
+                      der_objetivo=1050.0, etapa_requisitos="Adulto", peso_perro_kg=22.0,
+                      patologias=patologias, forzar_presencia=[_FORZADO_125],
+                      presupuesto_segundos=120.0)
+    _r = _api._resolver_menu_v2_interno(_d)
+    if not _r.get("factible"):
+        return None
+    return _FORZADO_125 in (_r.get("menu") or {})
+
+_control125 = _mete_125([])
+_conpat125 = _mete_125(["oxalato"])
+if _control125 is not True:
+    fallos.append(f"BLOQUE125: forzando «{_FORZADO_125}» SIN patología el menú no lo trae "
+                  f"({_control125}). Sin ese control la mitad de abajo saldría verde sin "
+                  f"vigilar nada: un alimento que no entra nunca «no entra» siempre")
+if _conpat125 is True:
+    fallos.append(f"BLOQUE125: con `oxalato` marcado y forzando «{_FORZADO_125}» a mano, el "
+                  f"alimento ACABA EN EL PLATO. La Tabla 40-3 de SACN5 lo marca «H = high; "
+                  f"avoid feeding» y el aviso del dueño dice que se le han quitado: o la "
+                  f"exclusión se ha desconectado, o el aviso miente")
+
+print(f"  {len(_SANOS125)} menús de adulto sano de referencia · "
+      f"sal {_mediana125.get('sodio'):.0f} · grasa {_mediana125.get('grasa'):.0f} (por 1000 kcal)")
+print(f"  forzando «{_FORZADO_125}»: sin patología {'entra' if _control125 else 'NO entra'} · "
+      f"con oxalato {'ENTRA' if _conpat125 else 'no entra'}")
+print(f"  quitan comida por el catálogo: {len(_excluye125)} · por una lista del solver: "
+      f"{len(_por_patologia_125)} · promesas sin nada detrás: {len(_sin_quitar_125)}")
+print(f"  promesas del dueño comprobadas contra el tope que las tendría que cumplir: "
+      f"{len(_promesas_rotas_125)} rotas")
 print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
