@@ -21378,6 +21378,116 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tm
 
 #
 
+# ---------------------------------------------------------------------------
+# BLOQUE 124 — LA ESCALERA SE TIENE QUE PODER RECORRER DENTRO DEL PRESUPUESTO
+#
+# ⚠️ CASO REAL, EN PRODUCCIÓN (17 de septiembre de 2026). Barriendo el motor
+# DESPLEGADO tras fusionar, tres de los trece perros de referencia se quedaron
+# sin menú -- el toy de 1,5 kg, el cachorro de raza grande y Cairo con premios
+# --, los tres con «está tardando más de lo normal» y los tres de forma
+# DETERMINISTA, 3 de 3 tiradas. Los tres tenían menú antes de fusionar.
+#
+# Y no era nutrición: preguntándole al solver con reloj de sobra, el menú del
+# toy existe -- en el peldaño 2, tras dos peldaños que salen infactibles
+# DEMOSTRADOS y que cuestan 5,2 s y 20,1 s. O sea que hay que gastar TRES
+# llamadas al solver para llegar a la que da menú.
+#
+# `tiempo_de_un_intento()` le daba a una llamada el 40 % del presupuesto. Con
+# el 40 % **no caben tres**: el presupuesto se agota en dos y pico y la tercera
+# --la única con menú-- se queda sin reloj.
+#
+# Lo que vigila este bloque es esa ARITMÉTICA, que no depende de lo rápida que
+# sea la máquina -- que es la regla del 14 de septiembre: un bloque que le da
+# un presupuesto al solver y luego afirma algo del MOTOR mide dos cosas a la
+# vez. Aquí no se resuelve ni un menú.
+# ---------------------------------------------------------------------------
+print("\n=== BLOQUE 124: la escalera se puede recorrer dentro del presupuesto ===")
+
+# ⚠️ LAS DOS COTAS DEL PRESUPUESTO, Y LAS DOS TIENEN UN CASO REAL DETRÁS.
+#    Por abajo: con 40 s, el toy de 1,5 kg, el cachorro de raza grande y Cairo
+#    con premios se quedaron los tres SIN MENÚ contra el motor desplegado, 3 de
+#    3 tiradas. Medido apretando el reloj a mano, el toy necesita el
+#    equivalente a ~28 s de este equipo para salir 5 de 5. Por arriba: Render
+#    documenta 100 s como máximo de una petición, y lo que hay por encima no es
+#    un aviso que se pueda leer, es un corte de conexión.
+_presu124 = _api.PRESUPUESTO_SEGUNDOS_MENU_UNICO
+_frac124 = _api.FRACCION_DE_UN_INTENTO
+if _presu124 < 60.0:
+    fallos.append(
+        f"BLOQUE124: PRESUPUESTO_SEGUNDOS_MENU_UNICO = {_presu124} s. Con 40 habia perros de "
+        f"verdad sin menu en produccion -- el toy de 1,5 kg, el cachorro de raza grande y Cairo "
+        f"con premios, 3 de 3 tiradas cada uno, y los tres con menu si se les da reloj. Bajarlo "
+        f"sin volver a medir es devolverlos a «esta tardando mas de lo normal»")
+
+# ⚠️ Y UN SOLO INTENTO NO PUEDE COMERSE EL PRESUPUESTO, que es para lo que esa
+#    fraccion existe desde el 8 de septiembre: si la primera llamada se lo lleva
+#    todo, la escalera no se pisa y el menu que esta dos peldanos mas abajo no
+#    se encuentra nunca.
+#    ⚠️ Y TAMPOCO SE BAJA SIN MEDIR: probado a un tercio el 17 de septiembre y el
+#    cachorro de raza grande pasa de 5/5 a 0/5 con el presupuesto apretado,
+#    porque SU menu esta en el peldano 0 y lo que necesita es que el PRIMER
+#    intento tenga tiempo. La tabla entera esta en `tiempo_de_un_intento`.
+if not (0.3 <= _frac124 <= 0.4):
+    fallos.append(
+        f"BLOQUE124: FRACCION_DE_UN_INTENTO = {_frac124:.3f}. Fuera de 0,30-0,40 hay medida que "
+        f"dice que algun perro se queda sin menu: por encima, la primera llamada se lleva el "
+        f"presupuesto y no se baja de peldano; por debajo, el que tiene el menu en el peldano 0 "
+        f"no llega a resolverlo")
+
+# ⚠️ Y QUE `tiempo_de_un_intento` LA LEA DE VERDAD, no que exista. Es la lección
+#    del BLOQUE 86: una constante que no lee nadie se lee y se cree. Se mira el
+#    BYTECODE y no el fuente, porque una línea de comentario ya la nombraría.
+_fn124 = None
+for _c124 in _api._resolver_menu_v2_crudo.__code__.co_consts:
+    if getattr(_c124, "co_name", None) == "tiempo_de_un_intento":
+        _fn124 = _c124
+if _fn124 is None:
+    fallos.append("BLOQUE124: no se encuentra `tiempo_de_un_intento` dentro de "
+                  "`_resolver_menu_v2_crudo`. Si se ha movido, este guardia deja de mirar nada")
+elif "FRACCION_DE_UN_INTENTO" not in _fn124.co_names:
+    fallos.append("BLOQUE124: `tiempo_de_un_intento` NO lee `FRACCION_DE_UN_INTENTO` -- o sea "
+                  "que la fracción que se vigila aquí arriba no es la que aplica el motor, y "
+                  "este bloque saldría verde vigilando un número que no usa nadie")
+
+# ⚠️ NI EL MENÚ SUELTO NI LA SEMANA PUEDEN PASARSE DE LO QUE RENDER AGUANTA.
+#    100 s documentados, y pasarse no es un mensaje que se pueda leer: es un
+#    corte de conexión.
+for _n124, _v124 in (("PRESUPUESTO_SEGUNDOS_MENU_UNICO", _presu124),
+                     ("PRESUPUESTO_SEGUNDOS_SEMANA", _api.PRESUPUESTO_SEGUNDOS_SEMANA),
+                     ("PRESUPUESTO_SEGUNDOS_VARIOS_PERROS", _api.PRESUPUESTO_SEGUNDOS_VARIOS_PERROS)):
+    if _v124 > 95.0:
+        fallos.append(f"BLOQUE124: {_n124} = {_v124} s. Render documenta 100 s como máximo de "
+                      f"una petición, y lo que hay por encima no es un aviso: es un corte")
+
+# ⚠️ Y LA SEMANA NO HEREDA EL PRESUPUESTO DEL MENÚ SUELTO. Si lo heredara,
+#    subirlo para salvar al toy dejaría a los otros seis menús de la semana con
+#    el mínimo -- y eso sería romper la semana sin tocar una línea de la semana.
+_primero124 = _api.SEGUNDOS_PRIMER_MENU_DE_LA_SEMANA
+_minimo124 = _api.SEGUNDOS_MINIMOS_POR_MENU_SEMANA
+if _primero124 + _minimo124 * 6 > _api.PRESUPUESTO_SEGUNDOS_SEMANA:
+    fallos.append(
+        f"BLOQUE124: el primer menú de la semana se lleva {_primero124} s y los otros seis "
+        f"necesitan {_minimo124} s cada uno, o sea {_primero124 + _minimo124*6} s de un total de "
+        f"{_api.PRESUPUESTO_SEGUNDOS_SEMANA}. No caben: la semana se queda coja y el aviso de "
+        f"«se generaron N de 7» tapa el motivo")
+_fuente124 = open("main.py", encoding="utf-8").read()
+_reparto124 = [l for l in _fuente124.splitlines()
+               if "_queda_semana," in l and "if i == 0" in l]
+if not _reparto124:
+    fallos.append("BLOQUE124: no se encuentra el reparto del primer menú de la semana. Si se ha "
+                  "reescrito, este guardia deja de mirar nada")
+elif "PRESUPUESTO_SEGUNDOS_MENU_UNICO" in _reparto124[0]:
+    fallos.append("BLOQUE124: el primer menú de la semana sigue cogiendo "
+                  "`PRESUPUESTO_SEGUNDOS_MENU_UNICO`. Son dos números distintos a propósito: "
+                  "uno protege al perro difícil y el otro a los siete menús de la semana")
+
+print(f"  presupuesto {_presu124:.0f}s · un intento se lleva como mucho el "
+      f"{_frac124*100:.0f}% ({_presu124*_frac124:.0f}s), asi que siempre queda para bajar")
+print(f"  semana {_api.PRESUPUESTO_SEGUNDOS_SEMANA:.0f}s = {_primero124:.0f} el primero "
+      f"+ {_minimo124:.0f}x6 de mínimo para los otros seis")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
+
+
 _tiempos_por_bloque.sort(reverse=True)
 _gastado = sum(t for t, _ in _tiempos_por_bloque)
 # ⚠️ Y CERRAR EL ÚLTIMO BLOQUE VA PEGADO AL GUARDIA, NO DONDE ESTABA (16 de

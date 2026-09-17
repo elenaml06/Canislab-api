@@ -3238,7 +3238,72 @@ def _aviso_de_lo_que_falta(gramos, al, categorias_excluidas=None):
 
 
 # Lo que se le da a UN menú suelto. Ver `_resolver_menu_v2_crudo`.
-PRESUPUESTO_SEGUNDOS_MENU_UNICO = 40.0
+#
+# ⚠️ SUBIDO DE 40 A 90 EL 17 DE SEPTIEMBRE DE 2026, Y NO ES UN CAPRICHO: CON 40
+# HABÍA PERROS DE VERDAD SIN MENÚ EN PRODUCCIÓN.
+#
+# Encontrado barriendo el motor DESPLEGADO tras fusionar, no leyendo el repo.
+# Tres de los trece perros de referencia se quedaron sin menú, los tres con el
+# mensaje de «está tardando más de lo normal», y los tres de forma
+# DETERMINISTA -- 3 de 3 tiradas, no mala suerte de Render:
+#
+#     toy 1,5 kg ............ 40,8 s sin menú   (antes de fusionar: 20,5 s CON menú)
+#     cachorro de raza grande 40,8 s sin menú   (antes: 8,6 s con menú)
+#     Cairo con premios ..... 48,5 s sin menú   (antes: 10,4 s con menú)
+#
+# Y la causa NO es nutrición: preguntándole al solver con reloj de sobra, en
+# este equipo y con la batería corriendo al lado, los menús existen --
+#
+#     toy 1,5 kg          peldaño 0  5,2 s infactible DEMOSTRADO
+#                         peldaño 1 20,1 s infactible DEMOSTRADO
+#                         peldaño 2  6,2 s **MENÚ**            (total 31,5 s)
+#     cachorro grande     peldaño 0  8,9 s **MENÚ**
+#
+# -- mientras que en el `main` de antes de fusionar los dos salían en el
+# peldaño ESTRICTO, en 25,4 s y 4,4 s. O sea dos cosas a la vez: al toy se le
+# cerró el peldaño estricto (las etiquetas de los suplementos corregidas el 15
+# de septiembre le quitaron la vitamina E del conservante y le movieron cuatro
+# minerales del alga a hueco, así que ahí ya no hay menú y hay que BAJAR dos
+# peldaños, que es la regla 3 funcionando), y cada peldaño cuesta ahora el
+# doble.
+#
+# Con 40 s de presupuesto, `tiempo_de_un_intento()` le da a UNA llamada como
+# mucho el 40 %, o sea 16 s. En Render, que va ~4,5 veces más lento que este
+# equipo, el peldaño que TIENE el menú necesita ~28 s y llega a él con 8 s en
+# la mano. No es que no exista: es que no se llega.
+#
+# 90 y no más, por lo mismo que el techo de la semana: Render documenta 100 s
+# como máximo de una petición, y pasarse de ahí no es un mensaje que se pueda
+# leer, es un corte de conexión.
+#
+# ⚠️ Y ESTO ES UN TECHO, NO UN COSTE, que es lo que hay que saber antes de
+# tocarlo: el bucle sale en cuanto tiene menú, así que el perro fácil sigue
+# contestando en los mismos segundos de siempre. Lo único que cambia es que el
+# caso difícil deja de morirse a un peldaño de la respuesta. Ya estaba medido
+# el 15 de septiembre al subirlo de 24 a 40, con 10 peticiones por celda: el
+# tiempo real no se movía entre 8, 12 y 16 s de presupuesto.
+PRESUPUESTO_SEGUNDOS_MENU_UNICO = 90.0
+
+# ⚠️ Y LA SEMANA NO LO HEREDA, A PROPÓSITO (17 de septiembre). El reparto de
+# `/menu/semana` le da al PRIMER menú «lo que se le daría a un menú suelto»,
+# porque si el primero falla se cae la semana entera. Mientras los dos números
+# fueron el mismo eso estaba bien; subiendo el suelto a 90 con un total de
+# semana de 85, el primero se llevaría los 85 y los otros seis se quedarían con
+# el mínimo. O sea que subir el presupuesto del menú suelto habría ROTO la
+# semana, en silencio y sin tocar una línea de la semana.
+SEGUNDOS_PRIMER_MENU_DE_LA_SEMANA = 40.0
+
+# Lo mínimo que se le da a CADA menú de la semana. Vive aquí fuera, y no dentro
+# del endpoint, por lo mismo que `PRESUPUESTO_SEGUNDOS_SEMANA` salió el 16 de
+# septiembre: una constante escrita dentro de una función no la puede leer una
+# prueba, y entonces el guardia que la vigila acaba copiándola -- que es el
+# fichero contra sí mismo.
+SEGUNDOS_MINIMOS_POR_MENU_SEMANA = 6.0
+
+# Lo que se lleva como mucho UNA llamada al solver, en fracción del presupuesto.
+# Vive aquí fuera para que se pueda vigilar y para que no se pueda tocar sin
+# medir: ver `tiempo_de_un_intento`, que trae la tabla.
+FRACCION_DE_UN_INTENTO = 0.4
 
 # El total de segundos que se reparte entre los menús de UNA semana. Vive aquí
 # y no dentro del endpoint para que una prueba pueda darle holgura: ver el
@@ -3321,7 +3386,8 @@ def endpoint_menu_semana(datos: PeticionMenu, numero_de_menus: int = 1):
         # este motivo; esto es ponerlos iguales.
         PRESUPUESTO_SEGUNDOS_SEMANA = globals().get(
             "PRESUPUESTO_SEGUNDOS_SEMANA", 70.0)
-        SEGUNDOS_MINIMOS_POR_MENU_SEMANA = 6.0
+        SEGUNDOS_MINIMOS_POR_MENU_SEMANA = globals().get(
+            "SEGUNDOS_MINIMOS_POR_MENU_SEMANA", 6.0)
         _t_inicio_semana = time.time()
 
         for i in range(n):
@@ -3349,7 +3415,7 @@ def endpoint_menu_semana(datos: PeticionMenu, numero_de_menus: int = 1):
             _queda_semana = PRESUPUESTO_SEGUNDOS_SEMANA - (time.time() - _t_inicio_semana)
             _presupuesto_segundos_este = max(
                 SEGUNDOS_MINIMOS_POR_MENU_SEMANA,
-                min(_queda_semana, PRESUPUESTO_SEGUNDOS_MENU_UNICO) if i == 0
+                min(_queda_semana, SEGUNDOS_PRIMER_MENU_DE_LA_SEMANA) if i == 0
                 else _queda_semana / max(1, n - i))
             dias_restantes_incluido_este = sum(dias_por_menu[i:])
             presupuesto_para_este = _presupuesto_para_menu_actual(
@@ -3792,8 +3858,45 @@ def _resolver_menu_v2_crudo(datos: PeticionMenu):
         siempre queda para bajar. Con 24 s (lo normal) son 9,6 s a la primera,
         de sobra para cualquier caso medido; con 3 s son 1,2 s y quedan casi 2
         para la escalera, que es donde está la solución.
+
+        ⚠️ EL 40 % SE INTENTÓ BAJAR A UN TERCIO EL 17 DE SEPTIEMBRE DE 2026
+        Y LA MEDIDA DIJO QUE NO. Queda escrito para que no se vuelva a
+        intentar sin medir, porque el razonamiento que lleva ahí es correcto y
+        la conclusión es falsa.
+
+        El razonamiento: el menú del toy de 1,5 kg está en el TERCER peldaño
+        --medido preguntándole al solver con reloj de sobra: peldaño 0
+        infactible demostrado en 5,2 s, peldaño 1 infactible demostrado en
+        20,1 s, peldaño 2 **menú** en 6,2 s--, y con el 40 % no caben tres
+        llamadas enteras. Parece que bajar la fracción es la respuesta.
+
+        La medida, mismo presupuesto y cinco peticiones por celda, apretando
+        el reloj a mano para imitar a Render (que es como lo hace el BLOQUE 43):
+
+            presupuesto   reparto   toy 1,5 kg   cachorro grande   Cairo 10 %
+                14 s       40 %        0/5           **5/5**          5/5
+                14 s       1/3         0/5           **0/5**          5/5
+                20 s       40 %        2/5             5/5            5/5
+                20 s       1/3         4/5             5/5            5/5
+                28 s       40 %        5/5             5/5            5/5
+
+        O sea que los dos perros tiran en direcciones opuestas -- que es
+        exactamente lo que ya pasó el 15 de septiembre al probar el 70 % --:
+        al toy le ayuda que cada peldaño se lleve menos, porque el suyo está
+        abajo; y al cachorro grande, cuyo menú está en el peldaño 0, le hace
+        falta que el PRIMER intento tenga tiempo, y con el presupuesto
+        apretado un tercio se lo quita y pasa de 5/5 a 0/5.
+
+        Y el presupuesto apretado no es un caso de laboratorio: es lo que
+        reciben los menús 2 a 7 de `/menu/semana` y los de
+        `/menu/varios-perros`. Bajar la fracción los habría roto a todos.
+
+        Lo que sí arregla al toy sin quitarle nada al otro es **subir el
+        presupuesto**: con 28 s salen los tres, 5/5. De ahí sale el 90 de
+        `PRESUPUESTO_SEGUNDOS_MENU_UNICO`.
         """
-        return max(1.0, min(tiempo_restante(), PRESUPUESTO_SEGUNDOS * 0.4))
+        return max(1.0, min(tiempo_restante(),
+                            PRESUPUESTO_SEGUNDOS * FRACCION_DE_UN_INTENTO))
 
     excluidos = list(datos.especies_excluidas or []) + list(datos.nombres_excluidos or [])
 
