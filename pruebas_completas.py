@@ -1292,8 +1292,30 @@ for _cuantos in (1, 3):
         _r = _pedir_casa(_perros, _noms, cuantos=_cuantos)
         _dt = time.time() - _t0
         _caso = f"{_titulo} x{_cuantos}"
-        if _dt > 28:
-            fallos.append(f"BLOQUE11 {_caso}: tardó {_dt:.0f}s — Render corta a los 30s")
+        # ⚠️ EL TECHO SE LEE DEL MOTOR, Y LOS «30 s DE RENDER» ERAN FALSOS
+        #    (17 de septiembre de 2026). Aquí ponía `_dt > 28` con el motivo
+        #    «Render corta a los 30s», y este mismo repo demostró el 15 de
+        #    septiembre que eso no es verdad: «MEDIDO CONTRA LA API DESPLEGADA:
+        #    una llamada a /menu/semana tardó 41,4 s y Render la contestó sin
+        #    cortar nada». Render documenta **100 s**. Ese 28 era un número
+        #    nuestro puesto sobre un dato que nadie volvió a comprobar — el
+        #    mismo caso que los 24 s del presupuesto del menú, corregido ya.
+        #
+        #    Lo que de verdad hay que exigir no es un número apuntado: es que el
+        #    endpoint RESPETE SU PROPIO TECHO. Si `/menu/varios-perros` se pasa
+        #    de `PRESUPUESTO_SEGUNDOS_VARIOS_PERROS` con margen, es que el bucle
+        #    no está mirando el reloj, y eso sí es un fallo del motor — y sí
+        #    acabaría en un corte de conexión el día que el techo se acerque a
+        #    los 100 s.
+        #
+        #    El margen es para lo que pasa DESPUÉS del bucle: verificar cada
+        #    menú, montar la compra única y los avisos.
+        _TECHO_B11 = _api.PRESUPUESTO_SEGUNDOS_VARIOS_PERROS + 20.0
+        if _dt > _TECHO_B11:
+            fallos.append(f"BLOQUE11 {_caso}: tardó {_dt:.0f}s y su techo son "
+                          f"{_api.PRESUPUESTO_SEGUNDOS_VARIOS_PERROS:.0f}s + 20 de margen. "
+                          f"El bucle no está parando cuando se le acaba el presupuesto, y eso "
+                          f"acaba en un corte de conexión -- Render documenta 100 s")
         if not _r.get("factible"):
             fallos.append(f"BLOQUE11 {_caso}: no dio menús ({(_r.get('motivo') or '')[:90]})")
             continue
