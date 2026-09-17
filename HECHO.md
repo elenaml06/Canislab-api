@@ -9,6 +9,160 @@ Este archivo no se lee solo: se abre cuando hace falta el detalle de algo
 que ya se resolvió — por qué se decidió así, qué se midió, qué PR lo trajo.
 Nada de esto es agenda; es historial. Se separó el 6 de septiembre.
 
+## El suelo de hueso en las siete patologías que topan la grasa (16-sep-2026)
+
+Lo pidió Elena —«prueba a que en esas patologias que limitan la grasa se elimine
+el hueso a ver si sale un menú razonable sin un 50% de verdura»— y lo autorizó
+al ver la medida: «las proporciones son nuestras y las movemos como queremos».
+El resumen y el porqué están en `CLAUDE.md`; aquí quedan las medidas enteras,
+que son lo que no cabe allí.
+
+**Cómo se midió**: `resolver` directo, peldaño a peldaño, 60 s cada uno, catálogo
+real, soltando SOLO el suelo de `Hueso carnoso` (20 %) y dejando el de
+`Carne muscular` (10 %).
+
+| patología | tal cual | sin el suelo de hueso |
+|---|---|---|
+| **obesidad** 25→20 kg, DER 830 | SIN MENÚ en los 9 peldaños | verde, peldaño ×5 · 47 % verdura · 34 % carne · 18 % pescado |
+| **hiperlipidemia** 20 kg | peldaño ×5 · 49 % verdura | peldaño ×2 · 51 % carne · 28 % pescado · 20 % verdura |
+| **pancreatitis** 25 kg | peldaño ×5 · 48 % verdura | peldaño ×5 · 49 % verdura |
+| **EPI** 25 kg | peldaño 2 · 58 % carne · 20 % hueso | peldaño 1 · 59 % carne · 24 % pescado |
+| **linfangiectasia** 25 kg | peldaño 2 | peldaño 1 |
+| **SIBO** 25 kg | peldaño 2 | peldaño 1 |
+| **enteropatía crónica** 25 kg | peldaño 2 | peldaño 1 |
+
+**De dónde sale el calcio cuando no hay hueso** — y lo acertó Elena antes de que
+se midiera («igual si metes un suplemento que tenga calcio o cascara de huevo o
+algo asi llega mejor???»):
+
+| patología | hueso | calcio del menú | el 90 % sale de |
+|---|---|---|---|
+| obesidad 25→20 | 0,0 % | 2055 mg/1000 kcal | napfcheck Novomineral proLEBER **86 %** |
+| hiperlipidemia | 0,0 % | 1999 | Cáscara de huevo PAWS & PATCH 63 % + V-INTEGRA 24 % |
+| pancreatitis | 0,0 % | 1503 | napfcheck Novomineral proLEBER **91 %** |
+| EPI | 2,7 % | 1883 | Cáscara de huevo 47 % + V-INTEGRA 24 % + carcasa 21 % |
+| linfangiectasia | 4,1 % | 1962 | Cáscara de huevo 41 % + carcasa 28 % + V-INTEGRA 25 % |
+| SIBO | 2,7 % | 1884 | Cáscara de huevo 47 % + V-INTEGRA 24 % + carcasa 21 % |
+| enteropatía | 0,0 % | 1534 | Cáscara de huevo casera **91 %** |
+
+**El perro SANO sí se movería, y por eso esto no se enciende para todos:**
+
+| perro | tal cual | sin el suelo |
+|---|---|---|
+| adulto 20 kg | hueso 20 % | hueso **10 %** |
+| sénior 8 kg | hueso 21 % | hueso **12 %** |
+| cachorro 10 kg | hueso 21 % | hueso 20 % |
+
+**Barrido final por la API**: 39 patologías formulables, **0 sin menú y 0 no
+verdes**.
+
+### Lo que descartó cada sospechoso, antes de llegar al hueso
+
+La obesidad no sacaba menú y había tres candidatos. Se quitaron uno a uno,
+peldaño a peldaño:
+
+| qué se quita | resultado |
+|---|---|
+| el techo del LIBRO (fósforo 2000 del adulto sano) | **sin menú en los 9 peldaños** — no es él |
+| los límites de la PATOLOGÍA enteros | menú verde en los 9 |
+| solo el suelo de fibra de la obesidad (30 g/1000 kcal) | menú en el último |
+
+O sea: **grasa ≤ 22,5 + fibra ≥ 30 + suelo de hueso 20 %**, y de los tres el
+único que es NUESTRO es el del hueso.
+
+## Lo que se midió el 16 de septiembre y no cambia código, pero contesta preguntas
+
+Tres medidas que estaban sueltas en una conversación y que se escriben aquí
+porque **contestan cosas que el repo daba por supuestas**.
+
+### 1 · Cairo ya sale por debajo del techo del libro, y lo arregló la curva
+
+Medido por la API con su perfil real (American Staffordshire, 20 kg hoy, 31 de
+adulto, `CachorroCrecimiento`, DER 1581):
+
+| Premios | Calcio | Peldaño | Botes |
+|---|---|---|---|
+| ninguno | **2733** | **estricto** | astoral MultiVital BARF 1,1 g |
+| alguno (5 %) | **2733** | **estricto** | astoral MultiVital BARF 1,1 g |
+| hasta el máximo (10 %) | 2817-2831 | proporcion_minima_de_todas_las_categorias | alga + astoral |
+
+El motor elige el **astoral** (100 mg de calcio por 100 g) y no el V-INTEGRA
+Cachorro (17.600), y queda **por debajo del techo de 2750** de la Tabla 17-1 de
+SACN5. Lo arregló la curva de crecimiento del 15 de septiembre: sin ella el
+motor se creía el peso adulto que le llegara, y con ella lo deriva (26,5 kg para
+el perro del BLOQUE 121, calcio **2747 con ella y 3957 sin ella**).
+
+⚠️ Y **más de la mitad del calcio de ese menú no viene del hueso**: viene del
+multivitamínico. Medido sobre el menú de 1430 kcal: V-INTEGRA Cachorro 12 g →
+**2.112 mg (52 %)**, carcasa de pollo 108 g → 1.777 mg (44 %), todo lo demás
+176 mg (4 %). El hueso se puede bajar; el bote no, porque bajarlo es quedarse
+sin las vitaminas.
+
+### 2 · ¿Hace falta suplemento sí o sí? Medido: no siempre, y lo que obliga es la FORMA
+
+Ocho perros (adulto 5/10/20/40 kg, cachorro 10 y 22, sénior, gestante):
+
+| Suplementos permitidos | Con menú |
+|---|---|
+| **0** | **1 de 8** |
+| 1 | 8 de 8 |
+| 2 | 8 de 8 |
+
+⚠️ Y el matiz que cambia la respuesta: al adulto de 20 kg, **soltando las
+proporciones BARF**, le sale menú **verde con cero suplementos**. O sea que lo
+que obliga al bote **no son los 43 requisitos: es la FORMA** (las proporciones
+BARF) más este catálogo. Regla 3 otra vez.
+
+Importa para lo que venga: **no se puede dar por supuesto que una dieta cocinada
+necesite los mismos suplementos que la cruda**. Hay que medirlo.
+
+### 3 · Cómo trata los premios un formulador de referencia, y por qué manda
+
+`balanceit_instrucciones_2023.txt`, el PDF público de Balance It, que fundó
+**Sean J. Delaney** — coeditor de *Applied Veterinary Clinical Nutrition*
+(Fascetti & Delaney), **una de las cuatro fuentes del motor** y de donde sale
+nuestro 10 % de premios. No es «otro producto»: es la misma persona que escribe
+la fuente que aplicamos, resolviendo el mismo problema en su herramienta.
+
+> «Some of these can be selected as "**Treats & Enticers**" when creating a
+> recipe as can other palatants. Any such addition should be limited to
+> tolerated and non-toxic foods […] that do not add up to being more than 10% of
+> daily calories **if not called for and accounted for specifically in the
+> recipe** above.»
+
+Son **dos reglas**, y la condición final es la que decide: el premio **declarado
+entra en la receta como un ingrediente más**, y el que no se declara se topa en
+el 10 % y la receta no se ajusta.
+
+⚠️ Y eso **descartó la salida que se iba a proponer** — subir los máximos de la
+ración igual que ya se suben los mínimos. Medido con fichas del catálogo como
+aproximación, si los 316 kcal de premios de ese cachorro fueran **carne**
+aportarían **350-789 mg de fósforo y 119-237 de sodio y casi nada de calcio**,
+o sea que **empeoran** el ratio Ca:P y el techo de sodio del día. Aflojar
+nuestro techo apoyándose en «el premio seguramente no aporta nada» habría
+aflojado justo por donde el premio ya empuja. Lo que hace hoy el motor —peor
+caso por los dos extremos— **es lo correcto cuando no se sabe qué lleva**.
+
+---
+
+## El día que la batería tuvo razón cuatro veces — 15 de septiembre de 2026
+
+Todo lo de este apartado lo encontró la propia batería o una medida, no un
+usuario. Va aquí junto porque las cuatro cosas son la **misma familia**: dos
+sitios que miden lo mismo con dos varas distintas.
+
+| Qué | Quién lo cazó | Qué era |
+|---|---|---|
+| El reloj se gastaba reintentando un peldaño sin menú | Elena, con su toy | `not infactible_demostrado` dejaba pasar el status 1 («se me acabó el reloj») cuando el comentario decía «SOLO el status 2». Y el presupuesto de 24 s estaba puesto sobre una premisa falsa: medido contra la API desplegada, una llamada tardó **41,4 s** y Render no cortó nada |
+| Dos multivitaminicos y tres aceites en el mismo cuenco | Elena, usando Personalizar | La regla 5 del solver comparaba la CLAVE del grupo de candidatos («Suplementos», para todos) y no la categoría del catálogo, así que `CUANTOS_MAX` era **inerte** para los suplementos y los extras |
+| `obesidad` y `renal` dejaron de dar menú | **BLOQUE 61** | El tope de 1 multivitamínico es FORMA y no estaba en la escalera; y la vitamina E de la renal (67,1) ya no cabe debajo de los siete máximos legales |
+| El toy en crecimiento salía en ámbar con el hierro al 99 % | regenerando el catálogo | El **techo** se medía contra las kcal de verdad del menú desde el 21 de agosto y el **suelo** contra las pedidas. El menú salía a 297 kcal contra 288, o sea el doble del margen del 1,5 % que llevaba el suelo |
+
+**La regla que dejan las cuatro**: cuando hay dos formas de medir lo mismo, la
+que no está vigilada es la que falla, y falla **en silencio y solo a veces** —
+en el perro pequeño, en el menú que se pasó un 3 % de kcal, en la patología que
+nadie generaba. El detalle de cada una está en `CLAUDE.md`.
+
 ## La pregunta zombi que la batería estaba defendiendo — 14 de septiembre de 2026
 
 Repasando `PENDIENTE.md` aparecieron **tres cosas ya resueltas que seguían

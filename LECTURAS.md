@@ -151,11 +151,11 @@ cambia sola.
 
 ## Today's Veterinary Practice — Cook & Atiee, oxalato cálcico canino · releída entera el 12-sep-2026
 
-Se lee entera porque es la que podía cerrar **P-11** (si el oxalato necesita un
+Se lee entera porque es la que podía cerrar **P-41** (antes P-11) (si el oxalato necesita un
 suelo de fósforo). **No lo cierra: no da ninguna cifra de fósforo.** La única
 vez que nombra el fosfato es como inhibidor endógeno —*«This is an inorganic
 phosphate found in blood and urine that reduces the crystallization of calcium
-salts»*—, que es fisiología, no una recomendación dietética. Así que P-11 sigue
+salts»*—, que es fisiología, no una recomendación dietética. Así que P-41 sigue
 abierta y ahora se sabe que es una tercera fuente que no la contesta.
 
 **Y lo demás ya estaba aplicado, entero y bien.** Es la primera fuente que se
@@ -220,7 +220,7 @@ Lo que sí da son **objetivos en SANGRE**, que es otra cosa:
 
 Y con **suelo**: *«but not less than 0.9 mmol/l; <4.6 mg/dl but >2.7 mg/dl»*. O sea que la
 propia IRIS dice que bajar el fosfato **de más** también es malo — en sangre,
-no en el plato, pero es la misma forma que la pregunta P-11 sobre el suelo de
+no en el plato, pero es la misma forma que la pregunta P-41 (antes P-11) sobre el suelo de
 fósforo del oxalato.
 
 ### Y lo que dice del estadio 4 va en la dirección CONTRARIA
@@ -1947,3 +1947,151 @@ con eso?». Lo que hay aquí contesta esa pregunta mejor que la ecuación.
 según el BCS del cachorro. Dice que se reevalúe y que se ajuste, y eso es un
 bucle clínico, no una ecuación. Inventarse el factor sería exactamente lo que
 `auditar_conversiones.py` existe para impedir.
+
+---
+
+## Jewell et al. 2000 — el estudio del que sale el suelo de vitamina E, leído entero
+
+*(15 de septiembre de 2026.)* Se leyó porque la cifra que llevaba cuatro
+decisiones encima —el suelo de **67,1 mg/1000 kcal** de vitamina E del perro
+sano— se apoya en **un solo trabajo**, y SACN5 lo cita sin dar ni una de sus
+cifras. Aquí no hay un capítulo que leer: es un resumen de veinte líneas, y en
+esas veinte líneas está lo que decide.
+
+**Jewell DE, Toll PW, Wedekind KJ, Zicker SC, «Effect of increasing dietary
+antioxidants on concentrations of vitamin E and total alkenals in serum of dogs
+and cats», *Vet Ther* 2000;1(4):264-72 (PMID 19757574).** Resumen entero en
+`jewell_2000_vet_ther_resumen.txt`, en la raíz de este repo, para que
+`auditar_citas.py` pueda comprobar sus citas. ⚠️ Es **el resumen, no el
+artículo**: el texto completo no es de acceso libre, y todo lo que el repo cita
+sale de ahí.
+
+### Lo que dice, literal
+
+- **«This 6-week dose-titration study was conducted to assess the effect of
+  selected dietary vitamin E levels on byproducts of in vivo oxidative reactions
+  in dogs and cats.»**
+
+- **«Forty healthy adult dogs and 40 healthy adult cats were assigned to four
+  equal groups per species in a complete random block design.»**
+
+- **«A control group for both dogs and cats was fed dry food containing 153 and
+  98 IU vitamin E/kg of food (as fed), respectively.»**
+
+- **«The total analyzed dietary vitamin E levels for the canine treatment groups
+  were 293, 445, and 598 IU vitamin E/kg of food, as fed.»**
+
+- **«The thresholds for significant reduction of serum alkenal concentrations in
+  dogs and cats were 445 and 540 IU vitamin E/kg of food, respectively, on an
+  as-fed basis.»**
+
+- **«Although all treatments increased concentrations of vitamin E in serum, all
+  were not effective at decreasing serum alkenal levels.»**
+
+### Los tres hallazgos, y el primero es el que importa
+
+**1 · El 400 UI de SACN5 no es el número de este estudio, y está por debajo de
+su umbral.** El efecto se demostró a **445 UI/kg tal cual**; en pienso seco
+(~10 % de humedad) eso son ~**494 UI/kg MS**, o sea ~**83 mg/1000 kcal** con la
+densidad de 4,0 kcal/g MS. Y el grupo de **293 no dio efecto significativo**. O
+sea que los 400 UI/kg MS que aplicábamos —67,1 mg/1000 kcal— caen **entre** el
+grupo que no funcionó y el que sí. No es la dosis que el estudio demostró: es un
+redondeo prudente del libro, hacia abajo.
+
+⚠️ Y el propio texto de SACN5 lo deja ver, aunque su tabla diga 400: *«One
+antioxidant biomarker study in dogs indicated that for improved antioxidant
+performance, dog foods should contain at least **500 IU** vitamin E/kg (DM)»*.
+Los 500 del texto están mucho más cerca de los 494 de verdad que los 400 de la
+tabla. **Teníamos las dos cifras del libro escritas desde el 11 de septiembre y
+se aplicó la más baja sin saber cuál era cuál.**
+
+**2 · Lo que se midió es un biomarcador, no un resultado clínico.** Alcanales en
+suero, o sea peroxidación lipídica. 40 perros sanos, 6 semanas, y el propio
+resumen cierra en condicional: *«increased dietary levels of antioxidants **may**
+decrease in vivo measures of oxidative damage»*. Eso no descalifica nada — es lo
+que es, y es la diferencia entre un requisito y una recomendación.
+
+**3 · Era pienso seco, de Hill's.** *«fed dry food»*, y los autores firman desde
+el «Hill's Science and Technology Center». Una ración BARF fresca no es el mismo
+escenario oxidativo que una croqueta extrusionada y almacenada. No es un reproche
+al estudio: es que la extrapolación no es automática.
+
+⚠️ **Y AQUÍ, LA RELACIÓN VITAMINA E:PUFA — QUE EL REPO TENÍA BIEN EN EL NÚMERO
+Y MAL EN LA UNIDAD, Y QUE YO EMPEORÉ ANTES DE ARREGLARLA.** Merece contarse
+entero porque es un fallo de método en tres pasos y lo cazó la maquinaria.
+
+`CLAUDE.md` decía: «por la relación clásica de vitamina E:PUFA (**≥0,6 mg/g**)
+vamos holgados — 0 de 216 menús por debajo, el peor a 1,53». Yo remedí, me salió
+**8 de 214 por debajo**, y lo escribí como que la medida había caducado. **Las
+dos cosas estaban mal**, y la que estaba mal de verdad era la **unidad**.
+
+Fui al documento de AAFCO — porque la primera versión de esto la cité de un
+**resumen de búsqueda** y no de la fuente, que es justo lo que este método
+prohíbe — y la nota al pie *h* de su Apéndice A dice, literal:
+
+> «It is recommended that the ratio of IU of vitamin E to grams of
+> polyunsaturated fatty acids (PUFA) be > 0.6:1.  A diet containing 50 IU of
+> vitamin E will have a ratio of > 0.6:1 when the PUFA content is 83 grams or
+> less.  Diets containing more than 83 grams of PUFA should contain an
+> additional 0.6 IU of vitamin E for every gram of PUFA.»
+
+O sea **UI de vitamina E por gramo de PUFA**, dicho con todas las letras en la
+primera frase. En d-α-tocoferol, 0,6 UI/g son **0,40 mg/g**. El repo llevaba
+escrito «0,6 mg/g», que es **un 50 % más estricto** que lo que dice la fuente.
+
+Remedido con la unidad buena, sobre el catálogo regenerado del 15 de septiembre:
+
+| | |
+|---|---|
+| vitamina E:PUFA | **min 0,79 · mediana 4,82 · máx 44,01 UI/g** |
+| Por debajo de 0,6 UI/g | **0 de 214** |
+
+O sea que la **conclusión del repo era correcta** —vamos holgados— y lo que
+había que corregir era la etiqueta de la unidad y el «peor caso», que ya no es
+1,53 sino 0,79 UI/g. El texto de AAFCO entra al repo entero
+(`aafco_nutrient_profiles_2014.txt`, sacado del PDF con `get_text()`, o sea
+rehacible) para que esto se pueda comprobar y no haya que volver a fiarse de un
+resumen.
+
+⚠️ Y **dos cosas más de esa misma nota que el motor NO aplica hoy**, y que son
+de verdad para la P-45: (1) el requisito de AAFCO **sube con el PUFA** por
+encima de 83 g/kg, cosa que una ración BARF con aceite de pescado puede pasar;
+y (2) su perfil **felino** trae una regla aún más dura — *«Add 10 IU Vitamin E
+above the minimum concentration for each gram of fish oil per»*—. FEDIAF dice lo
+mismo en su §3.3 **sin dar cifra para el perro** (`documentado_sin_cifra` en
+`requisitos_condicionales.json`). Atar la vitamina E al PUFA de CADA ración
+sería mejor que un suelo plano, y por eso está en la pregunta.
+
+⚠️ Y al medirlo me comí la trampa nº4 de `UNIDADES.md`, que la dejo escrita
+porque es la que más se repite: **el araquidónico va en `mg` y los demás ácidos
+grasos en `g`**. Sumarlos sin dividir da un PUFA 240 veces mayor y una relación
+de 0,03 que parece un desastre y no es nada.
+
+### Y la comparación que ordena todo esto
+
+| Fuente | Qué es | mg/1000 kcal |
+|---|---|---|
+| FEDIAF 2025, Tabla III-3b (10,40 UI) | **requisito** — es lo que aplica el motor | **6,968** |
+| NRC 2006, *recommended allowance* | requisito | 7,5 |
+| AAFCO, mínimo del perfil (50 UI/kg MS) | requisito legal EE. UU. | ~8,4 |
+| SACN5, Tabla 13-3 (≥400 UI/kg MS) | **recomendación** «for improved antioxidant performance» | 67,1 |
+| El umbral que este estudio demostró (445 UI/kg tal cual) | lo que de verdad movió el biomarcador | ~83 |
+
+Las tres primeras coinciden. La cuarta está un orden de magnitud por encima y
+**no dice ser un requisito**: el propio capítulo 13 las separa —*«The requirement
+for vitamin E for foods (DM) for adult dogs is 30 mg/kg (NRC, 2006)»*— y llama a
+la suya *«a prudent recommendation»*.
+
+**Qué decidimos con esto (15 de septiembre):**
+
+| | |
+|---|---|
+| **Aplicado** | El resumen entra al repo como texto de fuente, así que sus citas se auditan. Y la clave `jewell` entra en `_EN_EL_REPO` de `auditar_citas.py`: sin ella el párrafo se atribuía a SACN5 —la otra fuente que nombra— y las dos citas salían acusadas de no aparecer en SACN5, que es verdad y no es el punto |
+| **No se aplica porque…** | **El suelo de 67,1 se apaga** (`aplicado_por_el_solver: false` en Adulto y Sénior). No por la cifra: **cabe** desde que entraron las dos fichas de vitamina E suelta. Se apaga por lo que cuesta en producto —**0 de 6** adultos y séniors sacan menú con **un solo bote**, y el segundo bote es siempre una vitamina E— y porque decírselo al dueño no se puede escribir sin nombrarle un nutriente, que es la regla COMIDA-NO-NUTRIENTES. La cifra **no se baja y no se borra** |
+| **Pendiente de decidir** | **P-45**, para **Adrián (Ecocan)**. Y va con las tres cosas de arriba delante, porque cambian la pregunta: si se aplica, ¿el **400** de la tabla o el **~494 UI/kg MS** que es el umbral real? Aplicar el 400 es aplicar una cifra que este estudio no demostró |
+
+⚠️ **La lección de método, que es la de siempre en otra cara:** el número llevaba
+cuatro decisiones, dos documentos y un bloque de batería encima, y **nadie había
+abierto el estudio**. Se citaba la tabla de un libro que cita un estudio, y a dos
+saltos de la fuente el 400 parecía un dato y era un redondeo. Es exactamente lo
+que `auditar_transcripcion_fediaf.py` existe para impedir un tramo más arriba.

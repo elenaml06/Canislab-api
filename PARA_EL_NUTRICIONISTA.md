@@ -1411,6 +1411,29 @@ ahí lo que falta no es maquinaria sino una decisión: las fuentes van de <1:1
 
 ### 8.1 · Los 73, verificados uno a uno contra su capítulo
 
+⚠️ **Y UNA DE ESAS FILAS SE APAGÓ Y SE VOLVIÓ A ENCENDER EL MISMO DÍA, EL 15 DE
+SEPTIEMBRE, Y MERECE LEERSE ENTERA**: la **vitamina E de la insuficiencia renal
+crónica** (67,1 mg/1000 kcal, Tabla 37-9).
+
+Por la mañana dejó de poder aplicarse: llegar a esa cifra obliga a meter **dos
+multivitamínicos** —en el catálogo no había vitamina E suelta— y dos ya no caben
+debajo de los **siete máximos LEGALES de la UE**, que desde ese día van sobre
+**materia seca**, que es la única forma en que FEDIAF los publica. Medido en el
+perro de referencia (adulto de 20 kg, DER 950): sin ese suelo la renal sí daba
+menú, con **34,5 mg/1000 kcal** y el **zinc al 99,0 % de su techo legal**. Se
+movió a `limites_escritos_que_el_solver_no_aplica` con esa medida, **sin bajar la
+cifra**, que es lo que manda el procedimiento de este repo.
+
+Por la tarde entraron al catálogo **dos suplementos de vitamina E suelta** que se
+venden en España —un aceite de germen de trigo enriquecido (396 mg/100 g) y una
+vitamina E líquida natural (2620 mg/100 g)— y con ellos la renal **vuelve a dar
+menú con el suelo puesto**: sale con **77,0 mg/1000 kcal** usando 9,2 g del
+aceite.
+
+**La lección, que es la de todo el repo**: la cifra de la fuente no se baja. Se
+dice lo que cuesta, y lo que fallaba era el **catálogo**, no el número.
+
+
 **Verificado el 8 de septiembre abriendo cada capítulo de SACN5 y leyendo la
 tabla citada, fila a fila y no solo la fila del nutriente que ya teníamos.** El
 motivo clínico completo de cada cifra —con la cita literal, la conversión y el

@@ -304,6 +304,7 @@ def main_regenerar(solo_base=False, solo=None):
               % (clave, len(g), sum(g.values()), e["correctos"], e["total"],
                  "" if peldano == main.PELDANO_ESTRICTO else "  [peldano %s]" % peldano), flush=True)
 
+    declarados_sin_menu = []
     if not solo_base:
         for clave, lista in d["CATALOGO_VARIANTES"].items():
             ent = d["CATALOGO"][clave]
@@ -317,6 +318,25 @@ def main_regenerar(solo_base=False, solo=None):
                                              al_completo=al_completo,
                                              peso_adulto=peso_adulto_de(d, ent["tamano"]))
                 if g is None or v["semaforo"] != "verde":
+                    # ⚠️ UNA VARIANTE DECLARADA SIN MENU NO ES UN FALLO, Y HASTA
+                    # EL 15 DE SEPTIEMBRE SE CONTABA COMO TAL. `Gigante_Lactante`
+                    # con ternera o con conejo forzados es INFACTIBLE DEMOSTRADO
+                    # -- el solver lo dice con status 2, no se le acaba el reloj
+                    # --, y por eso lleva `gramos: {}` y `no_hay_menu: true` con
+                    # su motivo escrito. Contarla como «no regenerada» hacía que
+                    # este script devolviera FALLO en cada pasada y que su aviso
+                    # afirmara algo FALSO: «se ha quedado con su version vieja,
+                    # calculada con datos que ya no son los de ahora». No hay
+                    # version vieja: está vacía a propósito.
+                    #
+                    # Y eso no es cosmético: un aviso que acusa cuando el motor
+                    # acierta enseña a mirar la salida por encima, que es la
+                    # lección del BLOQUE 13. Se cuenta aparte y se dice lo que es.
+                    if var.get("no_hay_menu") and not (var.get("gramos") or {}):
+                        declarados_sin_menu.append("%s/%s" % (clave, p))
+                        print("  %-28s variante %-10s sin menu, DECLARADO (infactible)"
+                              % (clave, p), flush=True)
+                        continue
                     fallos.append("%s/%s" % (clave, p))
                     print("  %-28s variante %-10s NO -- se deja la vieja"
                           % (clave, p), flush=True)
@@ -331,6 +351,9 @@ def main_regenerar(solo_base=False, solo=None):
     json.dump(d, io.open(RUTA, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print("\nCATALOGO regenerado: %d de %d" % (len(cambios), len(d["CATALOGO"])), flush=True)
     print("no regenerados (%d): %s" % (len(fallos), fallos), flush=True)
+    if declarados_sin_menu:
+        print("declarados SIN MENU, y no es un fallo (%d): %s"
+              % (len(declarados_sin_menu), declarados_sin_menu), flush=True)
 
     # ⚠️ Y AHORA SE COMPRUEBA LO QUE QUEDA EN EL FICHERO, REGENERADO O NO.
     #
@@ -373,6 +396,22 @@ def main_regenerar(solo_base=False, solo=None):
             rojos.append("%s (%d/%d)" % (clave, v["correctos"],
                                          v["correctos"] + len(v["faltan"]) + len(v["se_pasa"])))
         for var in d["CATALOGO_VARIANTES"].get(clave, []):
+            # ⚠️ LO DECLARADO SIN MENU NO SE VERIFICA, PERO NO SE CALLA: un menú
+            # vacío no puede salir verde NUNCA, así que medirlo contra el semáforo
+            # solo produce un rojo que miente. Lo que sí se exige es que la
+            # declaración no pueda mentir ELLA: si dice que no hay menú tiene que
+            # estar vacía de verdad y traer su motivo escrito. Sin esta guarda,
+            # cualquier variante que dejara de salir podría taparse poniéndole
+            # `no_hay_menu`, que es cambiar un fallo por una etiqueta.
+            if var.get("no_hay_menu"):
+                if var.get("gramos"):
+                    rojos.append("%s/%s (dice `no_hay_menu` y TIENE %d alimentos "
+                                 "dentro: o hay menú o no lo hay)"
+                                 % (clave, var["proteina"], len(var["gramos"])))
+                elif len(str(var.get("por_que") or "")) < 40:
+                    rojos.append("%s/%s (dice `no_hay_menu` y no dice POR QUÉ)"
+                                 % (clave, var["proteina"]))
+                continue
             v = verificar(var["gramos"], al_completo, req,
                           _der_real_de(var["gramos"]) or e["der"], e["etapa"])
             if v["semaforo"] != "verde":
@@ -383,15 +422,26 @@ def main_regenerar(solo_base=False, solo=None):
                                 v["correctos"] + len(v["faltan"]) + len(v["se_pasa"]), falta))
     if rojos:
         print("\n⚠️ ATENCION: %d MENUS DEL FICHERO NO ESTAN VERDES contra el catalogo "
-              "actual. Son los que no se han podido regenerar y se han quedado con su "
-              "version vieja, calculada con datos que ya no son los de ahora. NO se "
-              "entregan asi -- hay que reintentarlos con mas tiempo "
-              "(CANISLAB_SEGUNDOS_POR_MENU):" % len(rojos), flush=True)
+              "actual. Casi siempre son los que no se han podido regenerar y se han "
+              "quedado con su version vieja, calculada con datos que ya no son los de "
+              "ahora: esos se reintentan con mas tiempo (CANISLAB_SEGUNDOS_POR_MENU). "
+              "Los que hablan de `no_hay_menu` son otra cosa -- una declaracion que se "
+              "contradice a si misma -- y se arreglan en el fichero. NO se entrega "
+              "ninguno asi:" % len(rojos), flush=True)
         for r in rojos:
             print("     - %s" % r, flush=True)
     else:
-        print("\nLos %d menus del fichero estan VERDES contra el catalogo actual."
-              % (len(d["CATALOGO"]) + sum(len(x) for x in d["CATALOGO_VARIANTES"].values())),
+        _declarados = sum(1 for x in d["CATALOGO_VARIANTES"].values()
+                          for y in x if y.get("no_hay_menu"))
+        _medidos = (len(d["CATALOGO"])
+                    + sum(len(x) for x in d["CATALOGO_VARIANTES"].values())
+                    - _declarados)
+        print("\nLos %d menus del fichero estan VERDES contra el catalogo actual%s."
+              % (_medidos,
+                 "" if not _declarados else
+                 " (y %d declarados SIN MENU, que no se miden porque no hay nada que "
+                 "medir -- solo se comprueba que su declaracion no se contradiga)"
+                 % _declarados),
               flush=True)
     return fallos + rojos
 

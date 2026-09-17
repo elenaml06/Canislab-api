@@ -195,7 +195,7 @@ def _seguridad_completa(gramos, al, der, etapa, patologias=None, peso_perro_kg=N
     # El motor los penaliza en el objetivo, así que casi nunca salen — medido,
     # de 56 apariciones en 20 menús a 3. Pero «casi nunca» no es «nunca»: en
     # HUESO apenas hay opción de súper, así que cuando uno de éstos aparece es
-    # porque de verdad hacía falta para cerrar los 43 requisitos.
+    # porque de verdad hacía falta para cerrar todos los requisitos.
     #
     # Que el motor lo evite no sirve de nada si quien va a comprar se entera en
     # el mostrador. Va por el mismo canal y por el mismo motivo que el de
@@ -422,7 +422,7 @@ def _tope_patologia_roto(gramos, al, patologias, etapa="Adulto",
     El fallo que la motivó: editar el menú de un perro renal daba 3084 mg de
     fósforo con el tope en 1400, y el menú SALÍA IGUAL. La causa era que el
     camino de edición no le pasaba las patologías al motor (arreglado), pero
-    lo que dejó pasar el menú fue esto: `verificar_v2` comprueba los 30
+    lo que dejó pasar el menú fue esto: `verificar_v2` comprueba todos los
     requisitos de FEDIAF, que son los de un perro SANO. 3084 mg de fósforo
     está dentro del máximo de FEDIAF, así que el semáforo salía VERDE.
 
@@ -527,7 +527,15 @@ def _tope_patologia_roto(gramos, al, patologias, etapa="Adulto",
     for clave, tope in topes.items():
         v = por_1000(clave)
         if v > tope * MARGEN:
-            _de = ("recomendado para el perro adulto sano" if clave in _del_libro
+            # ⚠️ Y NO SIEMPRE ES «EL PERRO ADULTO SANO» (15 de septiembre de
+            # 2026). Este texto decía eso de CUALQUIER techo del libro, y los
+            # del cachorro son del libro también: el calcio y el fósforo de la
+            # Tabla 17-1 de SACN5 y la vitamina D. O sea que a un veterinario
+            # que formulaba un cachorro se le decía que el techo de 2750 que le
+            # acababa de tirar el menú era «el recomendado para el perro adulto
+            # sano» — que es falso, y encima le invita a descartarlo por no
+            # venir a cuento. Lo cazó el BLOQUE 62 de rebote.
+            _de = ("recomendado para el perro sano en esta etapa" if clave in _del_libro
                    else "por patología")
             rotos.append(f"{clave} {v:.1f} (tope {tope:.1f} {_de})")
 
@@ -874,6 +882,108 @@ def _ratio_cap_raza_grande_roto(gramos, al, req, etapa, peso_adulto_esperado_kg)
 # escalar de más falla RUIDOSAMENTE -sale infactible, o sale un menú más
 # denso de lo necesario, y se ve-. Cuando un fallo es silencioso y el otro
 # visible, se elige el visible.
+# ⚠️ EL PESO ADULTO DE UN CACHORRO LO PUEDE CALCULAR EL MOTOR, Y HASTA HOY NO LO
+# HACÍA EN EL CAMINO DEL MENÚ (15 de septiembre de 2026).
+#
+# Lo encontró Elena preguntando: «lo del peso de adulto en teoría se iba a
+# calcular con la curva de crecimiento y ya estaba aplicado, ¿no?».
+#
+# La curva existe, está medida y funciona: `der.peso_adulto_desde_curva()`, la
+# Tabla VII-8a de FEDIAF, cinco ecuaciones por banda. Lo que pasa es DÓNDE vive:
+# la llama `calcular_der()`, y a `calcular_der()` solo se entra por `/der` --que
+# no llama nadie, porque la app calcula el DER por su cuenta-- y por
+# `/analizar`. **`/menu/v2` no la ejecutaba nunca**, y no podía: de sus 25 campos
+# no recibía ni la edad ni la raza. Solo recibía `peso_adulto_esperado_kg` ya
+# calculado.
+#
+# O sea que el número que decide TRES límites de un cachorro --el techo de calcio
+# de 2750 de SACN5 (por encima de 25 kg de adulto), el mínimo reforzado de la
+# nota b de FEDIAF y el techo del ratio Ca:P (por encima de 15 kg)-- se calculaba
+# en la app y el motor no podía comprobarlo. Es la regla 6 rota en el sitio donde
+# más duele, y ya estaba declarada como riesgo en `datos_de_la_ficha.json`: «el
+# motor recibe el peso adulto ya estimado y NO sabe de qué raza salió».
+#
+# ⚠️ Y LO QUE MANDA QUIEN PIDE NO SE PISA. Si `peso_adulto_esperado_kg` viene, se
+# usa tal cual: puede salir de que el dueño lo sepa, de un veterinario, o de un
+# cálculo de la app con datos que el motor no tiene. El motor solo RELLENA EL
+# HUECO, que es exactamente lo que ya hace `calcular_der` («if meses and
+# peso_actual_kg and not peso_adulto_esperado_kg»). Cambiar eso sería decidir por
+# encima de quien firma.
+#
+# ⚠️ Y SE DICE DE DÓNDE SALE. Un número derivado que no se anuncia es otra vez el
+# problema de origen: quien lea el menú tiene que poder saber si ese peso lo
+# mandó él o lo estimó el motor, porque de él salen tres límites.
+def _peso_adulto_completado(datos):
+    """(peso_adulto_kg, de_dónde, aviso). Rellena el hueco con la curva del
+    propio cachorro cuando quien pide no lo manda.
+
+    `de_dónde` es "lo mandó quien pide", "curva de crecimiento" o None.
+    `aviso` es un dict para la respuesta, o None si no hay nada que decir.
+    """
+    ya = getattr(datos, "peso_adulto_esperado_kg", None)
+    if ya:
+        return float(ya), "lo mandó quien pide", None
+    etapa = getattr(datos, "etapa_requisitos", None)
+    if etapa not in ("CachorroJoven", "CachorroCrecimiento"):
+        return None, None, None
+    meses = getattr(datos, "edad_meses", None)
+    peso = getattr(datos, "peso_perro_kg", None)
+    if not meses or not peso:
+        return None, None, None
+    # La media de la raza SOLO como semilla de la iteración, que es para lo que
+    # la usa la curva. NO acota el resultado -- eso se quitó el 12 de septiembre
+    # tras mirar cómo lo hacen WALTHAM y MyVetDiet, y está medido en
+    # `der.peso_adulto_desde_curva`.
+    semilla = None
+    fila = None
+    nombre_raza = getattr(datos, "raza", None)
+    if nombre_raza:
+        try:
+            import razas as _razas
+            fila = _razas.raza(nombre_raza)
+        except Exception:
+            fila = None
+        if fila:
+            semilla = fila.get("pesoMedio")
+    try:
+        from der import peso_adulto_desde_curva as _curva
+        estimado = _curva(float(peso), float(meses), peso_medio_raza=semilla)
+    except Exception:
+        estimado = None
+    if not estimado:
+        return None, None, None
+    aviso = {
+        "campo": "peso_adulto_esperado_kg",
+        "valor": round(float(estimado), 1),
+        "de_donde": ("Curva de crecimiento de FEDIAF (Tabla VII-8a), a partir de la edad "
+                     "y el peso de hoy"),
+        "dueno": (f"No nos habéis dicho cuánto va a pesar de adulto, así que lo hemos "
+                  f"estimado a partir de su edad y de lo que pesa ahora: unos "
+                  f"{float(estimado):.0f} kg. De ahí salen los límites de calcio que le "
+                  f"tocan mientras crece."),
+        "veterinario": (f"`peso_adulto_esperado_kg` no venía en la petición. Se ha derivado "
+                        f"con `der.peso_adulto_desde_curva` (FEDIAF Tabla VII-8a): "
+                        f"{float(estimado):.1f} kg. De él dependen el techo de calcio de "
+                        f"SACN5 (2750 por encima de 25 kg), el mínimo reforzado de la nota b "
+                        f"y el techo del ratio Ca:P (por encima de 15 kg)."),
+    }
+    # ⚠️ Y SI SE SABE LA RAZA, SE COMPRUEBA QUE CAE EN SU RANGO -- que es la
+    #    segunda cosa que `datos_de_la_ficha.json` declara como perdida. No se
+    #    RECORTA (eso se quitó a propósito el 12 de septiembre): se DICE.
+    if fila and fila.get("pesoMin") and fila.get("pesoMax"):
+        if not (float(fila["pesoMin"]) <= float(estimado) <= float(fila["pesoMax"])):
+            aviso["fuera_del_rango_de_su_raza"] = {
+                "raza": nombre_raza,
+                "rango_kg": [fila["pesoMin"], fila["pesoMax"]],
+                "veterinario": (f"La curva estima {float(estimado):.1f} kg y el estándar de "
+                                f"{nombre_raza} va de {fila['pesoMin']} a {fila['pesoMax']} kg. "
+                                f"No se recorta a propósito --la trayectoria del propio "
+                                f"cachorro informa mejor que la tabla de razas, medido el 12 de "
+                                f"septiembre-- pero conviene mirar el peso y la edad."),
+            }
+    return float(estimado), "curva de crecimiento", aviso
+
+
 def _peso_de_referencia(datos):
     """(peso_kg, de_dónde_salió). Nunca devuelve None en el peso si hay
     peso real: el último peldaño es usarlo tal cual, y decirlo."""
@@ -1041,12 +1151,59 @@ PREGUNTA_DE_LOS_PREMIOS = {
 
 
 
+def _premios_en_el_plato(datos, alimentos=None):
+    """`{alimento: gramos}` de lo que el dueño DECLARA que le da fuera de las comidas.
+
+    ⚠️ ESTO NO ES UNA DILUCIÓN: ES COMIDA (16 de septiembre de 2026). En cuanto
+    se sabe QUÉ premio se da, el problema desaparece -- entra en el menú con sus
+    gramos, sus kcal cuentan dentro de la ración y sus nutrientes también, y los
+    43 requisitos se miden sobre el total. No hay ninguna parte del día a ciegas,
+    así que no hay nada que escalar ni que apretar.
+
+    Es la salida que usa el formulador de Sean Delaney (coeditor de Fascetti &
+    Delaney, una de nuestras cuatro fuentes): «...no more than 10% of daily
+    calories IF NOT CALLED FOR AND ACCOUNTED FOR SPECIFICALLY IN THE RECIPE».
+
+    ⚠️ SOLO ALIMENTOS DEL CATÁLOGO, y no por comodidad: de una ficha sabemos su
+    composición y la rehace un auditor contra su fuente. Un nombre que no está
+    NO se ignora en silencio -- se dice en `premios_que_no_conocemos`, porque un
+    premio que el dueño cree declarado y que el motor no cuenta es peor que no
+    preguntarlo: el menú saldría verde dando por cubierto algo que no lo está.
+    """
+    crudos = getattr(datos, "premios_declarados", None)
+    if not isinstance(crudos, dict) or not crudos:
+        return {}
+    if alimentos is None:
+        alimentos = cargar_v2()[0]
+    salida = {}
+    for nombre, gramos in crudos.items():
+        if nombre not in alimentos:
+            continue
+        try:
+            g = float(gramos)
+        except (TypeError, ValueError):
+            continue
+        if g > 0:
+            salida[nombre] = g
+    return salida
+
+
+def _premios_declarados_que_no_conocemos(datos, alimentos=None):
+    """Los nombres declarados que NO están en el catálogo. Se DICEN, no se callan."""
+    crudos = getattr(datos, "premios_declarados", None)
+    if not isinstance(crudos, dict) or not crudos:
+        return []
+    if alimentos is None:
+        alimentos = cargar_v2()[0]
+    return sorted(n for n in crudos if n not in alimentos)
+
+
 def _kcal_de_premios(datos):
     """Las kcal de premios que declara la petición, saneadas.
 
     Nunca negativas y nunca más del 90 % del día: si alguien manda un número
     absurdo, lo que NO puede pasar es que la ración se quede sin calorías con
-    las que cerrar los 43 requisitos. El aviso de abajo se encarga de decir que
+    las que cerrar todos los requisitos. El aviso de abajo se encarga de decir que
     ese número es demasiado; el motor, mientras tanto, sigue formulando.
     """
     try:
@@ -1066,6 +1223,29 @@ def _kcal_de_premios(datos):
         fraccion = NIVELES_DE_PREMIOS.get(nivel) if nivel else None
         if fraccion and der > 0:
             premios = der * fraccion
+    # ⚠️ Y LO QUE YA SE HA DECLARADO NO SE CUENTA DOS VECES (16 de septiembre de
+    # 2026). Un premio DECLARADO deja de ser un premio y pasa a ser un
+    # ingrediente: entra en el menú con sus gramos, sus kcal van dentro de la
+    # ración y sus nutrientes también. Así que sus calorías ya NO son de la
+    # parte del día que se formula a ciegas.
+    #
+    # Sin esto, un dueño que contesta «más del máximo» Y ADEMÁS dice qué le da
+    # recibía lo peor de los dos mundos: el 20 % del día descontado de la ración
+    # y, encima, los gramos declarados metidos dentro. Medido: ese perro se
+    # quedaba SIN MENÚ teniendo la salida delante, que es peor que no ofrecerla.
+    #
+    # Se resta, no se ignora el nivel: quien da 214 g de corazón Y algo más que
+    # no sabe decir sigue teniendo esa parte a ciegas, y sigue contándose.
+    if premios > 0:
+        try:
+            _al_pr, _ = cargar_v2()
+            _ya_dentro = sum(
+                _al_pr[n]["energia"] * float(g) / 100.0
+                for n, g in (getattr(datos, "premios_declarados", None) or {}).items()
+                if n in _al_pr and float(g) > 0)
+        except Exception:
+            _ya_dentro = 0.0
+        premios = max(0.0, premios - _ya_dentro)
     if premios <= 0:
         return 0.0
     if der > 0:
@@ -1094,7 +1274,7 @@ def _aviso_de_los_premios(der, kcal_de_premios):
     pct = premios / der * 100.0
     # ⚠️ DICE LO QUE SE HA APLICADO, no lo que llegó en la petición.
     # `_kcal_de_premios` topa los premios en el 90 % del día para no dejar la
-    # ración sin calorías con las que cerrar los 43 requisitos, así que un
+    # ración sin calorías con las que cerrar todos los requisitos, así que un
     # número absurdo no sale de aquí como si se hubiera aceptado. Escribir «has
     # dicho que toma 2000 kcal» cuando se han contado 990 sería poner en boca
     # del dueño un número que el motor no usó.
@@ -1677,6 +1857,31 @@ class PeticionDER(BaseModel):
 # que nadie se entere. Es el mismo fallo que el tope de fosforo del renal al
 # editar, y la misma cura.
 class _ConPremios(BaseModel):
+    # ⚠️ EL PREMIO QUE SE DECLARA NO ES UN PREMIO: ES UN INGREDIENTE
+    # (16 de septiembre de 2026). Lo pidió Elena, y tiene toda la razón:
+    #
+    #     «tiene que haber una parte en la que elija lo que le da y se meta en
+    #      el plato»
+    #
+    # `{"Pavo pechuga con piel": 60.0}` -- gramos AL DÍA de lo que el dueño le
+    # da fuera de las comidas, pero eligiendo el alimento de nuestro catálogo.
+    # En cuanto se sabe QUÉ es, deja de hacer falta suponer nada: entra en el
+    # menú como gramos fijos, sus kcal cuentan dentro de la ración, y los 43
+    # requisitos se miden sobre el total. Ni se escalan mínimos ni se aprieta
+    # nada, porque no hay ninguna parte del día a ciegas.
+    #
+    # Es literalmente lo que hace el formulador de Sean Delaney -- coeditor de
+    # Fascetti & Delaney, una de nuestras cuatro fuentes -- en su propia
+    # herramienta: «Some of these can be selected as "Treats & Enticers" when
+    # creating a recipe (...) no more than 10% of daily calories IF NOT CALLED
+    # FOR AND ACCOUNTED FOR SPECIFICALLY IN THE RECIPE». Declarado = está en la
+    # receta. Ver `balanceit_instrucciones_2023.txt`.
+    #
+    # ⚠️ Y CONVIVE CON `kcal_de_premios`, no lo sustituye: lo que se declara
+    # entra en el plato, y lo que el dueño NO sabe o no quiere decir sigue
+    # siendo kcal a ciegas con su dilución. Los dos a la vez es el caso normal
+    # («le doy 60 g de pavo y alguna galleta suelta»).
+    premios_declarados: Optional[dict] = None
     # ⚠️ AÑADIDO (11 septiembre) — LOS PREMIOS, QUE DILUYEN LA RACION.
     #
     # Las kcal que el perro toma AL DIA fuera de su racion: premios, sobras de
@@ -1747,6 +1952,18 @@ class PeticionMenu(_ConPremios):
     peso_perro_kg: Optional[float] = None
     # peso ADULTO esperado: activa el tope de calcio de raza grande en cachorros
     peso_adulto_esperado_kg: Optional[float] = None
+    # ⚠️ AÑADIDOS (15 septiembre) — LA EDAD Y LA RAZA, QUE LA FICHA YA SABE Y NO
+    # MANDABA A ESTE ENDPOINT. Sin ellas el motor no podía correr su propia curva
+    # de crecimiento y tenía que creerse el `peso_adulto_esperado_kg` que le
+    # llegara -- y de ese número salen TRES límites del cachorro. Ver
+    # `_peso_adulto_completado`, que es quien las usa: rellena el hueco cuando no
+    # viene el peso adulto, y NO pisa el que venga.
+    #
+    # Son opcionales a propósito: sin ellas todo sigue funcionando exactamente
+    # igual que antes, y lo que no se puede aplicar se dice en
+    # `limites_sin_aplicar`, que ya existía.
+    edad_meses: Optional[float] = None
+    raza: Optional[str] = None
     # ⚠️ AÑADIDO (28 agosto) — el peso de referencia para la DER efectiva.
     # En un perro con sobrepeso las kcal se calculan sobre el peso IDEAL,
     # así que la densidad de nutrientes tiene que medirse sobre el mismo
@@ -2161,9 +2378,22 @@ def endpoint_menu_v2(datos: PeticionMenu):
         # necesita saber si es un perro de trabajo. Se pone ANTES de verificar,
         # no después: si se pusiera después, un menú rechazado saldría sin el
         # aviso y el único perro al que le importa es justo el que más come.
+        # ⚠️ EL PESO ADULTO SE COMPLETA AQUÍ, ANTES DE RESOLVER (15 septiembre).
+        # `_resolver_menu_v2_interno` lo hace también --para los otros caminos
+        # que lo llaman-- y es idempotente: si ya está puesto, devuelve «lo
+        # mandó quien pide» y no hay nada que decir. Se hace además aquí porque
+        # esta es la única función con UN solo punto de salida, y el aviso tiene
+        # que viajar SALGA EL MENÚ O NO: si un cachorro se queda sin menú, saber
+        # con qué peso adulto se ha calculado es justo lo que hace falta para
+        # entender por qué.
+        _pa_v2, _pa_de_v2, _pa_aviso_v2 = _peso_adulto_completado(datos)
+        if _pa_v2 and not datos.peso_adulto_esperado_kg:
+            datos.peso_adulto_esperado_kg = _pa_v2
         _interno_v2 = _resolver_menu_v2_interno(datos)
         if isinstance(_interno_v2, dict) and datos.actividad:
             _interno_v2["actividad"] = datos.actividad
+        if isinstance(_interno_v2, dict) and _pa_aviso_v2:
+            _interno_v2["peso_adulto_derivado"] = _pa_aviso_v2
         _resp_v2 = _garantizar_verificado(
             _interno_v2,
             datos.der_objetivo, datos.etapa_requisitos, datos.peso_perro_kg,
@@ -2495,22 +2725,105 @@ def _hay_comida_de_verdad(al, excluidos=None, categorias_excluidas=None):
     Se mira lo que de verdad queda: la categoría excluida a mano, y también
     la que se ha quedado sin nada por las alergias (excluir "pollo" puede
     vaciar una categoría entera en un catálogo reducido).
+
+    ⚠️ BASTA CON **UNA** DE LAS DOS, Y ANTES SE EXIGÍAN LAS DOS (15 de
+    septiembre de 2026). CASO REAL, cazado por el BLOQUE 9 el mismo día que
+    entraron los siete máximos LEGALES de la UE: el **cachorro de 10 kg sin
+    hueso y con tres alergias** dejó de sacar menú a cualquier hora, 0 de 10.
+
+    Y el menú EXISTE: el solver lo encuentra en el peldaño
+    `tope_de_visceras_higado_y_verdura_al_doble`, o sea en uno de los tres
+    últimos. Lo que pasaba es que esta función devolvía `False` —porque el
+    usuario había excluido «Hueso carnoso» a mano— y esos tres peldaños **no se
+    le ofrecían**. O sea: a un perro le faltaba el menú por una regla de FORMA,
+    que es exactamente lo que el BLOQUE 9 existe para impedir.
+
+    El argumento de arriba sigue en pie, pero pedía de más. Lo que hace seguro
+    ese peldaño no es que estén las DOS categorías: es que **al menos una siga
+    teniendo su SUELO mordiendo**, porque un suelo sobre una categoría vacía se
+    cumple solo. Con el hueso fuera, la carne muscular conserva su 10 % y la
+    ración no puede volverse hígado y calabaza. Con las dos fuera —que es el
+    caso de agosto, «sin carne, hueso ni pescado»— no queda ninguna y esto
+    sigue devolviendo `False`.
     """
     fuera = set(categorias_excluidas or [])
     prohibidos = set(excluidos or [])
+    quedan = []
     for cat in CATEGORIAS_QUE_HACEN_RACION:
         if cat in fuera:
-            return False
+            continue
         de_la_cat = [n for n, a in (al or {}).items() if a.get("categoria") == cat]
         permitidos, _f, _av = filtrar_exclusiones(de_la_cat, prohibidos)
-        if not permitidos:
-            return False
-    return True
+        if permitidos:
+            quedan.append(cat)
+    return bool(quedan)
 
 
-def _escalera_de_relajacion(hay_comida_de_verdad=True):
+def _la_patologia_topa_la_grasa(patologias, etapa="Adulto"):
+    """¿Alguna de las patologías marcadas le pone techo a la grasa?
+
+    Se DERIVA de `patologias.json` a través de la misma función que llama el
+    solver (`topes_de_patologias`), no de una lista escrita a mano: una lista
+    copiada se queda parada el día que entre una patología nueva con techo de
+    grasa, y no daría ningún error -- el menú saldría verde igual. Es la regla 6
+    aplicada dentro del motor.
+
+    Hoy son siete: obesidad (22,5), hiperlipidemia (30), y pancreatitis, EPI,
+    SIBO, enteropatía crónica y linfangiectasia (37,5).
+    """
+    if not patologias:
+        return False
+    try:
+        topes, pct_grasa, _av, _su = topes_de_patologias(list(patologias), etapa)
+    except Exception:
+        return False
+    return bool(topes.get("grasa") is not None or pct_grasa)
+
+
+def _escalera_de_relajacion(hay_comida_de_verdad=True, patologias=None, etapa="Adulto"):
     """Peldaños (margenes, max_suplementos, qué se soltó), de más
-    estricto a menos. El primero es exactamente lo de siempre."""
+    estricto a menos. El primero es exactamente lo de siempre.
+
+    ⚠️ Y CON UNA PATOLOGÍA QUE TOPE LA GRASA, EL SUELO DEL HUESO NO SE EXIGE
+    (16 de septiembre de 2026). Lo pidió Elena: «prueba a que en esas patologias
+    que limitan la grasa se elimine el hueso a ver si sale un menú razonable sin
+    un 50% de verdura», y autorizó aplicarlo con la regla que lo permite: «las
+    proporciones son nuestras y las movemos como queremos». Es la regla 3 -- el
+    20 % de hueso es convención BARF, criterio NUESTRO, no de FEDIAF.
+
+    POR QUÉ CHOCA: el hueso carnoso es lo más graso del plato y lo que más
+    fósforo trae, así que obligar a meter un 20 % es justo lo contrario de lo
+    que pide una ración con la grasa topada. Lo que salía en su lugar era medio
+    plato de verdura -- o ningún menú.
+
+    MEDIDO, peldaño a peldaño y con 60 s cada uno (16 de septiembre):
+
+        obesidad 25->20 kg ..... SIN MENÚ  ->  menú verde
+        hiperlipidemia ......... peldaño x5, 49 % verdura  ->  peldaño x2,
+                                 51 % carne · 28 % pescado · 20 % verdura
+        EPI, SIBO, PLE ......... peldaño 2  ->  peldaño 1
+        pancreatitis ........... igual (x5 en los dos)
+
+    Ninguna empeora, y lo que entra en el sitio del hueso es PESCADO, no
+    verdura. El calcio pasa a salir de la cáscara de huevo o del
+    multivitamínico, que es exactamente lo que preguntó Elena antes de medirlo:
+    «igual si metes un suplemento que tenga calcio o cascara de huevo».
+
+    ⚠️ SE SUELTA EL SUELO, NO EL TECHO: el hueso puede seguir entrando, y de
+    hecho entra en tres de las siete (2,7-4,1 %). Lo que se quita es la
+    OBLIGACIÓN de meter el 20 %.
+
+    ⚠️ Y SOLO AHÍ. Medido en el perro SANO, ese suelo está MORDIENDO -- sin él
+    el adulto de 20 kg baja de 20 % a 10 % de hueso y el sénior de 21 % a 12 %
+    --, o sea que es lo que mantiene la ración con forma de BARF. Esto no se
+    enciende «porque total no cambia nada»: cambia, y por eso va atado a la
+    patología que lo justifica.
+
+    ⚠️ El suelo de CARNE MUSCULAR (10 %) se queda. Sin los dos, el último
+    peldaño monta una ración de hígado, verdura y botes que cumple los
+    requisitos en el papel y no es comida -- lo tiró el BLOQUE 9 la primera vez
+    que se intentó.
+    """
     sin_minimo_secundarias = {
         c: ((0.0 if c in CATEGORIAS_SECUNDARIAS else mn), mx)
         for c, (mn, mx) in MARGENES_V2.items()
@@ -2562,18 +2875,172 @@ def _escalera_de_relajacion(hay_comida_de_verdad=True):
         for c, (mn, mx) in MARGENES_V2.items()
     }
     peldanos = [
-        (MARGENES_V2, 2, None),
+        # ⚠️ UN SOLO SUPLEMENTO PRIMERO, Y SUBIR A DOS SOLO SI NO HAY MENÚ
+        #    (15 de septiembre de 2026). Lo pidió Elena, y el motivo no es
+        #    nutricional sino de bolsillo:
+        #
+        #        «vamos a intentar siempre que los menús tengan un solo
+        #         suplemento. Si es imposible que salgan con un suplemento,
+        #         entonces subimos a dos. Pero vamos a intentar, si puede haber
+        #         solo un suplemento, que haya solo uno, porque son cosas caras,
+        #         que la gente no quiere estar comprando eso.»
+        #
+        #    Hasta hoy el peldaño estricto ya permitía DOS, así que el motor
+        #    nunca intentaba con uno: medido, **8 de 8 menús de referencia salían
+        #    con dos botes**, y en 7 de esos 8 el segundo era la vitamina E.
+        #
+        #    ⚠️ Y ESTO ES FORMA, NO NUTRICIÓN (regla 3): cuántos botes compra
+        #    alguien es criterio NUESTRO, no de FEDIAF, así que no puede dejar a
+        #    un perro sin comer. Por eso va como PELDAÑO y no como tope: si con
+        #    uno no sale, se baja al de dos y **se dice en cuál se paró**, igual
+        #    que con las proporciones del BARF.
+        #
+        #    MEDIDO antes de ponerlo, seis perros de referencia por el solver:
+        #
+        #      | suelo de vitamina E | con 1 bote | con 2 botes |
+        #      |---------------------|------------|-------------|
+        #      | ENCENDIDO (hoy)     | 1 de 6     | 6 de 6      |
+        #      | apagado             | 7 de 8     | 7 de 8      |
+        #
+        #    O sea que con el suelo encendido este peldaño casi siempre se caerá
+        #    al siguiente —y no se pierde ni un menú, que es lo que importa— y
+        #    con el suelo apagado se queda en uno. Las dos cosas son la MISMA
+        #    decisión, y por eso este peldaño se pone ahora: deja que la del
+        #    suelo se tome aparte sin bloquear nada.
+        (MARGENES_V2, 1, None),
+        (MARGENES_V2, 2, "hasta_dos_suplementos"),
         (sin_minimo_secundarias, 2, "proporcion_minima_visceras_higado_verdura"),
         (sin_ningun_minimo, 2, "proporcion_minima_de_todas_las_categorias"),
         (sin_ningun_minimo, 3, "proporcion_minima_y_un_suplemento_mas"),
         (sin_ningun_minimo, 4, "proporcion_minima_y_dos_suplementos_mas"),
     ]
+    # ⚠️ Y EL TECHO NO SE LEVANTA DE GOLPE: SUBE EN DOS PASOS (15 de septiembre
+    #    de 2026). CASO REAL, DE ELENA: «651 g de albahaca fresca en una ración
+    #    no es comida», y medido sobre los 216 precalculados el peor era una
+    #    variante con **3.676 g de coles de Bruselas, el 42 % del plato**.
+    #
+    #    La causa no es un fallo: este peldaño pone el techo de lo accesorio en
+    #    el **100 %**, así que dentro de él la verdura no tiene límite ninguno.
+    #    Y el MILP optimiza nutrición por gramo, así que si la verdura sale
+    #    barata para cerrar un hueco, mete verdura hasta donde le dejen — que es
+    #    exactamente el argumento de «la comida del menú se tiene que poder
+    #    comprar» del 14 de septiembre, visto por dentro del plato.
+    #
+    #    LA PREGUNTA QUE HAY QUE HACERSE NO ES «¿cuánta verdura sale?» SINO
+    #    «¿la NECESITA?». Medido sobre las 13 variantes que hoy caen aquí:
+    #
+    #        techo al doble  (20 % de verdura) ...  3 de 13 siguen con menú
+    #        techo al triple (30 % de verdura) ...  6 de 13 siguen con menú
+    #        sin techo (hoy) .................... 13 de 13, con 25-63 % de verdura
+    #
+    #    O sea que **seis de las trece la usaban porque les salía barata**, no
+    #    porque les hiciera falta. Con los dos peldaños de en medio, esas seis
+    #    paran en el primero que les vale y las otras siete siguen bajando hasta
+    #    el de siempre: **no se pierde ni un menú**, que es la regla 3 entera —
+    #    la forma se relaja lo MENOS posible y se dice en cuál se paró.
+    #
+    # ⚠️ Y LA OTRA FILA, LA DEL RELOJ, TAMBIÉN ESTÁ MEDIDA, porque dos peldaños
+    #    más son dos llamadas más al solver y este fichero ya tiene escrito que
+    #    «los dos casos tiran en direcciones opuestas». Ocho perros por la API,
+    #    cinco vueltas cada uno, con el presupuesto de verdad: **ninguno pierde
+    #    el menú y los tiempos no suben** (5/5 antes y 5/5 después en los siete
+    #    que salen; el toy de 3 kg con ocho especies fuera sale 0/5 en los dos,
+    #    o sea que no es de esto).
+    #
+    #    Y el que más gana es un perro de VERDAD, no una variante del catálogo:
+    #    el **cachorro de 10 kg con tres alergias** pasa de **40,5 % a 19,0 % de
+    #    verdura**, y tarda menos (2,7 s -> 1,5 s). Los que se quedan arriba es
+    #    porque la necesitan: el toy con artrosis (54 %) y el adulto con
+    #    pancreatitis (52 %) tienen que diluir con algo que no engorde, que es
+    #    justo el caso por el que este último peldaño existe.
+    #
     # El último peldaño solo existe si la ración sigue teniendo carne y
     # hueso de donde tirar -- ver _hay_comida_de_verdad(). Sin eso, soltar
     # los techos de lo accesorio no relaja la forma: inventa comida.
+    def _secundarias_por(veces):
+        """El mismo peldaño, pero con el techo de lo accesorio multiplicado.
+
+        Los mínimos se sueltan igual que en el de siempre; lo único que cambia
+        es hasta dónde puede llegar el techo. `min(1.0, ...)` porque un techo
+        por encima del 100 % del plato no significa nada.
+        """
+        return {c: ((0.0 if c in CATEGORIAS_SECUNDARIAS else mn),
+                    (min(1.0, mx * veces) if c in CATEGORIAS_SECUNDARIAS else mx))
+                for c, (mn, mx) in MARGENES_V2.items()}
+
     if hay_comida_de_verdad:
         peldanos.append(
-            (sin_max_secundarias, 4, "tope_maximo_de_visceras_higado_y_verdura"))
+            (_secundarias_por(2.0), 4, "tope_de_visceras_higado_y_verdura_al_doble"))
+        peldanos.append(
+            (_secundarias_por(3.0), 4, "tope_de_visceras_higado_y_verdura_al_triple"))
+        # ⚠️ Y UN ÚLTIMO PELDAÑO **ACOTADO**, QUE NO EXISTÍA Y HACE FALTA
+        # (16 de septiembre de 2026, por la tarde). Al quitar el que ponía el
+        # techo de lo accesorio en el 100 % medí lo que costaba sobre ONCE
+        # PERROS SANOS y sobre los 216 menús del catálogo, y salió gratis. Lo
+        # que NO medí es la población que de verdad lo usaba, y la batería me lo
+        # devolvió entero:
+        #     BLOQUE 9  ·· dos perros sin menú por una regla de FORMA
+        #     BLOQUE 20 ·· editar un menú CON PATOLOGÍA devolvía 500
+        #     BLOQUE 43 ·· el toy de 1,5 kg se quedaba sin menú
+        # O sea: medí la población fácil y concluí sobre todas.
+        #
+        # El caso que lo explica mejor lo tiene escrito el propio BLOQUE 9: en
+        # PANCREATITIS la grasa se topa por debajo de 20 g/1000 kcal, «y para
+        # llegar ahí hay que diluir con lo único que no engorda: verdura». Ese
+        # perro NECESITA el techo suelto.
+        #
+        # Así que lo que estaba mal no era que el peldaño existiera: era que NO
+        # TENÍA TECHO. Éste lo pone en x5 -- la verdura llega al 50 % del plato
+        # y no al 100 %, que es lo que producía los 484 g de alcachofa y los
+        # 2.141 g de albahaca. Sigue habiendo un límite, y sigue siendo comida.
+        peldanos.append(
+            (_secundarias_por(5.0), 4, "tope_de_visceras_higado_y_verdura_al_quintuple"))
+        # ⚠️ Y AQUÍ SE ACABA LA ESCALERA. EL PELDAÑO QUE LEVANTABA EL TECHO DEL
+        # TODO (`tope_maximo_de_visceras_higado_y_verdura`, 0-100 %) SE HA
+        # QUITADO EL 16 DE SEPTIEMBRE DE 2026, y lo pidió Elena viendo lo que
+        # producía:
+        #
+        #     «un plato con 484 gramos de alcachofa me parece muy loco»
+        #
+        # Era el menú del cachorro de raza grande al que le dan el 20 % del día
+        # en premios: 44 % del plato de alcachofa y SEIS botes distintos. Y no
+        # era un caso suelto -- este peldaño es de donde salían los quince
+        # peores de los 216 menús precalculados, con el récord en 3.676 g de
+        # coles de Bruselas.
+        #
+        # ⚠️ LO QUE CUESTA ESTÁ MEDIDO, Y NO ES UN MENÚ: ES EL PEOR MENÚ.
+        #   · Once perros de referencia (toy de 1,5 kg a lactante de 20, con
+        #     cachorro de raza grande y gestante): los ONCE salen exactamente
+        #     igual sin él. Ninguno lo estaba usando.
+        #   · De los 214 menús del catálogo con peldaño declarado, **UNO** lo
+        #     usaba: `Gigante_Lactante#3`, con 7.527 g de comida al día y
+        #     **2.141 g de albahaca**. O sea que quitarlo no quita un menú:
+        #     quita el peor menú del catálogo.
+        #   · El penúltimo peldaño (×3) deja la verdura hasta el 30 %, y los
+        #     siete menús que lo usan van a 22-28 % con el ingrediente mayor
+        #     siendo CONEJO, no una hierba. Eso es una ración, no un plato de
+        #     hierba.
+        #
+        # Y de paso arregla el reloj del BLOQUE 101: este peldaño costaba ~16 s
+        # de solver en el peor caso, y era la mitad de lo que hacía que la
+        # escalera no cupiera en el presupuesto.
+        #
+        # ⚠️ LO QUE **NO** ARREGLA, Y POR ESO NO SE QUEDA SOLO EN ESTO: al perro
+        # que ahora no saca menú hay que DECÍRSELO, y con comida y no con
+        # nutrientes. Un perro al que le dan el 20 % del día en premios no tiene
+        # un problema de formulación -- tiene un problema de premios, y la
+        # ración no puede arreglarlo: le quedan el 80 % de las kcal para meter
+        # el 100 % de los nutrientes. Ver `_por_que_no_cabe_con_premios`.
+
+    # ⚠️ Y AL FINAL, EL SUELO DEL HUESO SI LA PATOLOGIA TOPA LA GRASA. Va aquí,
+    # sobre la escalera ya montada, y no dentro de cada peldaño a propósito:
+    # afecta a los NUEVE por igual, incluido el estricto, así que un peldaño
+    # nuevo lo hereda sin acordarse de nada. El porqué y las medidas, en el
+    # docstring de esta función.
+    if _la_patologia_topa_la_grasa(patologias, etapa):
+        peldanos = [({c: ((0.0 if c == "Hueso carnoso" else mn), mx)
+                      for c, (mn, mx) in m.items()}, supl, cl)
+                    for m, supl, cl in peldanos]
     return peldanos
 
 
@@ -2602,14 +3069,41 @@ def _escalera_de_relajacion(hay_comida_de_verdad=True):
 # HTTP tiene que poder escribirse.
 PELDANO_ESTRICTO = "estricto"
 
+
+def _suplementos_del_peldano_estricto():
+    """Cuántos botes deja el PRIMER peldaño, leído de la escalera y no copiado.
+
+    ⚠️ CASO REAL, ENCONTRADO EL 15 DE SEPTIEMBRE DE 2026 A LOS DIEZ MINUTOS DE
+    PONER EL PELDAÑO DE UN SOLO SUPLEMENTO. Elena pidió que el motor intentara
+    siempre con un bote y subiera a dos solo si no hay menú. Se añadió el
+    peldaño... y la medida seguía dando **2 botes diciendo «peldaño estricto»**.
+
+    La causa: había un `max_suplementos=2` ESCRITO A MANO en la vía rápida del
+    catálogo y otro en el `else` del peldaño pedido. O sea que la escalera decía
+    una cosa y dos sitios hacían otra, y el menú salía afirmando un peldaño que
+    no era el suyo -- que es peor que no tener el peldaño, porque `/relajacion`
+    existe precisamente para que quien firma pueda afirmar en cuál salió.
+
+    Es la familia de fallo de las once tuplas del BLOQUE 117 y la de las seis
+    categorías de Personalizar: un número copiado a mano no da error cuando se
+    queda desfasado, se queda quieto.
+    """
+    esc = _escalera_de_relajacion(True)
+    return esc[0][1] if esc else 2
+
+
 # Que suelta cada uno, dicho para quien lo va a elegir. Sin esto el selector
 # ofreceria "proporcion_minima_visceras_higado_verdura", que es el nombre de
 # una variable, no una opcion.
 PELDANOS_EN_CRISTIANO = {
     PELDANO_ESTRICTO: (
-        "Proporciones BARF completas",
+        "Proporciones BARF completas y UN solo suplemento",
         "Carne, hueso, vísceras, hígado y verdura dentro de sus rangos habituales, "
-        "y hasta 2 suplementos."),
+        "y un único bote de suplemento."),
+    "hasta_dos_suplementos": (
+        "Proporciones BARF completas, y hasta 2 suplementos",
+        "Las proporciones no se tocan: lo único que sube es el número de botes, de uno "
+        "a dos, porque con uno solo no salían todos los nutrientes."),
     "proporcion_minima_visceras_higado_verdura": (
         "Sin mínimo de vísceras, hígado y verdura",
         "Pueden quedarse a cero si no hacen falta. Sus topes máximos siguen puestos, "
@@ -2625,15 +3119,29 @@ PELDANOS_EN_CRISTIANO = {
     "proporcion_minima_y_dos_suplementos_mas": (
         "Sin mínimos, y hasta 4 suplementos",
         "Dos suplementos más. Es lo más lejos que llega la escalera sin tocar ningún techo."),
-    "tope_maximo_de_visceras_higado_y_verdura": (
-        "Sin tope de vísceras, hígado y verdura",
-        "Se levanta el techo de lo accesorio — el 10 % de verdura es lo que suele bloquear "
-        "una pancreatitis. Los mínimos de carne y hueso siguen intactos: son lo que hace "
-        "que la ración siga siendo una ración."),
+    "tope_de_visceras_higado_y_verdura_al_doble": (
+        "Vísceras, hígado y verdura hasta el doble",
+        "El techo de lo accesorio sube al doble — la verdura, del 10 % al 20 % del plato. "
+        "Los mínimos de carne y hueso siguen intactos."),
+    "tope_de_visceras_higado_y_verdura_al_triple": (
+        "Vísceras, hígado y verdura hasta el triple",
+        "El techo de lo accesorio sube al triple — la verdura, del 10 % al 30 % del plato. "
+        "Los mínimos de carne y hueso siguen intactos."),
+    "tope_de_visceras_higado_y_verdura_al_quintuple": (
+        "Vísceras, hígado y verdura hasta el quíntuple",
+        "El techo de lo accesorio sube al quíntuple — la verdura, del 10 % al 50 % del plato. "
+        "Es el último de la escalera, y sigue teniendo techo: los mínimos de carne y hueso "
+        "siguen intactos."),
+    # ⚠️ AQUÍ HABÍA UN SEXTO, `tope_maximo_de_visceras_higado_y_verdura`, y se
+    # BORRA con su peldaño el 16 de septiembre de 2026. No se deja «por si
+    # acaso»: `_peldanos_publicos()` construye la lista recorriendo la escalera,
+    # así que una entrada que ya no tiene peldaño no la lee nadie -- y un texto
+    # muerto que parece vivo se lee y se cree, que es la lección de `modos.py`.
+    # El porqué del borrado está donde se quita el peldaño.
 }
 
 
-def _peldanos_publicos(hay_comida_de_verdad=True):
+def _peldanos_publicos(hay_comida_de_verdad=True, patologias=None, etapa="Adulto"):
     """La escalera con nombre y explicacion, en su orden real.
 
     Se construye recorriendo `_escalera_de_relajacion()` y NO escribiendo la
@@ -2643,7 +3151,8 @@ def _peldanos_publicos(hay_comida_de_verdad=True):
     sirven leyendo `patologias.json` en vez de copiarlos.
     """
     salida = []
-    for orden, (_m, supl, clave) in enumerate(_escalera_de_relajacion(hay_comida_de_verdad)):
+    for orden, (_m, supl, clave) in enumerate(
+            _escalera_de_relajacion(hay_comida_de_verdad, patologias, etapa)):
         clave = clave or PELDANO_ESTRICTO
         titulo, detalle = PELDANOS_EN_CRISTIANO.get(clave, (clave, ""))
         salida.append({"clave": clave, "orden": orden, "titulo": titulo,
@@ -2651,7 +3160,7 @@ def _peldanos_publicos(hay_comida_de_verdad=True):
     return salida
 
 
-def _peldano_por_clave(clave, hay_comida_de_verdad=True):
+def _peldano_por_clave(clave, hay_comida_de_verdad=True, patologias=None, etapa="Adulto"):
     """(margenes, max_suplementos) del peldano pedido, o None si no existe.
 
     Devolver None y no reventar es deliberado: una clave que no existe se
@@ -2660,7 +3169,7 @@ def _peldano_por_clave(clave, hay_comida_de_verdad=True):
     """
     if not clave:
         return None
-    for margenes, supl, k in _escalera_de_relajacion(hay_comida_de_verdad):
+    for margenes, supl, k in _escalera_de_relajacion(hay_comida_de_verdad, patologias, etapa):
         if (k or PELDANO_ESTRICTO) == clave:
             return margenes, supl
     return None
@@ -2670,7 +3179,7 @@ def _peldano_por_clave(clave, hay_comida_de_verdad=True):
 def listar_peldanos():
     """Los peldanos de la escalera, para que un profesional pueda elegir.
 
-    Se sirven los siete -- el ultimo incluido -- porque esto es la tabla, no
+    Se sirven los ocho -- el ultimo incluido -- porque esto es la tabla, no
     una decision sobre un paciente concreto: si al formular no hay carne y
     hueso de donde tirar, ese peldano simplemente no se aplica (ver
     `_hay_comida_de_verdad`). Decir aqui que no existe seria esconder una
@@ -2679,7 +3188,7 @@ def listar_peldanos():
     return {
         "que_es": ("Los peldaños que el motor recorre cuando no existe menú con las "
                    "proporciones de BARF habituales. Solo mueven la FORMA de la ración: "
-                   "los 43 requisitos de FEDIAF, el ratio Ca:P y los topes de seguridad y "
+                   "los requisitos de FEDIAF, el ratio Ca:P y los topes de seguridad y "
                    "de patología son idénticos en todos."),
         "peldanos": _peldanos_publicos(True),
     }
@@ -2688,7 +3197,7 @@ def listar_peldanos():
 def _aviso_de_lo_que_falta(gramos, al, categorias_excluidas=None):
     """
     Qué categorías del BARF se han quedado fuera del menú. Se dice en
-    cristiano y sin alarmar: el menú cumple los 30 requisitos igual, pero
+    cristiano y sin alarmar: el menú cumple todos los requisitos igual, pero
     la usuaria tiene derecho a saber por qué este no lleva vísceras
     cuando todos los demás sí.
     """
@@ -2708,10 +3217,44 @@ def _aviso_de_lo_que_falta(gramos, al, categorias_excluidas=None):
         que = lista[0]
     else:
         que = ", ".join(lista[:-1]) + " ni " + lista[-1]
+    # ⚠️ SIN NÚMERO, Y ESTA VEZ A PROPÓSITO (15 de septiembre de 2026).
+    #
+    # Aquí ponía «los 30 requisitos» y el motor verifica 43 desde que se
+    # encendieron los aminoácidos. Es EXACTAMENTE el fallo que este fichero ya
+    # tiene escrito el 29 de agosto para el mensaje de «no existe combinación»
+    # —«aquí ponía "los 30 requisitos" y el motor ya verifica 42»— y que se
+    # arregló en aquel texto y no en éste ni en el de la edición. Un número que
+    # vive en una prosa y en el código se separa, y el de la prosa no lo cubre
+    # ninguna prueba.
+    #
+    # La salida no es actualizar el número: es no ponerlo. A quien lee esto no
+    # le dice nada si son 30, 43 o 49 -—Elena, el 15 de septiembre: «a un
+    # usuario no le tiene que salir ningún aviso que no entienda»— y encima es
+    # un número que hay que mantener en dos sitios para siempre. El recuento
+    # exacto sigue estando donde sirve: en la ficha del menú, que trae «49/49».
     return ("Con las restricciones de este perro no había forma de incluir " + que +
-            " sin incumplir algo. El menú cumple igualmente los 30 requisitos "
+            " sin incumplir algo. El menú cumple igualmente todos los requisitos "
             "y todos los límites de seguridad.")
 
+
+# Lo que se le da a UN menú suelto. Ver `_resolver_menu_v2_crudo`.
+PRESUPUESTO_SEGUNDOS_MENU_UNICO = 40.0
+
+# El total de segundos que se reparte entre los menús de UNA semana. Vive aquí
+# y no dentro del endpoint para que una prueba pueda darle holgura: ver el
+# comentario largo en `endpoint_menu_semana`.
+#
+# ⚠️ SUBIDO DE 70 A 85 EL 16 DE SEPTIEMBRE DE 2026, Y ES UN TECHO, NO UN COSTE
+# -- el bucle sale en cuanto tiene los menús, así que a nadie le hace esperar
+# más. Los 70 se pusieron el 15 sin medir una semana difícil, y la primera que
+# se midió no cabía: la de Cairo con premios daba **2 de 7 menús** y, antes de
+# arreglar el reparto, **0 de 7**. En `origin/main`, que no tenía ningún techo,
+# esa misma semana tarda 42,6 s y la de premios al 20 % llega a 86,3.
+#
+# 85 y no más porque lo que este número protege es real: Render documenta 100 s
+# como máximo de una petición, y pasarse de ahí no es un mensaje que se pueda
+# leer -- es un corte de conexión.
+PRESUPUESTO_SEGUNDOS_SEMANA = 85.0
 
 MARGEN_SEGURIDAD_CRONICA_MENU_UNICO = 0.75  # mismo criterio que el de /menu/semana
 
@@ -2754,8 +3297,60 @@ def endpoint_menu_semana(datos: PeticionMenu, numero_de_menus: int = 1):
             datos.der_objetivo, datos.peso_perro_kg)
         especies_usadas = []
 
+        # ⚠️ Y LA SEMANA NO PUEDE MULTIPLICAR EL PRESUPUESTO POR SIETE (15
+        # septiembre). Este bucle llama N veces a `_resolver_menu_v2_interno`
+        # sin pasarle `presupuesto_segundos`, así que cada menú se llevaba el
+        # presupuesto ENTERO: con los 24 s de antes eran 168 s en el peor caso,
+        # y con los 40 de ahora serían 280 -- por encima de los 100 s que
+        # Render documenta como máximo. No es un riesgo que traiga el cambio de
+        # arriba: ya estaba, y por eso se cierra aquí en vez de dejarlo escrito.
+        #
+        # Se reparte un total, como ya hace `/menu/varios-perros`, con un suelo
+        # por menú para que el último no reciba un presupuesto inútil. Medido:
+        # una semana de adulto sano tardó 41,4 s contra producción, que es lo
+        # que de verdad cuesta -- el techo solo muerde en los casos difíciles.
+        # ⚠️ EL TOTAL SE LEE DE FUERA, COMO EL DE VARIOS PERROS (16 de
+        # septiembre de 2026). Estaba escrito aquí dentro como variable local,
+        # así que una prueba que quisiera darle reloj de sobra a la semana NO
+        # PODÍA -- `presupuesto_segundos` solo aprieta, nunca suelta. Eso dejó
+        # al BLOQUE 17 midiendo el reloj sin querer: fallaba 1 de cada 3 veces
+        # diciendo «solo conserva el 67 % de sus alimentos», o sea acusando al
+        # motor de no respetar lo que se le pidió cuando lo que pasaba es que
+        # el solver aceptaba una solución peor porque se le acababa el tiempo.
+        # `PRESUPUESTO_SEGUNDOS_VARIOS_PERROS` ya vivía fuera por exactamente
+        # este motivo; esto es ponerlos iguales.
+        PRESUPUESTO_SEGUNDOS_SEMANA = globals().get(
+            "PRESUPUESTO_SEGUNDOS_SEMANA", 70.0)
+        SEGUNDOS_MINIMOS_POR_MENU_SEMANA = 6.0
+        _t_inicio_semana = time.time()
+
         for i in range(n):
             dias_este = dias_por_menu[i]
+            # ⚠️ EL PRIMER MENÚ NO PUEDE QUEDARSE CON UNA SÉPTIMA PARTE (16 de
+            # septiembre de 2026, por la noche, y lo encontró la batería de la
+            # APP DE VERDAD, no la del motor).
+            #
+            # El reparto era «lo que queda, entre los que faltan», o sea 10 s
+            # para el primero de siete. Y los siete menús de una semana NO
+            # cuestan lo mismo: el PRIMERO se resuelve de cero y los demás son
+            # variaciones suyas, mucho más baratas. Medido en `origin/main`, que
+            # no tenía techo: la semana de Cairo entera son 42,6 s, de los que
+            # su primer menú se lleva ~20 y los otros seis ~3,7 cada uno.
+            #
+            # Con 10 s el primero no llega, y si el primero falla SE CAE LA
+            # SEMANA ENTERA -- el aviso de «se generaron N de 7» solo existe si
+            # ya había alguno. Medido en esta rama antes de arreglarlo: la
+            # semana de Cairo daba **0 menús** donde `main` da 7.
+            #
+            # Así que al primero se le da lo que se le daría a un menú suelto, y
+            # el resto se reparten lo que quede. El total sigue acotado por
+            # `PRESUPUESTO_SEGUNDOS_SEMANA`, que es lo que protege de los 100 s
+            # de Render.
+            _queda_semana = PRESUPUESTO_SEGUNDOS_SEMANA - (time.time() - _t_inicio_semana)
+            _presupuesto_segundos_este = max(
+                SEGUNDOS_MINIMOS_POR_MENU_SEMANA,
+                min(_queda_semana, PRESUPUESTO_SEGUNDOS_MENU_UNICO) if i == 0
+                else _queda_semana / max(1, n - i))
             dias_restantes_incluido_este = sum(dias_por_menu[i:])
             presupuesto_para_este = _presupuesto_para_menu_actual(
                 presupuesto_restante, dias_restantes_incluido_este)
@@ -2776,6 +3371,7 @@ def endpoint_menu_semana(datos: PeticionMenu, numero_de_menus: int = 1):
             # se pide conservar y se obliga a cambiar.
             datos_este = datos.model_copy(update={
                 "presupuesto_semanal_restante": presupuesto_para_este,
+                "presupuesto_segundos": _presupuesto_segundos_este,
                 "evitar_especies": list(datos.evitar_especies or [])
                                    + ([] if preferir_este else especies_usadas),
                 "preferir_alimentos": preferir_este or None,
@@ -2869,6 +3465,162 @@ CATEGORIAS_QUE_ELIGE_EL_USUARIO = (
 
 
 def _resolver_menu_v2_interno(datos: PeticionMenu):
+    """El motor, con lo que el dueño DECLARA que le da puesto en la respuesta.
+
+    ⚠️ POR QUÉ ES UN ENVOLTORIO Y NO CUATRO LÍNEAS DENTRO (16 de septiembre de
+    2026, y lo encontró el BLOQUE 122 el mismo día que se escribió la función).
+
+    `_resolver_menu_v2_crudo` tiene CUATRO salidas con `factible: True`: tres
+    vías rápidas de catálogo y la del final. Las dos claves de los premios se
+    escribieron solo en la última, así que un cachorro de raza grande sin
+    alergias ni patologías —o sea el caso fácil, que es el que coge el atajo—
+    recibía su menú **sin el premio dentro y sin una palabra**, con la respuesta
+    impecable. Es la lección que este repo ya tiene escrita tres veces: *un
+    texto se vigila por la PUERTA por la que sale, no por dónde está escrito*.
+
+    Aquí se pone una sola puerta. Un camino nuevo que devuelva un menú lo
+    hereda sin acordarse de nada.
+    """
+    resultado = _resolver_menu_v2_crudo(datos)
+    if not isinstance(resultado, dict) or not resultado.get("factible"):
+        return resultado
+    try:
+        _al_pr, _ = cargar_v2()
+    except Exception:
+        return resultado
+    # ⚠️ Y SI SE LE HA SOLTADO EL SUELO DEL HUESO, SE DICE (16 de septiembre de
+    # 2026). La regla 3 permite mover una proporción de BARF porque es criterio
+    # nuestro -- lo que NO permite es moverla en silencio: quien mire el plato
+    # va a ver poco hueso o ninguno, y sin una palabra lo lee como un fallo.
+    #
+    # COMIDA, NO NUTRIENTES (regla del 14 de septiembre): se dice qué lleva el
+    # plato y de dónde sale el calcio, no cuántos gramos de grasa por 1000 kcal.
+    if _la_patologia_topa_la_grasa(getattr(datos, "patologias", None),
+                                   getattr(datos, "etapa_requisitos", "Adulto")):
+        resultado["suelo_de_hueso_suelto_por_patologia"] = True
+        resultado.setdefault("avisos_extra", []).append(
+            "Este menú lleva poco hueso, o ninguno, y es a propósito: con lo que tiene "
+            "tu perro le toca un plato más ligero, y el hueso es de lo que más engorda. "
+            "El calcio se lo damos por otro lado — normalmente cáscara de huevo o el "
+            "complemento que veas en la lista. No le añadas hueso por tu cuenta.")
+    _plato = _premios_en_el_plato(datos, _al_pr)
+    if _plato:
+        resultado["premios_dentro_del_menu"] = _plato
+    _desconocidos = _premios_declarados_que_no_conocemos(datos, _al_pr)
+    if _desconocidos:
+        resultado["premios_que_no_conocemos"] = _desconocidos
+        resultado.setdefault("avisos_extra", []).append(
+            "No hemos podido contar " + ", ".join(_desconocidos) + ": no está en "
+            "nuestra lista de alimentos, así que no sabemos qué lleva dentro. Este menú "
+            "está hecho SIN contarlo. Si se lo das a menudo, elige en la lista algo "
+            "parecido y vuelve a generarlo, o cuéntaselo a tu veterinario.")
+    return resultado
+
+
+def _respuesta_de_premios_sin_sitio(datos, hay_comida, se_agoto_el_tiempo=False,
+                                    escalera=None):
+    """La respuesta de «no hay menú» cuando la causa son los premios sin decir.
+
+    Devuelve `None` si los premios no se pasan de lo que recomienda la fuente:
+    entonces el motivo es otro y contesta quien ya contestaba.
+
+    ⚠️ POR QUÉ ESTÁ EN UNA FUNCIÓN Y NO ESCRITA DONDE SE USA (16 de septiembre
+    de 2026, por la noche). La primera versión vivía en la rama de «la escalera
+    se acabó» y **no se alcanzaba nunca** en el caso que la motivó: con el 20 %
+    del día en premios, los siete primeros peldaños salen infactibles
+    demostrados en 0,3 s cada uno y los dos últimos se comen el presupuesto, así
+    que el que contestaba era el `se_agoto_el_tiempo` de más arriba -- «el
+    cálculo está tardando más de lo normal. Inténtalo de nuevo en un momento»,
+    que además promete algo que no va a pasar, porque reintentar falla igual.
+    Es el mismo fallo que el repo ya tiene escrito para el toy con artrosis.
+
+    Son DOS puertas para el mismo «no hay menú» y las dos tienen que decir lo
+    mismo, que es la lección de siempre: *un texto se vigila por la puerta por
+    la que sale*.
+
+    ⚠️ Y LO QUE SE AFIRMA CAMBIA SEGÚN LA PUERTA, porque si no sería mentira.
+    Cuando la escalera se ha recorrido entera se puede decir que NO CABE; cuando
+    se acabó el reloj, no se ha demostrado nada y se dice que no hemos podido.
+    Lo que NO cambia es lo que se le ofrece, porque ayuda en los dos casos:
+    decir qué premio es lo quita del terreno de lo desconocido.
+    """
+    _kcal_prem = _kcal_de_premios(datos)
+    _der_dia = float(getattr(datos, "der_objetivo", None) or 0.0)
+    if not (_kcal_prem > 0 and _der_dia > 0):
+        return None
+    _fraccion = _kcal_prem / _der_dia
+    # ⚠️ CON TOLERANCIA, PORQUE 0,10 NO PUEDE SALIR «POR ENCIMA DEL 10 %». Con un
+    # `>` pelado, `1581 * 0.10 / 1581` da 0,10000000000000002 en coma flotante y
+    # el nivel que la fuente RECOMIENDA se trataba como si se pasara. Medido: la
+    # semana de Cairo con «hasta_el_maximo» perdía sus siete menús por esto.
+    if _fraccion <= FRACCION_MAXIMA_DE_PREMIOS + 1e-6:
+        return None
+    _pct = _fraccion * 100
+    # ⚠️ LO PRIMERO QUE SE OFRECE ES DECIR QUÉ PREMIO ES, NO BAJARLO (16 de
+    # septiembre de 2026). La primera versión decía «bájale los premios» y ya
+    # está, y Elena lo cortó: «¿pero para qué pones ese mensaje? si tiene que
+    # haber una parte en la que elija lo que le da y se meta en el plato».
+    #
+    # Tiene razón, y además es lo que hace la fuente: un premio DECLARADO deja
+    # de ser un premio y pasa a ser un ingrediente (`premios_declarados`). Lo
+    # que no cabe no es el premio -- es el premio DESCONOCIDO, porque obliga a
+    # formular a ciegas esa parte del día. Decirle «bájaselo» a quien puede
+    # simplemente decirnos qué es sería mandarle a cambiar de vida por un hueco
+    # nuestro.
+    #
+    # ⚠️ COMIDA, NO NUTRIENTES (regla del 14 de septiembre): ni «dilución», ni
+    # «mg/1000 kcal», ni el nombre de un nutriente.
+    _medio = ("no hemos conseguido cuadrar el resto del plato"
+              if se_agoto_el_tiempo else
+              "todo lo que necesita tiene que caber en el resto del plato, y no cabe")
+    return {
+        "factible": False,
+        "motivo": (
+            f"Necesitamos saber QUÉ le das. Ahora mismo has dicho que los premios "
+            f"son el {_pct:.0f} % de lo que come al día, pero no qué son — y sin "
+            f"saberlo tenemos que dar por hecho que no aportan nada, así que "
+            f"{_medio}. "
+            f"|| LO MEJOR: dinos qué le das (pollo, pavo, queso, lo que sea) y "
+            f"cuánto, y lo metemos DENTRO del menú contando lo que aporta. Así no "
+            f"hay que quitarle nada. || Y si no lo sabes: bájaselos a no más de una "
+            f"décima parte de lo que come al día y vuelve a generar el menú."),
+        "los_premios_no_dejan_sitio": True,
+        "premios_pct_del_dia": round(_pct, 1),
+        "premios_pct_recomendado": round(FRACCION_MAXIMA_DE_PREMIOS * 100),
+        "se_agoto_el_tiempo": bool(se_agoto_el_tiempo),
+        # ⚠️ LO QUE SE PROBÓ DE VERDAD, NO LA ESCALERA ENTERA (16 de septiembre
+        # de 2026). Con premios por encima del límite y sin declarar se cortan
+        # los peldaños que suben el techo de lo accesorio, así que listarlos
+        # aquí sería decirle a quien lo lee que se intentó algo que no se
+        # intentó -- y el desplegable «Qué dijo el motor» los enseña tal cual.
+        "se_intento_relajando": [
+            p[2] for p in (escalera if escalera is not None
+                           else _escalera_de_relajacion(hay_comida))[1:]]}
+
+
+def _hay_algun_premio(datos, alimentos=None):
+    """¿Este perro come algo fuera de la ración, lo sepamos o no?
+
+    ⚠️ SON DOS COSAS Y LAS DOS TIENEN QUE PARAR EL ATAJO DEL CATÁLOGO (16 de
+    septiembre de 2026). `_kcal_de_premios` solo ve el premio ANÓNIMO —el que
+    llega como nivel o como kcal— y desde hoy hay otro: el DECLARADO, que trae
+    nombre y gramos y entra en el plato como gramos fijos.
+
+    Las vías rápidas sirven un menú YA CALCULADO y lo reescalan por un factor.
+    Con el anónimo eso ya estaba prohibido, y con el declarado es peor: el
+    premio **no puede aparecer** en un menú enlatado que se hizo sin saber de
+    él, así que el motor devolvía el menú de siempre y el premio se perdía. El
+    BLOQUE 122 lo cazó con 214 g de corazón de pollo declarados y 580 en el
+    plato.
+    """
+    if _kcal_de_premios(datos):
+        return True
+    if getattr(datos, "premios_declarados", None):
+        return True
+    return False
+
+
+def _resolver_menu_v2_crudo(datos: PeticionMenu):
     """
     EL MOTOR NUEVO. Misma petición que /menu (mismo modelo PeticionMenu),
     pero resuelto con programación lineal entera mixta: decide qué
@@ -2882,6 +3634,15 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
     ya tomadas, no parámetros que mande el frontend.
     """
     al, req = cargar_v2()
+    # ⚠️ EL PESO ADULTO, ANTES QUE NADA (15 septiembre). Se rellena SOBRE `datos`
+    # porque los sesenta sitios que lo usan leen `datos.peso_adulto_esperado_kg`
+    # directamente -- el solver, el filtro final, el mínimo de la nota b, el
+    # techo del ratio Ca:P y los techos del libro. Ponerlo aquí es la única forma
+    # de que los sesenta vean lo mismo; derivarlo en cada uno sería la
+    # duplicación que este repo lleva un mes desmontando.
+    _pa_calc, _pa_de_donde, _pa_aviso = _peso_adulto_completado(datos)
+    if _pa_calc and not datos.peso_adulto_esperado_kg:
+        datos.peso_adulto_esperado_kg = _pa_calc
     # ⚠️ AÑADIDO (5 agosto, madrugada) — CASO REAL GRAVE ENCONTRADO,
     # pedido expreso: "si generas UN SOLO menú en Personalizar y se le
     # va a dar al perro toda la semana, los límites semanales (vitamina
@@ -2931,11 +3692,51 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
     # la probabilidad de fallo total. No elimina el problema del todo
     # (sigue siendo un caso genuinamente difícil), pero lo mitiga de
     # forma medible sin arriesgar el límite de tiempo de Render.
-    PRESUPUESTO_SEGUNDOS = 24.0
+    # ⚠️ SUBIDO DE 24 A 40 (15 septiembre) — Y LO QUE CAMBIA NO ES UN NÚMERO,
+    # ES LA PREMISA DE ARRIBA, QUE ERA FALSA.
+    #
+    # Todo este presupuesto se puso el 5 de agosto sobre la frase «Render (plan
+    # gratis) corta la conexión a los 30s». MEDIDO EL 15 DE SEPTIEMBRE CONTRA LA
+    # API DESPLEGADA: una llamada a `/menu/semana` tardó 41,4 s y Render la
+    # contestó sin cortar nada. O sea que los 24 s no eran el límite de Render:
+    # eran un límite NUESTRO puesto sobre un dato que no se volvió a comprobar.
+    #
+    # Y estaba dejando perros sin comer. CASO REAL DE ELENA: el toy de 1,5 kg
+    # con `artrosis`, 0 de 3 contra producción, siempre con «el cálculo está
+    # tardando más de lo normal». El menú existe -- la escalera entera cuesta
+    # 6,4 s aquí, y Render va ~4,5 veces más lento (medido: el mismo toy sin
+    # patología tarda 5,0 s aquí y 22,5 s allí), o sea 29 s contra 24.
+    #
+    # ⚠️ Y SUBIRLO NO HACE QUE NADIE ESPERE MÁS, que es lo que hay que saber
+    # antes de tocarlo: esto es un TECHO, no un coste. El solver vuelve en
+    # cuanto tiene menú. Medido con el arreglo del reintento puesto, 10
+    # peticiones por celda, en esta máquina:
+    #
+    #                          presupuesto 8s    12s      16s
+    #   toy 1,5 kg artrosis     10/10 (6,1s)  10/10(6,4s) 10/10(6,2s)
+    #   cachorro 10kg 3 alerg   10/10 (2,4s)  10/10(2,7s) 10/10(2,5s)
+    #
+    # El tiempo real no se mueve. Lo único que cambia es que el caso difícil
+    # deja de morir a un peldaño de la respuesta.
+    #
+    # 40 s deja 60 de margen sobre los 100 s que Render documenta como tiempo
+    # máximo de petición, y son ~8,9 s de esta máquina, por encima de los 8 s
+    # donde las dos filas de arriba ya salen 10 de 10.
+    PRESUPUESTO_SEGUNDOS = globals().get("PRESUPUESTO_SEGUNDOS_MENU_UNICO", 40.0)
     # Quien orquesta varias generaciones dentro de una misma petición
     # (ver /menu/varios-perros) reparte el tiempo. Solo puede apretar.
     if datos.presupuesto_segundos is not None:
         PRESUPUESTO_SEGUNDOS = max(3.0, min(PRESUPUESTO_SEGUNDOS, float(datos.presupuesto_segundos)))
+
+    # ⚠️ CON POCO RELOJ NO SE INTENTA LA MEJORA, NI SIQUIERA LA PRIMERA VUELTA
+    # (16 de septiembre de 2026). Ver el comentario largo de
+    # `_MITAD_PARA_LA_MEJORA`, abajo: con 10 s por menú --que es lo que reparte
+    # `/menu/semana` entre siete-- partir el presupuesto en dos deja las dos
+    # mitades sin llegar, y la que no puede fallar es la segunda. Medido con
+    # Cairo: la semana pasaba de 7 menús a 0.
+    SEGUNDOS_MINIMOS_PARA_INTENTAR_LA_MEJORA = 20.0
+    _APRETAR_EL_TECHO_DEL_LIBRO = (
+        PRESUPUESTO_SEGUNDOS >= SEGUNDOS_MINIMOS_PARA_INTENTAR_LA_MEJORA)
 
     def tiempo_restante():
         """
@@ -3037,7 +3838,7 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
     # aplicaba nunca -- que es justo el fallo que esto viene a arreglar.
     if (datos.modo == "personalizar" and datos.tamano and not excluidos
             and not datos.patologias and not (datos.forzar_presencia or datos.nombres_alimentos)
-            and not datos.preferir_alimentos and not _kcal_de_premios(datos)
+            and not datos.preferir_alimentos and not _hay_algun_premio(datos)
             and datos.restringir_especie and len(datos.restringir_especie) == 1):
         # ⚠️ Y NO SI HAY PREMIOS (11 septiembre). Las vías rápidas sirven un
         # menú YA CALCULADO y lo reescalan a las kcal del perro. Eso es
@@ -3055,8 +3856,17 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
             from catalogo_menus import CATALOGO_VARIANTES
             clave_v = f"{datos.tamano}_{datos.etapa_requisitos}"
             variantes = CATALOGO_VARIANTES.get(clave_v, [])
+            # ⚠️ Y SOLO LAS QUE TIENEN MENU (15 de septiembre de 2026). Dos
+            # variantes del `Gigante_Lactante` estan declaradas `no_hay_menu`
+            # porque el solver las da INFACTIBLE DEMOSTRADA en los ocho peldaños
+            # desde que los siete maximos LEGALES de la UE van sobre materia
+            # seca. Se quedan escritas, con su motivo y SIN gramos, para que no
+            # se sirva un menu viejo que el filtro final va a tirar igual --
+            # pero entonces el atajo no puede leerlas: se cae al camino normal,
+            # que resuelve de verdad y dice que no hay.
             coincide = next((v for v in variantes
-                             if v["proteina"].strip().lower() == especie_pedida.strip().lower()), None)
+                             if v["proteina"].strip().lower() == especie_pedida.strip().lower()
+                             and v.get("gramos")), None)
             if coincide:
                 SUP_COMERCIALES = CAT_SUPLEMENTO   # la del motor, no una copia
                 der_base = sum(al[n]["energia"] * g / 100 for n, g in coincide["gramos"].items())
@@ -3143,7 +3953,7 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
           # ⚠️ NI CON PREMIOS: ver el comentario largo de la vía rápida de
           # arriba. Un menú enlatado reescalado no puede llevar el día entero de
           # nutrientes en menos calorías; eso lo decide el MILP, no un factor.
-          and not _kcal_de_premios(datos)):
+          and not _hay_algun_premio(datos)):
         # ⚠️ AÑADIDO (5 agosto, madrugada) — VARIANTES PRE-RESUELTAS: caso
         # real encontrado con datos exactos de producción -- resolver un
         # menú en caliente con una proteína evitada tardó 19,4 segundos
@@ -3160,11 +3970,20 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
         from catalogo_menus import CATALOGO_VARIANTES
         clave_variantes = f"{datos.tamano}_{datos.etapa_requisitos}" if datos.tamano else None
         variantes = CATALOGO_VARIANTES.get(clave_variantes) if clave_variantes else None
-        if variantes:
+        # ⚠️ `any(gramos)` Y NO SOLO `variantes`: si TODAS las de ese perro
+        # estuvieran declaradas sin menu, `elegida` se quedaria en None y la
+        # linea de abajo reventaria con un KeyError. Hoy no pasa --el
+        # `Gigante_Lactante` tiene tres que si salen-- pero un atajo que revienta
+        # es peor que un atajo que no se usa.
+        if variantes and any(v.get("gramos") for v in variantes):
             evitar_lower = {e.strip().lower() for e in (datos.evitar_especies or [])}
-            elegida = next((v for v in variantes if v["proteina"].strip().lower() not in evitar_lower), None)
-            if elegida is None:
-                elegida = variantes[0]  # si ya se evitaron todas, se repite alguna antes que fallar
+            # Igual que arriba: una variante declarada `no_hay_menu` no tiene
+            # gramos que reescalar, asi que no se elige nunca.
+            _con_menu = [v for v in variantes if v.get("gramos")]
+            elegida = next((v for v in _con_menu
+                            if v["proteina"].strip().lower() not in evitar_lower), None)
+            if elegida is None and _con_menu:
+                elegida = _con_menu[0]  # si ya se evitaron todas, se repite alguna antes que fallar
             SUP_COMERCIALES = CAT_SUPLEMENTO   # la del motor, no una copia
             der_base = sum(al[n]["energia"] * g / 100 for n, g in elegida["gramos"].items())
             factor = datos.der_objetivo / der_base if der_base else 1.0
@@ -3272,7 +4091,9 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
                 ok_rapido, gramos_rapido = resolver_v2(
                     datos.der_objetivo, datos.etapa_requisitos, al, req,
                     datos.peso_perro_kg, dosis_maxima_fabricante,
-                    margenes_categoria=MARGENES_V2, max_suplementos=2, forzar=base, time_limit=tiempo_de_un_intento(),
+                    margenes_categoria=MARGENES_V2,
+                    max_suplementos=_suplementos_del_peldano_estricto(),
+                    forzar=base, time_limit=tiempo_de_un_intento(),
                     presupuesto_semanal_restante=datos.presupuesto_semanal_restante,
                     # ⚠️ AÑADIDO (28 agosto): esta vía era la única de las
                     # cuatro que llaman al motor que NO le pasaba el peso
@@ -3287,6 +4108,10 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
                     # mantenimiento a una racion de bajada. Las dos mal.
                     peso_objetivo_kg=_peso_de_referencia(datos)[0],
                     kcal_de_premios=_kcal_de_premios(datos),
+                    # Y lo que el dueño DECLARA que le da entra como gramos fijos: donde
+                    # viajan las kcal de premios tienen que viajar los declarados, o el
+                    # premio se pierde en este camino y en silencio.
+                    gramos_fijos=_premios_en_el_plato(datos, al) or None,
                 )
                 if not ok_rapido:
                     break
@@ -3328,7 +4153,8 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
     # menú se siga generando igual (con aviso), en vez de fallar del
     # todo.
     def _intentar_generacion(forzar_este, restringir_a_elegidos_este,
-                             margenes=None, max_supl=None, soltar=None):
+                             margenes=None, max_supl=None, soltar=None,
+                             soltar_techo_libro=True):
         """Un intento completo: llamada + reintentos para mejorar a
         verde mientras quede presupuesto de tiempo -- misma lógica que
         ya existía, solo que reutilizable para los tres niveles.
@@ -3351,6 +4177,7 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
             max_suplementos=(max_supl if max_supl is not None else _supl_base),
             time_limit=tiempo_de_un_intento(),
             estado_del_solver=_estado_solver,
+            soltar_el_techo_si_no_cabe=soltar_techo_libro,
             forzar=forzar_este, preferir=preferir,
             patologias=datos.patologias, restringir_especie=datos.restringir_especie,
             peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
@@ -3361,6 +4188,10 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
             presupuesto_semanal_restante=datos.presupuesto_semanal_restante,
             soltar_limites_patologia=soltar,
             kcal_de_premios=_kcal_de_premios(datos),
+            # Y lo que el dueño DECLARA que le da entra como gramos fijos: donde
+            # viajan las kcal de premios tienen que viajar los declarados, o el
+            # premio se pierde en este camino y en silencio.
+            gramos_fijos=_premios_en_el_plato(datos, al) or None,
         )
         # ⚠️ VERIFICAR CUESTA 1,6 ms: NO SE PUEDE QUEDAR SIN TIEMPO (29 agosto).
         #
@@ -3387,6 +4218,7 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
                 excluidos=excluidos or None,
                 margenes_categoria=(margenes if margenes is not None else MARGENES_V2),
                 max_suplementos=max_supl, time_limit=tiempo_de_un_intento(),
+                soltar_el_techo_si_no_cabe=soltar_techo_libro,
                 forzar=forzar_este, preferir=preferir,
                 patologias=datos.patologias, restringir_especie=datos.restringir_especie,
                 peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
@@ -3396,6 +4228,10 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
                 categorias_excluidas=datos.categorias_excluidas,
                 presupuesto_semanal_restante=datos.presupuesto_semanal_restante,
                 kcal_de_premios=_kcal_de_premios(datos),
+                # Y lo que el dueño DECLARA que le da entra como gramos fijos: donde
+                # viajan las kcal de premios tienen que viajar los declarados, o el
+                # premio se pierde en este camino y en silencio.
+                gramos_fijos=_premios_en_el_plato(datos, al) or None,
             )
             if ok2:
                 ok_i, gramos_i = ok2, gramos2
@@ -3438,12 +4274,51 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
         # Render, 6-10 veces más lento, eso es la diferencia entre dar menú y
         # contestar «está tardando más de lo normal» -- que es lo que pasaba.
         #
-        # Se mira SOLO el status 2. Si el solver devolvió una solución que
-        # rechazó la red de seguridad de las categorías (status 0 y `ok_i`
-        # falso), reintentar SÍ sirve: ahí otra semilla da otro menú.
+        # ⚠️ Y TAMPOCO SE REINTENTA LO QUE SE QUEDÓ SIN RELOJ (15 septiembre).
+        # AQUÍ EL COMENTARIO DECÍA UNA COSA Y EL CÓDIGO HACÍA OTRA, y eso es lo
+        # que había que arreglar antes que el número.
+        #
+        # El párrafo de arriba dice, desde el 10 de septiembre, «Se mira SOLO el
+        # status 2. Si el solver devolvió una solución que rechazó la red de
+        # seguridad de las categorías (status 0 y `ok_i` falso), reintentar SÍ
+        # sirve». Esa es la intención y es la correcta. Pero la condición
+        # escrita era `not infactible_demostrado`, que es MÁS ANCHA: deja pasar
+        # también el **status 1**, que es «se me acabó el reloj». Y reintentar
+        # eso con el MISMO reloj se vuelve a acabar igual.
+        #
+        # CASO REAL DE ELENA, reproducido: el toy de 1,5 kg con `artrosis` no
+        # sacaba menú en producción. Traza con el presupuesto apretado a 6 s:
+        #     +0,0s  0,1s  status=2   peldaño 0, infactible DEMOSTRADO
+        #     +0,1s  0,1s  status=2   peldaño 1, infactible DEMOSTRADO
+        #     +0,1s  2,4s  status=1   peldaño 2, se le acabó el reloj
+        #     +2,6s  2,4s  status=1   el MISMO peldaño 2, otra vez
+        #     +5,0s  1,1s  status=1   y otra
+        #     TOTAL 6,1s -> «el cálculo está tardando más de lo normal»
+        # 5,8 s de 6 en un peldaño sin menú, y el peldaño 3 -- que tiene uno, en
+        # 3,5 s -- sin pisar.
+        #
+        # MEDIDO, con el presupuesto apretado a mano para no depender de lo
+        # rápida que sea la máquina (como hace el BLOQUE 43), 15 peticiones por
+        # celda, contra los DOS casos: el toy y el cachorro de 10 kg con tres
+        # alergias, que es el que puso este bucle el 24 de agosto:
+        #
+        #                                antes   con status==0
+        #     toy 1,5 kg artrosis, 4 s    0/15       8/15
+        #     toy 1,5 kg estruvita, 6 s  15/15      15/15
+        #     cachorro 10 kg 3 alerg, 4s  4/15       5/15
+        #
+        # Mejor o igual en los tres. Y con el presupuesto de verdad (40 s, ~8,9
+        # de esta máquina) los dos casos difíciles salen 10 de 10.
+        #
+        # ⚠️ SE PROBÓ TAMBIÉN A DARLE MÁS TIEMPO A CADA PELDAÑO (el 70 % de lo
+        # que queda) y NO VALE, porque los dos casos tiran en direcciones
+        # opuestas: al cachorro le sube a 15/15 porque su menú está EN el
+        # peldaño y solo le falta reloj, y al toy le BAJA a 2/15 porque el suyo
+        # está más abajo y el peldaño de arriba se come el presupuesto. Queda
+        # escrito para que no se vuelva a intentar sin medir las dos filas.
         _reintentos_infactible = 0
         while (not ok_i and _reintentos_infactible < 2
-               and not _estado_solver.get("infactible_demostrado")
+               and _estado_solver.get("status") == 0
                and time.time() - t_inicio_total < PRESUPUESTO_SEGUNDOS):
             _reintentos_infactible += 1
             ok_i, gramos_i = resolver_v2(
@@ -3461,7 +4336,12 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
                 categorias_excluidas=datos.categorias_excluidas,
                 presupuesto_semanal_restante=datos.presupuesto_semanal_restante,
                 estado_del_solver=_estado_solver,
+                soltar_el_techo_si_no_cabe=soltar_techo_libro,
                 kcal_de_premios=_kcal_de_premios(datos),
+                # Y lo que el dueño DECLARA que le da entra como gramos fijos: donde
+                # viajan las kcal de premios tienen que viajar los declarados, o el
+                # premio se pierde en este camino y en silencio.
+                gramos_fijos=_premios_en_el_plato(datos, al) or None,
             )
             ficha_i = (verificar_v2(gramos_i, al, req, datos.der_objetivo, datos.etapa_requisitos)
                        if ok_i else None)
@@ -3475,10 +4355,58 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
     # lo que pide un profesional: si el elige soltar el tope de la verdura,
     # no quiere que ademas se le suelte el minimo del hueso por detras.
     _hay_comida_para_peldano = _hay_comida_de_verdad(al, excluidos, datos.categorias_excluidas)
+    # ⚠️ LA ESCALERA DE ESTE PERRO, UNA VEZ Y EN UNA VARIABLE (16 de septiembre
+    # de 2026). Desde hoy la escalera depende también de las PATOLOGÍAS -- con
+    # una que tope la grasa, el suelo del hueso no se exige (ver
+    # `_escalera_de_relajacion`) --, y eso es exactamente la clase de cosa que
+    # se olvida en uno de doce sitios: el motor construiría el menú con el suelo
+    # suelto y el peldaño que se le enseña al profesional sería otro.
+    #
+    # Es el mismo olvido que ya tuvo `patologias` el 8 de septiembre («se olvidó
+    # una vez en la edición y una sola edición tiraba el tope»). Así que se
+    # calcula UNA vez, aquí, y todo lo de abajo lee esta variable.
+    _escalera_de_este_perro = _escalera_de_relajacion(
+        _hay_comida_para_peldano, datos.patologias, datos.etapa_requisitos)
+
+    # ⚠️ Y CON PREMIOS POR ENCIMA DE LO QUE RECOMIENDA LA FUENTE Y SIN DECIR
+    # CUÁLES SON, LA ESCALERA NO LLEGA A LOS PELDAÑOS DEL PLATO DE HIERBA
+    # (16 de septiembre de 2026, por la noche).
+    #
+    # Los tres últimos peldaños suben el techo de vísceras, hígado y verdura
+    # hasta ×5. Existen para el perro al que una PATOLOGÍA le topa la grasa y
+    # tiene que diluir con algo que no engorde. Usarlos para tapar que no
+    # sabemos qué hay en el 20 % del día es justo lo que Elena rechazó:
+    #
+    #     «un plato con 484 gramos de alcachofa me parece muy loco»
+    #
+    # Y cuestan el menú entero: MEDIDO, esos dos peldaños tardan 17 s cada uno
+    # en demostrar lo suyo, así que la respuesta llegaba a los 40 s -- por
+    # encima de los 45 s que espera la app, que entonces aborta y enseña
+    # «Despertando el servidor...». Lo cazó la batería de la app de verdad.
+    #
+    # Cortándolos, el mismo perro recibe en ~2 s el mensaje que le sirve: dinos
+    # QUÉ le das y lo metemos en el plato. La salida existe y funciona
+    # (`premios_declarados`), así que esto no deja a nadie sin comer -- le manda
+    # por la puerta buena en vez de hacerle esperar 40 s para lo mismo.
+    #
+    # ⚠️ Solo cuando NO se ha declarado nada: si el dueño dice qué le da, esos
+    # premios son comida y el problema desaparece, así que la escalera entera
+    # vuelve a estar disponible.
+    _kcal_prem_esc = _kcal_de_premios(datos)
+    _der_esc = float(getattr(datos, "der_objetivo", None) or 0.0)
+    if (_kcal_prem_esc > 0 and _der_esc > 0
+            and (_kcal_prem_esc / _der_esc) > FRACCION_MAXIMA_DE_PREMIOS + 1e-6
+            and not getattr(datos, "premios_declarados", None)):
+        _escalera_de_este_perro = [
+            (m, supl, cl) for m, supl, cl in _escalera_de_este_perro
+            if not any(m.get(c, (0.0, 0.0))[1] > MARGENES_V2[c][1]
+                       for c in CATEGORIAS_SECUNDARIAS)]
     _peldano_pedido = _peldano_por_clave(getattr(datos, "peldano", None),
-                                         _hay_comida_para_peldano)
-    _margenes_base = _peldano_pedido[0] if _peldano_pedido else MARGENES_V2
-    _supl_base = _peldano_pedido[1] if _peldano_pedido else 2
+                                         _hay_comida_para_peldano,
+                                         datos.patologias, datos.etapa_requisitos)
+    _margenes_base = _peldano_pedido[0] if _peldano_pedido else _escalera_de_este_perro[0][0]
+    _supl_base = (_peldano_pedido[1] if _peldano_pedido
+                  else _suplementos_del_peldano_estricto())
 
     aviso_extra_alimentos = None
     if datos.modo == "personalizar" and forzar:
@@ -3488,12 +4416,14 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
 
     if restriccion:
         # NIVEL 1: solo lo elegido a mano en carne/pescado/hueso, nada más
-        ok, gramos, ficha_intento = _intentar_generacion(forzar, restriccion)
+        ok, gramos, ficha_intento = _intentar_generacion(forzar, restriccion,
+                                                         soltar_techo_libro=not _APRETAR_EL_TECHO_DEL_LIBRO)
         if not ok:
             # NIVEL 2: se afloja la restricción de especie, pero se
             # sigue forzando que lo elegido esté presente -- el motor
             # puede añadir OTRA especie más si de verdad hace falta
-            ok, gramos, ficha_intento = _intentar_generacion(forzar, None)
+            ok, gramos, ficha_intento = _intentar_generacion(forzar, None,
+                                                             soltar_techo_libro=not _APRETAR_EL_TECHO_DEL_LIBRO)
             if ok:
                 # ⚠️ aviso solo si de verdad se añadió algo que el
                 # usuario no pidió en esas categorías -- comparando
@@ -3508,7 +4438,8 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
                         "también se ha añadido: " + ", ".join(anadidos) + "."
                     )
     else:
-        ok, gramos, ficha_intento = _intentar_generacion(forzar, None)
+        ok, gramos, ficha_intento = _intentar_generacion(forzar, None,
+                                                         soltar_techo_libro=not _APRETAR_EL_TECHO_DEL_LIBRO)
 
     if not ok and datos.modo == "personalizar":
         # igual que hacía /menu (el viejo): si forzar lo elegido a mano
@@ -3553,6 +4484,10 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
             evitar_especies=datos.evitar_especies,
             presupuesto_semanal_restante=datos.presupuesto_semanal_restante,
             kcal_de_premios=_kcal_de_premios(datos),
+            # Y lo que el dueño DECLARA que le da entra como gramos fijos: donde
+            # viajan las kcal de premios tienen que viajar los declarados, o el
+            # premio se pierde en este camino y en silencio.
+            gramos_fijos=_premios_en_el_plato(datos, al) or None,
         )
         no_se_pudo_forzar = ok
     else:
@@ -3570,14 +4505,131 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
     # cambiarle la decision sin decirselo, que es lo contrario de por que
     # existe poder elegirlo. Si en ese peldano no hay menu, se dice que no en
     # ese peldano -- y el elige otro.
+    # ⚠️ LA MEJORA NO PUEDE COMERSE EL PRESUPUESTO DE LA RESPUESTA (16 de
+    # septiembre de 2026). CASO REAL, y el fallo lo introduje yo el día 15.
+    #
+    # Desde ese día la escalera se recorre DOS veces: ésta, con el techo del
+    # libro puesto, y otra entera soltándolo. Las dos hacen falta y en ese orden
+    # -- antes `resolver()` soltaba el techo DENTRO del peldaño 0 y la escalera
+    # no bajaba nunca. Pero no son lo mismo: **esta primera es una MEJORA** (da
+    # un menú más pegado al consejo del libro) y **la segunda es la RESPUESTA**
+    # (es la que garantiza que el perro come). Perder la primera cuesta calidad;
+    # perder la segunda cuesta la comida.
+    #
+    # MEDIDO con el cachorro de raza grande al que le dan el 20 % del día en
+    # premios, peldaño a peldaño y con 120 s cada uno:
+    #     peldaños 0 a 6 .... infactible DEMOSTRADO, 0,2 s cada uno
+    #     peldaño 7 ......... infactible DEMOSTRADO, 17,2 s
+    #     peldaño 8 ......... MENÚ, 16,4 s, calcio 4114
+    # O sea ~35 s por vuelta y ~70 s las dos, contra un presupuesto de 40. Por
+    # eso el BLOQUE 101 salía verde en una máquina y rojo en otra un 39 % más
+    # lenta: la primera vuelta se comía el reloj y la segunda -- la que tenía la
+    # respuesta -- no llegaba a pisar el peldaño 8.
+    #
+    # Así que la primera vuelta se queda con LA MITAD del presupuesto como mucho.
+    # No es un número fino: es que a la segunda le tiene que quedar al menos
+    # tanto como a la primera, porque es la que no puede fallar.
+    _MITAD_PARA_LA_MEJORA = 0.5
+    # ⚠️ Y SOLO SE REPARTE CUANDO HAY ALGO QUE PROTEGER (16 de septiembre de
+    # 2026, por la tarde, y me lo devolvió la batería). El reparto se puso para
+    # que la segunda vuelta no se quedara sin reloj -- pero LA SEGUNDA VUELTA
+    # SOLO PUEDE DAR ALGO DISTINTO SI HAY UN TECHO DEL LIBRO SUBIDO, que es el
+    # cachorro de raza grande con premios. Para todos los demás las dos vueltas
+    # son EL MISMO PROBLEMA, así que reservarle la mitad a la segunda no protege
+    # nada y le quita la mitad a la primera.
+    #
+    # CASO REAL: el toy de 1,5 kg necesita 25,7 s y sale en el peldaño 2 (está
+    # medido el 15 de septiembre). Con el reparto puesto a ciegas se quedaba con
+    # 20 s de los 40 y salía 1 de 3 -- «el cálculo está tardando más de lo
+    # normal» --, y la segunda vuelta que le robaba el tiempo no podía darle
+    # nada que la primera no tuviera ya.
+    #
+    # `cedidos_ante_fediaf` contesta esto sin resolver nada: devuelve los techos
+    # del libro que se han caído por cruzarse con el suelo que sí se aplica. Si
+    # está vacío, no hay nada que soltar y la primera vuelta se queda con el
+    # presupuesto entero.
+    try:
+        from recomendaciones import cedidos_ante_fediaf as _cedidos_rep
+        from verificar import der_efectiva_de as _derefe_rep
+        _hay_techo_que_soltar = bool(_cedidos_rep(
+            datos.etapa_requisitos, req,
+            _derefe_rep(datos.der_objetivo, datos.peso_perro_kg),
+            datos.peso_adulto_esperado_kg,
+            (datos.der_objetivo / max(1.0, datos.der_objetivo - _kcal_de_premios(datos)))))
+    except Exception:
+        # Ante la duda, repartir: es el lado que no deja a nadie sin la segunda
+        # vuelta, y solo cuesta reloj al caso raro.
+        _hay_techo_que_soltar = True
+    if not _hay_techo_que_soltar:
+        _MITAD_PARA_LA_MEJORA = 1.0
+    # ⚠️ Y CON POCO RELOJ, LA MEJORA NO SE INTENTA SIQUIERA (16 de septiembre de
+    # 2026, por la noche, y esto lo encontró la batería de la APP DE VERDAD --
+    # no la del motor).
+    #
+    # CASO REAL MEDIDO, y es el de Cairo otra vez: `/menu/semana` reparte 70 s
+    # entre SIETE menús, o sea ~10 s cada uno. Partir 10 s en dos mitades deja
+    # 5 s para la mejora y 5 para la respuesta, y su menú cuesta más que eso:
+    #
+    #     un solo menú por `/menu/v2` (40 s) ....... 19,7 s, SALE
+    #     la semana de 7 en esta rama .............. 0 menús, «está tardando»
+    #     la misma semana en `origin/main` ......... 7 menús, 42,6 s
+    #
+    # O sea que la mejora, que existe para dar un menú MÁS PEGADO al consejo del
+    # libro, estaba costando el menú entero. Es su propio comentario llevado al
+    # final: perder la mejora cuesta calidad y perder la respuesta cuesta la
+    # comida, así que cuando no caben las dos, se va la mejora.
+    #
+    # El umbral son 20 s -- por debajo, ninguna de las dos vueltas tendría los
+    # 10 s que hace falta para recorrer la escalera de un perro difícil.
+    if not _APRETAR_EL_TECHO_DEL_LIBRO:
+        _MITAD_PARA_LA_MEJORA = 0.0
     if not ok and not _peldano_pedido:
-        for margenes_peldano, supl_peldano, que_se_suelta in _escalera_de_relajacion(hay_comida)[1:]:
+        for margenes_peldano, supl_peldano, que_se_suelta in _escalera_de_este_perro[1:]:
             if tiempo_restante() <= 1.5:
                 break  # sin tiempo: mejor no factible que un timeout de Render
+            if (time.time() - t_inicio_total) >= PRESUPUESTO_SEGUNDOS * _MITAD_PARA_LA_MEJORA:
+                break  # se acabó lo que se le presta a la MEJORA: manda la RESPUESTA
             ok, gramos, ficha_intento = _intentar_generacion(
-                forzar, None, margenes=margenes_peldano, max_supl=supl_peldano)
+                forzar, None, margenes=margenes_peldano, max_supl=supl_peldano,
+                soltar_techo_libro=not _APRETAR_EL_TECHO_DEL_LIBRO)
             if ok:
                 relajaciones.append(que_se_suelta)
+                break
+
+    # ⚠️ Y SOLO AHORA SE SUELTA EL TECHO DEL LIBRO — LA ESCALERA VA PRIMERO
+    # (15 de septiembre de 2026). Lo destapó Elena: «no me creo que en un menú
+    # con premios Cairo no pueda cumplir con el techo de calcio estricto».
+    #
+    # Tenía razón. Hasta hoy `resolver()` soltaba el techo DENTRO del mismo
+    # peldaño: el 0 salía infactible con el techo puesto, se soltaba ahí mismo,
+    # el 0 pasaba a ser factible y la escalera NO BAJABA NUNCA. Así que se
+    # tiraba un consejo de la fuente para no tocar las proporciones de BARF,
+    # que son criterio NUESTRO. La regla 3 dice lo contrario: lo que cede es la
+    # FORMA, nunca la nutrición.
+    #
+    # MEDIDO con Cairo (raza grande, premios al 10 %, ventana de calcio
+    # 2778-2833, un 2 % de sitio), con el techo APRETADO y 60 s por peldaño:
+    #     peldaño 0, 1 y 2 .... infactible DEMOSTRADO
+    #     peldaño 3 ........... MENÚ, calcio 2816
+    # O sea que el menú que cumple el techo EXISTÍA y no se buscaba. Antes se
+    # entregaba 3569 en el peldaño 0 con el techo soltado; ahora 2816 en el 3
+    # cumpliéndolo. **753 mg de calcio menos al día** en el nutriente que causa
+    # enfermedad ortopédica del desarrollo si sobra.
+    #
+    # ⚠️ Y NO CUESTA RELOJ A CASI NADIE: el flag solo cambia algo cuando hay un
+    # techo del libro SUBIDO, que es el cachorro de raza grande con premios. Para
+    # los demás `se_ha_subido` es falso y este segundo recorrido no llega a
+    # hacerse, porque el primero ya dio menú.
+    if not ok and not _peldano_pedido:
+        for margenes_peldano, supl_peldano, que_se_suelta in _escalera_de_este_perro:
+            if tiempo_restante() <= 1.5:
+                break
+            ok, gramos, ficha_intento = _intentar_generacion(
+                forzar, None, margenes=margenes_peldano, max_supl=supl_peldano,
+                soltar_techo_libro=True)
+            if ok:
+                if que_se_suelta:
+                    relajaciones.append(que_se_suelta)
                 break
 
     if not ok:
@@ -3618,6 +4670,37 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
         # cuando el presupuesto se agotaba en la vía del catálogo, a
         # propósito: el mismo motivo tiene que decir lo mismo.
         if time.time() - t_inicio_total >= PRESUPUESTO_SEGUNDOS - 1.5:
+            # ⚠️ AQUÍ NO SE CULPA A LOS PREMIOS, Y COSTÓ UNA VUELTA ATRÁS (16 de
+            # septiembre de 2026, por la noche). Durante un rato esta puerta
+            # devolvió el texto de `_respuesta_de_premios_sin_sitio`, con el
+            # argumento de que «inténtalo de nuevo en un momento» promete algo
+            # que no va a pasar. Y LO ROMPIÓ, en el caso que más importa:
+            #
+            #     `/menu/semana` reparte un total entre los SIETE menús, así que
+            #     a cada uno le tocan ~10 s y quedarse sin reloj es lo NORMAL.
+            #     Medido: Cairo con premios «hasta_el_maximo» --el 10 %, o sea
+            #     justo lo que la fuente recomienda-- pasó a recibir «no cabe»
+            #     en 12,9 s, cuando su menú existe y sale.
+            #
+            # O sea que se estaba convirtiendo «no me ha dado tiempo» en «no hay
+            # sitio», que es afirmar lo que no se ha demostrado, y encima quitar
+            # menús que sí existen.
+            #
+            # ⚠️ LAS DOS CAUSAS ESTÁN ARREGLADAS Y LA PUERTA VUELVE, PERO
+            # DICIENDO OTRA COSA. Eran (1) la comparación en coma flotante, que
+            # hacía que el 10 % exacto contara como «por encima del 10 %», y (2)
+            # el reparto de la semana, que le daba 10 s al primer menú. Con las
+            # dos puestas, aquí solo llega quien de verdad se pasa de lo que
+            # recomienda la fuente.
+            #
+            # Y lo que se AFIRMA cambia según la puerta, porque si no sería
+            # mentira: con la escalera recorrida se dice que NO CABE; aquí, que
+            # no hemos podido. Lo que se OFRECE es lo mismo, porque ayuda igual
+            # -- decir qué premio es lo saca del terreno de lo desconocido.
+            _sin_sitio_reloj = _respuesta_de_premios_sin_sitio(
+                datos, hay_comida, True, escalera=_escalera_de_este_perro)
+            if _sin_sitio_reloj is not None:
+                return _sin_sitio_reloj
             return {"factible": False,
                     "motivo": "El cálculo está tardando más de lo normal para este "
                               "perro. Inténtalo de nuevo en un momento.",
@@ -3655,8 +4738,8 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
                     datos.patologias, datos.etapa_requisitos,
                     lambda soltar: _intentar_generacion(
                         forzar, None,
-                        margenes=_escalera_de_relajacion(hay_comida)[-1][0],
-                        max_supl=_escalera_de_relajacion(hay_comida)[-1][1],
+                        margenes=_escalera_de_este_perro[-1][0],
+                        max_supl=_escalera_de_este_perro[-1][1],
                         soltar=soltar)[0],
                     peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg)
             except Exception as e:   # el diagnóstico NUNCA puede tumbar la respuesta
@@ -3731,19 +4814,53 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
                      "fuente": x["fuente"],
                      "por_que": x["por_que"]}
                     for x in _l],
-                "se_intento_relajando": [p[2] for p in _escalera_de_relajacion(hay_comida)[1:]]}
+                "se_intento_relajando": [p[2] for p in _escalera_de_este_perro[1:]]}
+
+        # ⚠️ ANTES DEL MENSAJE GENÉRICO: SI LOS PREMIOS SE PASAN DEL 10 %, ESO ES
+        # LO QUE HAY QUE DECIR (16 de septiembre de 2026). Lo destapó Elena
+        # mirando lo que el motor le daba a un cachorro de raza grande con el
+        # 20 % del día en premios: «un plato con 484 gramos de alcachofa me
+        # parece muy loco».
+        #
+        # No es un problema de formulación: es un problema de PREMIOS, y la
+        # ración no puede arreglarlo. Con el 20 % del día en chuches le quedan
+        # el 80 % de las kcal para meter el 100 % de los nutrientes, porque de
+        # lo que lleva dentro un premio no sabemos nada y no se puede contar
+        # para cubrir nada (regla 3-bis). MEDIDO en ese cachorro: mismo perro,
+        # mismo peldaño estricto, misma ración de 1265 kcal --
+        #     DER 1581 sin premios ................. menú, verdura 10 %
+        #     DER 1265 sin premios declarados ...... menú, verdura  3 %
+        #     DER 1581 con 316 kcal de premios ..... SIN MENÚ
+        # o sea que no son las kcal: es que el día entero no cabe en el 80 %.
+        #
+        # Y el mensaje genérico de abajo -«quita alguna restricción»- es MENTIRA
+        # aquí, de la misma clase que la que ya está documentada para el reloj:
+        # puede quitar todas las alergias y seguirá sin salir. Lo único que lo
+        # arregla es bajar los premios.
+        #
+        # ⚠️ COMIDA, NO NUTRIENTES (regla del 14 de septiembre): ni «dilución»,
+        # ni «mg/1000 kcal», ni el nombre de un nutriente.
+        _sin_sitio = _respuesta_de_premios_sin_sitio(
+            datos, hay_comida, escalera=_escalera_de_este_perro)
+        if _sin_sitio is not None:
+            return _sin_sitio
 
         return {"factible": False,
                 "motivo": "No existe ninguna combinación de alimentos accesibles "
                           "que cumpla todos los requisitos para este perro, ni "
                           "siquiera soltando las proporciones habituales del "
                           "BARF. Quita alguna restricción y vuelve a probar.",
-                "se_intento_relajando": [p[2] for p in _escalera_de_relajacion(hay_comida)[1:]]}
+                "se_intento_relajando": [p[2] for p in _escalera_de_este_perro[1:]]}
     ficha = verificar_v2(gramos, al, req, datos.der_objetivo, datos.etapa_requisitos)
     problemas_seguridad = _seguridad_completa(gramos, al, datos.der_objetivo,
                                                datos.etapa_requisitos,
                                                datos.patologias,
                                                peso_perro_kg=datos.peso_perro_kg)
+    # ⚠️ EL DUEÑO TIENE QUE PODER VER QUÉ PARTE DEL PLATO ES LO QUE YA LE DA
+    # (16 de septiembre de 2026). Si declara 60 g de pavo y el menú los lleva
+    # dentro, enseñárselo sin separarlo se lee como «tengo que darle 60 g MÁS».
+    # Va como una clave aparte con los mismos nombres y gramos, para que la app
+    # los pueda marcar dentro de la lista en vez de repetirlos.
     resultado = {
         "factible": True,
         "menu": gramos,
@@ -3866,7 +4983,17 @@ class PeticionVariosPerros(BaseModel):
     personalizacion_por_menu: Optional[list[Optional[dict]]] = None
 
 
-PRESUPUESTO_SEGUNDOS_VARIOS_PERROS = 24.0
+# ⚠️ SUBIDO DE 24 A 70 EL 17 DE SEPTIEMBRE, Y ES UN TECHO, NO UN COSTE — el
+# bucle sale en cuanto tiene los menús, así que a nadie le hace esperar más.
+# MEDIDO en la casa de tres perros pidiendo 3 menús cada uno: con 24 salen
+# **1, 1 y 1** y en `origin/main` salían **3, 3 y 3**; con 70 salen 3, 3 y 3 en
+# 37-41 s. Ver `SEGUNDOS_AMOLDARSE` aquí abajo para la causa.
+#
+# 70 y no más porque lo que este número protege es real: Render documenta 100 s
+# como máximo de una petición, y es un techo de reloj de PARED del servidor, así
+# que allí el bucle para igual a los 70 y devuelve los menús que tenga —
+# diciéndolo, que es la degradación honesta.
+PRESUPUESTO_SEGUNDOS_VARIOS_PERROS = 70.0
 
 # ⚠️ AÑADIDO (21 agosto) — SUELO DE TIEMPO POR MENÚ.
 #
@@ -3892,8 +5019,27 @@ SEGUNDOS_MINIMOS_POR_MENU = 6.0
 #
 # Por eso el reparto NO es a partes iguales: holgura para ese primer menú,
 # y lo justo para los que solo tienen que encajar cantidades.
+#
+# ⚠️ Y «DÉCIMAS DE SEGUNDO» DEJÓ DE SER VERDAD (17 de septiembre de 2026). Esa
+# medida es de agosto, y desde entonces el solver se ha hecho **3-4 veces más
+# caro** por un motivo que no se puede quitar: los siete máximos LEGALES de la
+# UE pasaron a medirse sobre MATERIA SECA, y eso son siete filas nuevas que
+# acoplan la materia seca de todo el plato dentro del MILP. Medido, el mismo
+# adulto de 24,5 kg con el mismo peldaño:
+#
+#     `origin/main` ....... 1,3-3,8 s
+#     con las siete filas . 4,2-5,8 s
+#
+# Con `SEGUNDOS_AMOLDARSE = 4` eso significa que **amoldar FALLA y hay que
+# rehacer el menú entero**: en la traza de la casa de tres perros, las tres
+# llamadas del cachorro con 4 s salían «el cálculo está tardando más de lo
+# normal» tras gastar 3,3-4,0 s, y luego el mismo menú salía en 3,2-6,3 s con el
+# presupuesto grande. O sea que el suelo corto no ahorraba tiempo: lo tiraba dos
+# veces.
+#
+# Medido con 10: la casa de tres perros vuelve a dar 3, 3 y 3.
 SEGUNDOS_PRIMER_MENU_DE_LA_BASE = 12.0
-SEGUNDOS_AMOLDARSE = 4.0
+SEGUNDOS_AMOLDARSE = 10.0
 
 # Solo lo toca el BLOQUE 48, para comparar la versión de antes con la de
 # ahora en la misma máquina. En producción vale siempre False.
@@ -4525,6 +5671,10 @@ def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None, restringir_e
                 # función con otro modelo.
                 patologias=getattr(datos, "patologias", None),
                 kcal_de_premios=_kcal_de_premios(datos),
+                # Y lo que el dueño DECLARA que le da entra como gramos fijos: donde
+                # viajan las kcal de premios tienen que viajar los declarados, o el
+                # premio se pierde en este camino y en silencio.
+                gramos_fijos=_premios_en_el_plato(datos, al) or None,
             )
             if not ok:
                 break
@@ -4652,7 +5802,8 @@ def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None, restringir_e
                 getattr(datos, "categorias_excluidas", None))
             ok_quieto = False
             gramos_quieto = ficha_quieto = None
-            for _marg_q, _supl_q, _q_suelta in _escalera_de_relajacion(_hay_comida_ed):
+            for _marg_q, _supl_q, _q_suelta in _escalera_de_relajacion(
+                    _hay_comida_ed, datos.patologias, datos.etapa_requisitos):
                 ok_quieto, gramos_quieto, ficha_quieto = _intentar(
                     list(forzar or []) + _de_antes, margen_intentos=1,
                     margenes=_marg_q, max_supl=_supl_q,
@@ -4794,7 +5945,8 @@ def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None, restringir_e
     hay_comida = _hay_comida_de_verdad(al, excluidos + list(nombres_excl),
                                        getattr(datos, "categorias_excluidas", None))
     if not ok:
-        for margenes_peldano, supl_peldano, que_se_suelta in _escalera_de_relajacion(hay_comida)[1:]:
+        for margenes_peldano, supl_peldano, que_se_suelta in _escalera_de_relajacion(
+                hay_comida, datos.patologias, datos.etapa_requisitos)[1:]:
             ok, gramos, ficha = _intentar(forzar, margen_intentos=2,
                                           margenes=margenes_peldano, max_supl=supl_peldano)
             if ok:
@@ -4805,8 +5957,10 @@ def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None, restringir_e
         # ¿es culpa del alimento que se ha pedido meter? Se comprueba en vez
         # de suponerlo: si sin él sí hay menú, el problema es él, y muchas
         # veces se puede decir exactamente por qué (ver _por_que_no_cabe).
+        # Sin número, por lo mismo que el aviso de composición: ver el
+        # comentario de `_aviso_de_composicion`.
         motivo = ("Con este cambio no existe ninguna combinación que cumpla "
-                  "los 30 requisitos, ni siquiera soltando las proporciones "
+                  "todos los requisitos, ni siquiera soltando las proporciones "
                   "habituales del BARF. Prueba con otro alimento.")
         culpable = None
         if forzar:
@@ -4871,11 +6025,100 @@ def endpoint_anadir_alimento(datos: PeticionAnadirQuitarAlimento):
     return _recalcular_con_motor(datos, forzar=[datos.alimento])
 
 
+def _decir_por_que_entro_otro_de_lo_mismo(resultado, datos, quitado):
+    """⚠️ CASO REAL, DE ELENA USANDO LA APP (15 de septiembre de 2026):
+
+        «he hecho un menu en personalizar y me ha metido 3 suplementos,
+         borraba uno y metia otro y asi todo el rato»
+
+    Que fueran TRES era otra cosa y está arreglada: la regla 5 del solver
+    comparaba la clave equivocada, así que `CUANTOS_MAX` no ataba a los
+    suplementos. Lo que queda es la otra mitad de la frase, que es de
+    producto y no de motor: al quitar uno entraba otro Y NO SE DECÍA POR QUÉ.
+
+    Quitar algo y ver aparecer a su primo, sin una palabra, se lee como que
+    la app no ha hecho caso -- y por eso se vuelve a intentar «todo el rato».
+    El motor SÍ ha hecho caso: ese alimento ya no está y no va a volver. Lo
+    que pasa es que de esa familia hace falta ALGO para cerrar los requisitos.
+
+    Y eso se dice con comida y sin jerga, que es la regla de los dos
+    registros: ni «categoría», ni el nombre de un nutriente, ni un peldaño.
+    """
+    if not resultado.get("factible"):
+        return resultado
+    nuevos = resultado.get("gramos") or resultado.get("menu") or {}
+    antes = set(getattr(datos, "menu_actual", None) or [])
+    if not antes:
+        return resultado
+    al_, _req_ = cargar_v2()
+    cat = (al_.get(quitado) or {}).get("categoria")
+    if not cat:
+        return resultado
+    # Los de SU MISMA familia que no estaban antes. Si no ha entrado ninguno,
+    # es que se ha podido quitar limpiamente y no hay nada que explicar.
+    entraron = sorted(n for n in nuevos
+                      if n not in antes
+                      and (al_.get(n) or {}).get("categoria") == cat)
+    if not entraron:
+        return resultado
+    como_se_llama = _COMO_SE_LLAMA_LA_FAMILIA.get(cat, cat.lower())
+    resultado["por_que_entro_otro"] = (
+        f"«{quitado}» ya no está en el menú y no va a volver. Lo que pasa es "
+        f"que a este perro le hace falta {como_se_llama} para que la ración "
+        f"esté completa, así que hemos puesto "
+        + " y ".join(f"«{n}»" for n in entraron)
+        + " en su lugar. Si tampoco te encaja, quítalo también y probamos con "
+          "otro.")
+    # ⚠️ Y VA TAMBIEN EN `aviso`, QUE ES LO QUE LA APP YA PINTA. Una clave
+    # nueva que la app no lee es un texto que no lee nadie -- la regla 6 por
+    # el lado que no se ve: el motor puede servirlo y seguir sin llegar. Se
+    # pone DELANTE porque es la respuesta a lo que el usuario acaba de hacer;
+    # lo que viene detras es la lista de todo lo demas que se movio.
+    if resultado.get("aviso"):
+        resultado["aviso"] = resultado["por_que_entro_otro"] + " " + resultado["aviso"]
+    else:
+        resultado["aviso"] = resultado["por_que_entro_otro"]
+    return resultado
+
+
+# ⚠️ EN COMIDA, NO EN CATEGORÍAS DEL MOTOR. «Multivitamínico» y «Omega-3» son
+# las palabras con las que el motor indexa el catálogo, no con las que habla
+# alguien que quiere dar de comer a su perro. Es la regla de los dos registros
+# del 13 de septiembre, y la de COMIDA-NO-NUTRIENTES del 14: lo que falta aquí
+# no se llama con el nombre de un nutriente.
+# Lo que NO esté en este diccionario cae a la categoría en minúsculas, que es
+# fea pero cierta -- preferible a inventarse un nombre bonito por cada
+# categoría nueva que entre al catálogo.
+_COMO_SE_LLAMA_LA_FAMILIA = {
+    "Multivitamínico": "un complemento de vitaminas y minerales",
+    "Omega-3": "una fuente de omega-3 (aceite de pescado o similar)",
+    "Yodo": "una fuente de yodo",
+    "Fibra": "fibra",
+    "Calcio": "una fuente de calcio",
+    "Hierro": "una fuente de hierro",
+    "Vitamina B": "un complemento del grupo B",
+    "Vitamina E": "un aporte de vitamina E (un aceite rico en ella)",
+    "Hueso carnoso": "hueso carnoso",
+    "Vísceras": "vísceras",
+    "Hígado": "hígado",
+    "Verduras y frutas": "verdura o fruta",
+    "Carne muscular": "carne",
+    "Pescados y mariscos": "pescado o marisco",
+    "Extras": "extras (aceites, semillas, huevo o sal)",
+}
+
+
 @app.post("/menu/quitar")
 def endpoint_quitar_alimento(datos: PeticionAnadirQuitarAlimento):
     """Quita un alimento (excluyéndolo) y resuelve TODO de nuevo con el
-    motor real."""
-    return _recalcular_con_motor(datos, excluir_nombres=[datos.alimento])
+    motor real.
+
+    ⚠️ Y DICE POR QUÉ HA ENTRADO OTRO de su misma familia, si es que ha
+    entrado: ver `_decir_por_que_entro_otro_de_lo_mismo`.
+    """
+    return _decir_por_que_entro_otro_de_lo_mismo(
+        _recalcular_con_motor(datos, excluir_nombres=[datos.alimento]),
+        datos, datos.alimento)
 
 
 # =====================================================================
@@ -5947,7 +7190,7 @@ SELLOS_DE_LOS_DATOS = {
         # 11 sep: FUSION. El catalogo que sale de aqui no es el de ninguna de las dos ramas -- lleva las `restricciones_patologia` de la rama de patologias Y el `fuentes_id` y los huecos declarados de la rama del catalogo direccionable --, asi que el sello se ha RECALCULADO con el metodo de /verificar (json.dumps con sort_keys y ensure_ascii, no el SHA del fichero crudo). Las dos notas de abajo se conservan enteras a proposito: son el registro de los dos trabajos que aqui se juntan.
         # 8 sep (4): "Atun" y "Caballa" ganan `restricciones_patologia` para la patologia nueva `reaccion_adversa_alimento` -- SACN5 5a ed., cap.31, Tabla 31-3: «Vasoactive amines -- Avoid foods that contain certain fish ingredients (e.g., tuna, mackerel, skipjack, bonito)». Ningun valor nutricional cambia: es el mismo mecanismo por el que el Platano no entra en un menu de diabetes. El "bonito" y el "listado" (skipjack) no estan en el catalogo. Sello recalculado a proposito.
         # 8 sep (3): SIN CAMBIOS, y hubo que REVERTIR un cambio equivocado del mismo dia. Se puso aqui "20a15984bafa669f" creyendo que el sello estaba roto en main -- NO lo estaba: estos sellos NO son el SHA del fichero crudo sino el del CONTENIDO CANONICO (json.dumps con sort_keys y ensure_ascii), a proposito, para que reordenar claves o cambiar la indentacion no dispare una falsa alarma. Se comparo contra el crudo, que da otro hash, y de ahi salio una "correccion" que rompio el sello de verdad. El BLOQUE 12 la cazo. La leccion no es el numero: es que el metodo de comprobacion hay que leerlo antes de usarlo.
-        "alimentos_v3_final.json":      "75f08a250d3baf5b",   # ⚠️ 14 sep: LA HUMEDAD DE CADA FICHA. Ningun valor nutricional cambia: se anaden `humedad_g_100g` + `humedad_fuente` a 79 fichas (las otras 65 ya la tenian) y `humedad_hueco` a 18, que son suplementos en polvo sin fila en ninguna base y cuya etiqueta no la declara. POR QUE hacia falta: el catalogo va en gramos de alimento tal cual se da y casi toda fuente que no sea FEDIAF publica en % de MATERIA SECA, y sin humedad no hay materia seca -- asi que el supuesto que sostiene 135 limites del motor («These conversions assume an energy density of 16.7 kJ (4.0 kcal) ME/g DM», FEDIAF §3.2.1) NO SE PODIA NI COMPROBAR. Ahora se puede, y sale que no: una racion de este motor va a 5,20 kcal/g de materia seca (4,05-6,18 en los 216 menus), o sea que esas 135 cifras van un ~23 % flojas -- entre ellas los 13 maximos de FEDIAF que solo se publican en base materia seca, SIETE de ellos legales de la UE. NO SE APLICA NADA TODAVIA: esta medido lo que costaria (8 de 8 perros de referencia siguen con menu) y la decision es la P-38 de PREGUNTAS_ABIERTAS.md. De donde sale cada humedad: 63 de la cadena de mandato con el `fuentes_id` que la ficha ya declaraba (y se rehacen sin red contra `fuentes_instantanea.json`), 10 de la columna «DM [%]» de la Tabla 1 de Köber -- la MISMA fila de la que ya sale su calcio, lo que amplia el mandato 2 y la ampliacion va escrita en `fuentes_de_composicion.json` --, 5 aceites por cota de composicion (99,5 g de grasa por 100 g dejan medio gramo para todo lo demas, agua incluida) y 1 por el proxy ya declarado del corazon de conejo. Lo vigila el BLOQUE 111 con el fallo puesto de seis formas. || 13 sep (noche, 4): LOS DOS CASOS DE ESPECIE, ARREGLADOS CON LAS FUENTES, y los dos resultaron ser problemas DISTINTOS de lo que parecian. (1) «Riñon de ternera» RENOMBRADA a «Riñon de vaca» sin tocar una cifra: cuadra con ciqual:40402 «Rognon, boeuf, cru» en TRECE CELDAS EXACTAS (prot 17,1 · grasa 2,65 · hierro 7,04 · potasio 236 · sodio 169 · zinc 1,52 · selenio 118 · vitD 1,05 · B12 21,1 · magnesio 16 · calcio 11,2 · fosforo 243 · energia 95,9/92,3), mientras usda:174356 da 99/15,76/3,12 y bedca:1069 da 106,5/16,8/4,32. Renombrar y NO rellenar es la regla: traer los numeros de la otra especie mezclaria dos mediciones en una columna. Es el cuarto caso de esta familia (bazo, pancreas y pulmon «de ternera» se renombraron en agosto y septiembre). El catalogo se queda SIN riñon de ternera, y eso es sembrar una ficha nueva, no un renombre. (2) «Pulmon de vaca» NO habia que renombrarla: SI es de vaca (cuadra con usda:168628 en prot, grasa, hierro 7,95, potasio 340 y vitA 14). Lo que estaba mal era UNA CELDA: su vitamina D 11, que USDA no publica para el pulmon y que es EXACTAMENTE la que bedca:2300 da al pulmon de TERNERA. No era una ficha con nombre equivocado sino una CIFRA en la ficha equivocada, asi que se ha movido: la de vaca pasa esa celda a hueco declarado y «Pulmon de ternera» la recibe de bedca:2300 con `value_type` AR. Esto CIERRA la pregunta que esa ficha llevaba escrita desde el 8 de septiembre. // 13 sep (noche, 3): EL AVISO QUE LEE QUIEN COMPRA. Campo nuevo `aviso_al_comprar`, y nace de una frase de Elena que describe el fallo entero: «a lo mejor la persona que vaya a comprar al supermercado pide cerebro de ternera y dice: no tengo, pero tengo de vaca. Y problema». Sacar la ficha del catalogo NO tapa eso -- LO EMPEORA: antes estaban las dos en la lista y la diferencia se veia, y ahora solo aparece «de ternera» y quien la lea no tiene forma de saber que la otra no vale. La sustitucion pasa en el mostrador, donde el motor no esta, asi que lo unico que puede hacer es DECIRLO donde se lee. Sale por las DOS puertas, que es la forma del BLOQUE 64 con los avisos de patologia: `problemas_seguridad` -- el canal que la app ya pinta en los ocho caminos, asi que no hay que tocar la app -- y `GET /alimentos`, que es la que lee quien elige el alimento A MANO antes de que haya menu. Con solo la primera, ese camino no avisa hasta el final; con solo la segunda, quien deja elegir al motor no lo lee nunca. Lo vigila el BLOQUE 51 con el fallo puesto de cuatro formas, y exige ademas que una ficha con una condicion LEGAL en su `nota_datos` tenga aviso: una condicion que solo vive en una nota tecnica no la lee quien va a la carniceria. // 13 sep (noche, 2): FUERA «CEREBRO DE VACA», Y NO ES NUTRICION SINO LEY. El encefalo bovino de mas de 12 meses es material especificado de riesgo -- Reg. (CE) 999/2001 anexo V en su version CONSOLIDADA (comprobada en EUR-Lex, no en el texto de 2001, que decia SEIS meses): «the skull excluding the mandible and including the brain and eyes, and the spinal cord of animals aged over 12 months» --, o sea material de CATEGORIA 1 (Reg. (CE) 1069/2009 art. 8: «Category 1 material shall comprise […] (i) specified risk material»), y la comida para mascotas sale de categoria 3 (art. 35, que ademas trae su propio apartado para el petfood CRUDO, que es lo que calcula este motor). Una vaca pasa de 12 meses por definicion, asi que su ficha sale; la de TERNERA se queda porque la ternera espanola se sacrifica por debajo del año, con la condicion escrita en su propia ficha. Medido antes: aparecia en 0 de los 216 menus. Estar fuera del automatico (que ya lo estaban las dos desde el 7 y el 8 de septiembre, por el DHA) NO bastaba: lo ilegal tampoco se puede elegir a mano. Los otros tres candidatos se miraron y ninguno esta afectado, cada uno por su motivo: el cuello de ternera porque el umbral de la COLUMNA son 30 meses y ademas la norma excluye las apofisis cervicales; el pecho con hueso porque costillar y esternon no son columna ni medula; y las costillas de cordero porque para ovino la norma cubre solo craneo, encefalo, ojos y medula, NO la columna. Lo vigila el BLOQUE 51 con el fallo puesto de tres formas. // 13 sep (noche): LAS VISCERAS CONTRA SUS FUENTES, que no se habian barrido. SIETE CEROS MUDOS pasan a hueco declarado y los siete AFLOJABAN un tope cronico: la vitamina D del RIÑON DE CORDERO (BEDCA `TR`, USDA sin cifra, CIQUAL `-`: tres fuentes y ninguna la mide; que bebio de BEDCA lo prueba su vitamina E, 0,43, clavada), el YODO del pulmon de vaca, del pulmon de cordero y del bazo de cordero (USDA no publica yodo de NADA, BEDCA no trae esa columna en los pulmones y no tiene bazo), la vitamina E de los dos pulmones, y la vitamina D del HIGADO DE CONEJO, que era una FUGA: 1,2 es exactamente lo que BEDCA da al higado de VACA. Una se cierra con cifra: el timo de ternera, 0,25 de ciqual:40304 «Ris, veau, cru» (ris de veau ES el timo de ternera; BEDCA no tiene timo y USDA 172542 no publica su vitamina D). Tres indices que faltaban, y son la causa de que esto fuera invisible porque el barrido lee `fuentes_id`: higado de vaca bedca:1053 (sus 10250 ug de vitamina A son de BEDCA y no se comparaban con nada que los publique -- USDA da 4968 en la fila que la ficha declaraba, 2,06x, y en un higado el conflicto de convenio NO lo explica porque no hay caroteno), pulmon de cordero bedca:2299 (sus 12 ug de vitamina D no salian de ninguna fila declarada), e higado de conejo ciqual:40110, que CIERRA la pregunta de la unica ficha del catalogo sin ninguna procedencia: sale de ahi, con proteina, grasa y vitamina A (4530) exactas. Campo nuevo `hueco_verificado`, el gemelo de `cero_verificado`: `sin_dato` era una lista pelada y «las tres fuentes miradas, ninguna lo mide» se veia igual que «nadie ha mirado». Lo vigila el BLOQUE 100 con las cinco formas de contradecirse. Y dos fichas con cifras de OTRA ESPECIE que NO se tocan porque renombrar es decision de producto: el riñon de ternera es un riñon de BUEY (identidad exacta de ciqual:40402, y su vitamina D 1,05 es la de esa fila) y el pulmon de vaca lleva la vitamina D del pulmon de TERNERA (bedca:2300 da 11 y 14, las nuestras exactas) -- esto ultimo CIERRA la pregunta que esa ficha llevaba escrita desde el 8 de septiembre. // 13 sep (tarde): LA VITAMINA D, Y EL CERO FALSO QUE SOSTENIA UN VERDE. Nueve celdas que la fuente que MANDA no mide se cierran bajando por la cadena de mandato (la regla de `fuentes_de_composicion.json`), con la fila literal escrita: siete pescados desde CIQUAL -- merluza 2,15 / bacalao 1,41 / lubina 5,59 (USDA da 5,6 por su cuenta) / lenguado 0,75 / pulpo 0,5 / calamar 0,36 / sepia 0 -- y DOS ACEITES desde USDA, que eran los peores: el hueco de vitamina D del aceite de girasol se imputaba a 5 ug (lo que declara el huevo de pato) y el de vitamina A del de cacahuete a 591 ug de retinol (lo que declara la yema), siendo los dos aceites de semilla refinados. BEDCA lo dice ella misma cruzado: `LZ` (cero logico) a la vitamina A del de girasol y `LZ` a la vitamina D del de cacahuete. Y lo que encontro de paso: la ficha `Pescadilla` declaraba 0 ug de vitamina D sin que ninguna fuente lo diga (BEDCA da la celda vacia en sus TRES filas de merluza), y era LO UNICO que sostenia el menu del adulto de 20 kg con ocho especies fuera del BLOQUE 9 -- medido: sale con 0,0 y no sale con 1,0 / 2,15 / 3 / 4 / 5 / 6 / 8. Es aritmetica y no eleccion de cifra: con esas ocho fuera quedan 108 alimentos, casi todos pescado, y 17 pasan ELLOS SOLOS el tope cronico de 20 ug/1000 kcal (la merluza, con 2,15 ug y 65 kcal/100 g, sale a 33). Tres marcas que NO son un numero: el `TR` vacio de BEDCA, el `-` de CIQUAL y el `< X` de CIQUAL, que es limite de deteccion. Tres fichas se quedan en hueco porque ninguna fuente publica su especie: Bacaladilla, Gamba roja y Pescadilla. // 13 sep: EL CATALOGO CONTRA SUS FUENTES DE COMPOSICION, celda a celda, por primera vez. 318 celdas reciben la CIFRA de la fuente que manda (sobre todo acidos grasos de carne, huevo y verdura, que estaban a 0: el muslo de pollo declaraba 0 g de linoleico y USDA da 3,05, y el linoleico es un requisito de FEDIAF con minimo), 418 ceros pasan de MUDOS a declarados en `cero_verificado` con su fila de origen (78 son la fibra de la carne y el pescado, que es un cero de verdad), y 65 ceros que la fuente declara SIN CIFRA (`TR` con la celda vacia en BEDCA) pasan a `sin_dato` -- un hueco no es un cero. Dos errores de dato corregidos: el manganeso de la pechuga de pavo (0,6 -> 0,006 mg, un factor 100 contra FDC 174515, que la propia ficha ya citaba) y el agua del timo de ternera (67,8 -> 79,16, que era la del timo de VACA: cerraba la pregunta que su `humedad_nota` dejaba abierta). Y dos emparejamientos malos: «Perca» apuntaba a BEDCA 831 «Perca, AL HORNO» en una ficha cruda, y «Pato» tenia id de USDA cuando sus cifras son exactas de BEDCA 976. Los aminoacidos y los acidos grasos NO se copian: se transfieren por gramo de proteina y de grasa (regla de UNIDADES.md). Cada celda lleva su procedencia en `composicion_fuente` y se rehace desde `fuentes_instantanea.json`. Lo vigila el BLOQUE 100. // 11 sep (noche): TRES FICHAS DE HUESO CON EL CALCIO Y EL FOSFORO DIEZ VECES POR DEBAJO, corregidas al rehacerlas contra la Tabla 1 de Köber 2017 (`auditar_kober.py`, BLOQUE 98). Cuello de ternera 731->7310 mg de calcio y 338->3380 de fosforo, Pecho de ternera con hueso 427->4270 y 199->1990, Laringe de vacuno 66->660 y 44->440. Sobrevivieron porque la Tabla 1 de Köber mezcla DOS sistemas de unidades y su cabecera declara uno solo, y porque lo que se habia comprobado era el RATIO Ca:P, que un error x10 en los dos numeros no rompe. Medido: "Pecho de ternera con hueso" entraba en 93 de los 216 menus precalculados y 55 de ellos habrian pasado el MAXIMO de calcio de FEDIAF (el peor, 9408 mg/1000 kcal contra un tope de 4500 en cachorro). Catalogo de menus regenerado con los valores buenos.
+        "alimentos_v3_final.json":      "fe4a918873a16e66",   # 15 sep (noche): LAS ETIQUETAS DE LOS SUPLEMENTOS, UNA A UNA. 62 celdas en 12 fichas, y el patron es SIEMPRE el mismo: la etiqueta declara la SAL o el ESTER de la vitamina y el catalogo anoto el numero como si fuera la vitamina. Es la trampa que el repo ya tenia escrita para los minerales (el oxido de zinc de `sacn5_fuentes_de_minerales.json`) y para la que ya existia la tabla auditada contra el PDF: la VII-14 de FEDIAF. Cloruro de colina x0,75 (siete fichas), D-pantotenato calcico x0,92 (siete), clorhidrato de piridoxina x0,82 (tres), mononitrato de tiamina x0,81 (dos) y la vitamina E convertida por ACTIVIDAD a mg de d-alfa-tocoferol, que es la unidad en la que esta escrito el minimo que aplica el motor. TRES fallos de unidad de mil veces en el FOLATO (napfcheck 2->2000 ug y las cinco V-INTEGRA), que es la cifra en miligramos dentro de una celda que va en microgramos. SEIS fichas que declaraban TAURINA o L-CARNITINA en su etiqueta y la tenian como hueco (hasta 4.000 mg/100 g). Y la ENERGIA A CERO en ocho suplementos que publican su proteina y su grasa brutas: el peor es el polvo de sangre, 92 g de proteina y 0 kcal, o sea proteina que no contaba en el DIVISOR de todos los requisitos. Ademas: el yodo del alga, cuyo propio fabricante publica 600 mg/kg en aleman y 790 en ingles (y los distribuidores 339 y 760) -- se toma la mas alta porque el yodo es tope cronico y sobreestimar el contenido hace que el solver meta menos gramos, que es el lado seguro; y sus cuatro minerales pasan a hueco porque salian de una hoja cuya ceniza bruta contradice a la del fabricante. NO se ha tocado el Pets Purest, que lo paso la usuaria con foto de la etiqueta. # 15 sep: LOS AMINOGRAMAS QUE FALTABAN EN LAS VERDURAS, desde USDA -- que es la unica fuente que publica los 12 aminoacidos y por eso es el mandato para ellos. ONCE fichas los reciben (judia verde, pimiento rojo, boniato, champiñon, col lombarda, coliflor, esparrago verde, lechuga, repollo, tomate en pure y datil), y CUATRO se quedan en hueco VERIFICADO (alcachofa, rucula, frambuesa y cardo: USDA tiene su fila pero no trae los doce, y un aminograma se escribe ENTERO o no se escribe -- la leccion de la zanahoria del 13 de septiembre). NO SE COPIAN: se transfieren POR GRAMO DE PROTEINA, con la fila literal escrita en `composicion_fuente` para que se pueda rehacer. POR QUE hacia falta: la proteina de un menu que el motor NO PUEDE ver en aminoacidos llegaba al 11,16 % en una variante del catalogo (512 g de boniato sin aminograma), y el BLOQUE 27 exige que no pase del 5 % -- pero lo medía sobre CUATRO menus generados, no sobre los 216 del catalogo, asi que no lo veia. Tras esto: media 0,66 % y peor 6,04 %. Comprobado ademas que en NINGUNA ficha los doce aminoacidos suman mas que su propia proteina. # ⚠️ 14 sep: LA HUMEDAD DE CADA FICHA. Ningun valor nutricional cambia: se anaden `humedad_g_100g` + `humedad_fuente` a 79 fichas (las otras 65 ya la tenian) y `humedad_hueco` a 18, que son suplementos en polvo sin fila en ninguna base y cuya etiqueta no la declara. POR QUE hacia falta: el catalogo va en gramos de alimento tal cual se da y casi toda fuente que no sea FEDIAF publica en % de MATERIA SECA, y sin humedad no hay materia seca -- asi que el supuesto que sostiene 135 limites del motor («These conversions assume an energy density of 16.7 kJ (4.0 kcal) ME/g DM», FEDIAF §3.2.1) NO SE PODIA NI COMPROBAR. Ahora se puede, y sale que no: una racion de este motor va a 5,20 kcal/g de materia seca (4,05-6,18 en los 216 menus), o sea que esas 135 cifras van un ~23 % flojas -- entre ellas los 13 maximos de FEDIAF que solo se publican en base materia seca, SIETE de ellos legales de la UE. NO SE APLICA NADA TODAVIA: esta medido lo que costaria (8 de 8 perros de referencia siguen con menu) y la decision es la P-38 de PREGUNTAS_ABIERTAS.md. De donde sale cada humedad: 63 de la cadena de mandato con el `fuentes_id` que la ficha ya declaraba (y se rehacen sin red contra `fuentes_instantanea.json`), 10 de la columna «DM [%]» de la Tabla 1 de Köber -- la MISMA fila de la que ya sale su calcio, lo que amplia el mandato 2 y la ampliacion va escrita en `fuentes_de_composicion.json` --, 5 aceites por cota de composicion (99,5 g de grasa por 100 g dejan medio gramo para todo lo demas, agua incluida) y 1 por el proxy ya declarado del corazon de conejo. Lo vigila el BLOQUE 111 con el fallo puesto de seis formas. || 13 sep (noche, 4): LOS DOS CASOS DE ESPECIE, ARREGLADOS CON LAS FUENTES, y los dos resultaron ser problemas DISTINTOS de lo que parecian. (1) «Riñon de ternera» RENOMBRADA a «Riñon de vaca» sin tocar una cifra: cuadra con ciqual:40402 «Rognon, boeuf, cru» en TRECE CELDAS EXACTAS (prot 17,1 · grasa 2,65 · hierro 7,04 · potasio 236 · sodio 169 · zinc 1,52 · selenio 118 · vitD 1,05 · B12 21,1 · magnesio 16 · calcio 11,2 · fosforo 243 · energia 95,9/92,3), mientras usda:174356 da 99/15,76/3,12 y bedca:1069 da 106,5/16,8/4,32. Renombrar y NO rellenar es la regla: traer los numeros de la otra especie mezclaria dos mediciones en una columna. Es el cuarto caso de esta familia (bazo, pancreas y pulmon «de ternera» se renombraron en agosto y septiembre). El catalogo se queda SIN riñon de ternera, y eso es sembrar una ficha nueva, no un renombre. (2) «Pulmon de vaca» NO habia que renombrarla: SI es de vaca (cuadra con usda:168628 en prot, grasa, hierro 7,95, potasio 340 y vitA 14). Lo que estaba mal era UNA CELDA: su vitamina D 11, que USDA no publica para el pulmon y que es EXACTAMENTE la que bedca:2300 da al pulmon de TERNERA. No era una ficha con nombre equivocado sino una CIFRA en la ficha equivocada, asi que se ha movido: la de vaca pasa esa celda a hueco declarado y «Pulmon de ternera» la recibe de bedca:2300 con `value_type` AR. Esto CIERRA la pregunta que esa ficha llevaba escrita desde el 8 de septiembre. // 13 sep (noche, 3): EL AVISO QUE LEE QUIEN COMPRA. Campo nuevo `aviso_al_comprar`, y nace de una frase de Elena que describe el fallo entero: «a lo mejor la persona que vaya a comprar al supermercado pide cerebro de ternera y dice: no tengo, pero tengo de vaca. Y problema». Sacar la ficha del catalogo NO tapa eso -- LO EMPEORA: antes estaban las dos en la lista y la diferencia se veia, y ahora solo aparece «de ternera» y quien la lea no tiene forma de saber que la otra no vale. La sustitucion pasa en el mostrador, donde el motor no esta, asi que lo unico que puede hacer es DECIRLO donde se lee. Sale por las DOS puertas, que es la forma del BLOQUE 64 con los avisos de patologia: `problemas_seguridad` -- el canal que la app ya pinta en los ocho caminos, asi que no hay que tocar la app -- y `GET /alimentos`, que es la que lee quien elige el alimento A MANO antes de que haya menu. Con solo la primera, ese camino no avisa hasta el final; con solo la segunda, quien deja elegir al motor no lo lee nunca. Lo vigila el BLOQUE 51 con el fallo puesto de cuatro formas, y exige ademas que una ficha con una condicion LEGAL en su `nota_datos` tenga aviso: una condicion que solo vive en una nota tecnica no la lee quien va a la carniceria. // 13 sep (noche, 2): FUERA «CEREBRO DE VACA», Y NO ES NUTRICION SINO LEY. El encefalo bovino de mas de 12 meses es material especificado de riesgo -- Reg. (CE) 999/2001 anexo V en su version CONSOLIDADA (comprobada en EUR-Lex, no en el texto de 2001, que decia SEIS meses): «the skull excluding the mandible and including the brain and eyes, and the spinal cord of animals aged over 12 months» --, o sea material de CATEGORIA 1 (Reg. (CE) 1069/2009 art. 8: «Category 1 material shall comprise […] (i) specified risk material»), y la comida para mascotas sale de categoria 3 (art. 35, que ademas trae su propio apartado para el petfood CRUDO, que es lo que calcula este motor). Una vaca pasa de 12 meses por definicion, asi que su ficha sale; la de TERNERA se queda porque la ternera espanola se sacrifica por debajo del año, con la condicion escrita en su propia ficha. Medido antes: aparecia en 0 de los 216 menus. Estar fuera del automatico (que ya lo estaban las dos desde el 7 y el 8 de septiembre, por el DHA) NO bastaba: lo ilegal tampoco se puede elegir a mano. Los otros tres candidatos se miraron y ninguno esta afectado, cada uno por su motivo: el cuello de ternera porque el umbral de la COLUMNA son 30 meses y ademas la norma excluye las apofisis cervicales; el pecho con hueso porque costillar y esternon no son columna ni medula; y las costillas de cordero porque para ovino la norma cubre solo craneo, encefalo, ojos y medula, NO la columna. Lo vigila el BLOQUE 51 con el fallo puesto de tres formas. // 13 sep (noche): LAS VISCERAS CONTRA SUS FUENTES, que no se habian barrido. SIETE CEROS MUDOS pasan a hueco declarado y los siete AFLOJABAN un tope cronico: la vitamina D del RIÑON DE CORDERO (BEDCA `TR`, USDA sin cifra, CIQUAL `-`: tres fuentes y ninguna la mide; que bebio de BEDCA lo prueba su vitamina E, 0,43, clavada), el YODO del pulmon de vaca, del pulmon de cordero y del bazo de cordero (USDA no publica yodo de NADA, BEDCA no trae esa columna en los pulmones y no tiene bazo), la vitamina E de los dos pulmones, y la vitamina D del HIGADO DE CONEJO, que era una FUGA: 1,2 es exactamente lo que BEDCA da al higado de VACA. Una se cierra con cifra: el timo de ternera, 0,25 de ciqual:40304 «Ris, veau, cru» (ris de veau ES el timo de ternera; BEDCA no tiene timo y USDA 172542 no publica su vitamina D). Tres indices que faltaban, y son la causa de que esto fuera invisible porque el barrido lee `fuentes_id`: higado de vaca bedca:1053 (sus 10250 ug de vitamina A son de BEDCA y no se comparaban con nada que los publique -- USDA da 4968 en la fila que la ficha declaraba, 2,06x, y en un higado el conflicto de convenio NO lo explica porque no hay caroteno), pulmon de cordero bedca:2299 (sus 12 ug de vitamina D no salian de ninguna fila declarada), e higado de conejo ciqual:40110, que CIERRA la pregunta de la unica ficha del catalogo sin ninguna procedencia: sale de ahi, con proteina, grasa y vitamina A (4530) exactas. Campo nuevo `hueco_verificado`, el gemelo de `cero_verificado`: `sin_dato` era una lista pelada y «las tres fuentes miradas, ninguna lo mide» se veia igual que «nadie ha mirado». Lo vigila el BLOQUE 100 con las cinco formas de contradecirse. Y dos fichas con cifras de OTRA ESPECIE que NO se tocan porque renombrar es decision de producto: el riñon de ternera es un riñon de BUEY (identidad exacta de ciqual:40402, y su vitamina D 1,05 es la de esa fila) y el pulmon de vaca lleva la vitamina D del pulmon de TERNERA (bedca:2300 da 11 y 14, las nuestras exactas) -- esto ultimo CIERRA la pregunta que esa ficha llevaba escrita desde el 8 de septiembre. // 13 sep (tarde): LA VITAMINA D, Y EL CERO FALSO QUE SOSTENIA UN VERDE. Nueve celdas que la fuente que MANDA no mide se cierran bajando por la cadena de mandato (la regla de `fuentes_de_composicion.json`), con la fila literal escrita: siete pescados desde CIQUAL -- merluza 2,15 / bacalao 1,41 / lubina 5,59 (USDA da 5,6 por su cuenta) / lenguado 0,75 / pulpo 0,5 / calamar 0,36 / sepia 0 -- y DOS ACEITES desde USDA, que eran los peores: el hueco de vitamina D del aceite de girasol se imputaba a 5 ug (lo que declara el huevo de pato) y el de vitamina A del de cacahuete a 591 ug de retinol (lo que declara la yema), siendo los dos aceites de semilla refinados. BEDCA lo dice ella misma cruzado: `LZ` (cero logico) a la vitamina A del de girasol y `LZ` a la vitamina D del de cacahuete. Y lo que encontro de paso: la ficha `Pescadilla` declaraba 0 ug de vitamina D sin que ninguna fuente lo diga (BEDCA da la celda vacia en sus TRES filas de merluza), y era LO UNICO que sostenia el menu del adulto de 20 kg con ocho especies fuera del BLOQUE 9 -- medido: sale con 0,0 y no sale con 1,0 / 2,15 / 3 / 4 / 5 / 6 / 8. Es aritmetica y no eleccion de cifra: con esas ocho fuera quedan 108 alimentos, casi todos pescado, y 17 pasan ELLOS SOLOS el tope cronico de 20 ug/1000 kcal (la merluza, con 2,15 ug y 65 kcal/100 g, sale a 33). Tres marcas que NO son un numero: el `TR` vacio de BEDCA, el `-` de CIQUAL y el `< X` de CIQUAL, que es limite de deteccion. Tres fichas se quedan en hueco porque ninguna fuente publica su especie: Bacaladilla, Gamba roja y Pescadilla. // 13 sep: EL CATALOGO CONTRA SUS FUENTES DE COMPOSICION, celda a celda, por primera vez. 318 celdas reciben la CIFRA de la fuente que manda (sobre todo acidos grasos de carne, huevo y verdura, que estaban a 0: el muslo de pollo declaraba 0 g de linoleico y USDA da 3,05, y el linoleico es un requisito de FEDIAF con minimo), 418 ceros pasan de MUDOS a declarados en `cero_verificado` con su fila de origen (78 son la fibra de la carne y el pescado, que es un cero de verdad), y 65 ceros que la fuente declara SIN CIFRA (`TR` con la celda vacia en BEDCA) pasan a `sin_dato` -- un hueco no es un cero. Dos errores de dato corregidos: el manganeso de la pechuga de pavo (0,6 -> 0,006 mg, un factor 100 contra FDC 174515, que la propia ficha ya citaba) y el agua del timo de ternera (67,8 -> 79,16, que era la del timo de VACA: cerraba la pregunta que su `humedad_nota` dejaba abierta). Y dos emparejamientos malos: «Perca» apuntaba a BEDCA 831 «Perca, AL HORNO» en una ficha cruda, y «Pato» tenia id de USDA cuando sus cifras son exactas de BEDCA 976. Los aminoacidos y los acidos grasos NO se copian: se transfieren por gramo de proteina y de grasa (regla de UNIDADES.md). Cada celda lleva su procedencia en `composicion_fuente` y se rehace desde `fuentes_instantanea.json`. Lo vigila el BLOQUE 100. // 11 sep (noche): TRES FICHAS DE HUESO CON EL CALCIO Y EL FOSFORO DIEZ VECES POR DEBAJO, corregidas al rehacerlas contra la Tabla 1 de Köber 2017 (`auditar_kober.py`, BLOQUE 98). Cuello de ternera 731->7310 mg de calcio y 338->3380 de fosforo, Pecho de ternera con hueso 427->4270 y 199->1990, Laringe de vacuno 66->660 y 44->440. Sobrevivieron porque la Tabla 1 de Köber mezcla DOS sistemas de unidades y su cabecera declara uno solo, y porque lo que se habia comprobado era el RATIO Ca:P, que un error x10 en los dos numeros no rompe. Medido: "Pecho de ternera con hueso" entraba en 93 de los 216 menus precalculados y 55 de ellos habrian pasado el MAXIMO de calcio de FEDIAF (el peor, 9408 mg/1000 kcal contra un tope de 4500 en cachorro). Catalogo de menus regenerado con los valores buenos.
         # 6 sep: nota_datos de los 4 alimentos excluidos por tejido tiroideo (Cuello de pavo/pato/ternera, Laringe de vacuno) documenta el bloqueo -- ver seguridad.TIROIDES_EXCLUIR.
         # 28 ago (2): EL HIGADO Y EL CORAZON DE PAVO, resembrados desde el pollo del USDA -- su aminograma venia del pavo del USDA, que tiene la isoleucina y la valina un 40% bajas (Leu/Ile 2,52 contra 1,47-1,98 del resto). Reescalados a NUESTRA proteina. Las otras cinco fichas de pavo NO se cargan: traian histidina = isoleucina = valina exactos, y eso es una copia, no una medida. Ver el BLOQUE 27. // 28 ago: PURINAS DE CUATRO VISCERAS con cifra publicada (timo 525, bazo de cordero 322, bazo de vaca 185, pulmon de ternera 117). NO se uso la banda generica 84-243 que se habia propuesto: para el timo habria declarado ~160 cuando la cifra son 525, un factor de 3 a 4 POR ABAJO, y es el alimento solido con mas purinas de las tablas. Pancreas, testiculos y pulmon de cordero se quedan como hueco: no hay dato. Ver el BLOQUE 33
         # 7 sep (2): nueva fila "Fibra", con los seis campos (minAdulto..maxCachorroCrecimiento) a "-" -- FEDIAF no da minimo ni maximo de fibra en la Tabla III-3b, asi que esta fila NO es un requisito nuevo: no exige ni limita nada a un perro sano. Existe para que verificar.MAPA pueda leer la clave "fibra" y topes_de_patologias() pueda ponerle un suelo por patologia con fuente real (primer uso: hiperlipidemia, SACN5 cap.28). auditar_fediaf.py la lista en NO_SON_NUTRIENTES_DE_LA_TABLA y ademas comprueba que nunca lleve un numero, para que no repita el fallo del 25 de agosto (fila "Fibra" con minimo/maximo inventados que el analizador exigia). Ver PENDIENTE_NUTRICION.md.
@@ -6000,7 +7243,7 @@ def verificar(origin: Optional[str] = Header(default=None)):
     import hashlib, os, json
     SELLOS = SELLOS_DE_LOS_DATOS
     SELLOS_CRUDOS = {
-        "der.py": "f716be6ed6b14312",   # ⚠️ 13 sep: EL BCS DE UN CACHORRO YA MUEVE LA RACION, y hasta hoy no movia NADA -- la correccion por peso ideal esta detras de un `if not en_crecimiento`, asi que el mismo cachorro de 20 kg a los 7 meses recibia 1439 kcal en BCS 3, en 5 y en 7, cuando de adulto ese mismo BCS va de 578 a 1431. Y la fuente dice lo contrario de lo que haciamos: SACN5 cap.17 llama al BCS «the most practical indicator of whether or not a puppy's growth rate is healthy», y su Tabla 17-5 da la cifra -- «monitored regularly (at least every two weeks) and the amount fed should be increased or decreased by 10%, depending on body condition score» --, repetida en el cap.27 para mantenimiento. Se aplica ±10 % fuera de la banda ideal 4-5 de FEDIAF y 1,0 dentro; sin BCS no se toca nada. Es un ESCALON y no la cuenta del adulto porque a un adulto se le corrige dividiendo por el exceso para llegar a un peso objetivo y un cachorro no tiene diana quieta -- su ideal de hoy depende de lo que vaya a pesar de adulto, que es justo lo que se esta estimando. Por eso BCS 6 y BCS 9 reciben el mismo -10 %: lo que cierra la diferencia es repetirlo cada dos semanas, y eso es lo que hace posible el historial de pesadas. | 13 sep (2): UN SUELO PASADOS LOS 12 MESES, que es el unico tramo donde el peso adulto vuelve a salir de la tabla de razas y donde el 75 % de las razas (202 de 270) sigue creciendo. No es un numero nuevo: es la propia Tabla VII-8a en la ultima edad en que ella dice que vale -- a los 12 meses da 82,4 % en la banda de los gigantes y 90-100 % en las demas, y la curva solo sube. Las dos fuentes coinciden ahi: SACN5 Tabla 17-2 da 125-140 kcal/kg^0,75 para «>=80% of adult BW» y Klein entre el 85 y el 95 % da 139,3 y 125,8. Medido sobre las 270 razas en ese tramo: mueve 209 de 496 casos, mediana -3,0 %, peor -5,6 %, TODOS hacia abajo; y a un perro de 45 kg a los 14 meses al que el respaldo le supone 76 de adulto se le daba un +39 % de kcal, que se queda en +13 %. | 13 sep (3): LA CURVA YA NO PISA EL PESO ADULTO QUE LE PASEN. Aqui se recalculaba SIEMPRE que hubiera edad y en `src/der.js` era al reves, con una prueba que lo afirmaba; los dos eran coherentes consigo mismos y ningun caso del contrato lo ejercia, porque hacia falta peso adulto Y edad a la vez. Medido: 30 kg a los 10 meses con 60 de adulto daba 1814 aqui y 2391 alli, un 32 %. Gana la app porque en produccion no cambia nada -- `pesoAdultoEsperado` YA es el resultado de esta curva -- y a `der.py` solo se llega por `/der`. | 12 sep (noche): EL PESO ADULTO DE UN CACHORRO YA NO SE RECORTA AL RANGO DE SU RAZA. Lo decide su propia trayectoria con la Tabla VII-8a, que es lo que hacen las curvas de WALTHAM (el estandar de raza les sirve solo para ELEGIR LA BANDA) y MyVetDiet (llama a su tabla de 180 razas "pesos indicativos"). Medido sobre las 270 razas a 4, 6 y 9 meses: movia 47 de 1620 casos, mediana 3,0 % de kcal y 6,9 % el peor, y casi siempre hacia ARRIBA en cachorros que apuntan por debajo del minimo de su raza -- al Mastin Español de 9 meses le anadia 152 kcal/dia, y es raza gigante, donde FEDIAF avisa de deformidades esqueleticas por sobrealimentar. Los dos parametros se van con el recorte, aqui y en el cuerpo de POST /der: uno que se acepta y no hace nada es peor. Lo vigila el apartado 9 del BLOQUE 96. | 12 sep (madrugada): LA BANDA IDEAL DEL BCS ES 4-5 (§7.1.3 y §7.2.4.1 de FEDIAF, las dos sobre Kealy 2002) -- a un perro en BCS 4 se le subia el peso objetivo un 11 %, y por debajo el destino pasa a ser el BCS 4 y no el 5. Y la banda de la Tabla VII-8a se elige ahora SIN ITERAR: es una funcion a trozos y el bucle tenia dos puntos fijos (52,6 y 46,6 kg para el mismo cachorro), asi que este repo y la app discrepaban en 209 kcal/dia. Se recorren las cinco bandas y se coge la primera autoconsistente: determinista y la mas pequena, que es menos kcal. Y se borra la tabla WALTHAM, que no tenia fuente y hacia que fuera del rango de FEDIAF los dos repos dieran cosas distintas. | 11 sep (noche): LA CURVA DE CRECIMIENTO PASA A SER LA ECUACION DE FEDIAF. La Tabla VII-8a publica cinco ecuaciones por banda de peso adulto, validas de las 8 semanas al ano, y aqui habia una tabla cuyo propio comentario decia que venia de "reproducciones divulgativas" de las curvas WALTHAM y NO del texto del estudio. Medido: en el cachorro de mas de 47,5 kg de adulto iba 12 puntos por debajo a los 6 meses (45,0 % contra 57,0 %), y eso son ~9 % de kcal DE MAS (2479 contra 2269 en uno de 30 kg) justo donde FEDIAF avisa de deformidades esqueleticas por sobrealimentar. Ningun caso de `der_casos.json` la ejercia, asi que el contrato no se mueve. La tabla WALTHAM se queda de respaldo para lo que FEDIAF no cubre (<8 semanas y >1 ano). Lo vigila el BLOQUE 96, incluido el emparejamiento banda<->ecuacion. | 10 sep: la Tabla 5-3 de SACN5 da LA CIFRA del frio que FEDIAF deja como rango de 1 a 9 -- pelo corto +95 %, pelo largo +59,5 %, Labrador +25 %, Gran Danes +22 %, cada una con su salto de temperatura. El comentario decia que no hay cifra y era falso: lo era de FEDIAF, no del conjunto de las fuentes. Lo que falta sigue siendo la PREGUNTA en la ficha, que es producto. | 9 sep (3): la §7.2.3.5 de FEDIAF, leida entera, escrita en der.py -- las tres cosas que anade a la Tabla VII-7 y por que no se aplica ninguna: el frio (10-90 % mas de calorias durmiendo fuera en invierno; hueco real, falta la pregunta en la ficha), el suelo de 70 kcal/kg^0,75 de la literatura contra nuestros 95 de la recomendacion, y la termogenesis de la comida (~10 %, sube con proteina y con mas tomas, sin cifra para ninguna de las dos). | 9 sep (2): el escalon de edad pasa a ser el de la Tabla VII-6 de FEDIAF -- 130 (1-2 anos) / 110 (3-7) / 95 (>7), o sea +20 el joven y -15 el senior contra el +15/-7 de Thes 2014 que habia; nuestro -7 era un -6,4 % cuando FEDIAF dice -13,6 % y SACN5 cap.5 dice 10-20 %. Y el grupo "joven" era CODIGO MUERTO: existia en AJUSTE_EDAD y no se pasaba nunca, ni aqui ni en el front, asi que un perro de ano y medio recibia lo mismo que uno de cinco. | 9 sep: la cifra de raza de la Tabla VII-7 va EN VEZ del nivel de actividad, y lo dice la propia guia (la frase que presenta la tabla, y la seccion 7.2.3.4: la diferencia de raza YA CONTIENE la de actividad). Cierra PREGUNTAS_ABIERTAS.md P-11; lo separa de las lecturas «suelo» y «sumar» el BLOQUE 54 apartado 2-bis. | 8 sep: el DER verificado contra FEDIAF 2025 (Tablas VII-7 y VII-8b) y cerrado -- ver DECISIONES.md D-11. Cambian TRES cosas: se quita el tope de x6 RER en lactancia (no es de FEDIAF y recortaba hasta un 33 %), se adoptan las dos razas con cifra propia de FEDIAF (Gran Danes 200, Terranova 105; un Gran Danes recibia el 55 % de lo que le toca), y el respaldo de crecimiento pasa a la regla de SACN5 por edad (3 x RER hasta los 4 meses, 2 x RER despues) -- de sus tres escalones viejos, DOS eran codigo muerto. Lo vigila el BLOQUE 54.
+        "der.py": "da53bd4b5e34fd76",   # 15 sep: SOLO COMENTARIOS, ni un numero ni una linea de codigo. `PREGUNTAS_ABIERTAS.md` tenia DOS preguntas con el numero 38 y DOS con el 11 -- el mismo fallo que los dos BLOQUE 98 del 13 de septiembre: un numero es la unica forma que tiene el repo de decir de que se habla, y dos con el mismo numero es una referencia rota que no da ningun error. Renumeradas a P-40 (el historial de pesadas) y P-41 (el suelo de fosforo del oxalato), y este fichero las citaba a las dos. Se renumeraron esas y no sus gemelas por el mismo criterio que se uso con los bloques: la que menos referencias tiene fuera. # ⚠️ 13 sep: EL BCS DE UN CACHORRO YA MUEVE LA RACION, y hasta hoy no movia NADA -- la correccion por peso ideal esta detras de un `if not en_crecimiento`, asi que el mismo cachorro de 20 kg a los 7 meses recibia 1439 kcal en BCS 3, en 5 y en 7, cuando de adulto ese mismo BCS va de 578 a 1431. Y la fuente dice lo contrario de lo que haciamos: SACN5 cap.17 llama al BCS «the most practical indicator of whether or not a puppy's growth rate is healthy», y su Tabla 17-5 da la cifra -- «monitored regularly (at least every two weeks) and the amount fed should be increased or decreased by 10%, depending on body condition score» --, repetida en el cap.27 para mantenimiento. Se aplica ±10 % fuera de la banda ideal 4-5 de FEDIAF y 1,0 dentro; sin BCS no se toca nada. Es un ESCALON y no la cuenta del adulto porque a un adulto se le corrige dividiendo por el exceso para llegar a un peso objetivo y un cachorro no tiene diana quieta -- su ideal de hoy depende de lo que vaya a pesar de adulto, que es justo lo que se esta estimando. Por eso BCS 6 y BCS 9 reciben el mismo -10 %: lo que cierra la diferencia es repetirlo cada dos semanas, y eso es lo que hace posible el historial de pesadas. | 13 sep (2): UN SUELO PASADOS LOS 12 MESES, que es el unico tramo donde el peso adulto vuelve a salir de la tabla de razas y donde el 75 % de las razas (202 de 270) sigue creciendo. No es un numero nuevo: es la propia Tabla VII-8a en la ultima edad en que ella dice que vale -- a los 12 meses da 82,4 % en la banda de los gigantes y 90-100 % en las demas, y la curva solo sube. Las dos fuentes coinciden ahi: SACN5 Tabla 17-2 da 125-140 kcal/kg^0,75 para «>=80% of adult BW» y Klein entre el 85 y el 95 % da 139,3 y 125,8. Medido sobre las 270 razas en ese tramo: mueve 209 de 496 casos, mediana -3,0 %, peor -5,6 %, TODOS hacia abajo; y a un perro de 45 kg a los 14 meses al que el respaldo le supone 76 de adulto se le daba un +39 % de kcal, que se queda en +13 %. | 13 sep (3): LA CURVA YA NO PISA EL PESO ADULTO QUE LE PASEN. Aqui se recalculaba SIEMPRE que hubiera edad y en `src/der.js` era al reves, con una prueba que lo afirmaba; los dos eran coherentes consigo mismos y ningun caso del contrato lo ejercia, porque hacia falta peso adulto Y edad a la vez. Medido: 30 kg a los 10 meses con 60 de adulto daba 1814 aqui y 2391 alli, un 32 %. Gana la app porque en produccion no cambia nada -- `pesoAdultoEsperado` YA es el resultado de esta curva -- y a `der.py` solo se llega por `/der`. | 12 sep (noche): EL PESO ADULTO DE UN CACHORRO YA NO SE RECORTA AL RANGO DE SU RAZA. Lo decide su propia trayectoria con la Tabla VII-8a, que es lo que hacen las curvas de WALTHAM (el estandar de raza les sirve solo para ELEGIR LA BANDA) y MyVetDiet (llama a su tabla de 180 razas "pesos indicativos"). Medido sobre las 270 razas a 4, 6 y 9 meses: movia 47 de 1620 casos, mediana 3,0 % de kcal y 6,9 % el peor, y casi siempre hacia ARRIBA en cachorros que apuntan por debajo del minimo de su raza -- al Mastin Español de 9 meses le anadia 152 kcal/dia, y es raza gigante, donde FEDIAF avisa de deformidades esqueleticas por sobrealimentar. Los dos parametros se van con el recorte, aqui y en el cuerpo de POST /der: uno que se acepta y no hace nada es peor. Lo vigila el apartado 9 del BLOQUE 96. | 12 sep (madrugada): LA BANDA IDEAL DEL BCS ES 4-5 (§7.1.3 y §7.2.4.1 de FEDIAF, las dos sobre Kealy 2002) -- a un perro en BCS 4 se le subia el peso objetivo un 11 %, y por debajo el destino pasa a ser el BCS 4 y no el 5. Y la banda de la Tabla VII-8a se elige ahora SIN ITERAR: es una funcion a trozos y el bucle tenia dos puntos fijos (52,6 y 46,6 kg para el mismo cachorro), asi que este repo y la app discrepaban en 209 kcal/dia. Se recorren las cinco bandas y se coge la primera autoconsistente: determinista y la mas pequena, que es menos kcal. Y se borra la tabla WALTHAM, que no tenia fuente y hacia que fuera del rango de FEDIAF los dos repos dieran cosas distintas. | 11 sep (noche): LA CURVA DE CRECIMIENTO PASA A SER LA ECUACION DE FEDIAF. La Tabla VII-8a publica cinco ecuaciones por banda de peso adulto, validas de las 8 semanas al ano, y aqui habia una tabla cuyo propio comentario decia que venia de "reproducciones divulgativas" de las curvas WALTHAM y NO del texto del estudio. Medido: en el cachorro de mas de 47,5 kg de adulto iba 12 puntos por debajo a los 6 meses (45,0 % contra 57,0 %), y eso son ~9 % de kcal DE MAS (2479 contra 2269 en uno de 30 kg) justo donde FEDIAF avisa de deformidades esqueleticas por sobrealimentar. Ningun caso de `der_casos.json` la ejercia, asi que el contrato no se mueve. La tabla WALTHAM se queda de respaldo para lo que FEDIAF no cubre (<8 semanas y >1 ano). Lo vigila el BLOQUE 96, incluido el emparejamiento banda<->ecuacion. | 10 sep: la Tabla 5-3 de SACN5 da LA CIFRA del frio que FEDIAF deja como rango de 1 a 9 -- pelo corto +95 %, pelo largo +59,5 %, Labrador +25 %, Gran Danes +22 %, cada una con su salto de temperatura. El comentario decia que no hay cifra y era falso: lo era de FEDIAF, no del conjunto de las fuentes. Lo que falta sigue siendo la PREGUNTA en la ficha, que es producto. | 9 sep (3): la §7.2.3.5 de FEDIAF, leida entera, escrita en der.py -- las tres cosas que anade a la Tabla VII-7 y por que no se aplica ninguna: el frio (10-90 % mas de calorias durmiendo fuera en invierno; hueco real, falta la pregunta en la ficha), el suelo de 70 kcal/kg^0,75 de la literatura contra nuestros 95 de la recomendacion, y la termogenesis de la comida (~10 %, sube con proteina y con mas tomas, sin cifra para ninguna de las dos). | 9 sep (2): el escalon de edad pasa a ser el de la Tabla VII-6 de FEDIAF -- 130 (1-2 anos) / 110 (3-7) / 95 (>7), o sea +20 el joven y -15 el senior contra el +15/-7 de Thes 2014 que habia; nuestro -7 era un -6,4 % cuando FEDIAF dice -13,6 % y SACN5 cap.5 dice 10-20 %. Y el grupo "joven" era CODIGO MUERTO: existia en AJUSTE_EDAD y no se pasaba nunca, ni aqui ni en el front, asi que un perro de ano y medio recibia lo mismo que uno de cinco. | 9 sep: la cifra de raza de la Tabla VII-7 va EN VEZ del nivel de actividad, y lo dice la propia guia (la frase que presenta la tabla, y la seccion 7.2.3.4: la diferencia de raza YA CONTIENE la de actividad). Cierra PREGUNTAS_ABIERTAS.md P-11; lo separa de las lecturas «suelo» y «sumar» el BLOQUE 54 apartado 2-bis. | 8 sep: el DER verificado contra FEDIAF 2025 (Tablas VII-7 y VII-8b) y cerrado -- ver DECISIONES.md D-11. Cambian TRES cosas: se quita el tope de x6 RER en lactancia (no es de FEDIAF y recortaba hasta un 33 %), se adoptan las dos razas con cifra propia de FEDIAF (Gran Danes 200, Terranova 105; un Gran Danes recibia el 55 % de lo que le toca), y el respaldo de crecimiento pasa a la regla de SACN5 por edad (3 x RER hasta los 4 meses, 2 x RER despues) -- de sus tres escalones viejos, DOS eran codigo muerto. Lo vigila el BLOQUE 54.
         # 6 sep: 3 correcciones de cita en comentarios (VII-7 no VII-6, Thes 2015 no 2014, y el escalon 210/175/140 no es tabla de FEDIAF) -- ningun numero ni comportamiento cambia.
         # ⚠️ 9 sep: SELLO MOVIDO, y solo cambia UN numero. El BCS 9 pasa de un
         # exceso del 40 % a uno del 45 %, porque la Tabla VII-2 del Anexo 7.1 de
@@ -6259,7 +7502,7 @@ class PeticionFormular(_ConPremios):
 
 
 def _estado_de_la_racion(datos):
-    """La foto completa de unos gramos: los 43 requisitos, el ratio, los
+    """La foto completa de unos gramos: todos los requisitos, el ratio, los
     topes de seguridad crónica y los de patología, y las kcal de verdad.
 
     Es lo que `_garantizar_verificado` mira antes de dejar salir un menú,
@@ -6696,7 +7939,7 @@ def _objetivos_dentro_de_fediaf(objetivos, req, etapa, der_efectiva=None):
         nombre_req = por_clave.get(clave)
         if not nombre_req:
             ajustes.append({"nutriente": clave, "que_ha_pasado": "no_es_un_requisito",
-                            "explicacion": f"«{clave}» no es ninguno de los 43 requisitos que "
+                            "explicacion": f"«{clave}» no es ninguno de los requisitos que "
                                            f"verifica el motor, asi que no se puede fijar."})
             continue
         # `req` viene indexado por el NOMBRE del requisito, no como lista.
@@ -6807,7 +8050,8 @@ def formular_autocompletar(datos: PeticionFormular):
         _escalones_f = [(_peldano_por_clave(datos.peldano, _hay_comida_f) + (datos.peldano,))]
     else:
         _escalones_f = [(m, sup, k or PELDANO_ESTRICTO)
-                        for m, sup, k in _escalera_de_relajacion(_hay_comida_f)]
+                        for m, sup, k in _escalera_de_relajacion(
+                            _hay_comida_f, datos.patologias, datos.etapa_requisitos)]
 
     # Los objetivos del profesional, recortados contra FEDIAF ANTES de
     # formular. Lo que se recorte se dice en la respuesta.
@@ -6848,7 +8092,15 @@ def formular_autocompletar(datos: PeticionFormular):
             excluidos=excluidos or None,
             margenes_categoria=_margenes_f, max_suplementos=_supl_f, time_limit=20.0,
             forzar=list(fijos) or None,
-            gramos_fijos=fijos or None,
+            # ⚠️ LOS DOS A LA VEZ, Y MANDA EL PROFESIONAL (16 de septiembre de
+            # 2026). Aquí hay dos fuentes de gramos fijos: los que escribe quien
+            # formula (`fijos`) y los premios que el dueño declara. Se juntan en
+            # un solo diccionario, y si el mismo alimento sale en los dos gana
+            # el del profesional -- es quien firma la pauta y tiene el dato
+            # delante. Pasarlos como dos argumentos era un `keyword argument
+            # repeated` y no arrancaba ni el módulo; lo cazó `compile()`, que es
+            # lo que hay que usar y no `ast.parse()`, que esto no lo ve.
+            gramos_fijos={**_premios_en_el_plato(datos, al), **(fijos or {})} or None,
             patologias=datos.patologias,
             peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
             peso_objetivo_kg=_peso_de_referencia(datos)[0],
@@ -8251,7 +9503,7 @@ def endpoint_vocabulario():
         # cosa. Por eso la unidad sale de `requerimientos_v2_final.json`, que
         # es el fichero que la audita, y no de una tabla escrita aquí.
         "objetivos_del_profesional": {
-            "de_donde": ("`verificar.MAPA` (los 43 requisitos que el motor comprueba) y la "
+            "de_donde": ("`verificar.MAPA` (los requisitos que el motor comprueba) y la "
                          "columna `unidad` de `requerimientos_v2_final.json`"),
             "que_es": ("Los nutrientes a los que un profesional puede ponerle un mínimo o un "
                        "máximo propio en `POST /formular/*`. Van SIEMPRE por 1000 kcal y en la "
@@ -8516,7 +9768,7 @@ def endpoint_vocabulario():
         },
         "categorias_del_catalogo": {
             "ojo": ("Las que NO estan en la lista de arriba (Suplementos y Extras) van siempre "
-                    "libres: son la herramienta con la que el motor cierra los 43 requisitos."),
+                    "libres: son la herramienta con la que el motor cierra todos los requisitos."),
             "categorias": sorted({a.get("categoria") for a in al_v.values() if a.get("categoria")}),
             # ⚠️ Y AGRUPADAS, QUE ES LO QUE FALTABA (12 de septiembre).
             #

@@ -2,6 +2,243 @@
 
 Parte de `PENDIENTE.md` (secciones 4 y 6), separado el 6 de septiembre.
 
+## ⚠️ HIDRATOS PARA LAS PATOLOGÍAS QUE TOPAN LA GRASA (16 de septiembre de 2026)
+
+**Lo pidió Elena**: «¿y si metemos hidratos pero solo para que se puedan usar en
+el caso de la pancreatitis o casos así necesarios? Además a lo mejor un
+veterinario luego quiere pautarlos».
+
+### Lo primero, porque cambia la expectativa: YA metemos hidratos y el motor YA los usa
+
+El menú de pancreatitis sale hoy con **389 g de boniato**, y el boniato tiene el
+**93 % de sus kcal en forma de hidrato**. Ese 49 % del plato *es* el hidrato. No
+faltan: están en forma de verdura.
+
+### Y la razón de por qué ese plato es así NO es un defecto del motor
+
+SACN5 cap.67 Tabla 67-3 topa en pancreatitis **la grasa a 37,5 g/1000 kcal** y
+**la proteína a 75**. Entre las dos solo llegan a **638 de cada 1000 kcal**:
+
+```
+  grasa    ≤ 37,5 g  ->  338 kcal
+  proteína ≤ 75,0 g  ->  300 kcal
+                         638 de 1000
+  => 362 kcal de cada 1000 (36 %) TIENEN que venir de HIDRATOS
+```
+
+Es aritmética, no forma. Un perro con pancreatitis necesita una dieta con
+hidratos, y una ración BARF apenas los tiene.
+
+### Lo que se ganaría, medido, y es menos de lo que parece
+
+| Para las 362 kcal de hidrato | Gramos |
+|---|---|
+| Boniato (lo que usa hoy) | 358 g |
+| **Arroz blanco cocido** | **278 g** |
+| Patata cocida | 416 g |
+| Avena cocida | 510 g |
+
+El arroz ahorra ~80 g sobre un plato de 798, o sea un **10 %**. La patata y la
+avena **empeoran**. Así que el argumento de los gramos no sostiene esto solo.
+
+### El argumento que SÍ lo sostiene, y es clínico
+
+A un perro con pancreatitis le conviene un hidrato **blando y muy digestible**, y
+358 g de boniato no es lo mismo que 278 g de arroz cocido aunque las kcal
+cuadren.
+
+### Cómo encajaría — y dos de las tres piezas YA EXISTEN
+
+1. ⚠️ **Tendrían que ser fichas COCINADAS**: el arroz crudo no lo digiere un
+   perro. O sea que **esto es la primera rebanada del apartado de abajo** (BARF
+   vs. comida cocinada), no un añadido suelto.
+2. **«Solo cuando haga falta» ya funciona**: una categoría que no esté en
+   `ACCESIBLES` el motor **no la elige nunca** por su cuenta. Lo único nuevo
+   sería que se active sola en las patologías con techo de grasa.
+3. **Lo del veterinario ya funciona desde el 16 de septiembre**: cualquier ficha
+   del catálogo se puede fijar en gramos aunque esté fuera del automático (ver
+   `gramos_fijos` y `premios_declarados`). En cuanto exista la ficha de arroz
+   cocido, se puede pautar sin tocar nada más.
+
+### Y de paso, lo que se midió ese día sobre el HUESO en estas patologías
+
+El mínimo del 20 % de hueso es criterio NUESTRO (regla 3) y no cede en ninguno de
+los nueve peldaños — y el hueso lleva grasa. Medido en las **siete** patologías
+que topan la grasa, con el mínimo puesto y quitado (adulto de 25 kg, DER 1040):
+
+| Patología | Hoy | Sin mínimo de hueso |
+|---|---|---|
+| **Hiperlipidemia** | peldaño 8, verdura **48,8 %** | peldaño 6, verdura **19,5 %** |
+| **Obesidad** | **SIN MENÚ** | peldaño 8, verdura 48,9 %, grasa 21,4 |
+| EPI · PLE · SIBO · enteropatía crónica | peldaño 2, verdura 9,7 % | peldaño 1, verdura 9,8 % |
+| **Pancreatitis** | peldaño 8, verdura 49,0 % | peldaño 8, verdura **49,0 %** — *no cambia* |
+
+⚠️ **La que originó la idea es justo la que NO mejora**, por la aritmética de
+arriba: el solver se gasta en carne la grasa que le libera el hueso. Aplicarlo
+diciendo que arregla la pancreatitis sería vender una mejora que no existe.
+
+⚠️ Y **lo de la obesidad hay que comprobarlo antes de afirmarlo**: puede ser un
+artefacto de la prueba, porque se le pasó un DER de mantenimiento a un perro que
+debería llevar DER de adelgazamiento.
+
+### De dónde NO sale nada de esto
+
+Elena pasó dos textos de tiendas de BARF sobre pancreatitis, linfangiectasia,
+SIBO y EPI. **Se comprobaron tres de sus afirmaciones contra SACN5 y las tres
+estaban mal**, así que no se usa ni una:
+
+| Lo que decía | Lo que dice la fuente |
+|---|---|
+| «Regla estricta: dejar reposar las enzimas 20 minutos» | cap.66: «**pre-incubation of the meal with pancreatic enzymes are also unnecessary**… adding digestive enzymes to food 20 to 30 minutes before feeding **did not improve the response**» (Pidgeon, 1980) |
+| Linfangiectasia: «0 % grasa animal», «MCT, única grasa permitida» | cap.58: «Limiting fat intake (i.e., **<15% dry matter**)» — que es el 37,5 que ya aplicamos. Y del MCT: «**previously thought**… **However, a study in dogs showed that some MCT absorption does occur via the lymphatics**» (Jensen, 1994), además de que empeora la palatabilidad y **no lleva ácidos grasos esenciales** |
+| SIBO: «50 % huesos carnosos» | cap.48: «**Fat restriction is also useful in small intestinal bacterial overgrowth**». El 50 % de cuello de pollo va justo en contra |
+
+Y la señal que vale más que las tres: el primer texto pedía **0-5 % de hueso**
+para pancreatitis y el segundo **50 %** para SIBO, y las dos patologías tienen
+techo de grasa en el mismo libro. Cuando dos consejos del mismo sitio se
+contradicen diez veces en la misma cifra, lo que falla no es el detalle: es que
+no salen de ninguna fuente.
+
+---
+
+## ⚠️ ELEGIR ENTRE BARF Y COMIDA COCINADA (16 de septiembre de 2026)
+
+### ⚠️ LO PRIMERO QUE HAY QUE SABER: EL MOTOR TIENE ESCRITO QUE NO SABE DISTINGUIRLO
+
+`motor/seguridad.py`, con sus palabras:
+
+> «el motor **no tiene concepto de "crudo vs cocinado"**, así que no puede
+> garantizar que el usuario los cocine de verdad; lo más consistente es que
+> activen la misma restricción del 10 % que el pescado, **cubriendo el caso de
+> que alguien los dé crudos**»
+
+Eso es de la gamba y el langostino, que hoy cargan con el tope de la tiaminasa
+**por si acaso**. O sea que el interruptor no es solo una funcionalidad nueva:
+**quita un «por si acaso» que hoy aprieta a alimentos que no lo necesitan.**
+
+### Cómo lo pidió Elena (16 de septiembre de 2026)
+
+> «serían dos cosas distintas, el usuario tiene que poder elegir, o el
+> veterinario, si quiere hacer menú barf o cocinado, y en función [de eso] que le
+> proponga los ingredientes correctos para cada caso»
+
+O sea: **no es «añadir arroz al catálogo»**. Es que el catálogo tenga dos caras y
+el motor sepa en cuál está.
+
+### Qué cambia al girar el interruptor
+
+| | En BARF (hoy) | En cocinado |
+|---|---|---|
+| **Tiaminasa** (arenque, caballa, sardina, boquerón, atún, gamba, langostino) | tope del 10 % de las kcal | **se levanta** — «la cocción la destruye», y está escrito en `seguridad.py` |
+| **Avidina** de la clara de huevo | tope del 5 % | **se levanta** — la cocción la desnaturaliza |
+| **Parásitos del pescado crudo** | avisos de congelación | **se levantan** |
+| **Riesgo bacteriológico y la higiene en casa** | panel de avisos | **se levanta** |
+| ⚠️ **Hueso carnoso** | mínimo del 20 % | **PROHIBIDO** — el hueso cocido astilla |
+| **El calcio** | del hueso | de la **cáscara de huevo** (ya hay dos fichas) |
+| **Las fichas** | crudas, por 100 g tal cual se da | **otras fichas**, con su propia procedencia |
+| **Los 43 requisitos, los topes crónicos, los de patología, los máximos legales** | — | **no cambian ni una cifra** |
+
+### ⚠️ Y LA ASIMETRÍA QUE HAY QUE DISEÑAR CON CUIDADO, PORQUE ES LA PELIGROSA
+
+Equivocarse en la dirección «creo que es cocinado y era crudo» quita unos topes y
+el perro come pescado con tiaminasa. Malo.
+
+Equivocarse en la otra —«creo que es crudo y lo van a cocinar»— **mete hueso
+carnoso en un menú que se va a cocinar**, y el hueso cocido **astilla**. Eso es
+un daño físico inmediato, no una carencia a largo plazo. El repo ya tiene
+documentado que el hueso es el **cuarto daño documentado**: 46 de 60 cuerpos
+extraños esofágicos retirados a perros eran hueso (SACN5 cap.50).
+
+De ahí tres reglas de diseño:
+
+1. **El modo por defecto es BARF**, que es lo que el motor hace hoy.
+2. **En modo cocinado, las fichas de hueso carnoso no son candidatas jamás** — no
+   «se evitan»: no existen. Es una exclusión dura, como una alergia (regla 4), no
+   una proporción que ceda (regla 3).
+3. **El modo viaja con el menú y se guarda con él.** Un menú generado en un modo
+   y editado en otro es exactamente el fallo del 24 de agosto con las patologías:
+   el camino de edición no recibía el dato y tiraba el tope.
+
+### Lo que juega a favor, y está comprobado
+
+Las tres bases **ya publican las filas cocinadas**. Hoy el repo las esquiva **a
+propósito**: `fijar_identificadores.py` tiene un guardia de preparaciones
+(«asad», «frit», «cocid», y «horno» desde el caso de la `Perca`). El dato existe
+y sabemos dónde está; lo que hay que hacer es dejar de esquivarlo y meterlo como
+fichas aparte.
+
+⚠️ Y con la regla de siempre: **una ficha cocinada no se deriva de la cruda
+aplicando un factor**. Se trae de su propia fila, con su `composicion_fuente`
+celda a celda, y `auditar_composicion.py` la rehace igual que a las demás.
+
+### Lo que hay que decidir antes de empezar, y no lo decide el asistente
+
+1. **¿Un catálogo o dos?** Fichas aparte (`Pollo` y `Pollo cocido`) o un campo en
+   la misma ficha. Afecta a las ocho pantallas de
+   `alimentos_como_se_presentan.json` y a las 25 listas de `lo_que_la_app_pinta.json`.
+2. **¿Se puede mezclar?** Media ración cruda y media cocinada es una dieta real y
+   frecuente, y decide si el modo es del MENÚ o del ALIMENTO.
+3. **Qué grado de cocción.** «Cocido», «al horno» y «a la plancha» no dan los
+   mismos números, y las bases los publican por separado.
+
+
+**Lo pidió Elena**, el mismo día: «quiero que dejes apuntado también hacer que
+se pueda seleccionar entre barf y comida cocinada y que completemos el catálogo
+y haya los cambios que haya que hacer en el motor para hacerlo también».
+
+**Lo primero que hay que saber, porque cambia el tamaño del trabajo: los 43
+requisitos NO cambian ni una cifra.** FEDIAF no habla de BARF ni de cocinado —
+habla de una **dieta completa**, y sus mínimos, sus máximos, el ratio Ca:P, los
+cinco topes crónicos, los topes por patología y los siete máximos legales de la
+UE son exactamente los mismos. O sea que **esto no es un motor nuevo**: es la
+regla 3 otra vez, la FORMA cede y la nutrición no.
+
+### Qué cambia de verdad, por sitios
+
+| | Cambia | Por qué |
+|---|---|---|
+| `requerimientos_v2_final.json`, `verificar.MAPA`, `seguridad.py`, `patologias.json`, los máximos legales | **nada** | son de una dieta completa, no de una forma de darla |
+| **Las proporciones** (`MARGENES_V2`, `_escalera_de_relajacion`) | **sí** | el hueso cocido **astilla**: una ración cocinada no lleva hueso carnoso, y su calcio sale de un suplemento. Hacen falta OTROS márgenes, no otro motor. ⚠️ Y la cáscara de huevo **ya está en el catálogo**, dos fichas (37.000 y 38.000 mg de calcio por 100 g, 0 kcal, casi nada de fósforo) |
+| **El catálogo** | **sí, y es el trabajo caro** | las fichas van por 100 g **tal cual se da**, o sea crudo. Al cocinar se pierde agua (concentra todo por 100 g) y se destruye parte del grupo B. Cada alimento cocinado es una **ficha nueva con su propia procedencia**, no un factor aplicado a la cruda |
+| **Tiaminasa, mercurio del pescado crudo, riesgo bacteriológico** | se **relajan** | cocinar destruye la tiaminasa. Los avisos de `revisar_seguridad` que dependen de que sea crudo tienen que saber en qué modo está |
+| **`como_se_da_cada_alimento.json` y los avisos al dueño** | sí | «se da crudo» deja de valer para todo |
+
+### Lo que juega a favor, y está comprobado
+
+**Las tres bases de composición YA publican las filas cocinadas.** Hoy el repo
+las esquiva **a propósito**: `fijar_identificadores.py` tiene un guardia de
+preparaciones («asad», «frit», «cocid», y desde el 13 de septiembre «horno»)
+justo para que no se cuelen — el caso de la `Perca` apuntando a «Perca, AL
+HORNO» en una ficha cruda. O sea que **el dato existe y sabemos dónde está**;
+lo que hay que hacer es dejar de esquivarlo y meterlo como fichas aparte.
+
+⚠️ Y con la misma regla de siempre: **una ficha cocinada no se deriva de la
+cruda aplicando un factor**. Eso sería inventarse la cifra. Se trae de su
+propia fila, con su `composicion_fuente` celda a celda, y `auditar_composicion.py`
+la rehace igual que a las demás.
+
+### Lo que hay que decidir antes de empezar, y no lo decide el asistente
+
+1. **¿Un catálogo o dos?** Fichas cocinadas aparte (`Pollo` y `Pollo cocido`)
+   o un campo en la misma ficha. Afecta a las ocho pantallas de
+   `alimentos_como_se_presentan.json` y a las 25 listas de `lo_que_la_app_pinta.json`.
+2. **¿Se puede mezclar?** Media ración cruda y media cocinada es una dieta real
+   y frecuente, y decide si el modo es del MENÚ o del ALIMENTO.
+3. **Qué grado de cocción.** «Cocido», «al horno» y «a la plancha» no dan los
+   mismos números, y las bases los publican por separado.
+
+### Y hay una medida de hoy que ordena la prioridad
+
+Medido el 16 de septiembre sobre 8 perros (adulto 5/10/20/40 kg, cachorro 10 y
+22, sénior, gestante): con **0 suplementos** sacan menú **1 de 8**, con 1 los
+8 de 8. Pero al adulto de 20 kg, **soltando las proporciones BARF**, le sale
+menú **verde con cero suplementos**. O sea que lo que obliga al bote no son los
+43 requisitos: es la FORMA. Y una dieta cocinada tiene **otra** forma, así que
+no se puede dar por supuesto que necesite los mismos suplementos que la cruda —
+hay que medirlo, no deducirlo.
+
+---
+
 ## 4. Producto — funcionalidades nuevas
 
 Ordenadas por dependencia: multi-perro va primero porque la cesta y los

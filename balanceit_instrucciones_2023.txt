@@ -1,0 +1,377 @@
+BALANCE IT -- «IMPORTANT INSTRUCTIONS AND INFORMATION FOR ALL BALANCE IT DIETS»
+
+De donde sale: PDF publico de balance.it, bajado el 16 de septiembre de 2026 de
+static1.squarespace.com/static/633f173e054b0905bd90bb85/t/645ab1d0ec5554263bf0d20c/
+1683665360808/IMPORTANT+INSTRUCTIONS+AND+INFORMATION+FOR+ALL+BALANCE+IT+DIETS.pdf
+
+Por que esta aqui: es el formulador de dietas caseras de referencia, y lo fundo
+Sean J. Delaney, DVM, MS, DACVN -- COEDITOR de «Applied Veterinary Clinical
+Nutrition» (Fascetti & Delaney), que es UNA DE LAS CUATRO FUENTES DEL MOTOR y de
+donde sale nuestro 10 % de premios. O sea que no es «otro producto»: es la misma
+persona que escribe la fuente que aplicamos, resolviendo el mismo problema en su
+propia herramienta.
+
+Lo que se cita de aqui (seccion «INITIALLY SERVING, ESPECIALLY TO FINICKY/PICKY
+EATERS»), y es lo que decidio como trata Rawku los premios por encima del 10 %:
+
+  «Some of these can be selected as "Treats & Enticers" when creating a recipe as
+  can other palatants. Any such addition should be limited to tolerated and
+  non-toxic foods (e.g., no chocolate, grapes, raisins, macadamia nuts, kabocha
+  squash, onions, garlic, etc.) that do not add up to being more than 10% of
+  daily calories if not called for and accounted for specifically in the recipe
+  above.»
+
+O sea DOS reglas, y la condicion final es la que importa:
+  · premio DECLARADO -> entra en la receta como un ingrediente mas, y se formula
+    alrededor de el. No se supone nada de su composicion.
+  · premio NO declarado -> tope del 10 % del dia, y la receta NO se ajusta.
+
+Se extrajo con `page.get_text()` de PyMuPDF, asi que se puede rehacer.
+
+================================ TEXTO INTEGRO ================================
+
+ 
+ 
+ 
+IMPORTANT INSTRUCTIONS AND INFORMATION FOR ALL 
+BALANCE IT DIETS 
+ 
+DIRECTIONS 
+Step 1: All ingredients should be purchased and prepared. 
+The method of cooking, if any, is typically listed within the ingredient name. Raw meat, 
+poultry, fish, and other animal derived ingredients like eggs and egg whites should 
+always be cooked to a food safe temperature of 165 degrees F or 74 degrees C (any 
+drippings from cooking should not be fed). The specified amount of each ingredient is 
+measured after it is cooked (for ingredients that require cooking; exception: ingredients 
+that say “dry” are the starting amount).” Only vegetables and fruit can be fed raw even 
+if an ingredient is listed as a treat to prevent serious foodborne illness. 
+Cooking method “translation”: 
+Dry heat = baked, typically 350 degrees F or 175 degrees C 
+Broiled = use oven “broil” setting which should provide a higher heat (~550 degrees F or 
+290 degrees C) 
+Grilled = cooked directly over a flame 
+Pan-broiled = cooked in an open pan or pot over medium heat/flame 
+Braised = cooked in a covered pan or pot with a small amount of water to create steam 
+throughout cooking over low heat/flame 
+Stewed = boiled, food should be covered with water throughout cooking 
+Fried = cooked in hot fat or oil 
+Cooked (starches) = add water at a ratio of usually 2 parts water to 1 part 
+starch/grain/legumes (for legumes aka beans aka pulses soak first for 4 hours to 24 
+hours in the refrigerator with enough water to cover dry beans; for tapioca see FAQs for 
+detailed instructions) 
+Cooking times in your kitchen will vary depending on the amount of food being cooked 
+and oven/range/burner differences. The cooking time for a recipe can best be 
+determined by trial, by cooking until a food safe temperature of 165 degrees F or 74 
+degrees C is reached. Then the settings used and time needed for future recipe 
+preparations in the specific kitchen used should be written down and referenced 
+thereafter. 
+  
+
+ 
+ 
+ 
+NOTE: Foods/ingredients with similar but not exactly the same name can be selected at 
+the same time. Thus, if one selects two different ingredient options where, for example, 
+one is boiled/stewed potato with skin and another baked/roasted potato with skin/flesh 
+only then the amount for both should be added/included. Also if an ingredient has a 
+zero gram amount then it should not be added as it has not been included in any of the 
+recipe formulation calculations. If a food has “BalanceIt.com" in its name, it means 
+Balance It® has enhanced its available nutrient data from additional sources of data, not 
+that Balance It® sells it. 
+Step 2: Measure or weigh and then chop large pieces. 
+Ingredients should be cooked or prepared as indicated in their name above. Any large 
+pieces should then be cut into small bite-sized pieces as needed. The most accurate 
+method to measure is in grams (or ounces) using a kitchen scale that can be 
+economically purchased online or at stores that sell kitchen supplies. See the Tips 
+section below for the Quick conversion reference for many units of measurements. 
+Step 3: Combine all ingredients and mix well. 
+If batch cooking, mix in any heatable supplement(s) now before 
+refrigerating/freezing. You may also be interested in convenient one pot cooking 
+options which are available for a subset of ingredients, click the “Show one pot 
+cooking ingredients ONLY” checkbox when selecting ingredients to see those options 
+and recipes that include different directions than these. If using any non-heatable 
+supplement(s) mix them in after any cooking or reheating (heat degrades vitamins) and 
+mix in well before feeding. Any added supplement(s) should be equally distributed or 
+spread throughout the food and any meals. The total daily amount of any supplements 
+are not to be fed at only one meal or sporadically given if preparing large batches and 
+should always be well mixed with food. 
+  
+The addition of called for supplement(s) is not optional as this/they provide(s) needed 
+essential nutrients and prevent(s) nutrient deficiencies from developing, 
+see Fortifying section below. 
+Oils are used in recipes to add needed calories and fat, and are carefully calculated to 
+also provide essential fatty acid(s) and meet any desired fatty acid ratio(s). They are not 
+being added as a pan or pot coating and should be added on top of other ingredients 
+before mixing. If you are concerned about adding oil due to a concern of fat intolerance 
+in your dog or cat, please be sure to speak with your veterinarian, and if needed, 
+
+ 
+ 
+ 
+indicate this by entering “fat” in the “Any special needs or diet we should be aware of? 
+field of Step 1 to see condition options when building a recipe. 
+  
+Good hygiene and safe food handling practices (e.g., washing hands, surfaces) should 
+always be followed and utensils/bowls washed in a dishwasher or with very hot (155 
+degrees F or 68.3 degrees C) water. This along with cooking can help prevent foodborne 
+illness. 
+Balance It® strongly recommends frequently creating or attempting to create the recipe 
+again (at least every few months) in case employed strategies or ingredient nutrient 
+data are updated affecting the overall recipe. If you have questions about any strategies 
+for health conditions, Balance It® suggests speaking with the veterinarian or board-
+certified veterinary nutritionist® that provided you the recipe and/or approved your 
+access to building recipes. The FDA and state law restrict Balance It®’s ability to 
+specifically answer these types of questions because as a software developer &/or 
+manufacturer, we do not and cannot have a valid veterinarian-client-patient 
+relationship. If your animal companion has a condition that is nutritionally managed, 
+and that condition is not listed above or a new condition not listed develops, please 
+create a new recipe with that condition added and request a new veterinary approval 
+as indicated. Never feed a recipe that is not formulated for the nutritional 
+management of current condition(s)/requirement(s). 
+YIELD/ SERVINGS - Unless otherwise stated, the diet provided by CAH is for ONE 
+DAY 
+TIPS 
+Quick conversion reference 
+1 Calorie = 1 kilocalorie (kcal) 
+1 colored scoop (scoops are found in some products as noted on labels) = 5 mL 
+1 white scoop = 0.5 mL 
+16 tablespoon (tbsp) = 8 fluid ounce (fl oz) cup (aka cup) 
+1/16 cup = 1 tbsp 
+1 tbsp = 3 teaspoon (tsp) 
+1 tsp = 4.93 milliliter (mL) 
+1 ounce (oz) = 28.35 grams 
+
+ 
+ 
+ 
+8 fl oz cup = 237 mL 
+1000 mL = 1 liter (L) 
+1000 micrograms (mcg) = 1 milligram (mg) 
+1000 mg = 1 gram (g) 
+1000 g = 1 kilogram (kg) 
+fl oz and mL do not have a constant, direct conversion to grams as they are measures of 
+volume not mass and conversion differs depending on the specific density of what is 
+being measured. 
+Wash your hands 
+Good hygiene and safe food handling practices (e.g., washing hands, surfaces) should 
+always be followed and utensils/bowls washed in a dishwasher or with very hot (155 
+degrees F or 68.3 degrees C) water. This along with cooking can help prevent foodborne 
+illness. 
+Important note about supplements 
+The addition of called for supplement(s) is not optional as this/they provide(s) needed 
+essential nutrients and prevent(s) nutrient deficiencies from developing, see Fortifying 
+section below. 
+FORTIFYING 
+Rationale: 
+ 
+Feeding common human foods is not the same nutritionally as consuming evolutionary whole prey 
+or fresh kills. Meat for human consumption has generally been butchered -- exsanguinating, 
+eviscerating, and deboning. This loss of blood, internal organs especially liver, and bone, removes 
+very concentrated sources of essential nutrients (like electrolytes, trace minerals, vitamins, and 
+macrominerals like calcium) that then need to be fortified in a diet meeting the requirements of 
+dog and cat companions. Supplementing human foods with purified sources of these essential 
+nutrients ensures consistent potency, avoids the addition of potential antigens, eliminates 
+concurrent feeding of natural toxins (e.g., many other compounds are ingested when another 
+animal’s “filter," like liver, is eaten), and avoids/reduces cross contact/contamination concerns. If a 
+whole prey/food diet is desired, please consult with a board-certified veterinary nutritionist®. 
+ 
+Methods: 
+ 
+Our recipes offer up to two methods to fortify human foods with essential nutrients that would 
+
+ 
+ 
+ 
+otherwise be missing when feeding common human foods. . 
+ 
+General Option 1. Most healthy adult recipes use a food (aka human) grade, non-heatable, 
+patented, amino acid, mineral, and vitamin powder manufactured by Balance It®. This 
+includes the following products, Balance It® Canine, Balance It® Carnivore Blend®, and 
+Balance It® Feline. Carnivore Blend® is mainly used in both dog and cat recipes with no to low 
+carbohydrate content. For specific dog and cat health conditions, Balance It® also offers 
+Balance It® Canine K (lower in phosphorus, higher in amino acids, and B vitamins), Balance It® 
+Canine -Cu (no added copper), and Balance It® Feline K (lower in phosphorus, higher in amino 
+acids and B vitamins). The correct supplement will be called for in your recipe if needed for a 
+specific selected/listed condition. 
+General Option 2. Recipes using a combination of supplements, designed for humans’ unique 
+nutritional needs (usually 8-10 different ones) that can be purchased online elsewhere and/or 
+at local stores, are currently available for free. To access and view these, please click the “Use 
+human supplements ONLY” checkbox under the “Get Recipe” button on Step 2 when first 
+creating recipes. This is a less convenient option as the supplements are not optimized to 
+meet dog or cat nutritional needs, but is a good option for those that do not wish to purchase 
+anything from Balance It®. Balance It® uniquely offers this third option for free to help 
+educate and counter the multitude of available online and printed homemade pet food 
+recipes that are unfortunately not complete and balanced, and thus, not appropriate for long-
+term feeding. 
+Regardless of method chosen, fortification is required and crucial to avoid nutrient deficiencies 
+that can cause severe adverse health consequences. Unfortunate and completely preventable 
+examples of consequences that are commonly seen with inadequate fortification include: 
+broken or fractured bones due to inadequate calcium, heart failure and death due to 
+inadequate methionine in dogs or taurine in cats, anemia due to inadequate trace minerals like 
+iron, and severe mental/neurologic dysfunction due to inadequate thiamin (aka vitamin B1). 
+ 
+To see nutrient deficiency details for any specific recipe, click “See Nutrient Profile" on the 
+recipe results and scroll through the approximately 40 essential nutrients. Any percentages less 
+than 100% indicates a potential/likely deficiency. Additional details on the calculated 
+contributions of specific foods can be seen by hovering over the percentage (note that 
+unknown or undefined nutrient amounts for a food or ingredient are treated as zero for 
+calculations). If one is unable and/or unwilling to adequately fortify a homemade diet then it 
+should not be fed or only fed very rarely or intermittently or as a treat at no more than 10% of 
+daily calories. This should prevent one, with the best of intentions of providing wholesome 
+
+ 
+ 
+ 
+nutrition, from actually instead harming their beloved companion with the food they otherwise 
+carefully/diligently prepare.F 
+ 
+STORAGE 
+Prepared food can be stored in the refrigerator for up to 3 days or frozen for up to 3 weeks. Longer 
+storage in the refrigerator can lead to spoilage and in the freezer unaccounted vitamin degradation 
+that occurs naturally with time and decreased palatability. Do not reheat any food that already 
+contains added supplements that contain vitamins (unless the recipe uses a one-time heatable 
+supplement like Canine Plus or Canine K Plus that have been added after heating and before 
+refrigerating/freezing) as heating vitamins can degrade them. It can be convenient to separately 
+store separate single meal portions if a large batch is prepared ahead of time. 
+INITIALLY SERVING, ESPECIALLY TO FINICKY/PICKY EATERS 
+A slow transition to the new diet can improve acceptance and tolerance especially for any added 
+supplement(s). This is especially true in animal companions that have been fed a diet without 
+supplementation for a while. Supplements rich in essential vitamins and certain essential amino 
+acids can have an inherently strong natural odor that is not masked when in powdered form. In the 
+occasional case where supplement palatability is a concern, gradually working to the full dose of 
+supplement over 5-10 days may be helpful. One pot cooking may also increase 
+palatability/acceptance, to see those or more options, click the “Show one pot cooking 
+ingredients ONLY” checkbox when selecting ingredients. In very rare cases, one may need to mix 
+the needed supplement(s) with something other than the ingredients listed above to increase 
+acceptance. Some of these can be selected as “Treats & Enticers” when creating a recipe as can 
+other palatants. Any such addition should be limited to tolerated and non-toxic foods (e.g., no 
+chocolate, grapes, raisins, macadamia nuts, kabocha squash, onions, garlic, etc.) that do not add up 
+to being more than 10% of daily calories if not called for and accounted for specifically in the recipe 
+above. The addition of called for supplement(s) is not optional as this/they provide(s) needed 
+essential nutrients and prevent(s) nutrient deficiencies from developing, see Fortifying section 
+above. 
+MONITORING 
+Homemade pet food should be enjoyed and looked forward to by animal companions. With trillions 
+of possible recipes that can be created when using the Autobalancer®, trying different foods and 
+proportions should be expected and embraced. The goal is to find a recipe(s) that your animal 
+companion enjoys, does well on based on simple but important things like coat and stool quality, 
+and that you are able to sustainably prepare for them. Importantly, they should be able to maintain 
+an ideal body condition as that has been proven to improve both the quality and quantity of life. 
+
+ 
+ 
+ 
+Accordingly, please monitor your animal companions's weight and make sure they 
+achieve/maintain a healthy weight. If they unintentionally begin to gain or lose weight, adjust the 
+amount fed keeping all ingredients in the same proportions (one can make a new recipe online to 
+help get the right amounts, see Yield/Servings section above) after being sure that they are not sick. 
+Your animal companion should have access to water at all times and regular visits with a 
+veterinarian to check that their homemade diet is meeting their needs. As noted above recipes 
+should be rebuilt every few months in case there have been any changes to condition strategies or 
+requirements or ingredient nutrient data. 
+Dogs and cats with health conditions should be regularly and closely monitored per the specific 
+guidance of their veterinarian or board-certified veterinary nutritionist®. 
+ORDERING AND REORDERING BALANCEIT SUPPLEMENTS 
+ 
+One bottle of Balance IT® Carnivore Blend® (4.09 g/tsp) will last for about 38 preparation(s) of this 
+recipe. If using a 20 gram pouch of Balance IT® Carnivore Blend® (4.09 g/tsp) instead, one pouch will 
+last for about 1.3 preparation(s) of this recipe. To order or reorder, go to www.balance.it and click 
+Products OR purchase from your veterinarian. Some supplements require a specific vet. approval or 
+“vet code” per FDA CPG Sec. 690.150 guidelines. Requesting vet. approval can be done simply 
+during checkout or when attempting to view certain recipes. Vet codes are made available to clients 
+directly by their veterinarian or board-certified veterinary nutritionist® only and are not provided by 
+Balance It® to its customers. If you’d like to set up a convenient, automatic reorder, please select that 
+option during checkout. You can cancel your standing automatic reorder at any time before the early 
+morning it is scheduled to next ship. 
+CAUTIONS 
+The Autobalancer® provides access to thousands of human foods including ones that may seem 
+strange or even undesirable for an animal companion. Balance It® intentionally makes as many 
+human foods available as possible, while completely avoiding foods well-known to be toxic to dogs 
+and cats even at potentially low amounts. Giving the user this level of access can be very 
+informative and helpful, but this freedom can also allow a user to create recipes with very large 
+amounts of some foods that may not be practical (see higher vegetables and fruit diets caution 
+below), enjoyed, readily available, and/or cost effective. In addition, some human foods that one 
+might not typically or even ideally consider giving an animal companion are, as a consequence, 
+made available/selectable. This “open" approach allows one to best see the impact on total calories 
+fed and overall diet nutrient profile. If any food's addition will lead to an overall essential nutrient 
+deficiency or excess, the resulting recipe will not be possible or pass as a protection. It is always 
+important to remember the old saying, "the dose makes the poison." For example, vitamin D is 
+essential for bone health and optimal immune system function, but at too high a dietary 
+
+ 
+ 
+ 
+concentration, it becomes a potentially fatal poison. Thus, additional protections, like with fish that 
+can be naturally very high in vitamin D, are in place. Similarly some portions of plants or foods that 
+can be toxic, while other parts of the same plant that are well tolerated, can still be selected. For 
+example, the tomato fruit which is commonly used in commercially prepared and homemade pet 
+foods as a good source of fiber and antioxidants like lycopene is available, while tomato leaves and 
+stalks are and should be avoided given the presence of natural toxins found in the green parts of 
+all/most nightshade plants including potatoes. 
+ 
+Nutrition is an evolving science and dogs and cats can have very specific needs; therefore, if you 
+have a concern about feeding a food to your specific animal companion, Balance It® always 
+recommends speaking with your veterinarian and/or board-certified veterinary nutritionist® first. 
+You can also reach out to us here at Balance It® (see the Contact Us link in the footer of our website) 
+about the safety of any specific food available for selection for further clarification prior to 
+use/feeding. 
+ 
+Changing ingredients or their amount can be harmful and create nutrient deficiencies and/or 
+toxicities. The recipe must be followed exactly. If a different ingredient and/or amount is desired, 
+create a new recipe at www.balance.it and/or use the adjust link or button on recipe results page to 
+enter specific amounts to try and create a new recipe. Some changes, substitutions, or adjustments 
+may not be possible given the inherent nutrient profile of selected foods, but trillions of options are 
+available and possible. If you are struggling to fully understand why changes are not 
+passing/working or need more advanced help, please consider a consultation with a board-certified 
+veterinary nutritionist® as listed at www.vetnutritionist.com or www.vetspecialists.com. These 
+specialists have extensive nutritional knowledge and are an excellent referral and/or client 
+education option for challenging cases. 
+ 
+Higher dietary protein and fat concentrations may not be tolerated by all healthy adult dogs and 
+cats. Higher concentrations are generally considered to start at over 35% protein/fat calories. The 
+Autobalancer® that powers the Recipe Builder allows for the creation of recipes with the widest 
+range of caloric distributions possible as dogs and cats can do well on and prefer a spectrum of 
+proportions. If you are unsure what is optimal for your animal companion and/or if they will tolerate 
+higher concentrations of protein or fat, please speak with your veterinarian or board-certified 
+veterinary nutritionist® before feeding such a recipe/diet. 
+ 
+Higher vegetable and fruit diets can cause GI upset/diarrhea and be too voluminous. 
+Selecting only vegetables and/or fruit as carbohydrate sources in higher carbohydrate diets can 
+result in large amounts of vegetables or fruit being called for drastically increasing dietary fiber 
+intake & moisture and/or reducing energy density. This can result in a large amount of fiber in the 
+feces that retains moisture and loosens feces and/or a volume of food being fed that cannot be 
+readily eaten. To avoid this, reduce the amount of carbohydrate in the overall recipe and/or select a 
+
+ 
+ 
+ 
+carbohydrate source from the "blue" Carbs button group of grain and tuber dense carbohydrate 
+sources. 
+ 
+Vegan or vegetarian (and possibly grain free diets) must be carefully monitored to prevent heart 
+disease that can be fatal. If feeding a vegetarian diet (available for dogs only) or a diet very rich in 
+legumes (aka beans) and possibly other non-grain dense carbohydrates, regular blood taurine & 
+methionine concentrations should be measured by one's veterinarian to ensure adequate sulfur 
+amino acid supplementation (e.g., methionine dose) or bioavailability from the foods fed and to 
+prevent the development of a potentially life-threatening disease called dilated cardiomyopathy 
+(DCM). This is a still evolving and actively being researched issue and intake of other nutrients or 
+compounds may play a role. For concerns, please speak with your veterinarian and/or board-
+certified veterinary nutritionist® before feeding such a recipe. 
+ 
+High liver diets can cause vitamin A toxicity. All or mostly liver diets should only be fed, given their 
+very high vitamin A concentration, to cats under the direct supervision and ongoing approval of 
+one's veterinarian. 
+ 
+Recipe recommendations can change over time. Nutrition is an evolving science and nutrient data 
+for many foods change and/or improve over time. Fortunately, the Autobalancer® that powers the 
+Recipe Builder was specifically developed to be a dynamic tool and resource that can easily adapt to 
+new information unlike the alternative of static “cookbook" recipes. This means that when new 
+essential nutrient requirements become known to Balance It® through new published studies or due 
+to regulations, the requirements that are used by the Autobalancer® to formulate recipes can be 
+and are updated. In addition, this also means that the nutrient concentrations for differing foods are 
+also refreshed from time to time. Combined, this can lead to new outcomes when creating a recipe 
+with the same ingredients or foods later. Couple this with the potential for a supplement to also be 
+reformulated, and recipe amounts and the ability to meet requirements does change and should be 
+expected. Therefore, it is always a good idea to re-evaluate/rebuild any homemade recipe at least 
+every few months to make sure current and accurate information is being relied on for a recipe’s 
+creation. 

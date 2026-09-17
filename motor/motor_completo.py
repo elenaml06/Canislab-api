@@ -32,9 +32,11 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import numpy as np
 from scipy.optimize import milp, LinearConstraint, Bounds
 from verificar import (MAPA, _num, EQUIVALENCIA, maximo_de, minimo_de,
+                       maximo_por_g_de_materia_seca,
                        der_efectiva_de)
-from constructor import (valor_nutriente, valor_plausible_de,
-                         tabla_imputacion_maximos, valor_para_maximo)
+from constructor import (CAT_SUPLEMENTO, valor_nutriente, valor_plausible_de,
+                         tabla_imputacion_maximos, valor_para_maximo,
+                         materia_seca_g_100g)
 
 # ⚠️ AÑADIDO (5 agosto, noche): copia local de especie_de() (la misma
 # lógica que ya usan especies.py y el frontend) -- se define aquí en
@@ -566,6 +568,50 @@ MINIMO_POR_CATEGORIA_PORCION = {
 # y ahí ya no es una cuestión de precio.
 PENALIZACION_DE_ENCARGO = 12.0
 
+# ⚠️ LA ROTACIÓN DE PROTEÍNA, CON SU NÚMERO A LA VISTA Y MEDIDO (15 de
+# septiembre de 2026). Estaba escrita como un `+= 2.0` suelto dentro de la
+# función, y por eso nadie la volvió a medir cuando cambiaron las dos cosas de
+# las que depende: el margen de optimalidad del solver (`mip_rel_gap`, hoy
+# 0,30) y la penalización de lo difícil de comprar (12,0, del 14 de
+# septiembre).
+#
+# EL FALLO QUE LO DESTAPÓ: el BLOQUE 11 decía que los tres menús de un mismo
+# perro llevaban la MISMA proteína, dos tiradas independientes seguidas. Y era
+# verdad a medias -- reproducido, el menú 2 SÍ rota (Gallina -> Ternera) y el 3
+# vuelve a Gallina.
+#
+# LA CAUSA NO ES QUE NO SE APLIQUE, ES QUE NO SE NOTA. El solver se conforma
+# con estar a un 30 % del óptimo (es lo que lo hace rápido, ver el comentario
+# de `mip_rel_gap` abajo), y un objetivo típico ronda 10-14 unidades. Una
+# penalización de 2,0 cabe ENTERA dentro de esa tolerancia: el solver puede
+# devolver la solución sin rotar y no estar haciendo nada mal. Es exactamente
+# la misma lección que costó medir `PENALIZACION_DE_ENCARGO` el 14 de
+# septiembre --3,0 no bastaba y 8,0 sí--, y esta no se remidió entonces.
+#
+# ⚠️ Y TIENE QUE QUEDARSE POR DEBAJO DE `PENALIZACION_DE_ENCARGO`, que es la
+# razón por la que no se sube más: si rotar costara más que comprar en una
+# carnicería de encargo, el motor mandaría a la usuaria a por costillas de
+# cordero antes que repetir pollo dos semanas. Repetir proteína es un defecto
+# de variedad; no encontrar el alimento es no comer.
+#
+# MEDIDO, seis casas de tres menús seguidos cada una (adulto de 20 kg, 6 s por
+# menú, que es lo que le da `/menu/varios-perros`), contando cuántas repiten LA
+# MISMA carne en los tres:
+#
+#     penalización  2,0 (la de antes) ... 3 de 6 repiten
+#     penalización  4,0 ................. 0 de 6
+#     penalización  6,0 ................. 0 de 6
+#     penalización  8,0 ................. 0 de 6
+#
+# El umbral está en 4,0 y se deja en 6,0 por el mismo motivo por el que la de
+# encargo se dejó en 12,0 teniendo su umbral en 8,0: margen para los peldaños
+# relajados, donde el solver tiene menos tiempo y acepta soluciones peores.
+#
+# ⚠️ Y VA EN EL OBJETIVO, NO EN LAS RESTRICCIONES, así que puede cambiar QUÉ
+# proteína se elige y NUNCA SI hay menú. Eso no se supone: se comprueba, igual
+# que con la de encargo.
+PENALIZACION_DE_ROTACION = 6.0
+
 
 def resolver(*args, **kwargs):
     """El solver, con UN reintento y solo uno: el del techo del libro.
@@ -590,13 +636,44 @@ def resolver(*args, **kwargs):
     devuelve `_imposible` (aritmética demostrada) o si no había ningún techo que
     subir, reintentar sería pagar el doble de reloj para llegar al mismo sitio
     -- y el reloj es lo que dejó sin menú al toy de 1,5 kg en el BLOQUE 43.
+
+    ⚠️ Y EL QUE LLAMA PUEDE PEDIR QUE NO SE SUELTE TODAVÍA (15 de septiembre de
+    2026). Lo destapó Elena: «no me creo que en un menú con premios Cairo no
+    pueda cumplir con el techo de calcio estricto». Tenía razón.
+
+    EL FALLO ERA DE ORDEN, y es la regla 3 leída al revés. Este envoltorio
+    soltaba el techo DENTRO del mismo peldaño: el peldaño 0 salía infactible con
+    el techo puesto, se soltaba ahí mismo, el peldaño 0 pasaba a ser factible y
+    la escalera **no bajaba nunca**. Así que se tiraba un consejo de la fuente
+    para no tocar las proporciones de BARF -- que son criterio NUESTRO. La regla
+    3 dice justo lo contrario: lo que cede es la FORMA, nunca la nutrición.
+
+    MEDIDO con Cairo (cachorro de raza grande, premios al 10 %, ventana de
+    calcio 2778-2833, o sea un 2 % de sitio), peldaño a peldaño con el techo
+    APRETADO y 60 s cada uno:
+
+        peldaño 0 estricto ............................ infactible demostrado
+        peldaño 1 dos suplementos ..................... infactible demostrado
+        peldaño 2 sin mínimo de vísceras e hígado ..... infactible demostrado
+        peldaño 3 sin ningún mínimo de categoría ...... MENÚ, calcio 2816
+
+    O sea que el menú que cumple el techo EXISTÍA y no se buscaba. Hoy el motor
+    entrega 3569 en el peldaño 0 con el techo soltado; con el orden correcto
+    entrega 2816 en el peldaño 3 cumpliéndolo. **753 mg de calcio menos al día**
+    en el nutriente que causa enfermedad ortopédica del desarrollo si sobra.
+
+    Con `soltar_el_techo_si_no_cabe=False` este envoltorio NO hace el plan B:
+    devuelve «no hay menú» y deja que la escalera de `main` baje un peldaño. La
+    escalera lo pone a True en su última pasada, que es cuando ya se ha
+    comprobado que no cabe en ninguna forma de ración.
     """
+    _soltar = kwargs.pop("soltar_el_techo_si_no_cabe", True)
     _subidos = {}
     kwargs_1 = dict(kwargs)
     kwargs_1["_techos_subidos_fuera"] = _subidos
     ok, gramos = _resolver_una_vez(*args, **kwargs_1)
-    if not ok and _subidos.get("se_ha_subido") and not (
-            isinstance(gramos, dict) and gramos.get("_imposible")):
+    if (_soltar and not ok and _subidos.get("se_ha_subido") and not (
+            isinstance(gramos, dict) and gramos.get("_imposible"))):
         kwargs_2 = dict(kwargs)
         kwargs_2["apretar_el_techo_del_libro"] = False
         ok, gramos = _resolver_una_vez(*args, **kwargs_2)
@@ -786,15 +863,40 @@ def _resolver_una_vez(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn
     from exclusiones import filtrar
 
     if cuantos_max is None:
-        from modos import CUANTOS_MAX as cuantos_max
+        from modos import CUANTOS_MAX as _cuantos_max_base
+        cuantos_max = dict(_cuantos_max_base)
+        # ⚠️ DOS MULTIVITAMÍNICOS EN EL MISMO CUENCO SON **FORMA**, Y LA FORMA
+        #    SE RELAJA CON LA ESCALERA (15 de septiembre de 2026).
+        #
+        # El tope de 1 se puso ese mismo día porque Elena vio un menú con dos
+        # multivitamínicos distintos, que no es comida: nadie compra dos botes
+        # del mismo producto para el mismo plato. Pero es criterio NUESTRO, no
+        # de FEDIAF — o sea, regla 3 del CLAUDE.md — y un criterio nuestro no
+        # puede dejar a un perro sin comer.
+        #
+        # CASO REAL, cazado por el BLOQUE 61 el mismo día: **«obesidad» dejó de
+        # dar menú a ningún peso**. La causa es de DATOS y ya está escrita dos
+        # veces en el repo: SACN5 pide 67,1 mg/1000 kcal de vitamina E a cuatro
+        # patologías y **en el catálogo no hay un suplemento de vitamina E
+        # suelto** — solo los nueve multivitamínicos. Llegar a esa cifra con uno
+        # solo no se puede, así que atarlo a uno hacía infactible la patología
+        # entera. Medido: con el tope, `obesidad` no sale en ningún peldaño;
+        # sin él, sale.
+        #
+        # Así que el tope vale donde vale la forma —los peldaños estrictos— y se
+        # suelta exactamente en los mismos que ya dejan meter MÁS suplementos.
+        # No hace falta un peldaño nuevo ni un cuarto elemento en la escalera:
+        # `max_suplementos` ya dice en cuál estamos, y subirlo a 3 es justo la
+        # señal de «no hay menú con lo habitual».
+        if max_suplementos >= 3 and cuantos_max.get("Multivitamínico") == 1:
+            cuantos_max["Multivitamínico"] = 2
 
     # ⚠️ AÑADIDO 5 agosto: "Extras" (aceites, huevos, semillas) NO estaba
     # en esta lista, así que ni siquiera entraban como candidatos — el
     # linoleico dependía solo de lo que aportara la carne, sin poder usar
     # aceite de girasol. Ahora entra, y junto con los suplementos
     # comerciales queda topado al 5% del peso (decisión de la usuaria).
-    SUP_CATS = ("Multivitamínico", "Omega-3", "Yodo", "Fibra", "Calcio",
-               "Hierro", "Vitamina B", "Extras")
+    SUP_CATS = CAT_SUPLEMENTO + ("Extras",)   # la lista, no una copia
 
     # Candidatos: TODOS los accesibles de cada categoría de comida, y
     # TODOS los suplementos del catálogo (no solo unos pocos elegidos).
@@ -1023,6 +1125,52 @@ def _resolver_una_vez(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn
         n for n in candidatos_por_cat["Suplementos"]
         if n not in TODAS_LAS_VINTEGRA or n == correcta
     ]
+
+    # ⚠️ LO QUE SE HA FIJADO EN GRAMOS TIENE QUE SER UNA VARIABLE (16 de
+    # septiembre de 2026). Los candidatos salen de `ACCESIBLES`, que es la lista
+    # de lo que se compra fácil en España -- y eso deja fuera 59 fichas del
+    # catálogo que existen y son perfectamente comestibles. Fijar los gramos de
+    # una de ellas fallaba con «no puede entrar en la ración de este paciente:
+    # está fuera por una alergia, por su patología o por una categoría
+    # excluida», que es una frase FALSA en ese caso: no está fuera por nada de
+    # eso, está fuera por no ser de súper.
+    #
+    # Lo destapó la pantalla de premios: el dueño declara lo que le da de verdad
+    # (jamón, queso, una salchicha) y eso NUNCA va a estar en la lista de lo que
+    # el motor ofrece por su cuenta -- precisamente porque no queremos que el
+    # motor le meta jamón serrano en una ración. Pero si lo DECLARA, tiene que
+    # poder contarse.
+    #
+    # ⚠️ Y LA DISTINCIÓN QUE HACE QUE ESTO NO SEA UN AGUJERO: la exclusión por
+    # ALERGIA o por PATOLOGÍA sigue ganando, porque eso no se decide aquí -- se
+    # decide en el techo a CERO de unas líneas más abajo, que no cede nunca
+    # (regla 4). Aquí solo se está diciendo «existe como variable»; si está
+    # prohibido para este perro, su techo es 0 y el problema sale infactible,
+    # que es lo que tiene que pasar.
+    # ⚠️ Y PASA POR EL FILTRO DE ALERGIAS ANTES DE ENTRAR, SIN EXCEPCION.
+    #    CASO REAL, y lo metí yo al escribir esto: sin esta línea, declarar
+    #    «corazón de pollo» como premio en un perro con POLLO EXCLUIDO devolvía
+    #    un menú VERDE con el corazón de pollo dentro. Es la regla 4 -- las
+    #    alergias y las categorías excluidas a mano no se tocan jamás, porque
+    #    pueden ser médicas -- y lo daba por hecho fiándome del techo a cero de
+    #    más abajo, que en este camino no llegaba a aplicarse. Un supuesto sin
+    #    comprobar en la dirección peligrosa.
+    #
+    #    Un premio excluido por alergia NO entra y el menú sale igual: si el
+    #    dueño declara algo a lo que su perro es alérgico, lo que hay que hacer
+    #    es decírselo, no meterlo en el plato.
+    if gramos_fijos:
+        _fijos_permitidos = list(gramos_fijos)
+        if excluidos:
+            _fijos_permitidos, _f_fijo, _a_fijo = filtrar(_fijos_permitidos, excluidos)
+        for _n_fijo in _fijos_permitidos:
+            _cat_fijo = alimentos.get(_n_fijo, {}).get("categoria")
+            if not _cat_fijo:
+                continue
+            if categorias_excluidas and _cat_fijo in categorias_excluidas:
+                continue
+            if not any(_n_fijo in _l for _l in candidatos_por_cat.values()):
+                candidatos_por_cat.setdefault(_cat_fijo, []).append(_n_fijo)
 
     nombres = []
     categoria_de = {}
@@ -1924,6 +2072,113 @@ def _resolver_una_vez(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn
                     fila_rel[idx[n]] = coef
             _fila("fediaf_relativo", fila_rel, -np.inf, 0.0)
 
+        # ⚠️ Y EL SUELO TAMBIÉN SOBRE LAS KCAL DE VERDAD (15 de septiembre de
+        #    2026). El techo lleva su fila relativa desde el 21 de agosto y el
+        #    SUELO no la tenía, y esa asimetría dejaba menús en ámbar.
+        #
+        # CASO REAL, encontrado regenerando el catálogo: `Toy_CachorroCrecimiento`
+        # (un cachorro de 2,33 kg, DER 288) no salía verde ni con 400 s. El
+        # solver SÍ encontraba menú en el primer peldaño, en 3 s, y el semáforo
+        # lo dejaba en ÁMBAR con el hierro al 99 % y el manganeso al 99 %.
+        #
+        # La causa es la de siempre, la unidad: el suelo se convierte a absoluto
+        # con las kcal PEDIDAS (`der_racion`) y el menú que sale puede tener
+        # hasta un 3 % MÁS (`tolerancia_kcal`). Más kcal con el mismo nutriente
+        # = menos concentración, y los requisitos de FEDIAF se miden por 1000
+        # kcal de la dieta REAL. El margen del suelo era del 1,5 %, o sea la
+        # mitad de lo que puede moverse el denominador: medido en ese cachorro,
+        # el menú salía a 297 kcal contra 288 pedidas (+3,1 %) y los dos
+        # nutrientes que iban pegados al mínimo se caían por debajo.
+        #
+        # Es EXACTAMENTE el mismo argumento que ya está escrito doce líneas más
+        # arriba para el techo, con el signo cambiado, y la fila es la misma:
+        #     suma(nut_i * g_i)  >=  (mn/1000) * suma(kcal_i * g_i)
+        #   → suma((nut_i - (mn/1000) * kcal_i) * g_i)  >=  0
+        #
+        # Se deja TAMBIÉN la fila absoluta a propósito, igual que arriba: cuando
+        # el menú sale con MENOS kcal de las pedidas, la absoluta es la
+        # estricta. Teniendo las dos, siempre manda la que más aprieta.
+        #
+        # EL MARGEN ES DEL 1 % y no del 1,5 %: aquí el redondeo de los gramos
+        # mueve el numerador y el denominador a la vez, así que un cociente
+        # aguanta mucho mejor que una cantidad absoluta. `verificar()` tolera
+        # hasta el 99,5 %, o sea que con el 1 % hay el doble de sitio.
+        #
+        # Y CON EL VECTOR DEL SUELO (`fila_suelo`), no con el del techo: es la
+        # regla de «cada cota con su vector» de aquí arriba — el hueco cuenta
+        # CERO contra un mínimo, porque dar por cubierto un requisito con un
+        # número que nadie ha medido es justo lo que sacó menús al 28 %.
+        if mn is not None:
+            _mn_rel = mn * 1.01
+            fila_rel_min = fila_vacia()
+            for n in nombres:
+                _v_nut_min = fila_suelo[idx[n]]      # ya es valor/100
+                _kcal_n_min = (alimentos[n].get("energia", 0) or 0.0) / 100.0
+                _coef_min = _v_nut_min - (_mn_rel / 1000.0) * _kcal_n_min
+                if _coef_min:
+                    fila_rel_min[idx[n]] = _coef_min
+            _fila("fediaf_relativo_minimo", fila_rel_min, 0.0, np.inf)
+
+        # ⚠️ Y LOS SIETE LÍMITES LEGALES DE LA UE, SOBRE MATERIA SECA -- QUE ES
+        #    LA ÚNICA FORMA EN QUE FEDIAF LOS PUBLICA (15 de septiembre de 2026).
+        #
+        # Elena: «haz lo que diga FEDIAF tal como lo diga FEDIAF, pero comprueba
+        # bien en la fuente antes de hacer nada». Comprobado, §3.2.1, literal:
+        #
+        #   «Legal maxima in EU legislation are expressed on 12% moisture content
+        #    and they do not account for energy density. Therefore in these
+        #    guidelines they are only provided on a dry matter basis.»
+        #
+        # Y se ve en la propia Tabla III-3b: la celda de máximo de cobre, yodo,
+        # hierro, manganeso, selenio y zinc está VACÍA -- solo pone «(L)» --, y
+        # lo mismo el máximo legal de la vitamina D. Son SIETE. El número por
+        # 1000 kcal que aplicaba el motor lo habíamos hecho NOSOTROS con el ×2,5
+        # de su Tabla III-2, que es justo la conversión de la que la nota al pie
+        # dice «These conversions assume an energy density of 16.7 kJ (4.0 kcal)
+        # ME/g DM. For foods with energy densities different from this value, the
+        # recommendations should be corrected for energy density».
+        #
+        # Una ración de este motor va a 5,0-6,0 kcal/g de materia seca, no a 4,0.
+        #
+        # ⚠️ SE AÑADE, NO SE SUSTITUYE, y eso no es pereza: `mx` puede venir de
+        # un tope de PATOLOGÍA o de uno de seguridad crónica, y esos SÍ son por
+        # 1000 kcal y tienen que seguir escritos así. Las dos filas juntas son
+        # el `min()` de las dos cosas, que es lo correcto. La de arriba, cuando
+        # manda el máximo de FEDIAF, queda más floja y no ata nada.
+        #
+        # La forma es lineal y por eso no hace falta ninguna densidad ni ninguna
+        # media -- el supuesto de los 4,0 DESAPARECE del motor en vez de
+        # corregirse:
+        #     suma(nut_i * g_i)  <=  L_ms * suma(materia_seca_i * g_i)
+        #   → suma((nut_i - L_ms * materia_seca_i) * g_i)  <=  0
+        #
+        # MEDIDO antes de aplicarlo, iterando hasta el punto fijo (apretar el
+        # techo cambia el menú y el menú cambia su densidad) y con el hueco de
+        # humedad contado como AGUA ENTERA, que es el lado que más aprieta:
+        # 10 de 10 perros de referencia siguen con menú, de 3 a 40 kg y en las
+        # seis etapas, con factores de 0,66 a 0,80.
+        _ms_max = maximo_por_g_de_materia_seca(r, nombre_req, et)
+        if _ms_max is not None:
+            fila_ms = fila_vacia()
+            for n in nombres:
+                v_nut = fila_techo[idx[n]]      # valor/100, con el hueco imputado
+                # gramos de materia seca por GRAMO de alimento. El hueco cuenta
+                # como agua -- ver `materia_seca_g_100g`: contra un techo, dar
+                # por seca la comida que no sabemos lo AFLOJA.
+                ms_n = materia_seca_g_100g(alimentos[n]) / 100.0
+                coef = v_nut - _ms_max * ms_n
+                if coef:
+                    fila_ms[idx[n]] = coef
+            # El mismo margen de redondeo que el techo absoluto de aquí arriba,
+            # y por el mismo motivo: el solver resuelve EXACTO en el límite y
+            # luego los gramos se redondean a 2 decimales, así que el error es
+            # ABSOLUTO. Sin esto, un menú pegado al techo sale del solver y lo
+            # tira el semáforo -- que es el fallo de la vitamina D del 9 de
+            # septiembre, con otra cara.
+            _positivos = sorted((c for c in fila_ms if c > 0), reverse=True)
+            _colchon = PASO_DE_REDONDEO_G * sum(_positivos[:FUENTES_QUE_PUEDEN_COINCIDIR])
+            _fila("fediaf_maximo_legal_materia_seca", fila_ms, -np.inf, -_colchon)
+
         # ⚠️ AÑADIDO (8 septiembre) — EL ESPEJO DE LA FILA DE ARRIBA, PARA LOS
         # SUELOS POR PATOLOGÍA. CASO REAL MEDIDO, y es el mismo fallo del 21 de
         # agosto visto desde el otro lado:
@@ -2448,8 +2703,7 @@ def _resolver_una_vez(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn
     # equipo) está en el PR: si alguien lo vuelve a tocar por tiempo, que
     # mida en vez de suponer -- es lo que falló la primera vez.
     SUELO_MEDIBLE_G = 1.0
-    CATEGORIAS_QUE_SE_DOSIFICAN = ("Multivitamínico", "Omega-3", "Yodo", "Fibra",
-                                   "Calcio", "Hierro", "Vitamina B")
+    CATEGORIAS_QUE_SE_DOSIFICAN = CAT_SUPLEMENTO   # la lista, no una copia
     # ⚠️ Y UN GRAMO DE COSTILLAS NO ES UNA RACIÓN (29 agosto).
     #
     # CASO REAL ENCONTRADO POR LA USUARIA: "me ha salido 1 gramo de costillas
@@ -2550,8 +2804,38 @@ def _resolver_una_vez(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn
         _fila("suelo_medible", fila, 0.0, np.inf, alimento=n)
 
     # 5. CUÁNTOS ALIMENTOS DISTINTOS por categoría (máx.)
+    #
+    # ⚠️ CON LA CATEGORÍA REAL DEL CATÁLOGO, NO CON LA CLAVE DEL GRUPO DE
+    # CANDIDATOS (15 de septiembre de 2026). ES EL MISMO FALLO QUE YA TUVO
+    # `max_suplementos` EL 5 DE AGOSTO, y está contado doce líneas más abajo:
+    # `categoria_de[n]` es la CLAVE de `candidatos_por_cat`, y esa clave vale
+    # literalmente «Suplementos» para CUALQUIER suplemento y para CUALQUIER
+    # extra -- porque `ACCESIBLES` solo tiene las seis categorías de comida y
+    # todo lo demás se mete en un cajón con ese nombre.
+    #
+    # O sea que una entrada `"Extras"` o `"Multivitamínico"` en `CUANTOS_MAX`
+    # NO HACÍA NADA: la condición nunca era cierta y la fila se quedaba a
+    # ceros, «0 <= tope» siempre. Inerte y sin dar error, que es la peor forma.
+    #
+    # Y no es teórico. CASO REAL DE ELENA, reproducido contra producción con el
+    # perfil de su perro (American Staffordshire de 7 meses, 20 kg, en
+    # Personalizar con pollo, carcasa, hígado y zanahoria):
+    #
+    #     2 suplementos + SEIS extras
+    #     aceite de oliva virgen extra · aceite de girasol · aceite de sésamo
+    #     semilla de lino · semilla de sésamo · sal
+    #
+    # Tres aceites distintos en el mismo plato. El MILP optimiza nutrición por
+    # gramo y nadie le había dicho que un cuenco no lleva tres aceites -- que es
+    # exactamente el argumento de «la comida del menú se tiene que poder
+    # comprar» del 14 de septiembre, visto por el otro lado.
+    #
+    # Para las seis categorías de comida no cambia nada: ahí la clave del grupo
+    # ES la categoría del catálogo. Lo único que cambia es que ahora
+    # `CUANTOS_MAX` puede nombrar lo que antes no podía.
     for cat, tope in cuantos_max.items():
-        miembros = [n for n in nombres if categoria_de[n] == cat]
+        miembros = [n for n in nombres
+                    if (alimentos[n].get("categoria") or categoria_de[n]) == cat]
         if not miembros:
             continue
         fila = fila_vacia()
@@ -2559,11 +2843,36 @@ def _resolver_una_vez(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn
             fila[n_var + idx[n]] = 1.0
         _fila("max_por_categoria", fila, 0, tope)
 
+    # 5-bis. Y CUÁNTOS EXTRAS DEL MISMO GRUPO (aceites, semillas, huevo...).
+    #
+    # Ver el comentario largo de `CUANTOS_MAX_POR_GRUPO_DE_EXTRA` en `modos.py`:
+    # los 23 extras comparten una sola categoría del catálogo, así que la regla
+    # 5 no puede distinguir «sal + un aceite + una semilla» (que está bien) de
+    # «tres aceites» (que no es comida). El agrupamiento sale del MISMO fichero
+    # con el que la app los pinta.
+    try:
+        from modos import CUANTOS_MAX_POR_GRUPO_DE_EXTRA as _tope_grupo_extra
+        from grupos_de_extras import grupo_de_extra as _grupo_de_extra
+    except ImportError:
+        _tope_grupo_extra = None
+    if _tope_grupo_extra:
+        _por_grupo = {}
+        for n in nombres:
+            _g = _grupo_de_extra(n)
+            if _g:
+                _por_grupo.setdefault(_g, []).append(n)
+        for _g, _miembros in _por_grupo.items():
+            if len(_miembros) <= _tope_grupo_extra:
+                continue
+            fila = fila_vacia()
+            for n in _miembros:
+                fila[n_var + idx[n]] = 1.0
+            _fila("max_por_grupo_de_extra", fila, 0, _tope_grupo_extra)
+
     # 6. MÁXIMO DE SUPLEMENTOS (solo los COMERCIALES cuentan para el
     # límite de "2" — los aceites/huevos de Extras no son "un suplemento"
     # en el sentido de producto de marca, cuentan aparte en el peso)
-    SUP_COMERCIALES = ("Multivitamínico", "Omega-3", "Yodo", "Fibra",
-                       "Calcio", "Hierro", "Vitamina B")
+    SUP_COMERCIALES = CAT_SUPLEMENTO   # la lista, no una copia
     # ⚠️ CORREGIDO (5 agosto, tarde) — FALLO GRAVE ENCONTRADO por la
     # batería de pruebas: esto comparaba categoria_de[n] (que vale
     # literalmente el texto genérico "Suplementos" para CUALQUIER
@@ -2800,7 +3109,7 @@ def _resolver_una_vez(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn
             if categoria_de[n] in ("Carne muscular", "Pescados y mariscos", "Hueso carnoso",
                                    "Vísceras", "Hígado"):
                 if especie_de(n).strip().lower() in evitar_lower:
-                    coste_binaria[idx[n]] += 2.0
+                    coste_binaria[idx[n]] += PENALIZACION_DE_ROTACION
     c = np.array([0.0] * n_var + coste_binaria)
 
     # ⚠️ AÑADIDO (5 agosto, noche) — CASO REAL ENCONTRADO: cachorro pequeño

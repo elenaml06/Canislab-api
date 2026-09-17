@@ -1219,6 +1219,26 @@ fuente que `Bases.md` fija para el hueso precisamente porque BEDCA no lo trae. Y
 el motor lo cuenta como calcio **disponible**, igual que el de cualquier otra
 ficha.
 
+⚠️ **Y EL PROPIO KÖBER LO DICE, Y ESTA FICHA NO LO RECOGÍA** (encontrado el 15
+de septiembre leyendo su resumen entero, no solo su Tabla 1). Literal:
+
+> *«Even though no statements about mineral digestibility can be given here,
+> when evaluating the suitability of these components as Ca sources, it also has
+> to be taken into account that **Ca and P from bones were shown to have a lower
+> apparent digestibility in dogs than other mineral sources³**»*
+> — Köber et al. 2017, ESVCN Proceedings
+
+O sea que la fuente **de la que sale nuestro calcio del hueso** avisa, en su
+propio resumen, de que ese calcio se absorbe PEOR que el de otras fuentes. No es
+una sospecha nuestra: es una advertencia de la fuente que estábamos usando sin
+leerla entera.
+
+Y trae **la referencia que faltaba**: su nota 3 es **Siedler & Dobenecker
+(2015), ESVCN Proceedings p. 128**. Ése es el documento que puede cuantificarlo,
+y hasta hoy esta ficha decía «no está medida» sin decir dónde mirarlo. Va a
+`DATOS_QUE_FALTAN.md` con esa forma: no es un dato de composición, es un estudio
+que hay que conseguir.
+
 **Qué falta.** Köber da el CONTENIDO. La frase de arriba dice que la ABSORCIÓN
 del hueso molido no está cuantificada. No es un error de dato: es una
 incertidumbre conocida sobre un número que decide menús — y el calcio es de los
@@ -1333,15 +1353,36 @@ uno de 10, 1 kg para uno de 40. Los perros pequeños son los que quedan cerca.
 
 ---
 
-## Lo que dejó la relectura íntegra de SACN5, caps. 50 al 70 (11 de septiembre de 2026)
+## ~~Lo que dejó la relectura íntegra de SACN5, caps. 50 al 70~~ · **LOS TRES HECHOS el 11 de septiembre de 2026**
 
 De leer enteros los capítulos de digestivo, hígado y farmacología. **El cotejo
 tabla por tabla salió limpio**: las Tablas 57-1, 58-1, 60-1, 62-1, 63-3, 64-2,
 65-1, 66-1 y 67-3 están aplicadas enteras en sus ocho patologías digestivas, y
-la 68-8 en seis de sus diez filas. Lo que queda son estos tres puntos. Ninguno
-está aplicado; los tres son decisión tuya.
+la 68-8 en seis de sus diez filas.
 
-### 1 · El TECHO de hierro de la hepatopatía, que hoy solo usa el suelo
+⚠️ **CORREGIDO EL 15 DE SEPTIEMBRE DE 2026: los tres puntos de abajo decían
+«ninguno está aplicado; los tres son decisión tuya», y los tres estaban
+aplicados desde el mismo día que se escribieron.** Comprobado uno a uno contra
+el motor vivo, no contra este documento:
+
+| | Dónde está hoy | Comprobado |
+|---|---|---|
+| **1 · el techo de hierro de la hepatopatía** | `patologias.json`, `hepatopatia.topes_por_1000kcal.hierro` = **35,0** | `topes_de_patologias(["hepatopatia"])` lo devuelve, y `auditar_conversiones.py` rehace su conversión (140 mg/kg MS ÷ 4) |
+| **2 · el omega-3 de la enteropatía crónica** | `patologias.json`, `enteropatia_cronica.limites_escritos_que_el_solver_no_aplica.omega3_total`, con `valor: null` y `aplicado_por_el_solver: false` | está escrito con las dos frases de la fuente que dicen por qué no se aplica |
+| **3 · la B12 de la insuficiencia pancreática exocrina** | `patologias.json`, `insuficiencia_pancreatica_exocrina.avisos.dueno` | «ocho de cada diez perros con esto la tienen baja…», en los dos registros |
+
+**Esto es una pregunta zombi**, la misma forma que ya tiene su nombre en
+`PREGUNTAS_ABIERTAS.md`: un punto resuelto y aplicado en el motor que sigue
+abierto en el documento que se lee para decidir qué hacer. Y aquí hacía daño de
+verdad, porque este fichero es el índice de lo que queda: tres puntos cerrados
+puestos como «decisión tuya» son tres cosas que Elena podía ponerse a decidir
+teniendo la decisión tomada y aplicada. No se borran — se tachan con dónde
+acabaron, que es la regla de siempre: *una pregunta borrada se vuelve a hacer*.
+
+Lo que sigue son los tres puntos **tal como se escribieron**, para que se pueda
+leer el razonamiento completo.
+
+### ~~1 · El TECHO de hierro de la hepatopatía, que hoy solo usa el suelo~~ · **HECHO el 11 de septiembre** (`hepatopatia.topes_por_1000kcal.hierro` = 35,0)
 
 `hepatopatia` aplica `hierro` como **suelo** de 20 mg/1000 kcal, tomando el
 extremo bajo de la Tabla 68-8 («*Iron (mg/kg) 80 to 140*»). El extremo alto no
@@ -1383,9 +1424,9 @@ se pasa ninguno. `hepatopatia` es además `formulable: false` y
 veterinario. La ventana quedaría en **20-35** y el margen del profesional en
 10,4 (mínimo FEDIAF) a 35. El máximo de FEDIAF, 170,45, queda muy por encima.
 
-**Decisión:** aplicarlo o dejarlo escrito sin aplicar. Cabe holgado.
+**Decisión:** ~~aplicarlo o dejarlo escrito sin aplicar. Cabe holgado.~~ **Aplicado el 11 de septiembre**, con esta misma medida escrita en su `por_que`.
 
-### 2 · La dosis de omega-3 de la enteropatía crónica, que es del TEXTO y no de la tabla
+### ~~2 · La dosis de omega-3 de la enteropatía crónica, que es del TEXTO y no de la tabla~~ · **HECHO el 11 de septiembre** (escrita en `limites_escritos_que_el_solver_no_aplica`, sin aplicar y con el motivo de la fuente)
 
 El cap.57 la da y la Tabla 57-1 no, que es justo por lo que no la encontró el
 trabajo de transcribir tablas:
@@ -1405,7 +1446,7 @@ omega-3 del cáncer y el de la artrosis, que ya viven en
 `limites_escritos_que_el_solver_no_aplica` con su medida. **Su sitio es ese**, y
 hoy no está escrito en ninguna parte. El hueco es de registro, no de motor.
 
-### 3 · La B12 de la insuficiencia pancreática exocrina
+### ~~3 · La B12 de la insuficiencia pancreática exocrina~~ · **HECHO el 11 de septiembre** (está en `insuficiencia_pancreatica_exocrina.avisos`, en los dos registros)
 
 El aviso de `enteropatia_cronica` lleva la advertencia de la vitamina B12 con su
 pauta. El de `insuficiencia_pancreatica_exocrina` **no la lleva**, teniendo la
@@ -1626,6 +1667,26 @@ está en `identificadores_informe.json`. **Se regenera con
 
 ---
 
+## ~~§20 · El ratio omega-6:omega-3 lo elige el veterinario, y cada patología enseña el rango de su fuente~~ · **HECHO el 13 de septiembre de 2026**
+
+⚠️ **CORREGIDO EL 15 DE SEPTIEMBRE: los tres puntos de «lo que falta» de abajo
+están los tres hechos**, y se comprobaron contra el motor vivo, no contra este
+documento:
+
+| Lo que pedía | Dónde está hoy |
+|---|---|
+| 1 · la clave `omega6_total`, con su trampa de unidades | `constructor.NUTRIENTES_COMPUESTOS`, con `UNIDAD_DE_CADA_PARTE` al lado para que el g + mg se pueda **rehacer** en vez de creerse. Lo rehace el BLOQUE 106 |
+| 2 · que `objetivos_del_profesional` acepte ratios | `main.RATIOS_QUE_SE_PUEDEN_FIJAR` + `_ratios_dentro_de_fediaf`. `{"ratios": {"omega6_total:omega3_total": {"min": 1, "max": 7}}}` |
+| 3 · el rango de la fuente por patología, servido | `GET /vocabulario`, en `objetivos_del_profesional.ratios.lista[].rangos_por_patologia`, para los tres ratios |
+
+**Es la cuarta pregunta zombi del mismo día.** Las otras tres son los puntos de
+la relectura de SACN5 caps. 50-70, arriba en este mismo fichero. Un pendiente
+cerrado que sigue escrito como abierto no es inofensivo: este fichero es el
+índice de lo que queda.
+
+Lo que sigue es el razonamiento tal como se escribió, que es lo que explica por
+qué el ratio **no se aplica solo** — y eso sigue en pie.
+
 ## §20 · El ratio omega-6:omega-3 lo elige el veterinario, y cada patología enseña el rango de su fuente
 
 **Decidido el 13 de septiembre de 2026.** Elena, al ver que el ratio aparece en
@@ -1651,7 +1712,7 @@ Lo que falta es la puerta, no el mecanismo.
 - El rango de cada patología ya está **escrito con su cita**, en
   `limites_escritos_que_el_solver_no_aplica` de renal, artrosis y cáncer.
 
-### Lo que falta, y en este orden
+### ~~Lo que falta, y en este orden~~ · los tres, hechos el 13 de septiembre (ver la tabla de arriba)
 
 1. **La clave `omega6_total`**, que no existe. `omega3_total` es derivada
    (linolénico + EPA + DHA) y esta es su espejo: linoleico + araquidónico.
@@ -1758,7 +1819,7 @@ el omega-3 de la artrosis.
 
 ## §22 · Cerrar el bucle del BCS: el peso adulto de la TRAYECTORIA, no de la tabla
 
-Con el historial de pesadas hecho (P-38), el ±10 % por condición corporal deja de
+Con el historial de pesadas hecho (P-40, que era la P-38 antes de renumerarla), el ±10 % por condición corporal deja de
 poder ser lo que la fuente describe: SACN5 cap.17 pide reevaluar **cada dos
 semanas** y ajustar, y hoy el ±10 % se aplica una vez y no se acumula, porque el
 DER se recalcula de cero en cada pantalla.

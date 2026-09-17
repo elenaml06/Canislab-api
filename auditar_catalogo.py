@@ -31,7 +31,8 @@ Las cuatro comprobaciones que hace, y por qué cada una:
 
     python3 auditar_catalogo.py
 """
-import json, collections, sys, os, re, unicodedata
+import json
+import sys, collections, sys, os, re, unicodedata
 
 _re_org = re.compile(r"[a-z]+")
 
@@ -57,7 +58,12 @@ RUTA = os.environ.get("CANISLAB_CATALOGO") or os.path.join(
 al = json.load(open(RUTA, encoding="utf-8"))
 def nut(a, k): return (a.get("nutrientes") or {}).get(k, 0) or 0
 def es_grasa(a): return nut(a, "grasa") > 80          # aceites: sus ceros son reales
-SUPLEMENTOS = ("Multivitamínico", "Vitamina B", "Hierro", "Calcio", "Yodo", "Fibra", "Omega-3")
+# ⚠️ LA LISTA SE IMPORTA, NO SE COPIA (15 de septiembre de 2026). Añadir la
+# categoría «Vitamina E» destapó ONCE copias a mano del mismo conjunto, y esta
+# era una: sin la categoría nueva, un suplemento de vitamina E no se habría
+# auditado nunca y no habría saltado nada. Lo vigila el BLOQUE 117.
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "motor"))
+from constructor import CAT_SUPLEMENTO as SUPLEMENTOS
 
 def _envolver(texto, ancho):
     """Parte un texto largo en lineas, para que la lista de marcas se pueda leer."""

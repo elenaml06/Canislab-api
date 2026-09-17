@@ -55,7 +55,22 @@ jobs:
     # ⚠️ SUBIDO A 60 EL 10 DE SEPTIEMBRE POR LA NOCHE: la ultima tanda completa
     # en local tardo 2.387 s (40 min), y este runner va mas lento. Con el limite
     # en 45 volveria a morirse por reloj.
-    timeout-minutes: 60
+    #
+    # ⚠️ Y SUBIDO A 150 EL 16 DE SEPTIEMBRE, PORQUE LLEVABA MURIENDOSE POR RELOJ.
+    # La tanda 214 de este PR sale «cancelled» a los 60 minutos CLAVADOS (03:27
+    # -> 04:27): no es un fallo del motor, es este numero. Y es la peor forma de
+    # rojo que puede tener una CI -- no dice nada del codigo, no senala ningun
+    # bloque, y quien lo mira por encima entiende que la bateria fallo.
+    #
+    # MEDIDO: la bateria entera en local son 4.962-5.133 s, o sea 83-86 minutos
+    # con 122 bloques. Cada vez que un bloque nuevo resuelve menus de verdad
+    # esto sube, y ya ha pasado cuatro veces (2 min -> 10 -> 25 -> 45 -> 85).
+    #
+    # 150 deja margen para que el runner vaya mas lento que esta maquina sin
+    # tener que volver aqui cada semana. No es gratis --un job colgado ocupa el
+    # runner dos horas y media-- pero lo que cuesta un techo corto es peor:
+    # esconde el resultado entero.
+    timeout-minutes: 150
     # ⚠️ AQUI Y NO EN EL PASO. El `env` de un paso NO esta disponible en el `if`
     # de ese mismo paso -- GitHub evalua el `if` antes de montar el entorno del
     # paso, asi que `if: env.FUENTES_TOKEN != ''` con el `env` al lado da SIEMPRE
@@ -134,7 +149,10 @@ jobs:
         working-directory: Canislab-api
         run: pip install pyflakes
 
-      - name: Ejecutar los 85 bloques
+      # Sin el numero de bloques en el nombre: ponia «los 85» y son 122. Un
+      # numero escrito a mano en dos sitios se separa, y el de aqui no lo
+      # cubre ninguna prueba -- es la leccion de «los 30 requisitos».
+      - name: Ejecutar la bateria entera
         # Sin `-u` la salida sale a trompicones y, si algo se cuelga, el
         # registro no dice por qué bloque iba.
         working-directory: Canislab-api

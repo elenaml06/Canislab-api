@@ -252,7 +252,7 @@ AJUSTE_RAZA = 15
 # ⚠️ CÓMO SE APLICA: LA CIFRA DE RAZA VA EN VEZ DEL NIVEL DE ACTIVIDAD.
 # No es un suelo sobre el que se aplique la actividad, ni un ajuste que se
 # sume. Lo dice la propia guia dos veces (leido entero el 9 de septiembre, al
-# cerrar PREGUNTAS_ABIERTAS.md P-11):
+# cerrar PREGUNTAS_ABIERTAS.md P-41, que era la P-11):
 #
 #   · La frase que presenta la tabla: "Table VII-7 provides examples of daily
 #     energy requirements of dogs at different activity levels, FOR SPECIFIC
@@ -564,7 +564,8 @@ def _coef_crecimiento(peso_actual: float, peso_adulto: float,
 # Consecuencia que hay que conocer: un cachorro en BCS 6 y uno en BCS 9 reciben
 # el MISMO -10 %. No es un descuido, es que la regla es de escalon y no
 # proporcional. Lo que cierra la diferencia es repetirla cada dos semanas, y eso
-# es lo que hace posible el historial de pesadas (P-38).
+# es lo que hace posible el historial de pesadas (P-40, que era la P-38 hasta que
+# el 15 de septiembre se vio que habia DOS preguntas con ese numero).
 AJUSTE_BCS_CACHORRO = 0.10
 
 

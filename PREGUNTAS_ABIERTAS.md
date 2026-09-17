@@ -685,7 +685,14 @@ Lo único que falta es la cifra.
 
 ---
 
-### P-11 · ¿Lleva el oxalato cálcico un suelo de fósforo?
+### P-41 · ¿Lleva el oxalato cálcico un suelo de fósforo?
+
+⚠️ **ERA LA P-11 Y SE RENUMERA A P-41 el 15 de septiembre**, por lo mismo que la
+P-40 de abajo: había **dos preguntas con el número 11**, ésta y «FEDIAF da cifras
+para dos razas que la app tiene y el motor ignora», que está CERRADA. Se renumera
+la abierta y no la cerrada a propósito: una pregunta cerrada es historia y se
+cita desde `HECHO.md`, mientras que la abierta es la que se va a volver a leer.
+Las referencias de `der.py` y `LECTURAS.md` van cambiadas en el mismo commit.
 
 | | |
 |---|---|
@@ -2116,7 +2123,18 @@ dividiendo por el exceso medido (Tabla VII-2 de FEDIAF), y esa tabla es de perro
 adulto: no hay base para aplicársela a un cachorro, que está creciendo.
 
 
-### ~~P-38 · No se guarda ni una pesada~~ · **HECHA el mismo día, y falta ejecutar el SQL**
+### ~~P-40 · No se guarda ni una pesada~~ · **HECHA el mismo día, y falta ejecutar el SQL**
+
+⚠️ **ERA LA P-38 Y SE RENUMERA A P-40 el 15 de septiembre**, porque había **dos
+preguntas con el número 38**: ésta y la de la densidad energética. Es el mismo
+fallo que los dos BLOQUE 98 del 13 de septiembre y la lección es la misma: **un
+número es la única forma que tiene el repo de decir de qué se está hablando**, y
+dos con el mismo número es una referencia rota que no da ningún error. Se
+renumera ÉSTA y no la otra por el mismo criterio que se usó con los bloques: la
+de la densidad está citada desde `CLAUDE.md`, `PENDIENTE.md`, `LECTURAS.md`, el
+sello de `main.py` y cuatro sitios de `pruebas_completas.py`, y ésta desde dos.
+Las dos referencias que había —`PENDIENTE_NUTRICION.md` §22 y `der.py`— van
+cambiadas en el mismo commit.
 
 | | |
 |---|---|
@@ -2153,7 +2171,66 @@ calcula la app y el motor solo lo recibe, que es la duplicación declarada del
 DER).
 
 
-### P-38 · Una ración de este motor va a 5,20 kcal/g de materia seca, y los 135 límites que vienen de una tabla en % de materia seca se convirtieron suponiendo 4,0
+### P-38 · Una ración de este motor va a 5,20 kcal/g de materia seca, y los 135 límites que vienen de una tabla en % de materia seca se convirtieron suponiendo 4,0 — **REDUCIDA el 15 de septiembre: los siete límites LEGALES ya están aplicados**
+
+⚠️ **LO PRIMERO QUE HAY QUE SABER AL ABRIR ESTA PREGUNTA (15 de septiembre de
+2026).** Elena, leyendo la medida: «pues corrige por densidad no??», y después
+«haz lo que diga FEDIAF tal como lo diga FEDIAF, **pero comprueba bien en la
+fuente antes de hacer nada**». Al comprobarlo, la pregunta se parte en dos y una
+de las dos mitades **deja de ser una pregunta**, porque la fuente ya la contesta.
+
+**Lo que FEDIAF dice, y son DOS cosas distintas que yo había mezclado**:
+
+| | Lo que dice §3.2.1 | Cuántos |
+|---|---|---|
+| **Los máximos LEGALES de la UE** | *«Legal maxima in EU legislation are expressed on 12% moisture content and **they do not account for energy density**. Therefore in these guidelines **they are only provided on a dry matter basis**.»* | **7** — cobre, yodo, hierro, manganeso, selenio, zinc y el (L) de la vitamina D |
+| **Todo lo demás** (los mínimos, y los seis máximos nutricionales) | FEDIAF **los imprime por 1000 kcal** en su Tabla III-3b, y el motor usa **ese** número | el resto |
+
+Y se ve **en la propia tabla**: la celda de máximo de esos siete está **VACÍA**
+en la III-3b, solo pone «(L)». **No hay número por 1000 kcal que usar** — el que
+aplicaba el motor lo habíamos hecho nosotros con el ×2,5 de la Tabla III-2, que
+es justo la conversión de la que la nota al pie dice *«These conversions assume
+an energy density of 16.7 kJ (4.0 kcal) ME/g DM. For foods with energy densities
+different from this value, the recommendations should be corrected for energy
+density»*.
+
+**✅ APLICADO EL 15 DE SEPTIEMBRE**, en la forma que no supone ninguna densidad:
+el límite entra en el MILP como restricción lineal sobre la materia seca del
+propio menú —`Σ nut·g ≤ L_ms · Σ MS·g`—, y el semáforo hace la misma cuenta.
+Medido: **10 de 10 perros de referencia con menú verde**, con el hueco de humedad
+contado como agua entera (el lado que más aprieta), y el selenio pegado al 100 %
+del techo nuevo. ⚠️ Y **212 de los 216 menús precalculados se pasaban** de un
+límite legal (selenio 206, cobre 101, vitamina D 28, zinc 1): el catálogo se
+regeneró entero. Lo vigila el **BLOQUE 113**.
+
+⚠️ **Y LO QUE **NO** SE TOCA, que es la mitad que casi me llevo por delante**:
+los **mínimos**. Mi primera lectura decía que corregir por densidad los bajaría
+un 23 % y que eso era «lo que dice la fuente al pie de la letra». **Es falso**:
+FEDIAF publica los mínimos por 1000 kcal en la Tabla III-3b, anclados a la
+ingesta diaria (*«Recommended minimum values are based on an average daily energy
+intake of either 95 kcal/kg0.75 (398 kJ/kg0.75) or 110 kcal/kg0.75 (460 kJ/
+kg0.75) for dogs»*), y el motor usa esos
+números. No hay ninguna conversión nuestra que corregir ahí. Lo mismo los seis
+máximos nutricionales que sí vienen impresos por 1000 kcal — calcio 6,25/4,00/
+4,50 · fósforo 4,00 · vitamina A 100 000 · vitamina D (N) 800 · lisina 7,00 ·
+linoleico 16,25 —, comprobados celda a celda contra `fediaf_tabla_III_3b.txt`.
+
+**LO QUE SIGUE ABIERTO**, y es lo de abajo: los **122 límites que NO son de
+FEDIAF** —las 94 cifras de `patologias.json`, las 24 de
+`recomendaciones_libro.json` y las 4 de `requisitos_condicionales.json`—, que
+vienen de tablas de SACN5 y Fascetti en % de materia seca y se convirtieron con
+el mismo ×2,5. Ahí la fuente **no** dice que haya que corregir, y sus tablas
+están escritas para un **pienso**, donde 4,0 kcal/g MS es la densidad de verdad.
+Medido: corrigiéndolos también, **3 de 11 perros pierden el menú**, y los que
+aprietan son el fósforo y el sodio del libro. Y sigue abierta la otra mitad: que
+SACN5 recomienda una densidad de 3,5-4,5 kcal/g MS y ninguno de nuestros menús
+la cumple.
+
+Lo de abajo se conserva tal como se escribió el 14 de septiembre, porque la
+medida de la densidad y el recuento de las 135 siguen siendo buenos — lo que
+cambia es qué parte de ellos era una pregunta.
+
+### P-38-bis · lo escrito el 14 de septiembre (la medida sigue valiendo; el alcance no)
 
 | | |
 |---|---|
@@ -2256,6 +2333,42 @@ exactamente la misma pregunta que la de arriba, vista por el otro lado.
 ⚠️ **Y lo que NO se ha hecho a propósito**: bajar ninguna cifra. Ninguna de las
 135 se toca. Lo que está en cuestión es la conversión, no el número de la fuente.
 
+⚠️ **MEDIDO EL 15 DE SEPTIEMBRE, Y CAMBIA LA RESPUESTA AL PUNTO 2: HECHO BIEN,
+NO CABE.** El 14 se midió con un **factor fijo** del 23 % y salían **8 de 8**
+perros con menú. Pero un factor fijo no es la corrección: la corrección es la del
+punto 2 —el límite escrito sobre la materia seca del propio menú—, y eso es un
+**punto fijo**, porque apretar el límite cambia el menú y el menú cambia su
+densidad. Iterando hasta ese punto fijo sobre once perros de referencia:
+
+| | |
+|---|---|
+| Perros que **pierden el menú** | **3 de 11** — adulto 3 kg, sénior 22 kg y cachorro joven 10 kg |
+| El factor que de verdad les toca | **0,728 · 0,678 · 0,696** — más apretado que el 0,77 del factor fijo, que es por lo que aquel salía 8 de 8 |
+
+**Y lo que aprieta NO es FEDIAF: son los techos del LIBRO.** Soltando **un solo**
+límite corregido y dejando los demás apretados:
+
+| Perro | Vuelve a salir soltando |
+|---|---|
+| Adulto 3 kg | **fósforo** *o* **sodio** (los dos, techos de SACN5 Tabla 13-3) |
+| Cachorro joven 10 kg | **fósforo** (techo de SACN5 Tabla 17-1) |
+| Sénior 22 kg | ninguno solo — hacen falta varios |
+
+Eso importa **más que el recuento**, porque cambia de qué clase de límite estamos
+hablando. Ninguno de los 13 máximos de FEDIAF —los siete legales de la UE entre
+ellos— es el que deja al perro sin comer: el que aprieta es una **recomendación de
+un libro de texto**, que es justo la clase que ya cede cuando choca (regla 3-ter
+de `CLAUDE.md`: *un techo del LIBRO cede ante un suelo de FEDIAF, y se dice*).
+
+Así que la decisión de Elena no es «¿corregimos o no?» sino **«¿los techos del
+libro se corrigen también, o se quedan con su conversión de 4,0?»**, y hay
+argumento para lo segundo: esos techos se leyeron de una tabla escrita para un
+**pienso**, donde 4,0 kcal/g MS es la densidad de verdad — corregirlos es
+aplicarles una densidad que su propia tabla no contempla. Los máximos de FEDIAF
+no tienen esa salida: su nota dice expresamente que hay que corregir.
+
+**No se ha aplicado nada.** Está medido y escrito, que es la regla.
+
 Lo vigila el **BLOQUE 111**, que mide la densidad real en cada batería y falla si
 se mueve — para que el día que cambie no se siga citando un 23 % que ya no existe.
 
@@ -2317,6 +2430,667 @@ que deja inertes los tres `documentado_sin_cifra` de
 o una medida de energía metabolizable de estas piezas. Con eso el arreglo es de
 una línea por ficha.
 
+⚠️ **BUSCADO A FONDO EL 15 DE SEPTIEMBRE, ABRIENDO LAS CUATRO FUENTES, y sigue
+sin haber número — pero la búsqueda deja tres cosas que no estaban escritas.**
+
+**1 · NRC dice dónde está el dato, y no es ninguna de nuestras fuentes.** En el
+mismo capítulo 3, dos párrafos antes de la frase que excluye el hueso:
+
+> «For diets that consist of usual ingredients, data on digestibility of
+> nutrients or ME from tabular values may be used (**see Meyer and Zentek,
+> 2001**). […] While this approach does not take into account interactions among
+> nutrients and effects of processing, it has been used successfully for
+> **homemade** and semi-purified experimental diets (Kienzle, 1995).»
+
+O sea que NRC **sí** considera resuelto el problema para una dieta casera — pero
+remitiendo a una tabla de EM por ingrediente que está en *Meyer & Zentek,
+Ernährung des Hundes* (2001), que no está en el repo. **Ése es el documento que
+cierra esta pregunta**, y hasta ahora no sabíamos ni que existía.
+
+**2 · Y la otra ecuación de NRC tampoco sirve, comprobado.** Su Tabla 3-1 trae
+una segunda vía —la de los alimentos preparados: GE por bomba calorimétrica o
+`5,7×proteína + 9,4×grasa + 4,1×(NFE+fibra)`, y una digestibilidad energética
+que sale de `91,2 − 1,43 × %fibra bruta`—. **No vale para el hueso**: esa
+digestibilidad se predice desde la FIBRA BRUTA, y un hueso no tiene. Queda
+descartada, que es mejor que dejarla como posibilidad sin mirar.
+
+**3 · Fascetti da el MECANISMO y dice que el crudo es el peor caso.** Cap.11,
+literal:
+
+> «some protein sources have inherently low digestibility due to antinutritional
+> factors (e.g. legumes) or **dimensional features such as numerous cross-links
+> (e.g. collagen)**. In those cases, **processing methods such as heating are
+> necessary to improve digestibility**.»
+
+La proteína del hueso y del cartílago **es** colágeno, y una ración BARF va
+cruda. O sea que no solo es menos digestible que el 90 % que supone Atwater:
+está en el extremo en el que la fuente dice que haría falta cocinarla para
+subirla. Eso confirma la DIRECCIÓN del error —la energía del hueso está
+sobreestimada— sin dar la magnitud.
+
+**Y lo que se ha comprobado que NO existe**: FEDIAF solo da un método *in vivo*
+(§6.1.2, prueba de alimentación con seis perros y recogida de heces y orina), y
+**Köber 2017 no mide energía** — su Tabla 1 trae materia seca, proteína bruta,
+grasa bruta, cenizas, calcio y fósforo, y nada más. Las cuatro fuentes del repo
+están miradas y ninguna tiene el número.
+
+
+### P-42 · A un perro RENAL se le ha quitado el suelo de vitamina E, y la causa es que en el catálogo no hay vitamina E suelta
+
+| | |
+|---|---|
+| **Dueño** | **Cris Carles** (es clínica: si el antioxidante de la Tabla 37-9 se puede quedar fuera mientras no haya ficha) y **Elena** (es dato: conseguir la ficha) |
+| **Estado** | **abierta** — aplicado el apagado el 15 de septiembre de 2026, con la cifra escrita y medida |
+
+**Qué dice la fuente.** SACN5 5ª ed., Tabla 37-9 «Key nutritional factors for
+dogs and cats with chronic kidney disease», fila «Antioxidants … ≥400 IU vitamin
+E/kg of food for dogs». Convertido con el factor del d-α-tocoferol natural de la
+Tabla VII-14 de FEDIAF (1 UI = 0,671 mg) y la densidad de 4,0 kcal/g MS: **67,1
+mg/1000 kcal**. Es **la misma cifra** que piden otras tres tablas del mismo libro
+—artrosis (34-2), obesidad (27-4) y hepatobiliar (68-8)— y el techo del perro
+sano de los capítulos 13 y 14.
+
+**Qué ha pasado.** El BLOQUE 61 se puso rojo: la `renal`, marcada `formulable:
+true`, dejó de dar menú **a ningún peso**. La causa no es la cifra, es de
+**datos**, y ya estaba escrita dos veces en el repo: **en el catálogo no hay un
+suplemento de vitamina E suelto**, solo los nueve multivitamínicos. Llegar a 67,1
+obliga a meter **dos**, y dos ya no caben debajo de los **siete máximos LEGALES
+de la UE**, que desde el 15 de septiembre van sobre **materia seca**, que es la
+única forma en que FEDIAF los publica (§3.2.1).
+
+**La medida, sobre el perro de referencia del BLOQUE 61** (adulto de 20 kg, DER
+950):
+
+| | |
+|---|---|
+| Con el suelo puesto | **sin menú en ninguno de los ocho peldaños** |
+| Sin el suelo | menú en `proporcion_minima_y_un_suplemento_mas` |
+| Vitamina E de ese menú | **34,5 mg/1000 kcal** (la mitad de lo que pide SACN5) |
+| Zinc de ese menú | **99,0 % de su techo LEGAL** |
+| Selenio | 93,5 % |
+
+O sea: **no hay sitio para el segundo multivitamínico**. Subir la vitamina E se
+paga en zinc, y el zinc es **ley**, no una recomendación.
+
+**Lo que se ha hecho, que es el procedimiento y no una decisión clínica**: la
+cifra **no se ha bajado**. Se ha movido a
+`limites_escritos_que_el_solver_no_aplica` de `patologias.json` con esta medida,
+con su cita literal y con su conversión intactas, que es lo que este repo hace
+con un número de la fuente que no cabe.
+
+⚠️ **Las otras tres la siguen aplicando, y eso está medido una por una**:
+artrosis, obesidad y hepatopatía salen con **dos multivitamínicos**, bajando de
+peldaño. Que tres la apliquen y una no **no es incoherencia**: es que en las tres
+cabe y en la cuarta no. Uniformar bajando la cifra sería inventársela; uniformar
+quitándola de las cuatro sería tirar un límite que sí cabe.
+
+**Lo que hay que decidir:**
+
+1. **Cris** — ¿es aceptable que un perro renal se quede sin ese antioxidante
+   mientras no haya ficha? ¿O la renal debería dejar de ser `formulable` hasta
+   entonces, que es la otra salida que el propio BLOQUE 61 nombra?
+2. **Elena** — conseguir la **ficha de un suplemento de vitamina E suelto**
+   (`DATOS_QUE_FALTAN.md`). Es el mismo dato que desbloquea el suelo del perro
+   sano, apagado desde el 11 de septiembre por lo mismo. El día que entre, se
+   vuelve a poner `aplicado_por_el_solver: true` y **la batería tiene que salir
+   verde**: esa es la comprobación de que el problema era el catálogo y no la
+   cifra.
+
+⚠️ **Y la trampa del factor, que sigue viva**: los 67,1 salen del d-α-tocoferol
+**natural**, que es el más permisivo de los siete de la Tabla VII-14. Si la ficha
+que entre es de **acetato sintético**, el mismo requisito son **100 mg/1000
+kcal**, no 67,1.
+
+
+---
+
+### P-43 · El único producto que arregla el hueco de metionina que señaló Cris lleva **DL**-metionina, y ella pidió **L**
+
+| | |
+|---|---|
+| **Dueño** | **Cris Carles** (es clínica: si la forma DL vale) y **Elena** (es de producto: si se mete esa ficha) |
+| **Estado** | **abierta** — encontrado el 15 de septiembre de 2026 al revisar las etiquetas de los suplementos |
+
+**De dónde viene.** `REVISION_NUTRICIONISTA.md` §3: «Empieza a salir carente de
+metionina, que se tiene que suplementar como **L-metionina**». Está marcado ❌ y
+es el tercero de los tres puntos suyos que siguen sin cubrir. El motor **sí**
+verifica la metionina (está en `verificar.MAPA` desde el 28 de agosto, con su
+mínimo y el de metionina+cistina), así que **detecta** la carencia; lo que no
+hay es **con qué arreglarla**.
+
+**Lo que se ha encontrado.** **`V-INTEGRA Renal Met`**, del mismo fabricante que
+las cinco fichas de esa gama que ya están en el catálogo, **se vende en España**
+(viralataspetshop.es) y su etiqueta está publicada entera. Declara, entre sus
+aditivos nutricionales por kg:
+
+> «DL-metionina: 58.200 mg»
+
+y lo confirma su propio bloque analítico: «Metionina 5,8 %». Son **5.820 mg de
+metionina por 100 g**, que es un orden de magnitud por encima de cualquier otra
+cosa del catálogo. El resto de su etiqueta es el hermano del `V-INTEGRA Renal`
+que ya tenemos, con el fósforo a 0 %: ácido fólico 9,6 mg/kg, cloruro de colina
+49.000, taurina 39.200, yodo 44, calcio 14,8 %, proteína bruta 10,2 %, grasa 2,5 %,
+humedad 1,8 %.
+
+**Por qué no lo meto yo y ya está.** Por dos cosas, y las dos son de quien firma:
+
+1. **DL no es L.** La D-metionina se convierte a L en el perro, pero **no gratis
+   ni del todo**, y NRC 2006 (cap. «Methionine · Dogs») dice que **da la
+   eficiencia de utilización de la DL respecto a la L precisamente porque no es
+   1:1**. Contar los 5.820 enteros sería darlo por resuelto; contar la mitad
+   sería inventarme un factor. Y la dirección del error importa: la metionina
+   tiene **mínimo y no máximo**, así que contar de más deja al perro corto sin
+   que el semáforo lo vea.
+2. **Y NRC avisa de toxicidad, de la DL en concreto.** «Biourge et al. (2002)
+   reported methionine toxicosis in six hunting dogs fed a single meal of about
+   300 g of a normal diet containing 47 g DL-methionine·kg–1» —ataxia,
+   desorientación, temblores, vómitos, y convulsiones en el cachorro de 6 meses—
+   y concluye: «it would appear that the **SUL for DL-methionine is well below
+   47 g·kg–1** diet containing 4 kcal ME·g–1». Del mismo párrafo sale lo otro:
+   «If they used L-methionine, **D-methionine would appear to be considerably
+   more toxic than the L-form**».
+
+**Lo que hace falta para cerrarla**, y es poco: que Cris diga **(a)** si la
+DL-metionina le vale para lo que ella pedía, y **(b)** con qué factor se cuenta
+la mitad D. Con eso la ficha entra en una tarde, con su dosis máxima de etiqueta
+y su tope, como cualquier otra. Mientras tanto **no se mete**, porque una ficha
+de metionina con el número mal contado es peor que no tenerla: el motor daría la
+carencia por arreglada.
+
+**Y hay una alternativa que también es de producto**: la DL-metionina de grado
+pienso al 99 % existe suelta y barata, pero se vende **a granel de 25 kg** y sin
+etiqueta de producto para mascota. Que eso sea o no aceptable es decisión de
+Elena, no mía.
+
+---
+
+### ⚠️ ACTUALIZADA EL MISMO DÍA: Elena pasa DOS productos, y uno resuelve la mitad de la pregunta
+
+Elena: «¿Y estas? **VETFOOD L-Methiocid** … **napfcheck Vet-MET**».
+
+**Las dos son L-metionina, no DL.** O sea que la mitad clínica de esta pregunta
+—«¿vale la forma DL?»— **deja de hacer falta**: hay producto con la forma que
+pidió Cris. Pero solo una de las dos se puede meter hoy:
+
+| | Qué declara | ¿Entra? |
+|---|---|---|
+| **napfcheck Vet-MET** | «L-Methionin: **600.000 mg**» por kg = **60 g/100 g**. Es POLVO, así que la cifra entra directa. Analíticos completos (proteína 40,4 % · grasa 2,1 % · fibra bruta 15,2 % · ceniza 1,8 %) y dosis (hasta 2 g al día por cada 5 kg de peso). Y es **la misma marca** del `napfcheck Novomineral proLEBER` que ya está en el catálogo | **Sí** |
+| **VETFOOD L-Methiocid** | «L-metionina (500 mg/2 kapsułki)» = 250 mg por cápsula, y analíticos por 100 g (proteína 59,8 % · fibra 1,4 % · grasa 3,8 % · ceniza 2,7 % · **azufre 7,6 %** · almidón 14,1 %) | **No**, y por un dato concreto: **no publica lo que pesa la cápsula**, así que 250 mg/cápsula no se puede pasar a mg/100 g. El azufre solo da una **cota**: la L-metionina es 21,49 % de azufre por fórmula, así que 7,6 / 0,2149 ≤ **35,4 g/100 g** — y encima esa cota es floja porque el hidrolizado de ave que lleva dentro también aporta azufre. Una cota no es una cifra |
+
+**Lo medido, que es lo que hace falta para decidir:**
+
+| | |
+|---|---|
+| Mínimo de FEDIAF, metionina adulto | **1,16 g/1000 kcal** → un perro de 20 kg a 950 kcal necesita **1,10 g/día** |
+| Lo que hace falta de `napfcheck Vet-MET` para cubrirlo | **1,8 g de producto** |
+| El alimento del catálogo con más metionina | langostino, 0,709 g/100 g — harían falta **155 g** |
+| **Dosis MÁXIMA de la etiqueta** para ese mismo perro | **8 g/día = 4,8 g de metionina**, o sea **4,4 veces el requisito del día entero** |
+
+### ⚠️ Y AQUÍ ESTÁ LO QUE SIGUE ABIERTO, QUE YA NO ES LA FORMA SINO EL TECHO
+
+**Estos productos no son correctores de una carencia: son ACIDIFICANTES
+URINARIOS.** El propio napfcheck lo dice —«Methionin Ergänzung zur *Ansäuerung
+des Urins*»— y su dosis se ajusta **midiendo el pH de la orina**. El VETFOOD
+igual: struvita, una cápsula cada 12 h, hasta 6 meses.
+
+Eso deja **dos** cosas que decide Cris y no yo:
+
+1. **¿Hasta dónde puede subir la metionina en un perro sano?** Porque **FEDIAF no
+   pone máximo** —la celda de `maxAdulto` está vacía—, así que si el solver se
+   fuera al tope del fabricante **el semáforo no lo pararía**. Y NRC 2006 avisa
+   justo de eso: «*Biourge et al. (2002) reported methionine toxicosis in six
+   hunting dogs*» —ataxia, temblores, vómitos y convulsiones en el cachorro de 6
+   meses— y concluye que «*it would appear that the SUL for DL-methionine is well
+   below 47 g·kg–1 diet containing 4 kcal ME·g–1*».
+2. **¿En qué patologías NO debe entrar nunca?** Acidificar la orina es lo que se
+   busca en la **estruvita** y es **lo contrario** de lo que le conviene a un
+   perro con **oxalato** o con **urato**. Hoy el catálogo no tiene forma de decir
+   «este alimento sí para esta patología y no para aquella», así que meterlo sin
+   contestar esto es dejar que el motor se lo pueda dar a cualquiera.
+
+### ⚠️ Y AL MEDIRLO, LA PREGUNTA CAMBIA DE SITIO: EL MOTOR NO SE QUEDA CORTO DE METIONINA
+
+Antes de meter una ficha había que comprobar lo que esta pregunta llevaba
+dándose por hecho desde que la escribió Cris. **Medido sobre los 214 menús del
+catálogo**, contra el mínimo de FEDIAF de cada etapa:
+
+| | El más justo | Mediana | Por debajo del mínimo |
+|---|---|---|---|
+| **Metionina** | **157 %** (Gigante_Adulto/Salmón) | 319 % | **0 de 214** |
+| **Metionina + cistina** | **126 %** (Pequeño_Adulto/Ternera) | 238 % | **0 de 214** |
+
+O sea: **ningún menú de este motor sale carente de metionina, y el más justo va
+un 26 % por encima del mínimo.** Y no es casualidad ni suerte: la metionina y la
+suma metionina+cistina son **dos de los 43 requisitos** que el MILP impone como
+restricción dura desde el 28 de agosto, así que un menú corto **no se entrega**.
+
+**Lo que dijo Cris sigue siendo verdad de lo que ella ve** —formulando a mano, una
+ración casera se queda corta de metionina con facilidad— pero **no es verdad de
+este motor**, y esa diferencia es justo la que había que medir antes de meter un
+producto.
+
+**Consecuencia, y es la que ordena el resto:** la ficha de L-metionina **no hace
+falta para cubrir el requisito**. Hace falta para otra cosa distinta y legítima —
+que un veterinario pueda **acidificar la orina** de un perro con estruvita—, y eso
+la manda al **formulador del profesional**, no al automático.
+
+⚠️ Y meterla en el automático sería activamente malo: el solver no la necesita, así
+que si la usara sería **porque le sale barata en nutrición por gramo**, que es
+exactamente el fallo de la albahaca del 14 de septiembre. Un acidificante urinario
+no se le da a un perro sano porque salga eficiente.
+
+### ✅ Y ELENA LO CIERRA EL MISMO DÍA, CON UN CRITERIO MÁS FUERTE QUE EL MÍO
+
+> «Hombre, pero **la dosis de eso la tiene que pautar un veterinario**, ¿no? No
+> lo tendría que calcular el motor… O sea, eso es algo que un veterinario receta
+> al perro, y que el veterinario tiene que tener acceso a ello **para ponerlo
+> dentro del menú y ver cómo cuadran los nutrientes**, pero ya está. Él es el que
+> pauta cuánto tiene que tomar.»
+
+Eso es más estricto que lo que yo había escrito, y con razón. Yo proponía «solo
+formulador, con el tope del fabricante» — pero **un tope del fabricante sigue
+siendo el solver eligiendo los gramos**. Lo que dice Elena es que la cantidad **no
+es del motor en absoluto**: la pone quien firma, y el motor solo la cuenta para
+cuadrar el resto de la ración alrededor.
+
+**Y eso NO hay que construirlo: ya está.** `POST /formular/autocompletar` acepta
+`gramos_por_alimento`, los respeta con 0,5 g de margen, y —lo que lo hace servir—
+**si no puede respetarlos NO entrega el menú**: devuelve `factible: false` con
+`gramos_fijos_movidos` y la alternativa aparte, porque desde el 29 de agosto está
+escrito que «*si se han movido, no es un sí*». O sea que la promesa «tus gramos no
+se tocan» se cumple o se dice.
+
+**Lo que hace falta, entonces, es solo esto:**
+
+| | |
+|---|---|
+| Que la ficha exista en el catálogo, con su etiqueta | para que el veterinario pueda escribirla y el motor sepa qué lleva dentro |
+| Que **NO** entre en `accesibles.py` | que es la lista blanca del automático. Lo que no está ahí, el solver no lo usa nunca por su cuenta — es el mecanismo que ya deja fuera a los nueve aceites, a los huevos y al cerebro de ternera |
+
+Con las dos cosas, el techo de seguridad **deja de ser una pregunta del motor**:
+el solver nunca elige esa cantidad, así que no hay nada que topar. Queda como lo
+que es —una dosis clínica— y quien la pone es quien puede medir el pH de la orina.
+
+**Lo único que sigue abierto para Cris** es lo segundo del bloque anterior, y es
+de aviso y no de cifra: que la ficha diga **para qué es y para qué no** —acidificar
+la orina se busca en la estruvita y es lo contrario de lo que conviene en oxalato
+y en urato—, porque el formulador se lo enseña a un profesional pero la ficha es
+donde vive ese dato.
+
+---
+
+### P-44 · La medicación no es comida: la mete quien la receta, no nosotros
+
+| | |
+|---|---|
+| **Dueño** | **Elena** (es de producto y la propuesta es suya) y **Cris Carles** (qué se le pide a quien firma) |
+| **Estado** | **abierta** — propuesta el 15 de septiembre de 2026, sin construir |
+
+**De dónde sale.** Al decidir dónde meter la L-metionina, Elena:
+
+> «igual no debería estar en un catálogo de alimentos, que realmente es una
+> medicación… Igual en vez de meter nosotros medicaciones —porque igual luego
+> ellos eligen otra marca y la composición es distinta— **que ellos puedan meter
+> la medicación que van a usar, meter los datos de la medicación para que el
+> motor lo pueda calcular si quieren. Y si no, simplemente poner que han pautado
+> esa medicación** y si no meten los datos, no sé si eso tiene sentido…»
+
+**Sí lo tiene, y por una razón que no es de comodidad: nuestro catálogo es de
+COMIDA.** Cada ficha lleva su procedencia y la rehace un auditor contra su
+fuente. Una ficha de fármaco no puede cumplir eso, porque **el fármaco que
+recete el veterinario no es el que hayamos elegido nosotros**: el `napfcheck
+Vet-MET` (60 g de L-metionina por 100 g, en polvo) y el `VETFOOD L-Methiocid`
+(250 mg por cápsula) son el mismo principio activo con composiciones que no se
+parecen. Poner una ficha sería **elegirle la marca a quien firma** y, peor,
+contar en su ración una composición que no es la que ha recetado.
+
+### Lo que YA existe en el motor y encaja, que es medio camino
+
+| | |
+|---|---|
+| **Cinco avisos que nombran un fármaco concreto** | `mitotano_con_comida`, `bromuro_y_cloro`, `potasio_con_diureticos`, `analitica_de_taurina`, `carnitina_dosis_terapeutica`. Dos empiezan literalmente con «**ES UN AVISO DE FÁRMACO, NO UN TOPE**» |
+| **Gramos fijados por el profesional** | `POST /formular/autocompletar` acepta `gramos_por_alimento`, los respeta con 0,5 g y, si no puede, **no entrega el menú** |
+| **Lo que se come fuera de la ración ya se cuenta** | regla 3-bis: `kcal_de_premios`. Un jarabe o una pasta llevan kcal, y el mecanismo de descontarlas del DER está hecho |
+| **`dato_dudoso`** | el sitio del repo para un valor declarado que no se ha podido verificar. `verificar()` lo devuelve junto al menú |
+
+**Y dos huecos reales que esto llenaría:**
+
+1. ⚠️ **El aviso del bromuro sale hoy a quien no le toca.** `bromuro_y_cloro`
+   dispara **porque está marcada `epilepsia_idiopatica`**, no porque nadie haya
+   dicho que el perro toma bromuro. O sea que se le suelta a todo epiléptico,
+   lo tome o no. Y al revés es peor: el bromuro compite con el **cloruro de la
+   dieta**, así que en el perro que sí lo toma el cloruro de la ración pasa a ser
+   una cifra que hay que vigilar — y el motor no tiene forma de saber que ese
+   perro es ese.
+2. **La pauta firmada no guarda la medicación.** `PeticionFirmar` tiene
+   `paciente` y un `indicaciones` de texto libre, y nada estructurado. Pero
+   `VETERINARIOS.md` dice que la pauta se guarda **congelada entera** porque un
+   documento firmado tiene que seguir diciendo lo mismo dentro de un año: si el
+   fármaco interactúa con la dieta, **pertenece a ese documento**.
+
+### Lo que yo añadiría, y es lo que la propuesta no dice todavía
+
+**(a) No son «con datos / sin datos»: son DOS preguntas independientes.**
+
+| | Qué decide | Ejemplo |
+|---|---|---|
+| **¿Aporta nutrientes o kcal?** | si hay que contarlo en la ración o la ración sale mal calculada | la L-metionina, un aceite, un suplemento de zinc |
+| **¿Interactúa con la dieta?** | si hay que avisar y/o vigilar un nutriente | el bromuro con el cloruro · el mitotano con la comida · los diuréticos con el potasio |
+
+Eso contesta el «no sé si eso tiene sentido» del final: **declarar el fármaco SIN
+datos no es inútil**, porque activa la segunda columna entera, que es justo la
+que el motor ya sabe hacer y hoy dispara a ciegas.
+
+**(b) Un dato tecleado no tiene auditor, y eso hay que decirlo en el documento.**
+Si quien firma escribe la composición y se equivoca en un ×1000 —que es
+**literalmente** lo que se encontró el mismo día en seis fichas de suplemento con
+la etiqueta publicada delante— el motor se lo cree y **el menú sale verde**. El
+catálogo tiene ocho auditores contra eso; un número escrito en el momento no
+tiene ninguno. Así que lo que entre por aquí va marcado como **declarado por el
+profesional y no verificado**, y eso tiene que salir **en la pauta firmada**:
+quien firma tiene derecho a ver que ese número lo puso él y no una fuente.
+
+**(c) El límite, que no se puede cruzar:** el motor **no opina sobre la dosis del
+fármaco**. Cuenta lo que aporta a la ración y avisa de lo que ya sabe. Nada más.
+
+**(d) Y esto reclasifica la metionina** (P-43): deja de ser una ficha del catálogo
+y pasa a ser **el primer caso de uso de esta puerta**. Lo cual resuelve además lo
+de la marca sin tener que elegir ninguna.
+
+⚠️ **Lo que NO desaparece**: la puerta por rol sigue haciendo falta el día que
+haya en el catálogo cualquier ficha que el dueño no deba ver, porque hoy
+`GET /alimentos` sirve las 164 fichas **sin mirar quién pregunta** y
+`/menu/anadir` aceptaría el nombre aunque la pantalla no lo enseñara. Esconder
+sin cerrar la puerta es decorado — la lección de `/stripe/portal`.
+
+---
+
+### P-45 · El suelo de vitamina E del perro SANO: ¿67,1 mg/1000 kcal, o el mínimo de FEDIAF?
+
+| | |
+|---|---|
+| **Dueño** | **Adrián (Ecocan)** — es criterio clínico. Elena, 15 de septiembre: «lo dejamos como pregunta para el nutricionista, que en este caso va a ser Adrián, Ecocan» |
+| **¿Bloquea?** | No. El motor aplica el mínimo de FEDIAF, que es el requisito, y se cumple siempre |
+| **Abierta desde** | 15 de septiembre de 2026 |
+| **Estado** | **abierta** — la cifra está escrita y apagada en `recomendaciones_libro.json`, con sus medidas |
+
+**La pregunta, en una línea:** al perro adulto y sénior **sin ninguna patología**,
+¿se le exige la vitamina E del **requisito** (~7 mg/1000 kcal) o la que el libro
+recomienda **«for improved antioxidant performance»** (67,1 mg/1000 kcal, casi
+diez veces)?
+
+### Las cuatro cifras, y que las tres primeras coinciden
+
+| Fuente | Qué es | mg/1000 kcal |
+|---|---|---|
+| **FEDIAF 2025**, Tabla III-3b (10,40 UI) | requisito, y es lo que el motor aplica | **6,968** |
+| **NRC 2006**, *recommended allowance* | requisito | **7,5** |
+| **AAFCO**, mínimo del perfil (50 UI/kg MS) | requisito legal EE. UU. | ~**8,4** |
+| **SACN5 5ª ed.**, Tabla 13-3 (≥400 UI/kg MS) | **recomendación** del libro | **67,1** |
+
+Las tres referencias de requisito se parecen entre sí. La cuarta está un orden de
+magnitud por encima **y no dice ser un requisito** — el propio capítulo 13 lo
+separa: *«The requirement for vitamin E for foods (DM) for adult dogs is 30 mg/kg
+(NRC, 2006)»*, y los 400 UI son *«for improved antioxidant performance»*.
+
+### ⚠️ Lo que se leyó del estudio original, que es lo que hace falta para decidir
+
+SACN5 apoya ese 400 en un solo trabajo y lo cita sin dar el detalle. Leído
+entero: **Jewell DE, Toll PW, Wedekind KJ, Zicker SC, «Effect of increasing
+dietary antioxidants on concentrations of vitamin E and total alkenals in serum
+of dogs and cats», *Vet Ther* 2000;1(4):264-72 (PMID 19757574)**. Literal:
+
+> «The total analyzed dietary vitamin E levels for the canine treatment groups
+> were **293, 445, and 598 IU vitamin E/kg of food, as fed**.»
+
+> «The **thresholds for significant reduction of serum alkenal concentrations**
+> in dogs and cats **were 445 and 540 IU vitamin E/kg of food**, respectively,
+> on an as-fed basis.»
+
+Tres cosas que cambian cómo se lee el 400, y las tres son para Adrián:
+
+1. **El 400 de la tabla no es el número del estudio.** El efecto se demostró a
+   **445 UI/kg tal cual** —en pienso seco, ~494 UI/kg MS, o sea ~83 mg/1000
+   kcal— y el grupo de **293 no dio efecto significativo**. Nuestro 67,1 (=400
+   UI/kg MS) queda **por debajo de la única dosis que funcionó** y muy por
+   encima del requisito. Está en tierra de nadie.
+2. **Lo medido es un biomarcador en suero** —alcanales, o sea peroxidación
+   lipídica—, no un resultado clínico. 40 perros adultos sanos, 6 semanas.
+3. **Era un estudio de pienso SECO** (Hill's). Una ración BARF fresca no es el
+   mismo escenario oxidativo. Y por la relación clásica vitamina E:PUFA vamos
+   holgados: **min 0,79 · mediana 4,82 · máx 44,01 UI/g, y 0 de 214 menús por
+   debajo** del 0,6 UI/g que recomienda AAFCO (nota *h* de su Apéndice A,
+   comprobada contra el documento: *«It is recommended that the ratio of IU of
+   vitamin E to grams of polyunsaturated fatty acids (PUFA) be > 0.6:1»*).
+
+### Lo que cuesta aplicarlo, medido
+
+No es que no quepa: **cabe**. Desde el 15 de septiembre hay en el catálogo dos
+fichas de vitamina E suelta (aceite de germen de trigo de Beaphar y vitamina E
+líquida de MARNYS), y con ellas los perros de referencia sacan menú. Lo que
+cuesta es de **producto**:
+
+| Con el suelo encendido, peldaño `estricto` (**un solo bote**) | |
+|---|---|
+| toy 3 kg · mini 10 kg · mediano 22 kg · grande 40 kg · sénior 8 kg · sénior 28 kg | **0 de 6 sacan menú** |
+| Los 6, permitiendo el segundo bote | menú, y el segundo bote es **siempre** una vitamina E suelta |
+| cachorro 10 kg · cachorro 25 kg | menú con un bote — pero solo porque este suelo está escrito únicamente en Adulto y Sénior |
+
+**Y con un bote no se puede, por las etiquetas:** ningún multivitamínico del
+catálogo aporta 67,1 dentro de la dosis que marca su fabricante. El mejor,
+Homemadekun, da 45,7 mg a un perro de 10 kg; el napfcheck 18,0; los seis
+V-INTEGRA y el Nutratop llevan **0** desde que se les quitó el conservante (ver
+`ETIQUETAS_DE_LOS_SUPLEMENTOS.md`).
+
+Seguridad: ninguna en juego. El techo seguro son 1000-2000 UI/kg MS (NRC, vía
+Fascetti cap.14) y el motor aplica **167,75 mg/1000 kcal** — el suelo está 2,5
+veces por debajo.
+
+### Por qué está apagado hoy, y qué se descartó
+
+Elena, el 15 de septiembre, leyendo el aviso que tendría que ver el dueño si el
+suelo cediera y se dijera:
+
+> «no tiene sentido que un usuario vea ese mensaje, porque no tiene ni puta idea
+> de qué le estás hablando»
+
+Se descartó, entonces, la salida que estaba propuesta: que el **suelo** del libro
+cediera y se dijera, como ya ceden los **techos** del libro ante un suelo de
+FEDIAF (`techos_del_libro_que_no_se_aplican`). Técnicamente se puede; lo que no
+se puede es el texto — el canal del dueño no admite «la vitamina E se quedó en 35
+en vez de 67», que es la regla COMIDA-NO-NUTRIENTES del 14 de septiembre. Y
+decírselo solo al profesional dejaría al dueño con dos botes sin saber por qué.
+
+**Lo que se hace mientras tanto:** el suelo queda `aplicado_por_el_solver: false`
+en Adulto y Sénior, con la cifra, la fuente, la conversión y todas las medidas
+intactas, y con la maquinaria viva — el **BLOQUE 57** lo enciende a mano y exige
+que el solver y el filtro final lo apliquen. El día que Adrián conteste se pone a
+`true` y ya está.
+
+### Lo que hay que preguntarle exactamente
+
+1. Para un perro **sano**, adulto o sénior, con una ración **fresca** tipo BARF:
+   ¿tiene sentido clínico exigir ~10 veces el requisito de vitamina E, sabiendo
+   que el número sale de un biomarcador en pienso seco y que el propio estudio no
+   vio efecto por debajo de 445 UI/kg?
+2. Si la respuesta es que sí: ¿**67,1** (el 400 de la tabla) o **~83** (el 494
+   UI/kg MS que es el umbral real del estudio)? Aplicar el 400 es aplicar una
+   cifra que el estudio no demostró.
+3. ¿Cambia la respuesta según el **PUFA** de la ración? FEDIAF dice en su §3.3
+   que la vitamina E sube con los PUFA y **no da cifra para el perro** — está
+   escrito como `documentado_sin_cifra` en `requisitos_condicionales.json`. Si
+   Adrián da una regla (por ejemplo la de AAFCO, +0,6 UI por gramo de PUFA por
+   encima de 83 g/kg), eso sustituiría a un suelo plano y sería **mejor**, porque
+   ataría la cifra a la ración de cada perro en vez de a una media.
+4. Y la de al lado: **P-42**, el mismo nutriente en el perro **renal**, hoy en
+   `limites_escritos_que_el_solver_no_aplica`. Son la misma pregunta con dos
+   poblaciones, y conviene que las conteste la misma persona.
+
+**Dónde está todo:** `recomendaciones_libro.json` →
+`por_etapa.Adulto.suelos_por_1000kcal.vitE` (y `Senior`), con el `por_que`
+entero. Lo vigila el **BLOQUE 57**.
+
+### ⚠️ LA PRUEBA QUE IBA A CONTESTAR ESTO YA SE HA HECHO, Y SALIÓ QUE NO (16 de septiembre de 2026)
+
+`CLAUDE.md` dice hoy, en dos sitios:
+
+> «El día que entre en el catálogo una ficha de vitamina E suelta se vuelve a
+> poner a `true` y la batería tiene que salir verde: **esa es la comprobación de
+> que el problema era el catálogo y no la cifra**.»
+
+**Esa comprobación ya se puede dar por hecha, y el resultado es el contrario.**
+Las dos fichas de vitamina E suelta (`MARNYS VITAHELP Vitamina E liquida` y
+`Beaphar Aceite de Germen de Trigo`) entraron el 15 de septiembre, están dentro,
+y con el suelo encendido:
+
+| | |
+|---|---|
+| Suelo encendido, **un solo bote** | **0 de 6** adultos y séniors — infactible **DEMOSTRADO**, no por reloj |
+| Suelo encendido, **dos botes** | 6 de 6 verde, a 70,2 mg/1000 kcal |
+
+Y con la ficha nueva metida a mano para probar (`napfcheck Vitamin Complete`,
+550 mg de d-α-tocoferol por 100 g) **no cambia nada**: sigue siendo 0 de 6 con un
+bote, y con dos el solver sigue eligiendo la MARNYS.
+
+**La causa es aritmética, no de catálogo.** Para llegar a 67,1 mg/1000 kcal en
+una ración de 1100 kcal hacen falta 73,8 mg de vitamina E, y eso son:
+
+| Multivitamínico | vitE mg/100 g | gramos que harían falta |
+|---|---|---|
+| napfcheck Novomineral proLEBER | 600 | **12,3 g/día** |
+| astoral MultiVital BARF | 456,4 | 16,2 g/día |
+| Homemadekun | 419,5 | 17,6 g/día |
+| NEKTON Dog Easy-BARF | 134,2 | 55,0 g/día |
+| Las seis V-INTEGRA y el Nutratop | **0** | imposible |
+
+Y **la dosis que declara la etiqueta de cualquiera de ellos es 1-4 g al día**.
+O sea que **ninguna premezcla puede llevar ese suelo a su dosis declarada**,
+exista o no exista el producto. **El segundo bote es ESTRUCTURAL.**
+
+**Eso cambia la pregunta que se le hace a Adrián**: ya no es «¿falta un
+producto?» sino **«¿vale la pena un segundo bote por una recomendación que no es
+un requisito?»**. Y el coste de producto sigue siendo el medido el 15: con el
+suelo puesto, **0 de 6** adultos y séniors sacan menú con un solo bote.
+
+---
+
+### P-47 · El catálogo no tiene ficha de zinc, cobre, selenio ni manganeso
+
+| | |
+|---|---|
+| **Dueño** | **Elena** (es de catálogo y de compra) |
+| **¿Bloquea?** | No, pero explica tres cosas a la vez |
+| **Abierta desde** | 16 de septiembre de 2026 |
+
+Hay ficha suelta de **Calcio** (2), **Hierro** (1), **Yodo** (2), **Vitamina B**
+(2), **Vitamina E** (2), **Omega-3** (4) y **Fibra** (1). De **zinc, cobre,
+selenio y manganeso, ninguna**.
+
+O sea que **la única forma que tiene el motor de meter zinc es un
+multivitamínico**, y todos traen calcio. Medido sobre nueve productos —los diez
+del catálogo más `cdVet Fit-BARF MicroMineral`, `napfcheck Novomineral Balance`,
+`Sensitiv`, `BARF Complete` y `Dibaq Sense`— **ninguno baja del 15 % de calcio**,
+y siete están entre el 15 y el 21 %. No es casualidad: **existen para dietas
+caseras SIN hueso**, donde el calcio lo tiene que poner el bote. Este motor
+formula CON hueso, así que ese calcio es lastre.
+
+⚠️ Y el motor tiene la patología **`dermatosis_por_zinc`**, cuyo propio aviso
+dice «zinc por boca», **sin ninguna ficha de zinc en el catálogo**.
+
+**Candidato español encontrado y SIN MEDIR**: `Dermovital Zinc` (Stangest,
+España), comprimido de 1,3 g con **25 mg de zinc** (quelato de aminoácidos) y
+12,5 µg de selenio, **sin calcio declarado**. Lleva además aceite de borraja y
+de pescado (EPA 10,8 · DHA 7,2 mg por comprimido) y complejo B, así que no es
+zinc puro: es un suplemento de piel.
+
+---
+
+### P-48 · Solo entran productos que se vendan en España
+
+| | |
+|---|---|
+| **Quién lo decidió** | **Elena**, 16 de septiembre de 2026: «solo pueden ser cosas que se vendan en España, ¿vale? Ya sea en Amazon o en cualquier otra tienda» |
+| **Estado** | **cerrada** — es una regla, no una pregunta. Se escribe aquí porque no estaba escrita en ningún sitio |
+
+Ya era como funcionaba el catálogo de hecho (el yoduro potásico declara
+«ostrovit.es, envío España») pero no estaba dicho.
+
+**Primer descartado por esta regla:** `napfcheck Vitamin Complete`. Su tienda
+(vetbiom.com) tiene la web traducida al español, pero **su propia página de
+envíos** lista cinco zonas —Alemania/Austria, Benelux, Polonia/Chequia, Francia
+y Dinamarca— y dice que solo envía a las que están en esa lista. **España no
+está.**
+
+⚠️ Y esa frase va SIN comillas a propósito: la página de envíos de una tienda no
+es ninguna de las fuentes del repo, así que entrecomillarla la mandaba a la
+casilla de «no se sabe de dónde sale» de `auditar_citas.py` y ponía roja la
+batería en el BLOQUE 85 por una frase que no decide ninguna cifra. Es la misma
+salida barata que ya usa el repo para las frases de Elena dentro de un apartado
+de una fuente en español: se cuenta lo que dice, no se cita.
+
+---
+
+### P-46 · La rotación de proteína no llega al cachorro, y hacerla dura cambia los menús de todos
+
+| | |
+|---|---|
+| **Dueño** | **Elena** — es de producto: rotar tiene un precio y hay que decidir si se paga |
+| **¿Bloquea?** | No. Es variedad, no nutrición: el menú que sale está verde y cumple los 43 requisitos |
+| **Abierta desde** | 15 de septiembre de 2026 |
+
+**Qué pasa.** Pidiendo tres menús seguidos para el mismo perro, el adulto cambia
+de proteína y el cachorro **no**: repite pollo las tres veces.
+
+| perro | las tres proteínas |
+|---|---|
+| cachorro joven 12 kg | Pollo · Pollo · Pollo |
+| cachorro tardío 15 kg | Pollo · Pollo · Pollo |
+| cachorro tardío 6 kg | Pollo · Pollo · Pollo |
+| adulto 24,5 kg | Gallina · Ternera · Gallina |
+| adulto 8,2 kg | Gallina · Ternera · Gallina |
+
+**Y no es ninguna de las tres explicaciones fáciles**, las tres medidas el mismo
+día:
+
+1. **No es que no pueda.** Excluyendo pollo y gallina de verdad, los tres
+   cachorros sacan menú (ternera, pavo), 3 de 3. El menú alternativo existe.
+2. **No es la cifra de la penalización.** `PENALIZACION_DE_ROTACION` está en 6,0
+   (medida ese día: con 2,0 repetían 3 de 6 casas de adultos, con 4,0 ninguna).
+   Subida a 12, 20 y 40 el cachorro **sigue repitiendo** — a 40 cambia uno de
+   tres. Y 40 estaría por encima de los **12,0** de `PENALIZACION_DE_ENCARGO`,
+   que es la línea que no se cruza: repetir proteína es un defecto de variedad,
+   no encontrar el alimento es no comer.
+3. **No es el margen de optimalidad del solver.** Apretando `mip_rel_gap` de
+   0,30 a 0,02 sigue repitiendo.
+
+**La causa, entonces:** la rotación vive en el **objetivo**, y para un cachorro
+el menú con pollo es tanto mejor que la preferencia no lo voltea. En
+crecimiento los mínimos son más altos y la ventana más estrecha, y la carcasa de
+pollo es la forma barata de cerrar el calcio.
+
+### La salida, y por qué no la decide el asistente
+
+Hacer la rotación **dura con plan B**: prohibir como principal la especie del
+menú anterior y, si no hay menú, soltarlo y **decirlo**. Es exactamente el
+mecanismo que ya tiene el techo del libro (`resolver()` prueba apretado y suelta
+si sale infactible), y ya está medido que el menú sin pollo existe, así que
+nadie se quedaría sin comer.
+
+**Lo que hay que decidir es el precio**, y es tuyo:
+
+- ¿Prefieres que un cachorro coma pollo tres semanas seguidas, o un menú
+  posiblemente **más caro y con más ingredientes**?
+- La rotación dura afectaría **también a los adultos**, que hoy ya rotan: les
+  quitaría la opción de volver a una proteína buena al tercer menú (hoy hacen
+  Gallina → Ternera → Gallina, que es rotación real y perfectamente razonable).
+- Y hay un caso donde repetir es lo correcto: un perro con muchas alergias puede
+  tener **una sola** proteína viable. Ahí el plan B tendría que soltar y decirlo,
+  no dejarle sin menú.
+
+**Mientras tanto** el BLOQUE 11 exige que **el adulto rote** —eso sí está
+garantizado, 6 de 6 casas medidas— e **imprime** el caso del cachorro con su
+medida en vez de acusar al motor de tener «el mecanismo apagado», que es falso:
+el mecanismo está puesto y la especie a evitar le llega al solver.
 
 ---
 

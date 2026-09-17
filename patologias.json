@@ -125,27 +125,6 @@
    "nutriente_frontera": "fosforo",
    "objetivo_terapeutico_por_1000kcal": 1000,
    "suelos_por_1000kcal": {
-    "vitE": {
-     "valor": 67.1,
-     "fuente": "SACN5 5a ed., Tabla 37-9, verificado literal 8-sep-2026",
-     "por_que": "ANADIDO 8-sep-2026, TERCERA PASADA. Salio de leer la tabla ENTERA en vez de solo la fila del nutriente que ya teniamos -- ver VERIFICACION_FILA_A_FILA.md. Cuatro tablas de SACN5 piden vitamina E >=400 **UI**/kg de materia seca: la 37-9 (renal), la 34-2 (artrosis), la 27-4 (obesidad) y la 68-8 (hepatobiliar). Es el factor que MAS se repite de todas las tablas verificadas y no se aplicaba en ninguna. El motivo es el mismo en las cuatro: son cuadros con estres oxidativo, y la vitamina E es el antioxidante liposoluble de membrana. || ⚠️ LA UNIDAD, Y AQUI SE FALLO UNA VEZ. La tabla da UI y el catalogo mide MILIGRAMOS de tocoferol NATURAL. La conversion del repo, ya establecida y verificada contra FEDIAF Tabla VII-14 («Conversion factors - Vitamin source to activity»), es 1 UI = 0,671 mg: el d-alfa-tocoferol natural de los alimentos frescos da 1 mg = 1,49 UI. Asi que 400 UI/kg MS x 0,67 = 268 mg/kg MS, y /4 = 67 mg/1000 kcal. || El 8 de septiembre esto se escribio primero como 100, tratando las UI como si fueran mg. Se cazo porque la ARTROSIS dejo de dar menu en ningun peldano: el fallo se manifesto como infactibilidad, no como un numero raro. Medido entonces, soltando un limite cada vez: sin este suelo salia en el peldano 0; sin el de omega-3 totales salia en el 3; con los dos puestos, en ninguno. || OJO CON LA OTRA TABLA: la 35-3 (disfuncion cognitiva) dice «>=750 mg/kg», ya en MILIGRAMOS, asi que sus 187,5 son correctos y NO llevan el x0,67. Dos tablas del mismo libro, dos unidades distintas para el mismo nutriente.",
-     "conversion": {
-      "valor_en_la_fuente": 400,
-      "unidad_en_la_fuente": "UI/kg MS",
-      "factor_a_la_unidad_del_motor": 0.671,
-      "por_que_el_factor": "El catalogo mide mg de d-alfa-tocoferol natural y la tabla da UI. FEDIAF Tabla VII-14: d-alfa-tocoferol 1 mg = 1,49 UI, luego 1 UI = 0,671 mg. ⚠️ El 8-sep-2026 esto se escribio tratando las UI como mg y la artrosis dejo de dar menu.",
-      "densidad_kcal_por_g_MS": 4.0,
-      "cita": "SACN5 Tabla 37-9 «Key nutritional factors for dogs and cats with chronic kidney disease», nota «*All values expressed on a dry matter basis, unless otherwise indicated». Leida entera 9-sep-2026, fila «Antioxidants … >=400 IU vitamin E/kg of food for dogs»"
-     },
-     "margen_profesional": {
-      "sentido_de_la_cifra": "min",
-      "suelo": 6.968,
-      "suelo_de_donde": "minimo_fediaf:Vitamina_E",
-      "techo": null,
-      "techo_de_donde": "sin_techo",
-      "bajo_el_suelo_necesita_firma": true
-     }
-    },
     "omega3_total": {
      "valor": 1.0,
      "fuente": "SACN5 5a ed., cap.37 «Chronic Kidney Disease», Tabla 37-9, fila «Omega-3 fatty acids». Verificado literal 9-sep-2026",
@@ -163,6 +142,27 @@
       "techo": null,
       "techo_de_donde": "sin_techo",
       "bajo_el_suelo_necesita_firma": false
+     }
+    },
+    "vitE": {
+     "valor": 67.1,
+     "fuente": "SACN5 5a ed., Tabla 37-9, verificado literal 8-sep-2026",
+     "por_que": "⚠️ APAGADO Y VUELTO A ENCENDER EL MISMO DIA (15-sep-2026), Y ESO ES LO QUE HAY QUE LEER AQUI. Por la mañana el BLOQUE 61 se puso rojo: la renal dejo de dar menu a ningun peso, porque llegar a 67,1 mg/1000 kcal obliga a meter DOS multivitaminicos --en el catalogo no habia vitamina E suelta-- y dos ya no caben debajo de los siete maximos LEGALES de la UE, que desde ese dia van sobre materia seca. Medido entonces: sin el suelo la renal daba menu con 34,5 mg/1000 kcal y el ZINC AL 99,0 % de su techo legal. Se movio a `limites_escritos_que_el_solver_no_aplica` con esa medida, SIN BAJAR LA CIFRA, que es lo que manda el procedimiento. || Por la tarde Elena pidio lo unico que de verdad lo arreglaba: «busca suplementos de vitamina E recomendados por veterinarios justo para esa patologia, que se vendan en Espana, y metelos al catalogo». Entraron dos --el aceite de germen de trigo enriquecido de Beaphar (396 mg/100 g) y la vitamina E liquida natural de MARNYS (2620 mg/100 g)-- y con ellos la renal vuelve a dar menu CON el suelo puesto: medido en el perro de referencia (adulto de 20 kg, DER 950), sale en `proporcion_minima_y_un_suplemento_mas` con 77,0 mg/1000 kcal y 9,2 g del aceite de Beaphar. || LA LECCION: la cifra de la fuente no se baja; se dice lo que cuesta, y lo que fallaba era el CATALOGO y no el numero. || DE DONDE SALIO, que no se pierde al moverlo: ANADIDO 8-sep-2026, TERCERA PASADA. Salio de leer la tabla ENTERA en vez de solo la fila del nutriente que ya teniamos -- ver VERIFICACION_FILA_A_FILA.md. Cuatro tablas de SACN5 piden vitamina E >=400 **UI**/kg de materia seca: la 37-9 (renal), la 34-2 (artrosis), la 27-4 (obesidad) y la 68-8 (hepatobiliar). Es el factor que MAS se repite de todas las tablas verificadas. El motivo es el mismo en las cuatro: son cuadros con estres oxidativo, y la vitamina E es el antioxidante liposoluble de membrana. || ⚠️ LA UNIDAD, Y AQUI SE FALLO UNA VEZ: la tabla da UI y el catalogo mide MILIGRAMOS de tocoferol NATURAL (1 UI = 0,671 mg, FEDIAF Tabla VII-14). El 8 de septiembre esto se escribio primero como 100, tratando las UI como si fueran mg, y se cazo porque la ARTROSIS dejo de dar menu en ningun peldano: el fallo se manifesto como infactibilidad, no como un numero raro. || OJO CON LA OTRA TABLA: la 35-3 (disfuncion cognitiva) dice «>=750 mg/kg», ya en MILIGRAMOS, asi que sus 187,5 son correctos y NO llevan el x0,67. Dos tablas del mismo libro, dos unidades distintas para el mismo nutriente.",
+     "conversion": {
+      "valor_en_la_fuente": 400,
+      "unidad_en_la_fuente": "UI/kg MS",
+      "factor_a_la_unidad_del_motor": 0.671,
+      "por_que_el_factor": "El catalogo mide mg de d-alfa-tocoferol natural y la tabla da UI. FEDIAF Tabla VII-14: d-alfa-tocoferol 1 mg = 1,49 UI, luego 1 UI = 0,671 mg. ⚠️ El 8-sep-2026 esto se escribio tratando las UI como mg y la artrosis dejo de dar menu.",
+      "densidad_kcal_por_g_MS": 4.0,
+      "cita": "SACN5 Tabla 37-9 «Key nutritional factors for dogs and cats with chronic kidney disease», nota «*All values expressed on a dry matter basis, unless otherwise indicated». Leida entera 9-sep-2026, fila «Antioxidants … >=400 IU vitamin E/kg of food for dogs»"
+     },
+     "margen_profesional": {
+      "sentido_de_la_cifra": "min",
+      "suelo": 6.968,
+      "suelo_de_donde": "minimo_fediaf:Vitamina_E",
+      "techo": null,
+      "techo_de_donde": "sin_techo",
+      "bajo_el_suelo_necesita_firma": true
      }
     }
    },

@@ -1171,13 +1171,34 @@ Para un perro de 1,5 kg con 200 kcal, llegar a 13,4 mg de vitamina E total sin g
 las dos plazas de suplemento en ello es lo que no sale.
 
 **Qué se desbloquea con esa ficha**: que el suelo del perro sano deje de costar
-menús. Está **ENCENDIDO** desde el 11 de septiembre por decisión de Elena, y con la
-batería en rojo mientras siga así: el perro con ocho especies fuera se queda sin menú
-(adulto, cachorro y toy), y al toy de 1,5 kg le cuesta tanto que el solver no lo saca
-en 1 s ni en 20 intentos. Las otras 15 combinaciones de alergias y exclusiones siguen
-saliendo, y al toy lo salva la escalera por la vía de la API. Y de paso deja de
-depender de un multivitamínico completo el cumplir una recomendación de un solo
-nutriente.
+menús. ⚠️ **Corrección del 15 de septiembre, porque aquí ponía lo contrario**: NO está
+encendido. Elena lo encendió la mañana del 11 de septiembre («la norma es la norma») y
+lo apagó esa misma tarde para poder entregar («apágalo y fusiona todo, ya
+preguntaremos lo de la vitamina E») — lo segundo es el ORDEN, no la norma, porque con
+él encendido el perro con ocho especies fuera se queda sin menú (adulto, cachorro y
+toy), la batería sale roja en los BLOQUES 9 y 43, y eso estaba reteniendo 150 commits
+que no tienen nada que ver. Las otras 15 combinaciones de alergias y exclusiones
+siguen saliendo, y al toy lo salva la escalera por la vía de la API. Y de paso, con la
+ficha, deja de depender de un multivitamínico completo el cumplir una recomendación de
+un solo nutriente.
+
+⚠️⚠️ **Y EL 15 DE SEPTIEMBRE ESTE HUECO SE LLEVÓ POR DELANTE UNA PATOLOGÍA, QUE ES LO
+QUE LO SUBE DE PRIORIDAD.** La **insuficiencia renal crónica** ha tenido que apagar su
+suelo de vitamina E —la misma cifra, 67,1, de la Tabla 37-9 de SACN5— y pasa a
+`limites_escritos_que_el_solver_no_aplica`. El motivo es exactamente el de arriba con
+una vuelta más: llegar a 67,1 obliga a meter **dos** multivitamínicos, y dos ya no
+caben debajo de los **siete máximos LEGALES de la UE**, que desde ese día van sobre
+materia seca como los publica FEDIAF (§3.2.1). Medido en el perro de referencia
+(adulto de 20 kg, DER 950): sin el suelo, la renal sí da menú y llega a **34,5
+mg/1000 kcal** con el **zinc al 99,0 % de su techo legal** y el selenio al 93,5 %.
+Subir la vitamina E se paga en zinc, y el zinc es ley. Las otras tres que piden esa
+cifra —artrosis, obesidad y hepatopatía— **sí la siguen aplicando**, bajando de peldaño
+hasta donde caben dos multivitamínicos: en las tres cabe y en la renal no, medido una
+por una.
+
+O sea que hoy esta ficha no es solo «para que el perro sano cumpla una
+recomendación»: es lo que le devolvería a un **perro renal** el antioxidante que su
+propia tabla le pide.
 
 ### ⚠️ Y HAY UNA SEGUNDA COSA QUE FALTA, MEDIDA EL 11 DE SEPTIEMBRE: LA FORMA DE LA QUE YA HAY
 
@@ -1686,3 +1707,65 @@ vitamina A de la ración, y la vitamina A tiene **máximo en FEDIAF**. No se ha 
 cifra —manda BEDCA, que es el mandato 1— pero ahora la ficha **declara también el id de
 BEDCA**, que no tenía: sin él esos 10250 no se comparaban con ninguna fuente que los
 publique. Está en `PREGUNTAS_PARA_ELENA.md`.
+
+---
+
+## Dos razas de las que la ficha ofrece solo PARTE de sus tamaños (15 de septiembre de 2026)
+
+Nace de una pregunta de Elena: «*hay ciertas razas que tienen distintos tamaños,
+eso se recoge en razas? Es decir, por ejemplo, un perro salchicha puede ser toy,
+mini, estándar… ¿hay todas esas opciones para seleccionar la correcta para tu
+perro?*».
+
+**La respuesta general es que sí**: las variedades de tamaño viven en
+`razas.json` como razas con nombre propio, no como una opción aparte — Caniche
+Toy · Enano · Mediano · Grande, Schnauzer Miniatura · Estándar · Gigante, Spitz
+Alemán Pequeño · Mediano · Grande (más el Pomerania y el Keeshond, que son las
+otras dos del mismo estándar), Bull Terrier y Bull Terrier Miniatura, Pinscher
+Alemán y Pinscher Miniatura.
+
+**Pero faltan dos**, comprobadas contra el estándar oficial de la FCI:
+
+| Raza | Lo que dice la FCI | Lo que tiene `razas.json` |
+|---|---|---|
+| **Teckel / Dachshund** (FCI 148) | **tres** tamaños | Estándar y Miniatura. **Falta el Kaninchen** |
+| **Xoloitzcuintle** (FCI 234) | **tres** tamaños | solo Estándar. **Faltan Intermedio y Miniatura** |
+
+Citas literales, de la versión española del estándar:
+
+> «Dachshund Kaninchen (para la caza del conejo): Machos: 27 cm – hasta 32 cm ·
+> Hembras: 25 cm – hasta 30 cm»
+> — FCI, estándar nº 148, apartado TAMAÑO
+
+> «Existen tres tamaños para machos y hembras. • Variedad estándar: mayores de 46
+> a 60 cm… • Variedad intermedia: mayores de 36 a 45 cm. • Variedad miniatura: 25
+> a 35 cm.»
+> — FCI, estándar nº 234, apartado TAMAÑO
+
+⚠️ **Y AQUÍ EL DATO QUE FALTA NO ES EL TAMAÑO: ES EL PESO, Y LA FCI NO LO DA.**
+Los dos estándares definen sus variedades por **una medida que no es el peso** —
+el Teckel por **perímetro torácico** («*El perímetro torácico medido con una edad
+mínima de 15 meses…*») y el Xolo por **altura a la cruz**. O sea que añadir las
+filas exige inventarse una horquilla de peso, que es exactamente lo que este
+fichero existe para no hacer. **No lo rellena el asistente.**
+
+Es el mismo caso que las 185 razas sin fuente publicada, con un matiz peor: en
+aquellas la cifra ya estaba y lo que falta es de dónde sale; aquí no hay ni
+cifra ni fila.
+
+**Cuánto importa, medido**: desde el 12 de septiembre el rango de la raza **ya no
+recorta las kcal** de un cachorro — lo decide su propia trayectoria. Así que una
+variedad que falta no mueve ninguna ración: mueve el **peso de respaldo** cuando
+no hay ni edad ni peso, y lo que se le **enseña** al dueño. Quien tenga un Teckel
+de conejo elige hoy «Dachshund Miniatura» y ve 4-5 kg cuando su perro anda por
+3-3,5.
+
+**Y se ha barrido el resto, para no contestar con dos casos sueltos.** De las 65
+razas de `razas.json` que citan su número de estándar, se bajaron y leyeron 34 y
+**ninguna más define varios tamaños**. El barrido mira **solo el apartado
+TAMAÑO/PESO** y solo variedades de tamaño: las «variedades de pelo» y «de manto»
+son el pelaje y no cuentan — la primera versión las daba por buenas y acusaba al
+Pastor Alemán y al Fox Terrier. ⚠️ Y la segunda versión **tampoco veía al
+Teckel**, que es el caso que motivó todo esto, porque miraba línea a línea y el
+estándar escribe «Dachshund Standard:» en una línea y su medida en la siguiente.
+Comprobado con los dos casos conocidos: el barrido bueno los pilla los dos.

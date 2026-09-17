@@ -1,0 +1,116 @@
+FUENTES DE LA WEB, VERIFICADAS CONTRA LA PAGINA REAL
+=====================================================
+
+QUE ES ESTE FICHERO Y POR QUE EXISTE (16 de septiembre de 2026)
+---------------------------------------------------------------
+Elena: «acuerdate de que tienes lo de verificar BIEN QUE TODAS LAS FUENTES ESTEN
+BIEN CERRADAS Y QUE TODAS LAS CITAS SE HAYAN COGIDO BIEN».
+
+`auditar_citas.py` comprueba 2.071 citas y encuentra 2.051 literales. Las **20
+que quedan** citan una fuente que NO esta en el repo, asi que el auditor las
+deja en la casilla de «no se pueden comprobar aqui» -- honesto, pero es un
+hueco: **cuatro de esas fuentes deciden un limite que el motor aplica de
+verdad**.
+
+Este fichero trae SOLO las frases que el repo ya cita, copiadas de la pagina
+real y comprobadas una a una. Es el mismo criterio que `fci_estandares_peso.txt`
+(que guarda solo el apartado TAMAÑO Y PESO de cada estandar) y que
+`aafco_nutrient_profiles_2014.txt`: se guarda lo que hay que poder auditar, no
+el documento entero.
+
+⚠️ LO QUE **NO** SE HA PODIDO VERIFICAR VA ABAJO, con su motivo. Una lista de
+comprobaciones que solo cuenta las que salieron bien no sirve para nada.
+
+
+1 · MERCK VETERINARY MANUAL — la grasa de la PANCREATITIS
+----------------------------------------------------------
+Decide: `pancreatitis.topes.grasa`, el techo de grasa del motor.
+https://www.merckvetmanual.com/digestive-system/the-exocrine-pancreas/pancreatitis-in-dogs-and-cats
+Apartado «Treatment of Pancreatitis in Dogs and Cats». Consultado 16-sep-2026.
+
+"In dogs, feeding a low-fat diet (ie, less than 20 g fat/1,000 kcal) is crucial for treatment success"
+
+"In dogs, a ration with less than 20 g fat/1,000 kcal should be chosen. In cats, dietary fat content may not be as important as in dogs, but high-fat diets are usually avoided."
+
+
+2 · CENTER SA et al. — el cobre de la HEPATOPATIA
+---------------------------------------------------
+Decide: `hepatopatia.topes.cobre` (2,4 mg/1000 kcal).
+El repo lo cita por TITULO, no por una frase: lo que hay que verificar es que el
+articulo existe tal cual se describe. Comprobado contra PubMed (efetch), que es
+la misma via por la que entro el resumen de Jewell.
+
+  PMID 41275602
+  J Am Vet Med Assoc. 2025 Nov 21;264(2):171-180. doi: 10.2460/javma.25.05.0295.
+  Print 2026 Feb 1.
+
+"Lower risk for liver copper accumulation in dogs fed copper-restricted diets versus those fed copper-replete diets."
+
+  Center SA, VanVranken P, Randolph JF, Sapa K, Dowdy BG, Hull MC, Miller AD,
+  Wakshlag JJ, Glahn R, Wiesinger JA.
+
+⚠️ El doi, el volumen, el numero y las paginas que cita el repo cuadran EXACTOS
+con el registro de PubMed. Consultado 16-sep-2026.
+
+
+3 · CAVANAUGH SM — el sodio CARDIACO por estadio ACVIM
+--------------------------------------------------------
+Decide: de aqui salen las cifras por estadio de `cardiopatia_*`.
+https://www.veterinarypracticenews.com/understanding-nutrition-in-dogs-with-degenerative-mitral-valve-disease/
+Sarah M. Cavanaugh, DVM, MS, DACVIM (cardiology). 6 de julio de 2020.
+Consultado 16-sep-2026.
+
+"Understanding nutrition in dogs with degenerative mitral valve disease"
+
+"For Stage A and Stage B1 dogs, no dietary intervention is recommended."
+
+"Generally, this means staying in the range of approximately 80 to 99 mg of sodium per 100 kcal (including treats/snacks)."
+
+"A target range of approximately 50 to 79 mg of sodium per 100 kcal (including treats/snacks) is appropriate in most patients at this stage."
+
+"Some patients with refractory pulmonary edema may benefit from more severe sodium restriction"
+
+⚠️ Y LAS CINCO CIFRAS DEL MOTOR, COMPROBADAS CONTRA ESTAS FRASES (16-sep-2026):
+
+    estadio    Cavanaugh (mg/100 kcal)   el motor (mg/100 kcal)   veredicto
+    A          sin intervencion          sin techo                cuadra
+    B1         sin intervencion          sin techo                cuadra
+    B2         80 - 99                   73,9                     MAS ESTRICTO
+    C          50 - 79                   62,5                     dentro
+    D          < 50                      48,0                     dentro
+
+  El B2 esta por DEBAJO del rango de Cavanaugh, y no es un error: ahi el motor
+  aplica el limite LEGAL, no el del articulo. Reglamento (UE) 2020/354, entrada
+  «Ayuda a la funcion cardiaca en caso de insuficiencia cardiaca cronica»,
+  «sodium <= 2,6 g/kg» = 738,64 mg/1000 kcal = 73,9 mg/100 kcal. Ley por encima
+  de recomendacion, que es el orden de siempre. La entrada esta en
+  `limites_legales_ue_2020_354.json` y la rehace `auditar_margen_profesional.py`.
+
+
+LO QUE NO SE HA PODIDO VERIFICAR, Y POR QUE
+--------------------------------------------
+Son 8 de las 20 citas que quedan fuera. Siguen en la casilla de «no se puede
+comprobar aqui», que es lo honesto, y aqui queda escrito que se INTENTO y con
+que resultado -- para que nadie lo vuelva a intentar a ciegas dentro de seis
+meses.
+
+  · PURINA INSTITUTE (4 citas) — la grasa de la DIABETES, «Dietary fat
+    restriction (<30% of metabolizable energy [ME])…» y «except for diabetic
+    dogs in thin body condition». Su pagina
+    (purinainstitute.com/centresquare/therapeutic-nutrition/canine-diabetes-mellitus)
+    y el articulo espejo de dvm360 devuelven los dos **HTTP 403** desde este
+    entorno. Un resumen de buscador SI las devuelve palabra por palabra, y eso
+    **no cuenta como verificacion**: es exactamente el error que se cometio el
+    15 de septiembre con la nota al pie de AAFCO, donde el resumen decia «will
+    have a ratio greater than 0.6:1» y el documento dice «will have a ratio of
+    > 0.6:1». Un resumen no es la fuente.
+
+  · MYVETDIET (3 citas) — «pesos indicativos diferenciados para machos y
+    hembras» y «the weight of the parents … or via the breed standard». Es
+    software de pago y no tiene pagina publica con ese texto. Se cito al decidir
+    que el rango de la raza NO acote las kcal del cachorro (12-sep-2026), y ahi
+    es una referencia de contexto, no una cifra que el motor aplique.
+
+  · ORDEN AyG (1 cita) — «En machos de 17 a 21 Kg y en hembras de 15 a 19 kg.»,
+    del prototipo racial del Perro Leones. Es una orden autonomica y su texto no
+    esta en el repo de fuentes. Decide el peso de UNA fila de `razas.json`.

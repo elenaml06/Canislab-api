@@ -7,14 +7,14 @@
     "el_precio_es_criterio_nuestro": "⚠️ `precio_orientativo` NO TIENE FUENTE PUBLICADA y va marcado como lo que es. En el repo no hay ninguna tabla de precios, y escribir «4,20 €/kg» sería inventarse un dato con forma de dato bueno -- exactamente lo que este repo persigue. Por eso son DOS casillas y no tres: `premium` señala lo que cualquiera reconoce como caro (la gamba roja, el solomillo, el lenguado, los frutos rojos) y `corriente` es todo lo demás. Inventar un escalón «medio» sería fingir una precisión que no tengo. Es un juicio de andar por casa y es revisable; el día que haya una fuente de precios, esta columna se sustituye por ella.",
     "los_dos_cerebros": "`Cerebro de ternera` y `Cerebro de vaca` van en `no_se_vende`, y no es una cuestión de que cueste encontrarlos: el cerebro de bovino es material especificado de riesgo (Reglamento (UE) 999/2001, Anexo V) y Categoría 1 del Reglamento (CE) 1069/2009, o sea que no puede acabar en un animal. Hoy no afecta a nada -- 0 de los 216 menús precalculados los usan --, y la decisión de qué hacer con sus fichas no es de este fichero. Ver `PENDIENTE_DECISIONES.md`.",
     "cuantos": {
-      "especializada": 24,
+      "especializada": 26,
       "supermercado": 101,
       "mostrador": 35,
       "no_se_vende": 1,
       "en_casa": 1,
-      "accesibles": 137,
-      "total": 162,
-      "corriente": 142,
+      "accesibles": 136,
+      "total": 164,
+      "corriente": 144,
       "premium": 20
     },
     "el_precio_y_donde_se_compra_son_DOS_EJES": "Un multivitamínico se pide por internet y no es caro; una gamba roja está en cualquier supermercado y sí lo es. Mezclarlos daría un menú «barato» lleno de suplementos de marca, o uno «accesible» de solomillo y lenguado.",
@@ -162,6 +162,11 @@
     "Bazo de vaca": {
       "categoria": "Vísceras",
       "donde": "mostrador",
+      "precio_orientativo": "corriente"
+    },
+    "Beaphar Aceite de Germen de Trigo (vitamina E)": {
+      "categoria": "Vitamina E",
+      "donde": "especializada",
       "precio_orientativo": "corriente"
     },
     "Berenjena": {
@@ -507,6 +512,11 @@
     "Lubina": {
       "categoria": "Pescados y mariscos",
       "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "MARNYS VITAHELP Vitamina E liquida": {
+      "categoria": "Vitamina E",
+      "donde": "especializada",
       "precio_orientativo": "corriente"
     },
     "Mandarina": {

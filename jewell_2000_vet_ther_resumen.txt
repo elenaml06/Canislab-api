@@ -1,0 +1,66 @@
+FUENTE DE TEXTO — Jewell et al. 2000, Vet Ther 1(4):264-72 (PMID 19757574)
+=========================================================================
+
+QUE ES ESTE FICHERO, Y POR QUE VIVE EN ESTE REPO Y NO EN `canislab-fuentes`
+--------------------------------------------------------------------------
+Es el RESUMEN (abstract) completo, tal cual lo devuelve la API oficial de
+PubMed (efetch, rettype=abstract), del unico estudio del que sale el suelo de
+vitamina E de 400 UI/kg MS que SACN5 recomienda para el perro sano — la cifra
+de 67,1 mg/1000 kcal que vive en `recomendaciones_libro.json` y que es la
+PREGUNTA P-45 para Adrian (Ecocan).
+
+Esta aqui por lo mismo que `aaha_2021_tablas_transcritas.txt` y
+`fci_estandares_peso.txt`: `auditar_citas.py` indexa los `.txt` de la raiz de
+este repo, asi que con esto las citas de Jewell se COMPRUEBAN literales en vez
+de irse a la casilla de «no se puede comprobar aqui», que es la que menos se
+mira. Sin el, las dos citas que decidieron la P-45 quedaban sin auditar.
+
+⚠️ ES EL RESUMEN, NO EL ARTICULO. El texto completo de Vet Ther 2000 no es de
+acceso libre. Lo que se cita en el repo sale todo del resumen — el diseño, las
+dosis y el umbral — y no hay ninguna cita del cuerpo del articulo. Si algun dia
+hace falta una, no se puede comprobar contra este fichero y hay que decirlo.
+
+Bajado el 15 de septiembre de 2026 de:
+https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=19757574&rettype=abstract&retmode=text
+
+TEXTO, SIN TOCAR UNA PALABRA
+----------------------------
+
+1. Vet Ther. 2000 Fall;1(4):264-72.
+
+Effect of increasing dietary antioxidants on concentrations of vitamin E and
+total alkenals in serum of dogs and cats.
+
+Jewell DE(1), Toll PW, Wedekind KJ, Zicker SC.
+
+Author information:
+(1)Hill's Science and Technology Center, PO Box 1658, Topeka, KS 66216-1658,
+USA.
+
+Oxidative damage to DNA, proteins, and lipids has been implicated as a
+contributor to aging and various chronic diseases. The presence of total
+alkenals (malondialdehyde and 4-hydroxyalkenals) in blood or tissues is an
+indicator of lipid peroxidation, which may be a result of in vivo oxidative
+reactions. Vitamin E functions as a chain-breaking antioxidant that prevents
+propagation of free radical damage in biologic membranes. This 6-week
+dose-titration study was conducted to assess the effect of selected dietary
+vitamin E levels on byproducts of in vivo oxidative reactions in dogs and cats.
+Forty healthy adult dogs and 40 healthy adult cats were assigned to four equal
+groups per species in a complete random block design. A control group for both
+dogs and cats was fed dry food containing 153 and 98 IU vitamin E/kg of food (as
+fed), respectively. Canine and feline treatment groups were fed the same basal
+dry food with vitamin E added at three different concentrations. The total
+analyzed dietary vitamin E levels for the canine treatment groups were 293, 445,
+and 598 IU vitamin E/kg of food, as fed. The total analyzed dietary vitamin E
+levels for the feline treatment groups were 248, 384, and 540 IU vitamin E/kg of
+food, as fed. Increasing levels of dietary vitamin E in dog and cat foods caused
+significant increases in serum vitamin E levels compared with baseline values.
+Although all treatments increased concentrations of vitamin E in serum, all were
+not effective at decreasing serum alkenal levels. The thresholds for significant
+reduction of serum alkenal concentrations in dogs and cats were 445 and 540 IU
+vitamin E/kg of food, respectively, on an as-fed basis. The results of this
+study show that normal dogs and cats experience oxidative damage and that
+increased dietary levels of antioxidants may decrease in vivo measures of
+oxidative damage.
+
+PMID: 19757574 [Indexed for MEDLINE]
