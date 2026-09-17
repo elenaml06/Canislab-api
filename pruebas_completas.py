@@ -733,10 +733,25 @@ for _etq_p, _der, _etapa, _peso, _adulto in PERROS_B9:
             #    Lo que SÍ tiene que seguir cazando: una categoría que el motor
             #    deja fuera POR SU CUENTA al relajar, sin decirlo. Eso es la
             #    regla 5 --nunca se cambia en silencio-- y sigue vigilado.
+            #
+            #    ⚠️ Y SOLO CUENTA LO QUE TIENE SUELO (17 de septiembre de 2026).
+            #    Los «Cereales y tubérculos» entraron con el mínimo en CERO a
+            #    propósito: una ración BARF no lleva ninguno y eso está bien.
+            #    Sin esta derivación, este bloque acusaba al motor de dejarlos
+            #    fuera «sin avisar» en todo menú normal — o sea de no avisar de
+            #    algo que no ha pasado.
+            #
+            #    ⚠️ Y ES LA SEGUNDA VEZ QUE SE ESCRIBE LA MISMA CONDICIÓN: la
+            #    otra está en `_aviso_de_lo_que_falta` de `main.py`, y arreglar
+            #    solo aquella dejó este bloque rojo. Las dos derivan del suelo
+            #    por el mismo motivo, y las dos tienen que hacerlo — una lista
+            #    de categorías «que sí se echan de menos» escrita a mano se
+            #    queda parada el día que entre otra sin suelo.
             _quitadas9 = set(_extra.get("categorias_excluidas") or [])
             _presentes = {al.get(n, {}).get("categoria") for n in _g}
-            if any(c not in _presentes and c not in _quitadas9 for c in MARGENES):
-                _faltan9 = [c for c in MARGENES
+            _con_suelo9 = [c for c, (mn, _mx) in MARGENES.items() if mn > 0]
+            if any(c not in _presentes and c not in _quitadas9 for c in _con_suelo9):
+                _faltan9 = [c for c in _con_suelo9
                             if c not in _presentes and c not in _quitadas9]
                 fallos.append(f"BLOQUE9 {_etq_p} / {_etq_r}: relajó y dejó {_faltan9} "
                               f"fuera sin avisar de ello, y no las había quitado el usuario")
