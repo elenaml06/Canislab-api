@@ -101,6 +101,7 @@ identificador a secas no dice si «pollo» trajo «repollo».
 """
 import argparse
 import collections
+import datetime as _dt
 import json
 import os
 import sys
@@ -719,7 +720,12 @@ def cerrar():
     huesos = _fichas_de_hueso()
     catalogo = json.load(open(CATALOGO, encoding="utf-8"),
                          object_pairs_hook=collections.OrderedDict)
-    hoy = "2026-09-13"
+    # ⚠️ LA FECHA ES DE HOY, NO UNA CONSTANTE. Estuvo escrita a mano como
+    #    "2026-09-13" hasta el 17 de septiembre, asi que toda celda cerrada
+    #    despues de ese dia se estampaba con una fecha que no era la suya. Una
+    #    procedencia con la fecha equivocada no da ningun error y es
+    #    exactamente lo que impide reconstruir cuando entro un dato.
+    hoy = _dt.date.today().isoformat()
     intocables = _celdas_intocables()
     if not intocables:
         print("  ⚠️ no se han podido leer las celdas intocables del BLOQUE 51. Se aborta: "
