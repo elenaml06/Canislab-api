@@ -3602,6 +3602,46 @@ CATEGORIAS_QUE_ELIGE_EL_USUARIO = (
 )
 
 
+# ⚠️ LO QUE EL DUEÑO PUEDE QUITAR ENTERO, Y POR QUÉ ES UNA SOLA COSA (17 de
+# septiembre de 2026). Elena, mirando la ficha: «solo se pueden excluir los
+# huesos carnosos, ¿no debería haber más categorías que se pueden excluir?», y
+# después: «mira a ver tú qué sentido tiene que un usuario pueda quitar otras
+# categorías. Si no tiene sentido entonces sería cambiar la pregunta y poner
+# directamente si quiere excluir el hueso».
+#
+# ⚠️ LA MEDIDA NO DECIDE ESTO, y conviene decirlo porque es lo primero que uno
+# mira: quitando cualquiera de las SIETE por separado sigue habiendo menú en los
+# tres perros (adulto, cachorro y toy), y también en las cuatro parejas que un
+# dueño pediría. O sea que no es una cuestión de que se pueda: es de si la
+# pregunta significa algo.
+#
+# La pregunta de la ficha dice «¿hay alguna categoría entera que NO PUEDA
+# comer?», y de las siete solo el hueso la contesta:
+#
+#   · Hueso carnoso ....... SÍ. Sénior sin dientes, perro que traga sin masticar,
+#                           miedo a los huesos. Es el caso real que se pidió el
+#                           29 de agosto, y el calcio lo cubre un suplemento.
+#   · Carne muscular ...... NO. Es el grueso del plato; quitarla es una dieta de
+#                           eliminación con proteína novel, y eso lo firma un
+#                           veterinario -- que YA la tiene en su pantalla.
+#   · Verduras y frutas ... NO. Quien lo pediría lo hace por ideología (prey
+#                           model), no porque el perro no pueda.
+#   · Cereales y tubérculos NO, y además sería la MISMA pregunta dos veces: eso
+#                           ya lo contesta `con_hidratos`.
+#   · Hígado .............. NO como «no puede comer»: es el 2-6 % del plato.
+#   · Vísceras y Pescado .. aquí SÍ hay algo, y NO es esta pregunta. El motivo
+#                           real es que el dueño no soporta manejar un bazo o un
+#                           pescado crudo, o sea «no quiero comprarlo», que es
+#                           otra pregunta -- y el pescado ya tiene camino propio
+#                           por las alergias y las especies. Queda apuntado.
+#
+# ⚠️ Y SE SIRVE DESDE AQUÍ, aunque sea una sola, por la regla 6 y por una razón
+# concreta: si la clave no coincide EXACTAMENTE con la del catálogo, la
+# exclusión no hace nada y el menú sale verde igual, sin error y sin aviso. Una
+# cadena escrita a mano en la app es justo eso esperando a pasar.
+CATEGORIAS_QUE_EXCLUYE_EL_DUENO = ("Hueso carnoso",)
+
+
 def _resolver_menu_v2_interno(datos: PeticionMenu):
     """El motor, con lo que el dueño DECLARA que le da puesto en la respuesta.
 
@@ -9861,6 +9901,38 @@ def endpoint_vocabulario():
                     "límite clínico --, y van dichos en la etiqueta del veterinario. || Se "
                     "pregunta en porcentaje y no en kcal porque nadie sabe las calorías de la "
                     "galleta que le da a su perro, y la fuente habla justo en esa unidad."),
+        },
+        # ── LO QUE EL DUEÑO PUEDE QUITAR ENTERO ──────────────────────────
+        "categorias_que_excluye_el_dueno": {
+            "de_donde": ("Criterio de producto, no de ninguna fuente. El motor acepta excluir "
+                         "CUALQUIER categoría —`categorias_excluidas` es una lista— y el "
+                         "formulador del veterinario las ofrece todas; esto es lo que se le "
+                         "ofrece al DUEÑO, que es otra pregunta."),
+            "categorias": list(CATEGORIAS_QUE_EXCLUYE_EL_DUENO),
+            "pregunta": {
+                # ⚠️ LA POLARIDAD IMPORTA Y NO ES CAPRICHO: el campo que guarda la
+                # app se llama `categoriasExcluidasSi`, y «sí» significa «hay algo
+                # que quitar». Preguntar «¿puede comer hueso?» invertiría el
+                # sentido de lo YA GUARDADO en las fichas de todo el mundo, sin
+                # error y sin aviso, y a un perro que sí puede comer hueso se le
+                # quitaría. La pregunta se escribe en la dirección del dato.
+                "dueno": {"titulo": "¿Hay que quitarle el hueso crudo del menú?",
+                          "ejemplo": "dinos que sí si es mayor, le faltan dientes o traga sin "
+                                     "masticar"},
+                "veterinario": {"titulo": "Exclusión de hueso carnoso",
+                                "detalle": "Categoría entera fuera. El calcio y el ratio Ca:P "
+                                           "pasan a cubrirse con cáscara de huevo o suplemento, y "
+                                           "el menú se verifica igual contra los 43 requisitos."},
+            },
+            "que_pasa_al_quitarlo": ("El calcio que aportaría el hueso se cubre con cáscara de "
+                                     "huevo o con un suplemento, y el menú cumple los mismos "
+                                     "requisitos. Medido: sale menú en adulto, cachorro y toy."),
+            "por_que_solo_una": ("La pregunta es «qué NO PUEDE comer», y de las siete categorías "
+                                 "solo el hueso la contesta. Quitar la carne es una dieta de "
+                                 "eliminación (la firma un veterinario y la tiene en su "
+                                 "pantalla), quitar los hidratos ya lo pregunta `con_hidratos`, y "
+                                 "quitar vísceras o pescado no es «no puede comer» sino «no "
+                                 "quiero comprarlo», que es otra pregunta y todavía no se hace."),
         },
         # ── LOS HIDRATOS ─────────────────────────────────────────────────
         # ⚠️ LA PREGUNTA VIVE AQUÍ Y NO EN LA APP (17 de septiembre de 2026).
