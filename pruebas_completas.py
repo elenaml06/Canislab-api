@@ -22501,6 +22501,40 @@ if _sin128:
                   f"{sorted(_sin128)[:4]}. Son alimentos que hay que COCINAR, y la instrucción "
                   f"de la categoría no puede decir que un muslo se deshuesa después de hervirlo")
 
+# ── 8 · LOS TOPES QUE EXISTEN PORQUE LA COMIDA VA CRUDA ────────────────────
+# ⚠️ ESTO ES UN CABLE TRAMPA, NO UNA COMPROBACIÓN DE COMPORTAMIENTO, y va dicho
+# porque la primera versión SÍ intentaba serlo y salía VERDE CON EL FALLO
+# PUESTO: metía un «Atún cocido» a mano, desconectaba el tope de mercurio del
+# solver y del filtro final, y el bloque no se enteraba — porque el MILP no
+# tiene ningún motivo para meter tanto atún como para pasarse del 10 %. Una
+# comprobación que no puede fallar es peor que no tenerla.
+#
+# Lo que sí se puede vigilar es el momento de la DECISIÓN. Hoy, MEDIDO, de los
+# candidatos que quedan en cocinado CERO están en TIAMINASA y cero en
+# MERCURIO_ALTO, porque las fichas cocidas de pescado son bacalao, salmón y
+# trucha. O sea que no hay nada que relajar y no hay nada que comprobar. El día
+# que entre una ficha cocida de cualquiera de los dos conjuntos, esto se pone
+# rojo y obliga a decidir aquí — que es justo donde se decide mal si nadie
+# pregunta, porque «va cocinado, esos topes sobran» suena evidente y es FALSO a
+# medias: la tiaminasa es una ENZIMA y la cocción la destruye, pero el mercurio
+# es un METAL PESADO y cocinar no le hace nada.
+import seguridad as _seg128
+_COC_TODAS_128 = [n for n, a in _al128.items()
+                  if str(a.get("preparacion") or "crudo").lower() != "crudo"]
+_merc128 = sorted(n for n in _COC_TODAS_128 if _seg128._es(n, _seg128.MERCURIO_ALTO))
+_tia128 = sorted(n for n in _COC_TODAS_128 if _seg128._es(n, _seg128.TIAMINASA))
+if _merc128:
+    fallos.append(f"BLOQUE128: han entrado fichas COCIDAS con mercurio ({_merc128}) y hay que "
+                  f"decidir aquí, no dar por hecho nada. El mercurio es un METAL: cocinar NO lo "
+                  f"quita, así que su tope tiene que seguir aplicándose igual que en crudo. "
+                  f"Comprueba que se aplica, escríbelo, y quita este cable")
+if _tia128:
+    fallos.append(f"BLOQUE128: han entrado fichas COCIDAS con tiaminasa ({_tia128}) y hay que "
+                  f"decidir aquí. La cocción SÍ destruye la tiaminasa, así que su tope pasa a "
+                  f"sobrar — pero sobrar es el lado seguro y quitarlo es aflojar un tope "
+                  f"crónico (regla 2): se mide antes de tocarlo y se dice")
+
+print(f"  topes de crudo en cocinado: 0 fichas cocidas con tiaminasa, 0 con mercurio")
 print(f"  cómo darlo cocinado: {len(_COC_CAT_128)}/4 categorías · "
       f"{len(_COCINADAS_128) - len(_sin128)}/{len(_COCINADAS_128)} fichas con instrucción propia")
 print(f"  fichas animales cocinadas: {len(_COCINADAS_128)} · perros con menú cocinado: {_salen128}/4")

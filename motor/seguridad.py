@@ -73,6 +73,19 @@ TOPE_TIAMINASA_KCAL = 0.10
 # referencia humana de la EPA (0.1 µg/kg de peso al día) -- es una
 # aproximación prudente, NO un límite validado en perros, y así se dice en
 # el aviso al usuario.
+# ⚠️ Y ESTE NO SE RELAJA EN COCINADO, AL REVÉS QUE LA TIAMINASA (17 de
+# septiembre de 2026, al cerrar el modo cocinado). La generalización «si va
+# cocinado, estos topes sobran» es FALSA aquí y hay que dejarlo escrito antes de
+# que a alguien le parezca evidente: la tiaminasa es una ENZIMA y la cocción la
+# destruye; el mercurio es un METAL PESADO y cocinar no le hace absolutamente
+# nada — está en el músculo del pez, cocido o crudo.
+#
+# Hoy no muerde por una razón de catálogo y no de principio, MEDIDO: de los 108
+# candidatos que quedan en cocinado, CERO están en este conjunto y cero en
+# TIAMINASA, porque las fichas cocidas de pescado son bacalao, salmón y trucha.
+# O sea que el día que entre un «Atún cocido» este tope tiene que seguir
+# aplicándose igual, y el de tiaminasa quedaría solo de más — que es el lado
+# seguro. Lo vigila el BLOQUE 128.
 MERCURIO_ALTO = {"atun"}  # el único pescado grande de riesgo real en este catálogo
 # Tope por ración, mismo criterio que la tiaminasa. FUENTE: NRC 2006 fija un
 # nivel tolerable de ingesta de mercurio TOTAL; esto es la transposición
