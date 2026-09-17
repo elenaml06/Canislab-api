@@ -192,7 +192,7 @@ except ImportError:
     # No se instala aqui a proposito: la bateria no toca la maquina donde corre.
     # Si falta, se dice -- callarse seria dejar de vigilar sin avisar.
     print("  (pyflakes no esta instalado: `pip install pyflakes` para que este bloque mire)")
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -644,7 +644,7 @@ _res = _api._garantizar_verificado({"factible": True, "menu": {"Lengua de terner
 if _res.get("factible"):
     fallos.append("BLOQUE8: el filtro dejó pasar un menú de un solo alimento")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 # ============================================================
 # BLOQUE 9 — QUE NUNCA SE QUEDE SIN MENÚ POR UNA REGLA DE FORMA
@@ -890,13 +890,45 @@ if not _r_panc.get("factible"):
 # de lo accesorio solo relaja la FORMA mientras la carne y el hueso
 # conserven su suelo. Si no hay ni carne ni hueso entre lo accesible, ese
 # suelo se cumple solo y el peldaño pasa a inventar comida.
-_TOPE_SUELTO = "tope_maximo_de_visceras_higado_y_verdura"
-if _TOPE_SUELTO not in [p[2] for p in _api._escalera_de_relajacion(True)]:
-    fallos.append("BLOQUE9 escalera: con carne y hueso disponibles el peldaño de los "
-                  "máximos tiene que existir (si no, la pancreatitis se queda sin menú)")
-if _TOPE_SUELTO in [p[2] for p in _api._escalera_de_relajacion(False)]:
-    fallos.append("BLOQUE9 escalera: sin carne ni hueso el peldaño de los máximos NO "
-                  "puede existir — es el que inventa menús sin comida")
+#
+# ⚠️ Y ESTO SE COMPRUEBA POR EL HECHO, NO POR EL NOMBRE DEL PELDAÑO (16 de
+#    septiembre de 2026). Hasta hoy anclaba en la cadena literal
+#    `tope_maximo_de_visceras_higado_y_verdura`, y ese peldaño se quitó ese
+#    mismo día —levantaba el techo de lo accesorio al 100 % y de ahí salían los
+#    484 g de alcachofa— y se sustituyó por dos acotados (x3 y x5). El bloque
+#    se puso rojo diciendo que «el peldaño de los máximos tiene que existir»
+#    cuando existe: lo que había cambiado era cómo se llama.
+#
+#    Es exactamente el fallo que este repo ya tiene escrito para el BLOQUE 13
+#    («una prueba del motor convertida en prueba de redacción»), y aquí hace el
+#    mismo daño: acusa al motor de dejar a la pancreatitis sin menú cuando el
+#    motor sí le suelta el techo. Así que lo que se exige es el INVARIANTE —que
+#    ALGÚN peldaño suba el techo de lo accesorio por encima del de partida— y
+#    así sigue sirviendo se llame como se llame y esté acotado en x3, en x5 o
+#    en lo que se mida mañana.
+def _sube_el_techo_de_lo_accesorio(margenes):
+    """¿Este peldaño deja meter MÁS de lo accesorio que las proporciones BARF?"""
+    return any(margenes.get(c, (0.0, 0.0))[1] > _api.MARGENES_V2[c][1]
+               for c in _api.CATEGORIAS_SECUNDARIAS)
+
+if not any(_sube_el_techo_de_lo_accesorio(p[0])
+           for p in _api._escalera_de_relajacion(True)):
+    fallos.append("BLOQUE9 escalera: con carne y hueso disponibles tiene que existir "
+                  "algún peldaño que suba el techo de vísceras, hígado y verdura "
+                  "(si no, la pancreatitis se queda sin menú)")
+if any(_sube_el_techo_de_lo_accesorio(p[0])
+       for p in _api._escalera_de_relajacion(False)):
+    fallos.append("BLOQUE9 escalera: sin carne ni hueso NINGÚN peldaño puede subir el "
+                  "techo de lo accesorio — es el que inventa menús sin comida")
+# Y el techo que suba tiene que seguir SIENDO UN TECHO: un peldaño que lo deje
+# en el 100 % del plato es el que producía los 3.676 g de coles de Bruselas.
+for _mrg9, _sp9, _cl9 in _api._escalera_de_relajacion(True):
+    for _cs9 in _api.CATEGORIAS_SECUNDARIAS:
+        if _mrg9.get(_cs9, (0.0, 0.0))[1] >= 1.0:
+            fallos.append(f"BLOQUE9 escalera: el peldaño {_cl9!r} deja {_cs9} llegar al "
+                          f"100 % del plato. Un techo del 100 % no es un techo: es de "
+                          f"donde salían los 484 g de alcachofa")
+            break
 # ⚠️ ESTA COMPROBACIÓN PEDÍA MÁS DE LO QUE SU PROPIO MOTIVO JUSTIFICA, Y SE
 #    QUEDÓ DESACTUALIZADA EL MISMO DÍA (15 de septiembre de 2026). Exigía que
 #    excluir SOLO la carne muscular contara ya como «no queda comida de verdad»
@@ -974,7 +1006,7 @@ if _sin_tiempo_b9["mal"]:
         f"lo que es del reloj — «{_sin_tiempo_b9['mal'][0]}…». Con 24 s ese mismo cachorro "
         f"sí tiene menú, así que decirle que quite restricciones es mentira.")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 # ============================================================
 # BLOQUE 10 — EL WEBHOOK DE STRIPE (el camino del dinero)
@@ -1200,7 +1232,7 @@ _viejas = _api._cabeceras_supabase(_jwt_falso("service_role"))
 if "Authorization" not in _viejas:
     fallos.append("BLOQUE10: una clave JWT antigua ya no manda Authorization")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 # ============================================================
 # BLOQUE 11 — VARIOS PERROS EN LA MISMA CASA
@@ -1599,7 +1631,7 @@ _r8b = _c.post("/menu/varios-perros", json={
 if not _r8b.get("factible"):
     fallos.append("BLOQUE11 por-menú: sin personalizacion_por_menu ha dejado de funcionar")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 # ============================================================
 # BLOQUE 12 — EL CATÁLOGO NO SE DEGRADA EN SILENCIO
@@ -1681,7 +1713,7 @@ for _n in ("Hígado de pato", "Corazón de pavo"):
         fallos.append(f"BLOQUE12: se forzó '{_n}' y no aparece en el menú — "
                       f"¿está en ACCESIBLES y bien escrito?")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 # ============================================================
 # BLOQUE 13 — LOS TOPES POR PATOLOGÍA SE CUMPLEN DE VERDAD
@@ -2446,7 +2478,7 @@ for _pats_semilla in (["oxalato"], ["renal"], ["hepatopatia"], ["renal", "cardio
             f"no `valor_nutriente()` (el declarado). Si vuelven a separarse, la usuaria se queda "
             f"sin menú sin patrón visible.")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -2643,7 +2675,7 @@ else:
             "dosifican. Escribirla al revés ('todo menos Extras') es lo que dejó "
             "sin suelo a toda la comida durante semanas.")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -2751,7 +2783,7 @@ else:
                 fallos.append(f"BLOQUE15: a {_p.get('nombre')} le metió {_de_mas} en el "
                               f"menú {_j+1} sin pedirlo y sin avisar")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -2923,7 +2955,7 @@ if (_ok_a, _ga) != (_ok_b, _gb):
     fallos.append("BLOQUE16: pedir el diagnóstico cambia el menú. Tiene que ser "
                   "pura contabilidad; si toca el resultado, no sirve para comprobar nada.")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -2980,16 +3012,75 @@ else:
         fallos.append("BLOQUE17: conservar los alimentos ha vuelto la semana imposible. "
                       "Preferir NUNCA puede hacer eso: es una preferencia, no una imposición.")
     else:
+        _bajos_b17 = []
         for _i, _m in enumerate(_nuevo_b17["menus"]):
             _antes = set(_previos_b17[_i])
-            _pct = 100 * len(_antes & _alimentos_de(_m)) / max(1, len(_antes))
-            # 80% y no 100%: el motor puede tener que soltar algo para
-            # cuadrar los requisitos con las kcal nuevas, y eso es correcto
-            # -- lo que no puede es rehacer el menú entero. Antes del
-            # arreglo esto daba 50% y 33%.
+            # ⚠️ SE MIDE SOBRE EL MENÚ QUE CABE, NO SOBRE EL DE ANTES (16 de
+            # septiembre de 2026). Esto era `∩ / len(antes)`, y eso castiga que
+            # el menú nuevo ENCOJA -- que no es rehacerlo, es hacerlo más
+            # sencillo.
+            #
+            # CASO REAL MEDIDO: menú de 12 alimentos a 1100 kcal, regenerado a
+            # 1180. Sale uno de 9 que conserva 8 de los 12, o sea que de los 9
+            # que trae, OCHO son los de antes y solo uno es nuevo. La cuenta
+            # vieja decía 8/12 = 67 % y acusaba al motor de no respetar lo que
+            # se le pidió; la de ahora dice 8/9 = 89 %, que es lo que de verdad
+            # pasó.
+            #
+            # Y esto empezó a saltar en esta rama por un motivo concreto: con
+            # UN solo multivitamínico en el peldaño estricto el motor necesita
+            # más alimentos de verdad, así que los menús de partida pasaron de
+            # ~8 a ~12 y encoger se volvió lo normal.
+            #
+            # Lo que el bloque quiere afirmar sigue intacto -- que no se rehaga
+            # el menú entero -- y el fallo original sigue saltando: cuando
+            # `preferir` no llegaba, esto daba 50 % y 33 %, y esos siguen por
+            # debajo del 80 % se mida como se mida.
+            _comun = len(_antes & _alimentos_de(_m))
+            _cabe = max(1, min(len(_antes), len(_alimentos_de(_m))))
+            _pct = 100 * _comun / _cabe
             if _pct < 80:
-                fallos.append(f"BLOQUE17: el menú {_i+1} solo conserva el {_pct:.0f}% de sus "
-                              f"alimentos al regenerar. Se pidió conservarlos.")
+                _bajos_b17.append((_i, _pct))
+    # ⚠️ Y SI ALGUNO SE QUEDA CORTO, SE LE DA RELOJ DE SOBRA ANTES DE ACUSAR A
+    #    NADIE (16 de septiembre de 2026). Medido: este bloque fallaba UNA DE
+    #    CADA TRES veces diciendo «el menú 2 solo conserva el 67 %», y las otras
+    #    dos salía al 100 % -- o sea que no era una propiedad del motor, era el
+    #    reloj. `/menu/semana` reparte un total entre los menús, y con la máquina
+    #    cargada al segundo le toca tan poco que el solver acepta una solución
+    #    peor y suelta un alimento preferido. Eso es lo CORRECTO del motor y el
+    #    bloque lo leía como que no respeta lo que se le pidió.
+    #
+    #    Hasta hoy no se podía comprobar: el total vivía como variable local
+    #    dentro del endpoint y `presupuesto_segundos` solo APRIETA. Desde hoy es
+    #    `main.PRESUPUESTO_SEGUNDOS_SEMANA`, igual que el de varios perros, y
+    #    aquí se le sube para preguntar lo que el bloque de verdad quiere saber:
+    #    ¿el motor conserva lo que se le pide CUANDO PUEDE?
+    #
+    #    Y se dice en voz alta, como hace `_resolver_con_holgura`: si hizo falta
+    #    holgura, se imprime. Un reintento callado esconde que el caso va justo.
+    if _bajos_b17:
+        _presu_b17 = _api.PRESUPUESTO_SEGUNDOS_SEMANA
+        try:
+            _api.PRESUPUESTO_SEGUNDOS_SEMANA = 600.0
+            _p3_b17 = _api.PeticionMenu(nombres_alimentos=[], modo="automatico",
+                                        der_objetivo=1180, etapa_requisitos="Adulto",
+                                        peso_perro_kg=22, tamano="mediano",
+                                        preferir_por_menu=_previos_b17)
+            _holg_b17 = _api.endpoint_menu_semana(_p3_b17, numero_de_menus=2)
+        finally:
+            _api.PRESUPUESTO_SEGUNDOS_SEMANA = _presu_b17
+        for _i, _pct in _bajos_b17:
+            _m_h = (_holg_b17.get("menus") or [None] * (_i + 1))[_i]
+            _antes = set(_previos_b17[_i])
+            _pct_h = (100 * len(_antes & _alimentos_de(_m_h)) / max(1, len(_antes))
+                      if _m_h else 0.0)
+            if _pct_h < 80:
+                fallos.append(f"BLOQUE17: el menú {_i+1} solo conserva el {_pct_h:.0f}% de sus "
+                              f"alimentos al regenerar, y eso es CON el presupuesto de la "
+                              f"semana a 600 s. Se pidió conservarlos.")
+            else:
+                print(f"  (el menú {_i+1} conservó el {_pct:.0f}% con el presupuesto normal y "
+                      f"el {_pct_h:.0f}% con 600 s: era el reloj, no el motor)")
 
     # Y sin pedir nada, se sigue pudiendo generar de cero: preferir es
     # opcional y no puede haberse vuelto obligatorio por el camino.
@@ -3117,7 +3208,7 @@ else:
                       f"arreglado y 11 de 30 con el fallo.")
     print(f"  {_conservan_b17} de 5 semillas conservan lo que se pidió conservar")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -3336,7 +3427,7 @@ for _f18 in sorted(_FICHEROS_B18):
                 f"libro que aplica el motor (2000 en adulto, 1750 en maduro). Frase: "
                 f"«{_frase18b.strip()[:150]}»")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -3595,7 +3686,7 @@ else:
                       f"datos: {sorted(_arreglados)}. Quítalos de _HUECOS_YA_CONOCIDOS_b19 "
                       f"y de DATOS_QUE_FALTAN.md, o dejan de proteger de una recaída.")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -3643,7 +3734,7 @@ for _pat, _meter in [("renal", "Hígado de vaca"), ("pancreatitis", "Sardina"),
         except Exception as _e:
             fallos.append(f"BLOQUE20: {_ruta} con {_quien} no devuelve JSON: {_e}")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -3885,7 +3976,7 @@ if hasattr(_seg21, "TOPE_MERCURIO_DIAS_SEMANA"):
                   "estaba declarada sin que la usara ni una línea: la app decía tener una regla "
                   "que no aplicaba.")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -3955,7 +4046,7 @@ elif abs(_pres_b22["selenio"] - 570.0) > 1e-6:
                   f"{_pres_b22['selenio']} y debería ser 570 µg. Si sale 2, ha vuelto la "
                   f"densidad por gramo de dieta.")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -4042,7 +4133,7 @@ if _contrato_b23:
                 f"fórmula del servidor sin tocar la de App.jsx, o al revés. Si el cambio es a "
                 f"propósito hay que regenerar der_casos.json y copiarlo A LOS DOS REPOS.")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -4150,7 +4241,7 @@ for _f24 in _PY_B24:
         fallos.append(f"BLOQUE24: ha vuelto el motor viejo ({_f24.name}). El único motor es "
                       f"resolver() en motor_completo.py.")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -4479,7 +4570,7 @@ print(f"  los menús precalculados verifican: "
       f"{216 - len(_mal_verde_b25) - _declarados_b25}/{216 - _declarados_b25} verdes"
       + (f" ({_declarados_b25} declarados sin menú, con su motivo)" if _declarados_b25 else ""))
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -4554,7 +4645,7 @@ else:
             fallos.append(f"BLOQUE26: UNIDADES.md ya no menciona '{_debe26}'. Es justo la "
                           f"distinción que evita que se carguen cambiados.")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -4853,7 +4944,7 @@ if _con_dato_b27 < 94:
         f"Alguna carga las ha pisado -- y con los doce requisitos ya activos, cada ficha que se "
         f"pierde es proteína que cuenta como cero.")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -5136,7 +5227,7 @@ for _n28 in ("GRAU Levadura de cerveza", "PAWS & PATCH Levadura de cerveza"):
             f"«Levure alimentaire»). Los 2.340 de antes son levadura de PANADERÍA seca activa "
             f"(USDA FDC 175043): otro producto.")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -5231,7 +5322,7 @@ if any(_a29["nombre"] == "Testículos de cordero" for _a29 in _al29):
         "24 menús creyéndolo vacío de todo menos vitamina B12. Si vuelve con datos de "
         "verdad, quita esta comprobación; si vuelve sin ellos, no puede entrar.")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -5312,7 +5403,7 @@ else:
                 f"perro de 25 kg el menú declaraba 8,31 mg de cobre y el real eran 2,34 sobre "
                 f"un mínimo de 2,60.")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -5368,7 +5459,7 @@ if _PLANTAS_CON_D:
         f"Si es una seta, va en la lista de excepciones de arriba y hay que decidir aparte qué "
         f"se hace con la D2, que el perro aprovecha mucho peor que la D3.")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 
@@ -5582,7 +5673,7 @@ if not (_PAT_b33.get("urato") or {}).get("sin_dieta_automatica"):
         "objetivo de 90, y con alimentos frescos no queda margen. Es una puerta, no un "
         "optimizador.")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -5861,7 +5952,7 @@ elif _cascara35 in _al35 and not _ficha35["no_verificable"]:
     fallos.append(f"BLOQUE35: el menú lleva '{_cascara35}', que tiene huecos en nutrientes "
                   f"CON máximo y sin familia para imputar, y `no_verificable` vino vacío.")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 # ============================================================
 # BLOQUE 36: los topes por patología cuadran (auditar_patologias.py)
@@ -5897,7 +5988,7 @@ if len(_mc36.PATOLOGIAS) != len(_mc36.PATOLOGIAS_CRUDO["patologias"]):
     fallos.append("BLOQUE36: el JSON tiene %d patologías y el motor ve %d."
                   % (len(_mc36.PATOLOGIAS_CRUDO["patologias"]), len(_mc36.PATOLOGIAS)))
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -6057,7 +6148,7 @@ for _peso37 in (5, 20, 30, 45, 60):
                           f"discrepan, las kcal se calculan sobre un perro y la densidad de "
                           f"nutrientes sobre otro, y el menú sale verde igual.")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 
@@ -6154,7 +6245,7 @@ else:
         fallos.append("BLOQUE38: `dentro_de_rango` no viene ordenado por lo que va más justo. "
                       "Con 42 filas, el orden es la diferencia entre ver el que aprieta y no verlo.")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -6277,7 +6368,7 @@ if not ((_r39c.json() or {}).get("avisos_patologia")):
     fallos.append("BLOQUE39: un menú formulado con patología sale sin `avisos_patologia`. El aviso "
                   "tiene que viajar con el menú: es lo que cuenta qué hizo el motor y qué no.")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -6338,7 +6429,7 @@ if _g40:
                       f"La exclusión de categoría se aplica en el bucle de categorías, pero los "
                       f"Extras se montan aparte y hay que aplicarla ahí también.")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 
@@ -6459,7 +6550,7 @@ elif "cifras" not in (_r41f.get("motivo") or "") and "combinación" not in (_r41
     fallos.append(f"BLOQUE41: al no salir no se dice si es por las cantidades o por los "
                   f"alimentos: «{(_r41f.get('motivo') or '')[:70]}»")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -6584,7 +6675,7 @@ else:
                               f"sello sigue cuadrando. Un sello que no cambia con lo firmado "
                               f"no comprueba nada.")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -6949,7 +7040,7 @@ if _norojo43toy:
 print(f"  toy 1,5 kg con el presupuesto de verdad: {3 - _sin43toy}/3 con menú, "
       f"peldaños {_peldanos43toy}")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -7072,7 +7163,7 @@ else:
                       f"Tiene que ser positivo y estrecho: si fuera negativo, el tope estaria por "
                       f"debajo del minimo de FEDIAF y entonces renal no podria ser `formulable`.")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -7208,8 +7299,20 @@ if _estricto45.get("factible"):
 
 # c) Eligiendo el ultimo: sale, se marca como eleccion suya, y NO se anota
 #    como relajacion automatica (no se ha bajado: se ha empezado ahi).
+# ⚠️ EL ÚLTIMO PELDAÑO SE PIDE POR SU SITIO, NO POR SU NOMBRE (16 de septiembre
+# de 2026). Aquí estaba escrito `tope_maximo_de_visceras_higado_y_verdura`, y
+# ese peldaño se quitó ese mismo día -- ponía el techo de lo accesorio en el
+# 100 % del plato y de ahí salían los 484 g de alcachofa. Al no existir la
+# clave, `/menu/v2` no elegía ningún peldaño y el bloque acusaba al motor de
+# tres cosas que no pasaban: que no consta el peldaño pedido, que dice haberse
+# relajado, y que autocompletar no lo devuelve.
+#
+# Es la misma lección que este fichero ya tiene escrita para los BLOQUES 13 y 9:
+# se comprueba EL HECHO --«el último peldaño de la escalera»-- y no el nombre,
+# y así sigue sirviendo se llame como se llame mañana.
+_ULTIMO_PELDANO_45 = _api._escalera_de_relajacion(True)[-1][2]
 _ultimo45 = _c.post("/menu/v2", json={**_CUERPO_45,
-                                      "peldano": "tope_maximo_de_visceras_higado_y_verdura"}).json()
+                                      "peldano": _ULTIMO_PELDANO_45}).json()
 if not _ultimo45.get("factible"):
     fallos.append("BLOQUE45: eligiendo el ultimo peldano no sale menu, y sin elegir nada la "
                   "escalera llega hasta ahi y si sale. Elegir un peldano no puede dar menos "
@@ -7263,7 +7366,7 @@ if not _raro45.get("factible"):
 #     decision a quien la ha tomado (CLAUDE.md, `GET /relajacion`)
 _form45 = {"gramos_por_alimento": {}, "der_objetivo": 1040.0, "peso_perro_kg": 25.0,
            "etapa_requisitos": "Adulto", "patologias": ["pancreatitis"]}
-_ULTIMO45 = "tope_maximo_de_visceras_higado_y_verdura"
+_ULTIMO45 = _ULTIMO_PELDANO_45   # el último de la escalera, por su sitio
 _auto_libre45 = _c.post("/formular/autocompletar", json=dict(_form45)).json()
 _auto_estricto45 = _c.post("/formular/autocompletar",
                            json={**_form45, "peldano": "estricto"}).json()
@@ -7302,7 +7405,7 @@ elif _auto_ultimo45.get("se_bajo_de_peldano"):
     fallos.append("BLOQUE45: autocompletar dice haber BAJADO de peldano cuando el veterinario "
                   "eligio ese mismo. Bajar y obedecer no se leen igual.")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # BLOQUE 46 — UN CERO MUDO SE DELATA SOLO, SIN LISTA QUE MANTENER
@@ -7416,7 +7519,7 @@ else:
     finally:
         _os_b46.unlink(_roto_b46)
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -7655,7 +7758,7 @@ if _mudas_b48:
         f"trae `menus_pedidos_no_dados`. Recortar se puede; recortar EN SILENCIO es el fallo "
         f"original -- pedías 3, recibías 1, y no había ni una palabra.")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 # ============================================================
 # BLOQUE 49 — EL MARGEN DEL SUELO CUBRE EL REDONDEO, NO UN PORCENTAJE
@@ -7864,7 +7967,7 @@ if _yodos_b49 and _stat_b49.median(_yodos_b49) < 104:
         f"102 % y con el absoluto 106 %: si vuelve a 102 es que el suelo ha dejado de cubrir "
         f"el redondeo y los menús se van a caer otra vez en el verificador.")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 # ============================================================
 # BLOQUE 50 — PERROS DE VERDAD, PATOLOGIAS MEZCLADAS
@@ -8170,7 +8273,7 @@ if json.dumps(_pat_paquete.CRUDO, sort_keys=True, ensure_ascii=False) != \
    json.dumps(_pat_suelto.CRUDO, sort_keys=True, ensure_ascii=False):
     fallos.append("BLOQUE52: las dos copias del JSON crudo de patologías no coinciden")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -8318,7 +8421,7 @@ if _menu53:
             fallos.append("BLOQUE53: la garantía del ratio se le aplica a un ADULTO. La nota b "
                           "es solo de crecimiento.")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -8494,7 +8597,7 @@ if _der54.GESTACION_BASE != 132 or _der54.GESTACION_EXTRA_DESDE_SEM5 != 26:
     fallos.append(f"BLOQUE54: la gestación ya no es la de FEDIAF VII-8b "
                   f"({_der54.GESTACION_BASE} + {_der54.GESTACION_EXTRA_DESDE_SEM5})")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 # ============================================================
 # BLOQUE 55 — CADA CIFRA DE PATOLOGÍA, CONTRA LA CIFRA DE SU FUENTE
@@ -8658,7 +8761,7 @@ for _p, _tipo, _nut, _esperado, _origen, _cita in _CIFRAS_CON_FUENTE:
         fallos.append(f"BLOQUE55: {_p}.{_nut} vale {_esperado} en el JSON pero "
                       f"el solver recibe {_aplicado}")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 # ============================================================
 # BLOQUE 56 — LA FICHA DE PERMISOS, Y QUE SIGA DERIVANDOSE
@@ -8775,7 +8878,7 @@ for _f in _fichas56:
                           f"empieza en {_desde}, dice venir del minimo de FEDIAF, y ese "
                           f"minimo es hoy {_mn}")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 # ============================================================
 # BLOQUE 57 — LOS LIMITES DEL LIBRO PARA EL PERRO SANO (techos Y suelos)
@@ -9498,7 +9601,7 @@ for _patE in ("renal", "hepatopatia", "obesidad", "artrosis"):
                       f"que ser 67,1. Apagar el suelo del LIBRO no puede tocar el de una "
                       f"PATOLOGIA: son dos cajones distintos y se combinan con max()")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 # ============================================================
 # BLOQUE 58 — LA PROTEINA DE GESTACION Y LACTANCIA
@@ -9645,7 +9748,7 @@ if not _nombres58:
 elif not _nombres58[0].get("fuente"):
     fallos.append("BLOQUE58: el suelo de proteina de la lactancia se nombra sin fuente")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 # ============================================================
 # BLOQUE 51 — UNA CONSTANTE POR FAMILIA NO ES UNA MEDIDA
@@ -9916,7 +10019,7 @@ if _con_id51 < 95:
                   f"volver a buscar por nombre, que es como se llego a comprobarlo seis "
                   f"veces sin cerrarlo. Ver PENDIENTE_NUTRICION.md apartado 14.")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -10384,7 +10487,7 @@ if _r_b93.headers.get("access-control-allow-origin") != "https://rawku.app":
     fallos.append("BLOQUE93: rawku.app NO recibe permiso de CORS. La app se quedaría "
                   "sin poder llamar a la API.")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -10456,7 +10559,7 @@ else:
                       f"(techo {_ESPERADO_59}) no dispara ningun aviso de seguridad. Entonces el "
                       f"techo no se esta aplicando")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -10916,7 +11019,7 @@ for _pal_b60, _motivo_b60 in _PROHIBIDOS_B60:
                       f"FEDIAF documenta como toxico para el perro -- {_motivo_b60}. El semaforo "
                       f"no sabe de toxicos: mediria sus nutrientes y lo daria por bueno")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -11015,7 +11118,7 @@ for _pat61 in _EXCEPCIONES_61:
                       f"alarma apagada")
 
 print(f"  {len(_FORMULABLES_61)} patologias formulables, {len(_sin_menu_61)} sin menu")
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -11249,7 +11352,7 @@ for _et62 in ("CachorroJoven", "CachorroCrecimiento"):
                       f"el usuario no ha dado")
 
 print(f"  {len(_CASOS_B62)} cachorros de raza grande probados de punta a punta")
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -11372,7 +11475,7 @@ if dict(_COND_B63) != _VII1_COLUMNA2_B63:
                   f"a 2-4-5-7-9, eso era criterio nuestro y le calcula a un perro delgado un peso "
                   f"objetivo mas bajo del que le toca")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -11545,7 +11648,7 @@ for _pat64, _clave64, _trozo64 in _CIFRAS_64:
                       f"aviso sin su cifra parece que esta y no dice el numero, que es peor que no "
                       f"tenerlo")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -11775,7 +11878,7 @@ if _doc65 is not None:
                           f"es justo uno de los tres excesos que Ettinger cap.192 denuncia en las "
                           f"dietas caseras")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -11932,7 +12035,7 @@ if _reg66 is not None and _doc65 is not None:
                               f"quito a proposito, va como «retirada» y con el motivo; si no, "
                               f"se ha perdido")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 # ============================================================
 # BLOQUE 69 — LAS TRES CONDICIONALES DE LA §3.3.1, MEDIDAS EN VIVO
 # ============================================================
@@ -12156,7 +12259,7 @@ if _peor_tau_69[0] is not None:
               + ", ".join(f"{_q} ({_v:.0f})" for _v, _q in sorted(_bajo_umbral_69))
               + ". No es un fallo -- la taurina no es un requisito del motor y el menu que "
                 "devuelve el solver cambia entre ejecuciones --, pero es el borde y se dice")
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 
@@ -12243,7 +12346,7 @@ if _BCAR70 != 833.0:
                   f"833 UI por mg EN EL PERRO (el gato no lo convierte)")
 
 print(f"  {_revisadas70} conversiones de UI rehechas desde la nota de la ficha")
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 
@@ -12347,7 +12450,7 @@ if _revisadas71 < 50:
 
 print(f"  {_revisadas71} fichas de origen animal contra la ecuacion de FEDIAF, {_fuera71} fuera")
 print(f"  la mas alejada: {_peor71[1]} a {_peor71[0]:.3f} veces la ecuacion")
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 
@@ -12452,7 +12555,7 @@ if _dens72 != {4.0}:
                   f"cachorro grande via el Caso 1-1 --, tiene que venir con su cita y este bloque "
                   f"hay que ampliarlo a mano, no relajarlo")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 
@@ -12533,7 +12636,7 @@ for _peso73, _der73, _et73 in _CASOS_73:
 if _peor73[0] is not None:
     print(f"  {len(_CASOS_73)} menus; el mas justo: {_peor73[0]:.4f} g/1000 kcal en {_peor73[1]} "
           f"(suelo {_SUELO_DHA_73})")
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 
@@ -12697,7 +12800,7 @@ for _pat74, _f74 in sorted(_CRUDO_74.items()):
 
 print(f"  {sum(len(v.get('avisos') or {}) for v in _CRUDO_74.values())} avisos revisados, "
       f"{_afirmaciones74 + _afirmaciones74b} afirmaciones de «bajado a» comprobadas contra el tope aplicado")
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -12903,7 +13006,7 @@ print(f"  {len(_CON_RATIO_75)} patologias con ratio · {_menus_75} menus resuelt
 if _peor_75:
     print(f"  el mas justo: {_peor_75[0]:.3f} (suelo {_peor_75[1]}) en {_peor_75[2]} "
           f"a {_peor_75[3]:g} kg")
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -13053,7 +13156,7 @@ if _repetidos_76:
 
 print(f"  {len(_llamadas_76)} llamadas al solver · {len(_demostrados_76)} peldanos demostrados "
       f"imposibles · {len(_repetidos_76)} repetidos")
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -13134,7 +13237,7 @@ for _fich77, _marcas77 in (
                           f"copiada TAL CUAL: si alguien lo edita para que cuadre, deja de ser "
                           f"una fuente y pasa a ser una copia mas de la misma tabla")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 # ============================================================
 # BLOQUE 79 — QUIEN PUEDE MARCAR CADA PATOLOGIA, DERIVADO DE SU FUENTE
 # ============================================================
@@ -13226,7 +13329,7 @@ for _k79, _v79 in sorted(_QUIEN_79.items()):
 _preguntas79 = sum(1 for _v in _QUIEN_79.values() if (_v.get("pregunta_que_falta") or "").strip())
 print(f"  {len(_QUIEN_79)} patologias derivadas · {_solo_vet_79} solo_veterinario · "
       f"{_preguntas79} con una pregunta que falta en la ficha")
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -13297,7 +13400,7 @@ if _sin80:
                   f"({_sin80[:4]}). Un margen que no sale por la API no lo ve quien firma la "
                   f"pauta, que es para quien se escribio")
 print(f"  {_n80} margenes servidos por GET /patologias y comprobados contra el fichero")
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 # ============================================================
 # BLOQUE 85 — que cada cita entrecomillada diga lo que dice la fuente
 # ============================================================
@@ -13326,7 +13429,7 @@ _aud85 = _sp_b18.run([sys.executable, "auditar_citas.py"], capture_output=True, 
 if "Discrepancias: 0" not in _aud85.stdout:
     _cola85 = "\n      ".join((_aud85.stdout + _aud85.stderr).strip().splitlines()[-6:])
     fallos.append(f"BLOQUE85: el recuento de citas sin comprobar no cuadra:\n      {_cola85}")
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -13573,7 +13676,7 @@ else:
                           f"({_otros84[0]}), que no tiene calcio. Un aviso que sale siempre deja "
                           "de leerse")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -13788,7 +13891,7 @@ for _act86, _debe86 in ((None, False), ("normal", False), ("activo", False),
 print(f"  cruce en 130 kcal/kg^0,75 · 4 topes con su gemelo · "
       f"yodo del perro de trabajo congelado en {_tope_peso86:.0f} µg")
 print("  la actividad llega al motor · el aviso sale en los dos escalones de trabajo y en nadie más")
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 # ============================================================
 # BLOQUE 87 — TODO DATO QUE PIDE LA FICHA TIENE QUE LLEGAR AL MOTOR
@@ -13978,7 +14081,7 @@ print(f"  {len(_DE_LA_FICHA_87)} campos de la ficha · "
       f"{sum(1 for v in _campos87.values() if v['forma'] == 'campo')} llegan sueltos · "
       f"{sum(1 for v in _campos87.values() if v['forma'] == 'dentro_de')} cocinados · "
       f"{sum(1 for v in _campos87.values() if v['forma'] == 'no_hace_falta')} no hacen falta")
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 # ============================================================
 # BLOQUE 88 — EL VOCABULARIO QUE LA APP TIENE QUE REFLEJAR
@@ -14229,7 +14332,7 @@ print(f"  {sum(1 for _k in _d88 if isinstance(_d88[_k], dict))} listas servidas 
       f"{len(_api.CATEGORIAS_QUE_ELIGE_EL_USUARIO)} categorías · "
       f"{len(_lista88)} nutrientes para objetivos · "
       f"{len(_api.PELDANOS_EN_CRISTIANO)} peldaños")
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 # ============================================================
 # BLOQUE 89 — RAZAS, TAMAÑOS, ETAPAS Y CONDICIÓN CORPORAL
@@ -14794,7 +14897,7 @@ else:
 print(f"  {len(_R89)} razas · {len(_razas89.TAMANOS)} tamaños · "
       f"{len(_d89.get('etapas', {}).get('etapas', []))} etapas · "
       f"9 puntos de BCS · {_esperadas89} preguntas que la app no hace")
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -15203,7 +15306,7 @@ for _v90 in _P90.values():
     _cuenta90[_v90["estado"]] = _cuenta90.get(_v90["estado"], 0) + 1
 print(f"  {len(_P90)} preguntas · {_comprobadas90} cifras comprobadas contra el solver · "
       + " · ".join(f"{v} {k}" for k, v in sorted(_cuenta90.items())))
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -15342,7 +15445,7 @@ if _fijos91.get("factible"):
 
 print(f"  techo aplicado · suelo recortado contra FEDIAF y dicho · "
       f"no afloja el tope del renal")
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -15436,7 +15539,7 @@ if _restante92["yodo"] >= _pres92["yodo"]:
 
 print(f"  presupuesto semanal de yodo {_pres92['yodo']:.0f} µg · "
       f"una ración cara se lleva {_yodo92(_CARA92):.0f} µg/día")
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 # ============================================================
 # BLOQUE 98 — LAS DIEZ FICHAS DE HUESO, CONTRA LA TABLA DE KÖBER
 # ============================================================
@@ -15486,7 +15589,7 @@ else:
         if _l98.strip().startswith(("Discrepancias", "❌")) or not _l98.strip():
             continue
         print(f"  {_l98.rstrip()}")
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 # ============================================================
 # BLOQUE 95 — LOS PREMIOS DILUYEN LA RACIÓN, Y EL MOTOR LO CUENTA
 # ============================================================
@@ -15747,7 +15850,7 @@ if "kcal_de_premios" not in _pers95.CLAVES_CONTEXTO:
                   "`kcal_de_premios`. Al releerlo se pierde el aviso del 10 %, que es lo único "
                   "que el dueño tiene que hacer con ese dato")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -15939,7 +16042,7 @@ try:
 except TypeError:
     pass
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 # ============================================================
 # BLOQUE 97 — QUIÉN PUEDE LLAMAR DESDE UN NAVEGADOR
@@ -16037,7 +16140,7 @@ for _o97, _que97 in _PERMITIDOS_97 + _PROHIBIDOS_97:
 
 print(f"  {len(_PERMITIDOS_97)} origenes que tienen que poder · {len(_PROHIBIDOS_97)} que no · "
       f"y `/verificar` dice lo mismo que la puerta en los {len(_PERMITIDOS_97)+len(_PROHIBIDOS_97)}")
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 # ============================================================
 # ⚠️ ERA EL «BLOQUE 98» Y HABÍA DOS, Y AL FUSIONAR RESULTÓ QUE TAMBIÉN HABÍA DOS
@@ -16267,7 +16370,7 @@ if not (set(_PAT98) - set(_copia98)):
 print(f"  {len(_PRES98['patologias'])} patologías presentadas · "
       f"{len(_APARATOS98)} aparatos · {len(_esperado98) if _v98.status_code == 200 else '?'} "
       f"se eligen dentro de la pregunta de otra")
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 _hay_fuentes = _os_b18.path.isdir(_RUTA_FUENTES)
@@ -16675,7 +16778,7 @@ for _g99 in _GRUPOS99:
 
 print(f"  {len(_listas99)} listas declaradas · {len(_vistos99)} alimentos en {len(_al99['pantallas'])} pantallas"
       f" · {len(_declarados99)} filas de ficha en {len(_GRUPOS99)} grupos")
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 # ============================================================
 # BLOQUE 100 — LA VIA RAPIDA MIRA LO MISMO QUE EL FILTRO FINAL
@@ -17140,7 +17243,7 @@ else:
             if _fu100 not in _decl100["fuentes"]:
                 fallos.append(f"BLOQUE104: el mandato de «{_cl100}» nombra la fuente «{_fu100}», "
                               f"que no existe")
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -17396,7 +17499,7 @@ for _p103 in _ESPERADO103:
         fallos.append(f"BLOQUE106: «{_p103}» está escrita como que NO se aplica y "
                       f"`ratios_de_patologias()` —la función que llama el solver— SÍ la devuelve. "
                       f"Enseñar un número y aplicarlo a escondidas es peor que no enseñarlo")
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ── Y EL SEMAFORO TAMBIEN, CON EL MISMO PESO DE REFERENCIA (13-sep, noche) ──
@@ -17556,19 +17659,74 @@ for _n101 in _NIVELES101:
     #    4 de 4. Es la lección del 14 de septiembre, escrita para los BLOQUES 17
     #    y 27: un bloque que le da un presupuesto al solver y luego afirma algo
     #    del motor está midiendo dos cosas a la vez.
+    # ⚠️ Y EL REINTENTO «CON RELOJ DE SOBRA» NO DABA NINGÚN RELOJ DE SOBRA (16 de
+    #    septiembre de 2026). Pasaba `presupuesto_segundos: 120.0`, y ese campo
+    #    **solo puede APRETAR**: `main.py` lo mete en un
+    #    `max(3.0, min(PRESUPUESTO_SEGUNDOS, ...))`, así que 120 se quedaba en los
+    #    40 de siempre. O sea que el bloque reintentaba exactamente lo mismo y,
+    #    cuando salía, imprimía «era el reloj» afirmando algo que no había
+    #    probado. Es la peor forma de las que este fichero ya tiene catalogadas:
+    #    una prueba que cree que mide otra cosa.
+    #
+    #    Se le pregunta al SOLVER, que es donde el reloj sí se puede abrir, y el
+    #    endpoint solo decide el veredicto cuando el solver dice que el menú
+    #    existe.
     if not _r101.get("factible"):
-        _d101_holg = dict(_d101); _d101_holg["presupuesto_segundos"] = 120.0
-        _r101_holg = _c_b5.post("/menu/v2", json=_d101_holg).json()
-        if _r101_holg.get("factible"):
-            print(f"  (premios «{_n101}»: no salió a la primera y SÍ con 120 s — era el reloj)")
-            _r101 = _r101_holg
+        _hay_menu_101 = False
+        for _m101x, _s101x, _cl101x in _api._escalera_de_relajacion(True):
+            _ok101x, _g101x = resolver(
+                1581.0, "CachorroCrecimiento", al, req, 20.0, dosis_maxima_fabricante,
+                margenes_categoria=_m101x, max_suplementos=_s101x,
+                peso_adulto_esperado_kg=31.0,
+                kcal_de_premios=1581.0 * _api.NIVELES_DE_PREMIOS.get(_n101, 0.0),
+                time_limit=120)
+            if isinstance(_g101x, dict) and sum(
+                    v for v in _g101x.values() if isinstance(v, (int, float))) > 0:
+                _hay_menu_101 = True
+                break
+        if _hay_menu_101:
+            print(f"  (premios «{_n101}»: el endpoint no lo saca y el solver SÍ con 120 s "
+                  f"— era el reloj, no el motor)")
     _resp101[_n101] = _r101
     if not _r101.get("factible"):
-        fallos.append(f"BLOQUE101: el cachorro de raza grande con premios «{_n101}» se queda SIN "
-                      f"MENÚ. Es el caso de Cairo: su suelo de calcio de la nota b (2500) sube "
-                      f"por la dilución de los premios y cruza el techo de 2750 que recomienda "
-                      f"SACN5. Cuando cruzan manda FEDIAF y el techo del libro cede -- es la "
-                      f"misma regla que salva al perro a dieta desde el 8 de septiembre")
+        # ⚠️ CON LOS PREMIOS POR ENCIMA DE LO QUE RECOMIENDA LA FUENTE, NO DAR
+        #    MENÚ ES UNA RESPUESTA VÁLIDA -- SI SE DICE Y SI HAY SALIDA (16 de
+        #    septiembre de 2026). Lo decidió Elena al ver lo que salía si no:
+        #    «un plato con 484 gramos de alcachofa me parece muy loco», y lo que
+        #    pidió en su lugar fue la salida: «tiene que haber una parte en la
+        #    que elija lo que le da y se meta en el plato».
+        #
+        #    El 20 % es el DOBLE de lo que recomiendan las cuatro fuentes, y de
+        #    lo que lleva dentro un premio no sabemos nada (regla 3-bis), así
+        #    que el día entero tiene que caber en el 80 % de las kcal. Que no
+        #    quepa no es un fallo del motor: es un hueco de DATO, y el motor no
+        #    puede taparlo con un plato de hierba.
+        #
+        #    Lo que este bloque protege sigue intacto y son las DOS mitades: que
+        #    NO se le suelte el mensaje genérico -«quita alguna restricción»,
+        #    que aquí es mentira- y que DECLARANDO el premio el menú salga. Si
+        #    una de las dos se cae, esto es rojo.
+        if _n101 == "mas_del_maximo" and _r101.get("los_premios_no_dejan_sitio"):
+            _d101d = dict(_CAIRO101)
+            _d101d["premios_declarados"] = {"Corazón de pollo": 214.0}
+            _r101d = _c_b5.post("/menu/v2", json=_d101d).json()
+            if not _r101d.get("factible"):
+                fallos.append(
+                    "BLOQUE101: con premios «mas_del_maximo» se dice que hay que declararlos, "
+                    "y DECLARANDO 214 g de corazón de pollo tampoco sale menú. Entonces la "
+                    "salida que se le ofrece al dueño no existe, y eso es peor que no "
+                    "ofrecerla")
+            elif (_r101d.get("menu") or {}).get("Corazón de pollo") != 214.0:
+                fallos.append(
+                    "BLOQUE101: al declarar el premio el menú sale pero NO lleva los 214 g "
+                    "declarados. Un premio declarado son gramos fijos: si el motor los mueve, "
+                    "lo que se le enseña al dueño no es lo que come")
+        else:
+            fallos.append(f"BLOQUE101: el cachorro de raza grande con premios «{_n101}» se queda SIN "
+                          f"MENÚ. Es el caso de Cairo: su suelo de calcio de la nota b (2500) sube "
+                          f"por la dilución de los premios y cruza el techo de 2750 que recomienda "
+                          f"SACN5. Cuando cruzan manda FEDIAF y el techo del libro cede -- es la "
+                          f"misma regla que salva al perro a dieta desde el 8 de septiembre")
     elif _r101["ficha"]["semaforo"] != "verde":
         fallos.append(f"BLOQUE101: con premios «{_n101}» sale menú pero el semáforo está en "
                       f"{_r101['ficha']['semaforo']}. Ceder el techo del libro NO puede aflojar "
@@ -17780,7 +17938,7 @@ try:
 finally:
     _recmod101.HOLGURA_DEL_TECHO_QUE_SUBE = _holg_buena101
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -18014,7 +18172,7 @@ else:
                               f"en el menú que ha salido")
             if _viejop102 in _gp102:
                 fallos.append(f"BLOQUE102 (personalizar): se pidió quitar «{_viejop102}» y sigue")
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -18568,10 +18726,36 @@ try:
 except SyntaxError as _e_107:
     _arbol_107 = None
     fallos.append(f"BLOQUE107: main.py no compila, no se puede mirar ({_e_107})")
+# ⚠️ Y LOS DOCSTRINGS TAMPOCO SE ACUSAN, POR EL MISMO MOTIVO QUE LOS COMENTARIOS
+# (16 de septiembre de 2026). Este guardia existe para los textos que LEE EL
+# DUEÑO, y un docstring no lo lee ningún dueño: es documentación, igual que un
+# `#`. La primera versión miraba todas las cadenas del árbol y acusó al
+# docstring de `_premios_en_el_plato`, que dice «los 43 requisitos se miden
+# sobre el total» — o sea que explicaba correctamente lo que hace el motor y el
+# guardia lo llamó número escrito a mano. Un guardia que acusa a quien no ha
+# hecho nada se deja de mirar, que es lo que este mismo bloque tiene escrito
+# tres líneas más arriba.
+def _docstrings_de_107(arbol):
+    """Los ids de los nodos que son docstring de módulo, clase o función."""
+    _ids = set()
+    for _n in _ast_107n.walk(arbol):
+        if not isinstance(_n, (_ast_107n.Module, _ast_107n.ClassDef,
+                               _ast_107n.FunctionDef, _ast_107n.AsyncFunctionDef)):
+            continue
+        _cuerpo = getattr(_n, "body", None) or []
+        if (_cuerpo and isinstance(_cuerpo[0], _ast_107n.Expr)
+                and isinstance(_cuerpo[0].value, _ast_107n.Constant)
+                and isinstance(_cuerpo[0].value.value, str)):
+            _ids.add(id(_cuerpo[0].value))
+    return _ids
+
 if _arbol_107 is not None:
+    _docs_107 = _docstrings_de_107(_arbol_107)
     _con_numero_107 = []
     for _nodo_107 in _ast_107n.walk(_arbol_107):
         if isinstance(_nodo_107, _ast_107n.Constant) and isinstance(_nodo_107.value, str):
+            if id(_nodo_107) in _docs_107:
+                continue
             if _re_cuenta_107.search(_nodo_107.value):
                 _con_numero_107.append((getattr(_nodo_107, "lineno", "?"),
                                         " ".join(_nodo_107.value.split())[:90]))
@@ -18806,7 +18990,7 @@ for _quien108c, _menu108c, _palabra108c in _CONSEJOS_DEL_PLATO_108:
 
 print(f"  {_ediciones108} ediciones encadenadas miradas · {len(_sucios108)} menús entregados "
       f"diciendo que se pasan de un límite")
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 
@@ -18938,7 +19122,7 @@ if _conf109.get("cuantas_la_piden") != _esperadas109:
 
 print(f"  {_esperadas109} patologías piden diagnóstico · {len(_sin_analitica109)} no lo piden "
       f"a propósito · los dos registros servidos")
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -19068,7 +19252,7 @@ if any("súper" in _a110 for _a110 in _api._seguridad_completa(_menu110b, _al110
 
 print(f"  {len(_acc110.FACILES)} de súper · {len(_acc110.DE_ENCARGO)} de encargo · "
       f"con la penalización {_enc_con110} apariciones contra {_enc_sin110} sin ella")
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 
@@ -19708,7 +19892,7 @@ else:
     print(f"  con el fallo puesto se pasan {_pasan113f} de {len(_CASOS113F)}: "
           f"{' · '.join(_detalle113f)} -- la fila sujeta")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 # ============================================================
 # BLOQUE 114 — AL QUITAR UN SUPLEMENTO SE DICE POR QUÉ ENTRA OTRO
@@ -19837,7 +20021,7 @@ if _sobran114:
         f"catalogo: {_sobran114}. Una entrada que no puede dispararse nunca se lee y se cree")
 print(f"  las {len(_cats114)} categorias del catalogo tienen su nombre llano")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -19941,7 +20125,7 @@ if _pasados115:
 else:
     print("  y ninguno se pasa de un maximo medido con la misma vara")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 
@@ -20302,7 +20486,7 @@ if _sueltas116:
                   f"instantánea, así que su guardián es éste: " + " · ".join(_sueltas116[:6]))
 print(f"  celdas de etiqueta vigiladas: {len(_vigiladas116 & {(f['nombre'], c) for f in _cat116.values() for c in (f.get('composicion_fuente') or {})})}")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 
@@ -20421,7 +20605,7 @@ if _malc118:
 print(f"  cierres con las seis condiciones señaladas: "
       f"{len(_re118.findall(r'^## CERRADO · ', _txt118, _re118.M)) - len(_malc118)}")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -20515,7 +20699,7 @@ if _huerfanas117:
 else:
     print(f"  las {len(_cats_del_catalogo117)} categorias del catalogo estan todas declaradas")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 
@@ -20629,7 +20813,7 @@ for _f119, _d119, _v119, _u119 in _descuadran119:
                   f"pasó el 15 de septiembre con el selenio escrito en mg en vez de µg")
 
 print(f"  {len(_ANCLAS_119)} cifras de CLAUDE.md rehechas contra el motor vivo, con su unidad")
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -20754,7 +20938,7 @@ if _r121d.get("peso_adulto_derivado"):
 
 print(f"  peso adulto derivado: {(_pa121 or {}).get('valor')} kg · "
       f"calcio con él {(_calcio121(_r121) or 0):.0f} · sin él {(_calcio121(_r121c) or 0):.0f}")
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -20821,7 +21005,7 @@ if _m120 and int(_m120.group(1)) > 330:
                   f"de una forma que no reconoce --y hay que enseñarle-- o el hueco está "
                   f"creciendo. Subir este número es una decisión, no un trámite")
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 # ============================================================
@@ -20973,7 +21157,7 @@ else:
 print(f"  escalera: {len(_claves122)} peldanos, sin el del plato de hierba")
 print(f"  premio declarado: {'entra y se dice' if _r122.get('premios_dentro_del_menu') else 'NO'}"
       f" · desconocido: {'se dice' if _r122b.get('premios_que_no_conocemos') else 'NO'}")
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
 _tiempos_por_bloque.sort(reverse=True)

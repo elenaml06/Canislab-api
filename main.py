@@ -2736,9 +2736,71 @@ def _hay_comida_de_verdad(al, excluidos=None, categorias_excluidas=None):
     return bool(quedan)
 
 
-def _escalera_de_relajacion(hay_comida_de_verdad=True):
+def _la_patologia_topa_la_grasa(patologias, etapa="Adulto"):
+    """¿Alguna de las patologías marcadas le pone techo a la grasa?
+
+    Se DERIVA de `patologias.json` a través de la misma función que llama el
+    solver (`topes_de_patologias`), no de una lista escrita a mano: una lista
+    copiada se queda parada el día que entre una patología nueva con techo de
+    grasa, y no daría ningún error -- el menú saldría verde igual. Es la regla 6
+    aplicada dentro del motor.
+
+    Hoy son siete: obesidad (22,5), hiperlipidemia (30), y pancreatitis, EPI,
+    SIBO, enteropatía crónica y linfangiectasia (37,5).
+    """
+    if not patologias:
+        return False
+    try:
+        topes, pct_grasa, _av, _su = topes_de_patologias(list(patologias), etapa)
+    except Exception:
+        return False
+    return bool(topes.get("grasa") is not None or pct_grasa)
+
+
+def _escalera_de_relajacion(hay_comida_de_verdad=True, patologias=None, etapa="Adulto"):
     """Peldaños (margenes, max_suplementos, qué se soltó), de más
-    estricto a menos. El primero es exactamente lo de siempre."""
+    estricto a menos. El primero es exactamente lo de siempre.
+
+    ⚠️ Y CON UNA PATOLOGÍA QUE TOPE LA GRASA, EL SUELO DEL HUESO NO SE EXIGE
+    (16 de septiembre de 2026). Lo pidió Elena: «prueba a que en esas patologias
+    que limitan la grasa se elimine el hueso a ver si sale un menú razonable sin
+    un 50% de verdura», y autorizó aplicarlo con la regla que lo permite: «las
+    proporciones son nuestras y las movemos como queremos». Es la regla 3 -- el
+    20 % de hueso es convención BARF, criterio NUESTRO, no de FEDIAF.
+
+    POR QUÉ CHOCA: el hueso carnoso es lo más graso del plato y lo que más
+    fósforo trae, así que obligar a meter un 20 % es justo lo contrario de lo
+    que pide una ración con la grasa topada. Lo que salía en su lugar era medio
+    plato de verdura -- o ningún menú.
+
+    MEDIDO, peldaño a peldaño y con 60 s cada uno (16 de septiembre):
+
+        obesidad 25->20 kg ..... SIN MENÚ  ->  menú verde
+        hiperlipidemia ......... peldaño x5, 49 % verdura  ->  peldaño x2,
+                                 51 % carne · 28 % pescado · 20 % verdura
+        EPI, SIBO, PLE ......... peldaño 2  ->  peldaño 1
+        pancreatitis ........... igual (x5 en los dos)
+
+    Ninguna empeora, y lo que entra en el sitio del hueso es PESCADO, no
+    verdura. El calcio pasa a salir de la cáscara de huevo o del
+    multivitamínico, que es exactamente lo que preguntó Elena antes de medirlo:
+    «igual si metes un suplemento que tenga calcio o cascara de huevo».
+
+    ⚠️ SE SUELTA EL SUELO, NO EL TECHO: el hueso puede seguir entrando, y de
+    hecho entra en tres de las siete (2,7-4,1 %). Lo que se quita es la
+    OBLIGACIÓN de meter el 20 %.
+
+    ⚠️ Y SOLO AHÍ. Medido en el perro SANO, ese suelo está MORDIENDO -- sin él
+    el adulto de 20 kg baja de 20 % a 10 % de hueso y el sénior de 21 % a 12 %
+    --, o sea que es lo que mantiene la ración con forma de BARF. Esto no se
+    enciende «porque total no cambia nada»: cambia, y por eso va atado a la
+    patología que lo justifica.
+
+    ⚠️ El suelo de CARNE MUSCULAR (10 %) se queda. Sin los dos, el último
+    peldaño monta una ración de hígado, verdura y botes que cumple los
+    requisitos en el papel y no es comida -- lo tiró el BLOQUE 9 la primera vez
+    que se intentó.
+    """
     sin_minimo_secundarias = {
         c: ((0.0 if c in CATEGORIAS_SECUNDARIAS else mn), mx)
         for c, (mn, mx) in MARGENES_V2.items()
@@ -2946,6 +3008,16 @@ def _escalera_de_relajacion(hay_comida_de_verdad=True):
         # un problema de formulación -- tiene un problema de premios, y la
         # ración no puede arreglarlo: le quedan el 80 % de las kcal para meter
         # el 100 % de los nutrientes. Ver `_por_que_no_cabe_con_premios`.
+
+    # ⚠️ Y AL FINAL, EL SUELO DEL HUESO SI LA PATOLOGIA TOPA LA GRASA. Va aquí,
+    # sobre la escalera ya montada, y no dentro de cada peldaño a propósito:
+    # afecta a los NUEVE por igual, incluido el estricto, así que un peldaño
+    # nuevo lo hereda sin acordarse de nada. El porqué y las medidas, en el
+    # docstring de esta función.
+    if _la_patologia_topa_la_grasa(patologias, etapa):
+        peldanos = [({c: ((0.0 if c == "Hueso carnoso" else mn), mx)
+                      for c, (mn, mx) in m.items()}, supl, cl)
+                    for m, supl, cl in peldanos]
     return peldanos
 
 
@@ -3046,7 +3118,7 @@ PELDANOS_EN_CRISTIANO = {
 }
 
 
-def _peldanos_publicos(hay_comida_de_verdad=True):
+def _peldanos_publicos(hay_comida_de_verdad=True, patologias=None, etapa="Adulto"):
     """La escalera con nombre y explicacion, en su orden real.
 
     Se construye recorriendo `_escalera_de_relajacion()` y NO escribiendo la
@@ -3056,7 +3128,8 @@ def _peldanos_publicos(hay_comida_de_verdad=True):
     sirven leyendo `patologias.json` en vez de copiarlos.
     """
     salida = []
-    for orden, (_m, supl, clave) in enumerate(_escalera_de_relajacion(hay_comida_de_verdad)):
+    for orden, (_m, supl, clave) in enumerate(
+            _escalera_de_relajacion(hay_comida_de_verdad, patologias, etapa)):
         clave = clave or PELDANO_ESTRICTO
         titulo, detalle = PELDANOS_EN_CRISTIANO.get(clave, (clave, ""))
         salida.append({"clave": clave, "orden": orden, "titulo": titulo,
@@ -3064,7 +3137,7 @@ def _peldanos_publicos(hay_comida_de_verdad=True):
     return salida
 
 
-def _peldano_por_clave(clave, hay_comida_de_verdad=True):
+def _peldano_por_clave(clave, hay_comida_de_verdad=True, patologias=None, etapa="Adulto"):
     """(margenes, max_suplementos) del peldano pedido, o None si no existe.
 
     Devolver None y no reventar es deliberado: una clave que no existe se
@@ -3073,7 +3146,7 @@ def _peldano_por_clave(clave, hay_comida_de_verdad=True):
     """
     if not clave:
         return None
-    for margenes, supl, k in _escalera_de_relajacion(hay_comida_de_verdad):
+    for margenes, supl, k in _escalera_de_relajacion(hay_comida_de_verdad, patologias, etapa):
         if (k or PELDANO_ESTRICTO) == clave:
             return margenes, supl
     return None
@@ -3141,6 +3214,11 @@ def _aviso_de_lo_que_falta(gramos, al, categorias_excluidas=None):
             "y todos los límites de seguridad.")
 
 
+# El total de segundos que se reparte entre los menús de UNA semana. Vive aquí
+# y no dentro del endpoint para que una prueba pueda darle holgura: ver el
+# comentario largo en `endpoint_menu_semana`.
+PRESUPUESTO_SEGUNDOS_SEMANA = 70.0
+
 MARGEN_SEGURIDAD_CRONICA_MENU_UNICO = 0.75  # mismo criterio que el de /menu/semana
 
 
@@ -3194,7 +3272,18 @@ def endpoint_menu_semana(datos: PeticionMenu, numero_de_menus: int = 1):
         # por menú para que el último no reciba un presupuesto inútil. Medido:
         # una semana de adulto sano tardó 41,4 s contra producción, que es lo
         # que de verdad cuesta -- el techo solo muerde en los casos difíciles.
-        PRESUPUESTO_SEGUNDOS_SEMANA = 70.0
+        # ⚠️ EL TOTAL SE LEE DE FUERA, COMO EL DE VARIOS PERROS (16 de
+        # septiembre de 2026). Estaba escrito aquí dentro como variable local,
+        # así que una prueba que quisiera darle reloj de sobra a la semana NO
+        # PODÍA -- `presupuesto_segundos` solo aprieta, nunca suelta. Eso dejó
+        # al BLOQUE 17 midiendo el reloj sin querer: fallaba 1 de cada 3 veces
+        # diciendo «solo conserva el 67 % de sus alimentos», o sea acusando al
+        # motor de no respetar lo que se le pidió cuando lo que pasaba es que
+        # el solver aceptaba una solución peor porque se le acababa el tiempo.
+        # `PRESUPUESTO_SEGUNDOS_VARIOS_PERROS` ya vivía fuera por exactamente
+        # este motivo; esto es ponerlos iguales.
+        PRESUPUESTO_SEGUNDOS_SEMANA = globals().get(
+            "PRESUPUESTO_SEGUNDOS_SEMANA", 70.0)
         SEGUNDOS_MINIMOS_POR_MENU_SEMANA = 6.0
         _t_inicio_semana = time.time()
 
@@ -3317,6 +3406,150 @@ CATEGORIAS_QUE_ELIGE_EL_USUARIO = (
 
 
 def _resolver_menu_v2_interno(datos: PeticionMenu):
+    """El motor, con lo que el dueño DECLARA que le da puesto en la respuesta.
+
+    ⚠️ POR QUÉ ES UN ENVOLTORIO Y NO CUATRO LÍNEAS DENTRO (16 de septiembre de
+    2026, y lo encontró el BLOQUE 122 el mismo día que se escribió la función).
+
+    `_resolver_menu_v2_crudo` tiene CUATRO salidas con `factible: True`: tres
+    vías rápidas de catálogo y la del final. Las dos claves de los premios se
+    escribieron solo en la última, así que un cachorro de raza grande sin
+    alergias ni patologías —o sea el caso fácil, que es el que coge el atajo—
+    recibía su menú **sin el premio dentro y sin una palabra**, con la respuesta
+    impecable. Es la lección que este repo ya tiene escrita tres veces: *un
+    texto se vigila por la PUERTA por la que sale, no por dónde está escrito*.
+
+    Aquí se pone una sola puerta. Un camino nuevo que devuelva un menú lo
+    hereda sin acordarse de nada.
+    """
+    resultado = _resolver_menu_v2_crudo(datos)
+    if not isinstance(resultado, dict) or not resultado.get("factible"):
+        return resultado
+    try:
+        _al_pr, _ = cargar_v2()
+    except Exception:
+        return resultado
+    # ⚠️ Y SI SE LE HA SOLTADO EL SUELO DEL HUESO, SE DICE (16 de septiembre de
+    # 2026). La regla 3 permite mover una proporción de BARF porque es criterio
+    # nuestro -- lo que NO permite es moverla en silencio: quien mire el plato
+    # va a ver poco hueso o ninguno, y sin una palabra lo lee como un fallo.
+    #
+    # COMIDA, NO NUTRIENTES (regla del 14 de septiembre): se dice qué lleva el
+    # plato y de dónde sale el calcio, no cuántos gramos de grasa por 1000 kcal.
+    if _la_patologia_topa_la_grasa(getattr(datos, "patologias", None),
+                                   getattr(datos, "etapa_requisitos", "Adulto")):
+        resultado["suelo_de_hueso_suelto_por_patologia"] = True
+        resultado.setdefault("avisos_extra", []).append(
+            "Este menú lleva poco hueso, o ninguno, y es a propósito: con lo que tiene "
+            "tu perro le toca un plato más ligero, y el hueso es de lo que más engorda. "
+            "El calcio se lo damos por otro lado — normalmente cáscara de huevo o el "
+            "complemento que veas en la lista. No le añadas hueso por tu cuenta.")
+    _plato = _premios_en_el_plato(datos, _al_pr)
+    if _plato:
+        resultado["premios_dentro_del_menu"] = _plato
+    _desconocidos = _premios_declarados_que_no_conocemos(datos, _al_pr)
+    if _desconocidos:
+        resultado["premios_que_no_conocemos"] = _desconocidos
+        resultado.setdefault("avisos_extra", []).append(
+            "No hemos podido contar " + ", ".join(_desconocidos) + ": no está en "
+            "nuestra lista de alimentos, así que no sabemos qué lleva dentro. Este menú "
+            "está hecho SIN contarlo. Si se lo das a menudo, elige en la lista algo "
+            "parecido y vuelve a generarlo, o cuéntaselo a tu veterinario.")
+    return resultado
+
+
+def _respuesta_de_premios_sin_sitio(datos, hay_comida, se_agoto_el_tiempo=False):
+    """La respuesta de «no hay menú» cuando la causa son los premios sin decir.
+
+    Devuelve `None` si los premios no se pasan de lo que recomienda la fuente:
+    entonces el motivo es otro y contesta quien ya contestaba.
+
+    ⚠️ POR QUÉ ESTÁ EN UNA FUNCIÓN Y NO ESCRITA DONDE SE USA (16 de septiembre
+    de 2026, por la noche). La primera versión vivía en la rama de «la escalera
+    se acabó» y **no se alcanzaba nunca** en el caso que la motivó: con el 20 %
+    del día en premios, los siete primeros peldaños salen infactibles
+    demostrados en 0,3 s cada uno y los dos últimos se comen el presupuesto, así
+    que el que contestaba era el `se_agoto_el_tiempo` de más arriba -- «el
+    cálculo está tardando más de lo normal. Inténtalo de nuevo en un momento»,
+    que además promete algo que no va a pasar, porque reintentar falla igual.
+    Es el mismo fallo que el repo ya tiene escrito para el toy con artrosis.
+
+    Son DOS puertas para el mismo «no hay menú» y las dos tienen que decir lo
+    mismo, que es la lección de siempre: *un texto se vigila por la puerta por
+    la que sale*.
+
+    ⚠️ Y LO QUE SE AFIRMA CAMBIA SEGÚN LA PUERTA, porque si no sería mentira.
+    Cuando la escalera se ha recorrido entera se puede decir que NO CABE; cuando
+    se acabó el reloj, no se ha demostrado nada y se dice que no hemos podido.
+    Lo que NO cambia es lo que se le ofrece, porque ayuda en los dos casos:
+    decir qué premio es lo quita del terreno de lo desconocido.
+    """
+    _kcal_prem = _kcal_de_premios(datos)
+    _der_dia = float(getattr(datos, "der_objetivo", None) or 0.0)
+    if not (_kcal_prem > 0 and _der_dia > 0):
+        return None
+    _fraccion = _kcal_prem / _der_dia
+    if _fraccion <= FRACCION_MAXIMA_DE_PREMIOS:
+        return None
+    _pct = _fraccion * 100
+    # ⚠️ LO PRIMERO QUE SE OFRECE ES DECIR QUÉ PREMIO ES, NO BAJARLO (16 de
+    # septiembre de 2026). La primera versión decía «bájale los premios» y ya
+    # está, y Elena lo cortó: «¿pero para qué pones ese mensaje? si tiene que
+    # haber una parte en la que elija lo que le da y se meta en el plato».
+    #
+    # Tiene razón, y además es lo que hace la fuente: un premio DECLARADO deja
+    # de ser un premio y pasa a ser un ingrediente (`premios_declarados`). Lo
+    # que no cabe no es el premio -- es el premio DESCONOCIDO, porque obliga a
+    # formular a ciegas esa parte del día. Decirle «bájaselo» a quien puede
+    # simplemente decirnos qué es sería mandarle a cambiar de vida por un hueco
+    # nuestro.
+    #
+    # ⚠️ COMIDA, NO NUTRIENTES (regla del 14 de septiembre): ni «dilución», ni
+    # «mg/1000 kcal», ni el nombre de un nutriente.
+    _medio = ("no hemos conseguido cuadrar el resto del plato"
+              if se_agoto_el_tiempo else
+              "todo lo que necesita tiene que caber en el resto del plato, y no cabe")
+    return {
+        "factible": False,
+        "motivo": (
+            f"Necesitamos saber QUÉ le das. Ahora mismo has dicho que los premios "
+            f"son el {_pct:.0f} % de lo que come al día, pero no qué son — y sin "
+            f"saberlo tenemos que dar por hecho que no aportan nada, así que "
+            f"{_medio}. "
+            f"|| LO MEJOR: dinos qué le das (pollo, pavo, queso, lo que sea) y "
+            f"cuánto, y lo metemos DENTRO del menú contando lo que aporta. Así no "
+            f"hay que quitarle nada. || Y si no lo sabes: bájaselos a no más de una "
+            f"décima parte de lo que come al día y vuelve a generar el menú."),
+        "los_premios_no_dejan_sitio": True,
+        "premios_pct_del_dia": round(_pct, 1),
+        "premios_pct_recomendado": round(FRACCION_MAXIMA_DE_PREMIOS * 100),
+        "se_agoto_el_tiempo": bool(se_agoto_el_tiempo),
+        "se_intento_relajando": [p[2] for p in _escalera_de_relajacion(hay_comida)[1:]]}
+
+
+def _hay_algun_premio(datos, alimentos=None):
+    """¿Este perro come algo fuera de la ración, lo sepamos o no?
+
+    ⚠️ SON DOS COSAS Y LAS DOS TIENEN QUE PARAR EL ATAJO DEL CATÁLOGO (16 de
+    septiembre de 2026). `_kcal_de_premios` solo ve el premio ANÓNIMO —el que
+    llega como nivel o como kcal— y desde hoy hay otro: el DECLARADO, que trae
+    nombre y gramos y entra en el plato como gramos fijos.
+
+    Las vías rápidas sirven un menú YA CALCULADO y lo reescalan por un factor.
+    Con el anónimo eso ya estaba prohibido, y con el declarado es peor: el
+    premio **no puede aparecer** en un menú enlatado que se hizo sin saber de
+    él, así que el motor devolvía el menú de siempre y el premio se perdía. El
+    BLOQUE 122 lo cazó con 214 g de corazón de pollo declarados y 580 en el
+    plato.
+    """
+    if _kcal_de_premios(datos):
+        return True
+    if getattr(datos, "premios_declarados", None):
+        return True
+    return False
+
+
+def _resolver_menu_v2_crudo(datos: PeticionMenu):
     """
     EL MOTOR NUEVO. Misma petición que /menu (mismo modelo PeticionMenu),
     pero resuelto con programación lineal entera mixta: decide qué
@@ -3524,7 +3757,7 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
     # aplicaba nunca -- que es justo el fallo que esto viene a arreglar.
     if (datos.modo == "personalizar" and datos.tamano and not excluidos
             and not datos.patologias and not (datos.forzar_presencia or datos.nombres_alimentos)
-            and not datos.preferir_alimentos and not _kcal_de_premios(datos)
+            and not datos.preferir_alimentos and not _hay_algun_premio(datos)
             and datos.restringir_especie and len(datos.restringir_especie) == 1):
         # ⚠️ Y NO SI HAY PREMIOS (11 septiembre). Las vías rápidas sirven un
         # menú YA CALCULADO y lo reescalan a las kcal del perro. Eso es
@@ -3639,7 +3872,7 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
           # ⚠️ NI CON PREMIOS: ver el comentario largo de la vía rápida de
           # arriba. Un menú enlatado reescalado no puede llevar el día entero de
           # nutrientes en menos calorías; eso lo decide el MILP, no un factor.
-          and not _kcal_de_premios(datos)):
+          and not _hay_algun_premio(datos)):
         # ⚠️ AÑADIDO (5 agosto, madrugada) — VARIANTES PRE-RESUELTAS: caso
         # real encontrado con datos exactos de producción -- resolver un
         # menú en caliente con una proteína evitada tardó 19,4 segundos
@@ -4041,9 +4274,22 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
     # lo que pide un profesional: si el elige soltar el tope de la verdura,
     # no quiere que ademas se le suelte el minimo del hueso por detras.
     _hay_comida_para_peldano = _hay_comida_de_verdad(al, excluidos, datos.categorias_excluidas)
+    # ⚠️ LA ESCALERA DE ESTE PERRO, UNA VEZ Y EN UNA VARIABLE (16 de septiembre
+    # de 2026). Desde hoy la escalera depende también de las PATOLOGÍAS -- con
+    # una que tope la grasa, el suelo del hueso no se exige (ver
+    # `_escalera_de_relajacion`) --, y eso es exactamente la clase de cosa que
+    # se olvida en uno de doce sitios: el motor construiría el menú con el suelo
+    # suelto y el peldaño que se le enseña al profesional sería otro.
+    #
+    # Es el mismo olvido que ya tuvo `patologias` el 8 de septiembre («se olvidó
+    # una vez en la edición y una sola edición tiraba el tope»). Así que se
+    # calcula UNA vez, aquí, y todo lo de abajo lee esta variable.
+    _escalera_de_este_perro = _escalera_de_relajacion(
+        _hay_comida_para_peldano, datos.patologias, datos.etapa_requisitos)
     _peldano_pedido = _peldano_por_clave(getattr(datos, "peldano", None),
-                                         _hay_comida_para_peldano)
-    _margenes_base = _peldano_pedido[0] if _peldano_pedido else MARGENES_V2
+                                         _hay_comida_para_peldano,
+                                         datos.patologias, datos.etapa_requisitos)
+    _margenes_base = _peldano_pedido[0] if _peldano_pedido else _escalera_de_este_perro[0][0]
     _supl_base = (_peldano_pedido[1] if _peldano_pedido
                   else _suplementos_del_peldano_estricto())
 
@@ -4202,7 +4448,7 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
     if not _hay_techo_que_soltar:
         _MITAD_PARA_LA_MEJORA = 1.0
     if not ok and not _peldano_pedido:
-        for margenes_peldano, supl_peldano, que_se_suelta in _escalera_de_relajacion(hay_comida)[1:]:
+        for margenes_peldano, supl_peldano, que_se_suelta in _escalera_de_este_perro[1:]:
             if tiempo_restante() <= 1.5:
                 break  # sin tiempo: mejor no factible que un timeout de Render
             if (time.time() - t_inicio_total) >= PRESUPUESTO_SEGUNDOS * _MITAD_PARA_LA_MEJORA:
@@ -4239,7 +4485,7 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
     # los demás `se_ha_subido` es falso y este segundo recorrido no llega a
     # hacerse, porque el primero ya dio menú.
     if not ok and not _peldano_pedido:
-        for margenes_peldano, supl_peldano, que_se_suelta in _escalera_de_relajacion(hay_comida):
+        for margenes_peldano, supl_peldano, que_se_suelta in _escalera_de_este_perro:
             if tiempo_restante() <= 1.5:
                 break
             ok, gramos, ficha_intento = _intentar_generacion(
@@ -4288,6 +4534,13 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
         # cuando el presupuesto se agotaba en la vía del catálogo, a
         # propósito: el mismo motivo tiene que decir lo mismo.
         if time.time() - t_inicio_total >= PRESUPUESTO_SEGUNDOS - 1.5:
+            # ⚠️ Y SI LO QUE SE ACABÓ EL RELOJ INTENTANDO ES CUADRAR UNOS PREMIOS
+            # QUE NO SABEMOS QUÉ SON, ESO ES LO QUE HAY QUE DECIR. Ver
+            # `_respuesta_de_premios_sin_sitio`: «inténtalo de nuevo en un
+            # momento» promete algo que no va a pasar.
+            _sin_sitio_reloj = _respuesta_de_premios_sin_sitio(datos, hay_comida, True)
+            if _sin_sitio_reloj is not None:
+                return _sin_sitio_reloj
             return {"factible": False,
                     "motivo": "El cálculo está tardando más de lo normal para este "
                               "perro. Inténtalo de nuevo en un momento.",
@@ -4325,8 +4578,8 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
                     datos.patologias, datos.etapa_requisitos,
                     lambda soltar: _intentar_generacion(
                         forzar, None,
-                        margenes=_escalera_de_relajacion(hay_comida)[-1][0],
-                        max_supl=_escalera_de_relajacion(hay_comida)[-1][1],
+                        margenes=_escalera_de_este_perro[-1][0],
+                        max_supl=_escalera_de_este_perro[-1][1],
                         soltar=soltar)[0],
                     peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg)
             except Exception as e:   # el diagnóstico NUNCA puede tumbar la respuesta
@@ -4401,7 +4654,7 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
                      "fuente": x["fuente"],
                      "por_que": x["por_que"]}
                     for x in _l],
-                "se_intento_relajando": [p[2] for p in _escalera_de_relajacion(hay_comida)[1:]]}
+                "se_intento_relajando": [p[2] for p in _escalera_de_este_perro[1:]]}
 
         # ⚠️ ANTES DEL MENSAJE GENÉRICO: SI LOS PREMIOS SE PASAN DEL 10 %, ESO ES
         # LO QUE HAY QUE DECIR (16 de septiembre de 2026). Lo destapó Elena
@@ -4427,45 +4680,16 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
         #
         # ⚠️ COMIDA, NO NUTRIENTES (regla del 14 de septiembre): ni «dilución»,
         # ni «mg/1000 kcal», ni el nombre de un nutriente.
-        _premios_kcal = _kcal_de_premios(datos)
-        _der_dia = float(getattr(datos, "der_objetivo", None) or 0.0)
-        if _premios_kcal > 0 and _der_dia > 0 and (_premios_kcal / _der_dia) > FRACCION_MAXIMA_DE_PREMIOS:
-            _pct_prem = _premios_kcal / _der_dia * 100
-            return {
-                "factible": False,
-                # ⚠️ LO PRIMERO QUE SE OFRECE ES DECIR QUÉ PREMIO ES, NO BAJARLO
-                # (16 de septiembre de 2026). La primera versión de este texto
-                # decía «bájale los premios» y ya está, y Elena lo cortó:
-                # «¿pero para qué pones ese mensaje? si tiene que haber una
-                # parte en la que elija lo que le da y se meta en el plato».
-                #
-                # Tiene razón, y además es lo que hace la fuente: un premio
-                # DECLARADO deja de ser un premio y pasa a ser un ingrediente
-                # (`premios_declarados`). Lo que no cabe no es el premio -- es
-                # el premio DESCONOCIDO, porque obliga a formular a ciegas el
-                # 20 % del día. Decirle «bájaselo» a quien puede simplemente
-                # decirnos qué es sería mandarle a cambiar de vida por un
-                # hueco nuestro.
-                "motivo": (
-                    f"Necesitamos saber QUÉ le das. Ahora mismo has dicho que los premios "
-                    f"son el {_pct_prem:.0f} % de lo que come al día, pero no qué son — y "
-                    f"sin saberlo tenemos que dar por hecho que no aportan nada, así que "
-                    f"todo lo que necesita tiene que caber en el resto del plato, y no cabe. "
-                    f"|| LO MEJOR: dinos qué le das (pollo, pavo, queso, lo que sea) y "
-                    f"cuánto, y lo metemos DENTRO del menú contando lo que aporta. Así no "
-                    f"hay que quitarle nada. || Y si no lo sabes: bájaselos a no más de una "
-                    f"décima parte de lo que come al día y vuelve a generar el menú."),
-                "los_premios_no_dejan_sitio": True,
-                "premios_pct_del_dia": round(_pct_prem, 1),
-                "premios_pct_recomendado": round(FRACCION_MAXIMA_DE_PREMIOS * 100),
-                "se_intento_relajando": [p[2] for p in _escalera_de_relajacion(hay_comida)[1:]]}
+        _sin_sitio = _respuesta_de_premios_sin_sitio(datos, hay_comida)
+        if _sin_sitio is not None:
+            return _sin_sitio
 
         return {"factible": False,
                 "motivo": "No existe ninguna combinación de alimentos accesibles "
                           "que cumpla todos los requisitos para este perro, ni "
                           "siquiera soltando las proporciones habituales del "
                           "BARF. Quita alguna restricción y vuelve a probar.",
-                "se_intento_relajando": [p[2] for p in _escalera_de_relajacion(hay_comida)[1:]]}
+                "se_intento_relajando": [p[2] for p in _escalera_de_este_perro[1:]]}
     ficha = verificar_v2(gramos, al, req, datos.der_objetivo, datos.etapa_requisitos)
     problemas_seguridad = _seguridad_completa(gramos, al, datos.der_objetivo,
                                                datos.etapa_requisitos,
@@ -4476,8 +4700,6 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
     # dentro, enseñárselo sin separarlo se lee como «tengo que darle 60 g MÁS».
     # Va como una clave aparte con los mismos nombres y gramos, para que la app
     # los pueda marcar dentro de la lista en vez de repetirlos.
-    _prem_plato = _premios_en_el_plato(datos, al)
-    _prem_desconocidos = _premios_declarados_que_no_conocemos(datos, al)
     resultado = {
         "factible": True,
         "menu": gramos,
@@ -4512,20 +4734,6 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
         getattr(datos, "peldano", None) if _peldano_pedido
         else (relajaciones[-1] if relajaciones else PELDANO_ESTRICTO))
     resultado["peldano_lo_eligio_el_profesional"] = bool(_peldano_pedido)
-    # Lo que el dueño ya le da, DENTRO del plato y marcado como tal.
-    if _prem_plato:
-        resultado["premios_dentro_del_menu"] = _prem_plato
-    # ⚠️ Y LO QUE NO HEMOS PODIDO CONTAR SE DICE (regla 5: nunca en silencio).
-    # Un premio que el dueño cree declarado y que el motor no conoce es peor que
-    # no haberlo preguntado: el menú saldría verde dando por cubierto algo que no
-    # está contado. Va con qué hacer, no solo con el problema.
-    if _prem_desconocidos:
-        resultado["premios_que_no_conocemos"] = _prem_desconocidos
-        resultado.setdefault("avisos_extra", []).append(
-            "No hemos podido contar " + ", ".join(_prem_desconocidos) + ": no está en "
-            "nuestra lista de alimentos, así que no sabemos qué lleva dentro. Este menú "
-            "está hecho SIN contarlo. Si se lo das a menudo, elige en la lista algo "
-            "parecido y vuelve a generarlo, o cuéntaselo a tu veterinario.")
     return resultado
 
 
@@ -5404,7 +5612,8 @@ def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None, restringir_e
                 getattr(datos, "categorias_excluidas", None))
             ok_quieto = False
             gramos_quieto = ficha_quieto = None
-            for _marg_q, _supl_q, _q_suelta in _escalera_de_relajacion(_hay_comida_ed):
+            for _marg_q, _supl_q, _q_suelta in _escalera_de_relajacion(
+                    _hay_comida_ed, datos.patologias, datos.etapa_requisitos):
                 ok_quieto, gramos_quieto, ficha_quieto = _intentar(
                     list(forzar or []) + _de_antes, margen_intentos=1,
                     margenes=_marg_q, max_supl=_supl_q,
@@ -5546,7 +5755,8 @@ def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None, restringir_e
     hay_comida = _hay_comida_de_verdad(al, excluidos + list(nombres_excl),
                                        getattr(datos, "categorias_excluidas", None))
     if not ok:
-        for margenes_peldano, supl_peldano, que_se_suelta in _escalera_de_relajacion(hay_comida)[1:]:
+        for margenes_peldano, supl_peldano, que_se_suelta in _escalera_de_relajacion(
+                hay_comida, datos.patologias, datos.etapa_requisitos)[1:]:
             ok, gramos, ficha = _intentar(forzar, margen_intentos=2,
                                           margenes=margenes_peldano, max_supl=supl_peldano)
             if ok:
@@ -7650,7 +7860,8 @@ def formular_autocompletar(datos: PeticionFormular):
         _escalones_f = [(_peldano_por_clave(datos.peldano, _hay_comida_f) + (datos.peldano,))]
     else:
         _escalones_f = [(m, sup, k or PELDANO_ESTRICTO)
-                        for m, sup, k in _escalera_de_relajacion(_hay_comida_f)]
+                        for m, sup, k in _escalera_de_relajacion(
+                            _hay_comida_f, datos.patologias, datos.etapa_requisitos)]
 
     # Los objetivos del profesional, recortados contra FEDIAF ANTES de
     # formular. Lo que se recorte se dice en la respuesta.

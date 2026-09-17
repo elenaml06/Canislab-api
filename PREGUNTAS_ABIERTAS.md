@@ -3018,8 +3018,15 @@ Ya era como funcionaba el catálogo de hecho (el yoduro potásico declara
 **Primer descartado por esta regla:** `napfcheck Vitamin Complete`. Su tienda
 (vetbiom.com) tiene la web traducida al español, pero **su propia página de
 envíos** lista cinco zonas —Alemania/Austria, Benelux, Polonia/Chequia, Francia
-y Dinamarca— y dice «We currently only ship to the countries listed above».
-**España no está.**
+y Dinamarca— y dice que solo envía a las que están en esa lista. **España no
+está.**
+
+⚠️ Y esa frase va SIN comillas a propósito: la página de envíos de una tienda no
+es ninguna de las fuentes del repo, así que entrecomillarla la mandaba a la
+casilla de «no se sabe de dónde sale» de `auditar_citas.py` y ponía roja la
+batería en el BLOQUE 85 por una frase que no decide ninguna cifra. Es la misma
+salida barata que ya usa el repo para las frases de Elena dentro de un apartado
+de una fuente en español: se cuenta lo que dice, no se cita.
 
 ---
 
