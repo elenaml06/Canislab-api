@@ -56,6 +56,8 @@ from motor_completo import PATOLOGIAS, topes_de_patologias, RAZA_GRANDE_O_GIGANT
 from exclusiones import filtrar as filtrar_exclusiones
 from constructor import cargar as cargar_v2, MARGENES as MARGENES_V2
 from verificar import verificar as verificar_v2
+from verificar import es_verde as _es_verde
+from prescripcion import requisitos_del_paciente, PrescripcionInvalida
 from verificar import (peso_objetivo_desde_bcs, BCS_ESCALA_SATURADA,
                        BCS_NEUTRO as BCS_NEUTRO_MAIN,
                        BCS_IDEAL_MIN as BCS_IDEAL_MIN_MAIN,
@@ -1415,7 +1417,8 @@ def _aviso_del_perro_de_trabajo(etapa, actividad, der, peso_perro_kg):
 def _garantizar_verificado(respuesta, der, etapa, peso_perro_kg,
                            origen, al=None, req=None, patologias=None,
                            peso_adulto_esperado_kg=None,
-                           peso_objetivo_kg=None, kcal_de_premios=0.0):
+                           peso_objetivo_kg=None, kcal_de_premios=0.0,
+                           requisitos_prescritos=None):
     """
     Último filtro antes de devolver cualquier menú. Devuelve la respuesta
     tal cual (con la ficha recalculada) si el menú está verificado, o una
@@ -1438,8 +1441,15 @@ def _garantizar_verificado(respuesta, der, etapa, peso_perro_kg,
     # escalara y el semaforo no, un menu construido para una dieta de bajada
     # saldria verde con la densidad de un perro normal -- que es el mismo
     # fallo de la fibra, con otro nombre.
+    # ⚠️ Y CON LO QUE FIRMA EL VETERINARIO, SI LO HAY (17 de septiembre). Es el
+    #    MISMO objeto que recibió el solver: `requisitos_del_paciente()` lo
+    #    calcula una vez y lo leen los tres. Si el filtro final midiera contra
+    #    el mínimo del perro sano, tiraría exactamente los menús prescritos que
+    #    el solver acaba de construir bien -- que es el fallo del 8 de
+    #    septiembre con los suelos de patología, con otro nombre.
     ficha = verificar_v2(gramos, al, req, der, etapa,
-                         peso_referencia_kg=(peso_objetivo_kg or peso_perro_kg))
+                         peso_referencia_kg=(peso_objetivo_kg or peso_perro_kg),
+                         requisitos_prescritos=requisitos_prescritos)
     seguro = _menu_precalculado_es_seguro(gramos, al, der, peso_perro_kg)
     topes_rotos = _tope_patologia_roto(
         gramos, al, patologias, etapa, req=req,
@@ -1568,7 +1578,7 @@ def _garantizar_verificado(respuesta, der, etapa, peso_perro_kg,
             "verificacion": dict(_todos_los_motivos),
         }
 
-    if ficha["semaforo"] != "verde" or not seguro:
+    if not _es_verde(ficha["semaforo"]) or not seguro:
         # Que esto salte significa que algún camino ha construido un menú
         # que no cumple. Es justo el tipo de fallo que no puede quedarse
         # en un log de Render: va a Sentry con el detalle.
@@ -4006,7 +4016,7 @@ def _resolver_menu_v2_crudo(datos: PeticionMenu):
                 ficha_r = verificar_v2(gramos_r, al, req, datos.der_objetivo,
                                        datos.etapa_requisitos,
                                        peso_referencia_kg=_peso_de_referencia(datos)[0])
-                if (ficha_r["semaforo"] == "verde"
+                if (_es_verde(ficha_r["semaforo"])
                         and _menu_precalculado_es_seguro(gramos_r, al, datos.der_objetivo,
                                                          datos.peso_perro_kg)
                         # ⚠️ Y QUE QUEPA EN LO QUE QUEDA DE LA SEMANA (12-sep).
@@ -4129,7 +4139,7 @@ def _resolver_menu_v2_crudo(datos: PeticionMenu):
             # menu teniendolo a un segundo de solver.
             _rompe_rapida = _la_via_rapida_rompe_un_limite(
                 gramos_reescalados, al, req, datos, _peso_de_referencia(datos)[0])
-            if (ficha_variante["semaforo"] == "verde"
+            if (_es_verde(ficha_variante["semaforo"])
                     and not _rompe_rapida
                     and _menu_precalculado_es_seguro(gramos_reescalados, al, datos.der_objetivo,
                                                      datos.peso_perro_kg)
@@ -4219,7 +4229,7 @@ def _resolver_menu_v2_crudo(datos: PeticionMenu):
                 if not ok_rapido:
                     break
                 ficha_rapida = verificar_v2(gramos_rapido, al, req, datos.der_objetivo, datos.etapa_requisitos)
-                if ficha_rapida["semaforo"] == "verde":
+                if _es_verde(ficha_rapida["semaforo"]):
                     problemas_rapido = _seguridad_completa(gramos_rapido, al, datos.der_objetivo,
                                                             datos.etapa_requisitos, datos.patologias,
                                                             peso_perro_kg=datos.peso_perro_kg)
@@ -4313,7 +4323,7 @@ def _resolver_menu_v2_crudo(datos: PeticionMenu):
         # parpadear.
         ficha_i = (verificar_v2(gramos_i, al, req, datos.der_objetivo, datos.etapa_requisitos)
                    if ok_i else None)
-        while (ok_i and ficha_i and ficha_i["semaforo"] != "verde"
+        while (ok_i and ficha_i and not _es_verde(ficha_i["semaforo"])
                and time.time() - t_inicio_total < PRESUPUESTO_SEGUNDOS):
             ok2, gramos2 = resolver_v2(
                 datos.der_objetivo, datos.etapa_requisitos, al, req,
@@ -4448,7 +4458,7 @@ def _resolver_menu_v2_crudo(datos: PeticionMenu):
             )
             ficha_i = (verificar_v2(gramos_i, al, req, datos.der_objetivo, datos.etapa_requisitos)
                        if ok_i else None)
-        return (ok_i and ficha_i and ficha_i["semaforo"] == "verde"), gramos_i, ficha_i
+        return (ok_i and ficha_i and _es_verde(ficha_i["semaforo"])), gramos_i, ficha_i
 
     # ⚠️ EL PELDANO ELEGIDO (8 septiembre). Ver `_peldanos_publicos`.
     #
@@ -5782,9 +5792,9 @@ def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None, restringir_e
             if not ok:
                 break
             ficha = verificar_v2(gramos, al, req, datos.der_objetivo, datos.etapa_requisitos)
-            if ficha["semaforo"] == "verde":
+            if _es_verde(ficha["semaforo"]):
                 break
-        return (ok and ficha and ficha["semaforo"] == "verde"), gramos, ficha
+        return (ok and ficha and _es_verde(ficha["semaforo"])), gramos, ficha
 
     # ⚠️ AÑADIDO (5 agosto, madrugada) — PEDIDO EXPRESO: antes, editar UN
     # alimento dejaba que el motor reconstruyera el menú ENTERO desde
@@ -6272,7 +6282,7 @@ def endpoint_revalidar(datos: PeticionRevalidar):
     ficha = verificar_v2(gramos, al, req, datos.der_objetivo, datos.etapa_requisitos)
     seguro = _menu_precalculado_es_seguro(gramos, al, datos.der_objetivo, datos.peso_perro_kg)
 
-    if ficha["semaforo"] == "verde" and seguro:
+    if _es_verde(ficha["semaforo"]) and seguro:
         return _garantizar_verificado({
             "factible": True,
             "sigue_siendo_valido": True,
@@ -7575,6 +7585,30 @@ class PeticionFormular(_ConPremios):
     # nutrientes: {"ratios": {"omega6_total:omega3_total": {"min": 1, "max": 7}}}.
     # Las que se pueden fijar las sirve `GET /vocabulario`.
     objetivos_del_profesional: Optional[dict] = None
+    # ─── LA PRESCRIPCIÓN (17 de septiembre de 2026) ───────────────────────
+    #
+    # ⚠️ NO ES LO MISMO QUE `objetivos_del_profesional`, Y CONFUNDIRLAS ES EL
+    # ÚNICO ERROR GRAVE QUE SE PUEDE COMETER AQUÍ. Un objetivo solo puede
+    # APRETAR: se recorta contra FEDIAF y se dice. Una prescripción es la
+    # única cosa del motor que puede **bajar un mínimo de FEDIAF**, porque los
+    # mínimos describen a un perro SANO y ocho patologías piden, por su propia
+    # fuente, menos que eso -- el cobre de una hepatopatía por acúmulo son 1,2
+    # mg contra los 2,08 de FEDIAF.
+    #
+    # Por eso va FIRMADA, y sin la firma no se aplica:
+    #
+    #   {"fosforo": {"min": 900, "max": 900},
+    #    "motivo": "ERC estadio 3", "firmada_por": "<uuid>",
+    #    "colegiado": "...", "fecha": "2026-09-17"}
+    #
+    # Y por eso pide el rol: `requisitos_del_paciente()` exige una cuenta de
+    # veterinario con `rol_verificado_en`, o no la aplica. Sin esa puerta,
+    # «bajar un mínimo de FEDIAF» lo pediría cualquiera desde una terminal.
+    #
+    # Lo que NO puede hacer, y lo vigila `prescripcion.py`: aflojar un máximo
+    # por encima de FEDIAF, y tocar los topes de seguridad crónica. Ver
+    # `VETERINARIOS.md` §10 y la cabecera de `motor/prescripcion.py`.
+    prescripcion: Optional[dict] = None
     # ─── LA SEMANA DEL VETERINARIO (11 de septiembre de 2026) ─────────────
     #
     # ⚠️ Elena: «puede haber mas de un menu semanal, cosa que, por cierto, un
@@ -8118,6 +8152,22 @@ def formular_autocompletar(datos: PeticionFormular):
     if desconocidos:
         raise HTTPException(400, "No tenemos datos de: " + ", ".join(desconocidos))
 
+    # ⚠️ UNA SOLA VEZ Y PARA LOS TRES (17 de septiembre). El solver, el filtro
+    #    final y el semáforo tienen que medir contra EL MISMO juego de
+    #    requisitos, o el motor construye un menú contra unos números y lo
+    #    comprueba contra otros -- que en este repo ya ha pasado dos veces.
+    try:
+        _requisitos_f = requisitos_del_paciente(
+            req, datos.etapa_requisitos, datos.patologias, datos.prescripcion,
+            der_efectiva=der_efectiva_de(datos.der_objetivo,
+                                         _peso_de_referencia(datos)[0] or datos.peso_perro_kg),
+            es_profesional=_es_profesional_acreditado(getattr(datos, "token_usuario", None)))
+    except PrescripcionInvalida as e:
+        # Se dice lo que pide y por qué no se puede, no se recorta en silencio:
+        # quien firma tiene derecho a saber que el motor no le hizo caso.
+        raise HTTPException(400, str(e))
+    _limites_f = _requisitos_f.get("limites_prescritos")
+
     excluidos = list(datos.especies_excluidas or []) + list(datos.nombres_excluidos or [])
     _hay_comida_f = _hay_comida_de_verdad(al, excluidos, datos.categorias_excluidas)
 
@@ -8212,6 +8262,7 @@ def formular_autocompletar(datos: PeticionFormular):
             ratios_del_profesional=_ratios_f or None,
             presupuesto_semanal_restante=_pres_f,
             kcal_de_premios=_kcal_de_premios(datos),
+            limites_prescritos=_limites_f,
         )
         _peldano_usado_f = _clave_f
         if ok:
@@ -8330,7 +8381,16 @@ def formular_autocompletar(datos: PeticionFormular):
         origen="formulador del veterinario", patologias=datos.patologias,
         peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
         peso_objetivo_kg=_peso_de_referencia(datos)[0], al=al, req=req,
-        kcal_de_premios=_kcal_de_premios(datos))
+        kcal_de_premios=_kcal_de_premios(datos),
+        requisitos_prescritos=_requisitos_f)
+    if respuesta.get("factible") and _requisitos_f.get("excepciones"):
+        # ⚠️ FUERA DE LA FICHA TAMBIÉN, y no es duplicar: la ficha es lo que se
+        #    guarda con el menú, y esto es lo que la pantalla tiene que enseñar
+        #    al lado del semáforo. Un menú prescrito que no enseña en qué se
+        #    aparta es una etiqueta («modo renal activado»), que es justo lo que
+        #    la ficha de permisos prohíbe desde el 28 de agosto.
+        respuesta["excepciones_de_la_prescripcion"] = _requisitos_f["excepciones"]
+        respuesta["firma_de_la_prescripcion"] = _requisitos_f.get("firma")
     if respuesta.get("factible"):
         # El estado completo, para no obligar a la app a pedirlo otra vez
         # justo después: es la misma ración.
@@ -8548,7 +8608,7 @@ def pauta_firmar(datos: PeticionFirmar):
     # que viaja con el menú y contra la que se verifica. Hasta que exista,
     # decir que no es más honesto que firmar un rojo sin dejar constancia de
     # contra qué se comprobó.
-    if ficha.get("semaforo") != "verde" or topes_rotos:
+    if not _es_verde(ficha.get("semaforo")) or topes_rotos:
         return {
             "factible": False,
             "motivo": ("Esta ración todavía no cumple todo lo que hay que cumplir, así que "

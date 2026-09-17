@@ -21786,6 +21786,177 @@ print(f"  quitan comida por el catálogo: {len(_excluye125)} · por una lista de
       f"{len(_por_patologia_125)} · promesas sin nada detrás: {len(_sin_quitar_125)}")
 print(f"  promesas del dueño comprobadas contra el tope que las tendría que cumplir: "
       f"{len(_promesas_rotas_125)} rotas")
+
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
+
+
+# ---------------------------------------------------------------------------
+# BLOQUE 126 — LA PRESCRIPCIÓN: LO ÚNICO QUE PUEDE BAJAR DE FEDIAF
+#
+# ⚠️ POR QUÉ EXISTE (17 de septiembre de 2026). Elena, y tiene razón clínica:
+# «si pide mucha menos proteína de la que necesita un perro sano es
+# indiferente, porque NO ES UN PERRO SANO». Los mínimos de la Tabla III-3b son
+# los de un perro sano, y ocho patologías piden por su propia fuente menos que
+# eso -- el cobre de una hepatopatía por acúmulo son 1,2 mg contra 2,08.
+#
+# La regla 1 NO dice «todo menú cumple FEDIAF»: dice «ningún menú sale sin
+# verificar». Lo que cambia en un menú prescrito no es SI se comprueba, es
+# CONTRA QUÉ -- y eso viaja con el menú, se enseña y se guarda.
+#
+# Lo que este bloque vigila es que las cinco reglas de `VETERINARIOS.md` §10
+# sigan siendo verdad, y sobre todo la que más fácil se rompe sin enterarse:
+# que el SOLVER, el SEMÁFORO y el FILTRO FINAL midan contra lo mismo. En este
+# repo eso ya ha fallado dos veces (la fibra, y la tabla de patologías
+# duplicada con el fósforo renal a 1400 en un lado y 1200 en el otro).
+# ---------------------------------------------------------------------------
+print("\n=== BLOQUE 126: la prescripción, lo único que puede bajar de FEDIAF ===")
+
+from prescripcion import (normalizar as _norm126, requisitos_del_paciente as _reqpac126,
+                          PrescripcionInvalida as _Invalida126)
+from verificar import minimo_de as _min126, maximo_de as _max126, es_verde as _esverde126
+_al126, _req126 = _api.cargar_v2()
+from constructor import valor_nutriente as _vn126
+_CAT126 = {a["nombre"]: a for a in json.load(open("alimentos_v3_final.json"))}
+_FIRMA126 = {"motivo": "ERC estadio 3", "firmada_por": "uuid-vet",
+             "colegiado": "COL-4821", "fecha": "2026-09-17"}
+
+# ── 1 · LO QUE NO SE PUEDE PEDIR, Y SE DICE EN VEZ DE RECORTARSE ───────────
+#    Un objetivo del profesional que se pasa se RECORTA (ahí está apretando y
+#    pasarse es un descuido). Una prescripción que pide algo imposible se
+#    RECHAZA: quien firma tiene que enterarse de que el motor no le hizo caso.
+for _mala126, _que126 in (
+        ({"vitD": {"min": 1.0}, **_FIRMA126}, "un tope de seguridad crónica"),
+        ({"yodo": {"max": 5.0}, **_FIRMA126}, "el yodo, que también es crónico"),
+        ({"proteina": {"min": 40.0}}, "sin firma"),
+        ({"proteina": 40.0, **_FIRMA126}, "un número suelto sin min ni max"),
+        ({"proteina": {"min": 60.0, "max": 40.0}, **_FIRMA126}, "el mínimo por encima del máximo"),
+        ({**_FIRMA126}, "firmada y sin nombrar ningún nutriente")):
+    try:
+        _norm126(_mala126)
+        fallos.append(f"BLOQUE126: se acepta una prescripción con {_que126}. Una prescripción "
+                      f"que pide algo que el motor no puede conceder se RECHAZA y se dice; "
+                      f"recortarla en silencio deja al veterinario firmando otra cosa")
+    except _Invalida126:
+        pass
+
+# ── 2 · Y SIN EL ROL NO SE APLICA ─────────────────────────────────────────
+#    «Solo un veterinario acreditado puede prescribir» comprobado en el
+#    frontend no es una regla, es una sugerencia: cualquiera puede llamar a la
+#    API desde una terminal.
+_buena126 = {"fosforo": {"min": 900.0}, **_FIRMA126}
+try:
+    _reqpac126(_req126, "Adulto", ["renal"], _buena126, der_efectiva=110.0,
+               es_profesional=False)
+    fallos.append("BLOQUE126: una prescripción se aplica SIN cuenta de veterinario verificada. "
+                  "Eso es «bajar un mínimo de FEDIAF» al alcance de cualquiera con una terminal")
+except _Invalida126:
+    pass
+
+# ── 3 · BAJA EL MÍNIMO, NO SUELTA EL MÁXIMO ───────────────────────────────
+_fila126 = _req126["Proteína_total"]
+_p126, _ = _norm126({"proteina": {"min": 42.5}, **_FIRMA126})
+_sano126 = _min126(_fila126, "Proteína_total", "Adulto")
+_con126 = _min126(_fila126, "Proteína_total", "Adulto", prescripcion=_p126)
+if not (_con126 == 42.5 and _sano126 > _con126):
+    fallos.append(f"BLOQUE126: la prescripción no baja el mínimo de proteína: "
+                  f"perro sano {_sano126}, prescrito {_con126}. Es lo ÚNICO que puede hacer y "
+                  f"es para lo que existe")
+_fc126 = _req126["Cobre"]
+_pa126, _ = _norm126({"cobre": {"max": 999.0}, **_FIRMA126})
+if _max126(_fc126, "Cobre", "Adulto", prescripcion=_pa126) != _max126(_fc126, "Cobre", "Adulto"):
+    fallos.append("BLOQUE126: una prescripción AFLOJA un máximo por encima del de FEDIAF. "
+                  "Un mínimo describe al perro SANO y una patología puede cambiar esa premisa; "
+                  "un máximo es toxicidad y no la cambia ninguna patología")
+_r126 = _reqpac126(_req126, "Adulto", ["renal"], {"cobre": {"max": 999.0}, **_FIRMA126},
+                   der_efectiva=110.0, es_profesional=True)
+if not any(e.get("que_pasa") == "techo_no_aplicado_manda_fediaf" for e in _r126["excepciones"]):
+    fallos.append("BLOQUE126: el techo prescrito que NO se ha aplicado no se dice. Callarlo deja "
+                  "al veterinario creyendo que firmó un número que el motor ignoró")
+
+# ── 4 · EL SEMÁFORO NUNCA DICE «verde» A SECAS, Y EL NORMAL SIGUE IGUAL ────
+_dsano126 = _api.PeticionFormular(nombres_alimentos=[], modo="automatico",
+                                  der_objetivo=1050.0, etapa_requisitos="Adulto",
+                                  peso_perro_kg=22.0, patologias=["renal"],
+                                  presupuesto_segundos=200.0)
+_rsano126 = _api.formular_autocompletar(_dsano126)
+if _rsano126.get("factible"):
+    if _rsano126["ficha"]["semaforo"] != "verde":
+        fallos.append(f"BLOQUE126: un menú SIN prescripción sale con semáforo "
+                      f"«{_rsano126['ficha']['semaforo']}». Para quien no prescribe no puede "
+                      f"cambiar nada: «verde» a secas sigue significando «cumple los requisitos "
+                      f"de un perro sano»")
+    if _rsano126["ficha"].get("excepciones"):
+        fallos.append("BLOQUE126: un menú sin prescripción trae excepciones declaradas")
+else:
+    fallos.append("BLOQUE126: el perro de referencia no da menú ni SIN prescripción, así que "
+                  "este bloque no puede comparar nada")
+
+# ── 5 · Y CON PRESCRIPCIÓN: LOS TRES MIDEN CONTRA LO MISMO ────────────────
+#    Ésta es la comprobación que de verdad protege. Se aprieta el techo por
+#    DEBAJO del mínimo de FEDIAF: si el solver leyera la prescripción y el
+#    filtro final no, el menú se construiría bien y se tiraría después.
+_antes126 = _api._es_profesional_acreditado
+_api._es_profesional_acreditado = lambda _t: True
+try:
+    _dpres126 = _api.PeticionFormular(
+        nombres_alimentos=[], modo="automatico", der_objetivo=1050.0,
+        etapa_requisitos="Adulto", peso_perro_kg=22.0, patologias=["renal"],
+        prescripcion={"fosforo": {"min": 900.0, "max": 1100.0}, **_FIRMA126},
+        presupuesto_segundos=200.0)
+    _rpres126 = _api.formular_autocompletar(_dpres126)
+finally:
+    _api._es_profesional_acreditado = _antes126
+
+if not _rpres126.get("factible"):
+    fallos.append("BLOQUE126: con el fósforo prescrito entre 900 y 1100 no sale menú. Medido el "
+                  "17 de septiembre: sale, a 1099 mg. Si deja de salir, o el solver no lee la "
+                  "prescripción o el filtro final la tira")
+else:
+    _f126 = _rpres126["ficha"]
+    _fos126 = sum(_g * float(_vn126(_CAT126[_n].get("nutrientes") or {}, "fosforo") or 0) / 100.0
+                  for _n, _g in _rpres126["menu"].items() if _n in _CAT126) / _f126["kcal"] * 1000.0
+    _min_fediaf126 = _min126(_req126["Fósforo"], "Fósforo", "Adulto")
+    if _fos126 > 1100 * 1.01:
+        fallos.append(f"BLOQUE126: el techo prescrito (1100) no se aplica: el menú sale a "
+                      f"{_fos126:.0f} mg/1000 kcal medidos sobre SUS kcal")
+    if _fos126 >= _min_fediaf126:
+        fallos.append(f"BLOQUE126: el menú prescrito sale a {_fos126:.0f} mg y el mínimo de "
+                      f"FEDIAF son {_min_fediaf126}. No ha bajado de FEDIAF, así que este bloque "
+                      f"no está probando lo único que la prescripción existe para hacer")
+    if _f126["semaforo"] != "verde_con_excepciones":
+        fallos.append(f"BLOQUE126: un menú PRESCRITO sale con semáforo «{_f126['semaforo']}». "
+                      f"Un verde limpio significa «cumple los requisitos de un perro sano», y "
+                      f"esto no los cumple a propósito: tiene que leerse en el propio semáforo, "
+                      f"no en un campo de al lado que nadie mira")
+    _exc126 = _f126.get("excepciones") or []
+    if not any(e.get("clave") == "fosforo" and e.get("sentido") == "min" for e in _exc126):
+        fallos.append("BLOQUE126: el menú prescrito no declara la excepción del fósforo. Sin esa "
+                      "lista es indistinguible de uno que cumple")
+    if not (_f126.get("firma_de_la_prescripcion") or {}).get("colegiado"):
+        fallos.append("BLOQUE126: la ficha no lleva la firma. La ficha es lo que se guarda y lo "
+                      "que se firma: sin el colegiado dentro, dentro de un año no se sabe quién "
+                      "respondía de esas excepciones")
+
+# ── 6 · Y QUE NINGÚN GUARDIA SIGA COMPARANDO LA CADENA ────────────────────
+#    Si alguien vuelve a escribir `semaforo == "verde"` para decidir si se
+#    entrega, los menús prescritos se caerían en silencio -- verdes, correctos
+#    y tirados a la basura.
+if not (_esverde126("verde") and _esverde126("verde_con_excepciones")
+        and not _esverde126("ambar") and not _esverde126("rojo")):
+    fallos.append("BLOQUE126: `es_verde()` no distingue lo que tiene que distinguir")
+_fuente126 = open("main.py", encoding="utf-8").read()
+import re as _re126
+_directas126 = _re126.findall(r'semaforo"?\]?\s*[=!]=\s*"verde"', _fuente126)
+if _directas126:
+    fallos.append(f"BLOQUE126: quedan {len(_directas126)} sitios en `main.py` que comparan el "
+                  f"semáforo con la cadena «verde» en vez de preguntar por `es_verde()`. Un menú "
+                  f"prescrito tiene el semáforo «verde_con_excepciones», así que esos sitios lo "
+                  f"tirarían estando bien -- y sin dar ningún error")
+
+print(f"  prescripción: {len(_r126['excepciones'])} excepción declarada · "
+      f"menú prescrito a {_fos126:.0f} mg de fósforo contra un mínimo FEDIAF de {_min_fediaf126}"
+      if _rpres126.get("factible") else "  (sin menú prescrito)")
 print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 

@@ -561,7 +561,24 @@ Reglas de lo que una prescripción puede hacer:
   *verde con excepciones*, y las lista. Un verde limpio significa «cumple
   los requisitos de un perro sano», y esto no lo cumple a propósito.
 
-### El agujero que hay que tapar antes: la API no tiene puerta
+### ⚠️ CONSTRUIDO EL 17 DE SEPTIEMBRE DE 2026
+
+Todo lo de arriba existe ya: `motor/prescripcion.py` con
+`requisitos_del_paciente()`, el campo `prescripcion` en `POST
+/formular/autocompletar`, el semáforo `verde_con_excepciones` y la lista de
+excepciones viajando con la ficha. Lo vigila el BLOQUE 126. El detalle y las
+medidas, en `CLAUDE.md`.
+
+⚠️ **Y LO DE AQUÍ ABAJO ERA FALSO CUANDO SE CONSTRUYÓ, así que se corrige en vez
+de borrarse.** Decía que sin puerta la fase 4 no se despliega. La puerta existe
+desde el 11 de septiembre: `_uid_del_token` se la pregunta a Supabase y
+`_es_profesional_acreditado` exige `rol = 'profesional'` con
+`rol_verificado_en`, y los dos fallan cerrados. `requisitos_del_paciente()`
+rechaza la prescripción sin ese rol. Lo que sigue siendo verdad del párrafo es
+que los endpoints del motor que NO prescriben siguen sin puerta, y eso es a
+propósito: no dan acceso a datos de nadie.
+
+### El agujero que había antes: la API no tenía puerta
 
 **⚠️ ESTO ESTÁ A MEDIAS DESDE EL 11 DE SEPTIEMBRE.** Lo que decía entero
 aquí —«esta API no autentica nada, `CORS` está en `*`, no hay ningún token,

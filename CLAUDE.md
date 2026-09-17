@@ -1160,6 +1160,97 @@ quitarle la sal») y a `cardiopatia_a` («**ni siquiera** bajarle la sal»), que
 dicen exactamente lo contrario — la familia del «purina» dentro de «purinas»
 otra vez. Comprobado con el fallo puesto de dos formas.
 
+### La prescripción del veterinario: lo único que puede bajar de FEDIAF
+
+*(17 de septiembre de 2026.)* Elena, y la frase es la que ordena todo esto:
+
+> «si pide mucha menos proteína de la que necesita un perro sano es indiferente,
+> **porque no es un perro sano** y es una patología que tiene necesidades
+> diferentes. Simplemente el veterinario tiene que saber todo.»
+
+Los mínimos de la Tabla III-3b son los de un perro **SANO**, y **ocho**
+patologías piden, por su propia fuente, menos que eso — el cobre de una
+hepatopatía por acúmulo son **1,2 mg** contra los **2,08** de FEDIAF, y la
+proteína de una encefalopatía **31,25 g** contra **52,1**. Hasta hoy el motor se
+paraba en el mínimo y lo decía, que es correcto **para un dueño** y es justo lo
+contrario de lo que necesita quien firma.
+
+⚠️ **Y NO ROMPE LA REGLA 1, porque la regla 1 no dice lo que parece.** No dice
+«todo menú cumple FEDIAF»: dice **«ningún menú sale sin verificar»**. Un menú
+prescrito se verifica **de cero y entero**, igual que cualquier otro. Lo que
+cambia no es SI se comprueba, es **CONTRA QUÉ** — y ese «contra qué» viaja con
+el menú, se enseña y se guarda. Estaba escrito desde el 28 de agosto en
+`VETERINARIOS.md` §10; lo que faltaba era construirlo.
+
+**Las cinco reglas, y las cinco están vigiladas:**
+
+| | |
+|---|---|
+| Puede **bajar un mínimo** de FEDIAF, para un nutriente NOMBRADO | `minimo_de(..., prescripcion=…)` lo devuelve tal cual |
+| Puede **apretar un máximo** | con `min()`, como todo lo demás |
+| **No puede aflojar** ningún máximo por encima de FEDIAF | el `min()` lo impide, y **se dice** que no se aplicó |
+| **No puede tocar los topes de seguridad crónica** | la prescripción entera se RECHAZA |
+| El semáforo **nunca dice «verde» a secas** | dice `verde_con_excepciones` y las lista |
+
+⚠️ **La cuarta no es simetría con la primera, aunque lo parezca.** Un mínimo de
+FEDIAF dice «esto le hace falta a un perro sano», y una patología puede cambiar
+esa premisa. Los topes crónicos son **toxicidad acumulada**: no dependen de que
+el perro esté sano y ninguna patología los vuelve inofensivos. Por eso el
+primero cede ante una firma y el segundo no.
+
+⚠️ **Y FALLA RUIDOSO, no recortando.** Un objetivo del profesional que se pasa
+se **recorta** y se dice, porque ahí está apretando y pasarse es un descuido.
+Una prescripción que pide algo imposible se **rechaza entera** (400), porque
+quien firma está levantando un suelo a propósito: devolverle un menú recortado
+sería dejarle firmar algo que no es lo que escribió.
+
+⚠️ **Y LA CIFRA PRESCRITA NO SE ESCALA, y es una decisión.** El escalado de
+§7.2.5, el factor condicional de los aminoácidos y el suelo del perro que
+trabaja suben el mínimo **del perro sano** por cosas que el veterinario ya sabe
+cuando escribe su número. Escalarle encima su 900 hasta 1.100 sería cambiarle en
+silencio lo que firma, y la ficha de permisos dice lo contrario desde el 28 de
+agosto: **se le enseñan las cifras exactas que firma, nunca una etiqueta**.
+
+**Una sola función, y eso no es estilo**: `requisitos_del_paciente()` en
+`motor/prescripcion.py`. La llaman el **solver**, el **filtro final** y el
+**semáforo**, porque si cada uno resolviera los requisitos por su cuenta el
+motor construiría un menú contra unos números y lo comprobaría contra otros —
+que en este repo ya ha pasado **dos veces** (el analizador y el semáforo con la
+fibra, y la tabla de patologías duplicada con el fósforo renal a 1400 en un lado
+y a 1200 en el otro).
+
+**Medido, perro renal de 22 kg:**
+
+| | fósforo del menú | semáforo |
+|---|---|---|
+| sin prescripción | 1198 (tope renal 1200, mínimo FEDIAF **1160**) | `verde` |
+| prescrito 900-1100 | **1099** — por debajo del mínimo de FEDIAF | `verde_con_excepciones` |
+| prescrito 900-1000 | **no sale menú**, y se dice | — |
+
+La tercera fila es un límite honesto del catálogo, no un fallo: con esta comida
+no existe esa ración, y decirlo es mejor que dar una que no cumple.
+
+⚠️ **Y `es_verde()` existe por un motivo concreto**: diez sitios de `main.py`
+preguntaban `semaforo == "verde"` para decidir si se entrega. Con el valor
+nuevo, un menú prescrito **correcto** se habría tirado a la basura sin dar
+ningún error. Ahora la pregunta «¿se entrega?» se hace por esa función y el
+VALOR sigue contando la verdad entera — y el BLOQUE 126 falla si alguien vuelve
+a escribir la comparación a mano. Un menú normal sigue devolviendo exactamente
+`verde`: para quien no prescribe no cambia nada.
+
+⚠️ **Y la puerta YA EXISTÍA, al revés de lo que decía `VETERINARIOS.md` §10.**
+Ese documento afirmaba «la API no tiene puerta… sin eso, la fase 4 no se
+despliega». La tiene desde el 11 de septiembre: `_uid_del_token` no descodifica
+el token, se lo **pregunta a Supabase** (`/auth/v1/user`), y
+`_es_profesional_acreditado` lee su fila de `profiles` con la clave de servicio
+y exige `rol = 'profesional'` **y** `rol_verificado_en`. Los dos fallan cerrados.
+Corregido ahí.
+
+Lo vigila el **BLOQUE 126**, comprobado con el fallo puesto de **seis** formas:
+el semáforo volviendo a «verde», el solver dejando de leer la prescripción, el
+rol dejando de exigirse, un tope crónico volviéndose prescribible, un techo
+aflojando, y un guardia volviendo a comparar la cadena.
+
 ### Y al fusionar, tres perros de verdad se quedaron sin menú — otra vez el reloj
 
 *(17 de septiembre de 2026.)* Encontrado **barriendo el motor DESPLEGADO** justo
