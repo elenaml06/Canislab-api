@@ -193,7 +193,7 @@ def _num(v):
         return None
 
 
-def maximo_de(r, nombre_req, etapa):
+def maximo_de(r, nombre_req, etapa, prescripcion=None):
     """El máximo de FEDIAF de un requisito, o None si no tiene.
 
     ES EL ÚNICO SITIO que sabe cuáles no se aplican. El solver, el semáforo,
@@ -203,7 +203,35 @@ def maximo_de(r, nombre_req, etapa):
     """
     if nombre_req in MAXIMOS_NO_APLICADOS:
         return None
-    return _num(r.get(f"max{etapa}")) or _num(r.get("maxAdulto"))
+    mx = _num(r.get(f"max{etapa}")) or _num(r.get("maxAdulto"))
+    # ⚠️ Y LA PRESCRIPCIÓN SOLO PUEDE APRETAR UN MÁXIMO, NUNCA SOLTARLO
+    #    (17 septiembre). Va con `min()`, igual que los topes de patología y
+    #    los objetivos del profesional, así que un techo prescrito por encima
+    #    del de FEDIAF no hace nada -- y eso no es un descuido que se tapa:
+    #    `requisitos_del_paciente()` lo detecta y lo dice. La asimetría con el
+    #    mínimo es a propósito y está explicada en `prescripcion.py`: un mínimo
+    #    describe al perro SANO y una patología puede cambiar esa premisa; un
+    #    máximo es toxicidad y no.
+    _pmx = _prescrito(prescripcion, nombre_req, "max")
+    if _pmx is not None:
+        mx = _pmx if mx is None else min(mx, _pmx)
+    return mx
+
+
+def _prescrito(prescripcion, nombre_req, cual):
+    """La cifra que una prescripción firmada le pone a este requisito, o None.
+
+    Se traduce aquí el nombre del requisito a su clave porque `MAPA` vive en
+    este módulo y es la única traducción buena: el nombre es de presentación y
+    la clave es la que indexa el catálogo.
+    """
+    if not prescripcion:
+        return None
+    try:
+        from prescripcion import limite_prescrito
+    except ImportError:
+        return None
+    return limite_prescrito(prescripcion, MAPA.get(nombre_req), cual)
 
 
 # ⚠️ LOS SIETE MÁXIMOS QUE FEDIAF SOLO PUBLICA SOBRE MATERIA SECA
@@ -538,8 +566,23 @@ def _factor_condicional(nombre_req, etapa):
     return factor_sobre_el_minimo(nombre_req, etapa)
 
 
-def minimo_de(r, nombre_req, etapa, der_efectiva=None):
+def minimo_de(r, nombre_req, etapa, der_efectiva=None, prescripcion=None):
     """El mínimo de FEDIAF de un requisito, escalado por la DER efectiva.
+
+    ⚠️ Y DESDE EL 17 DE SEPTIEMBRE UNA PRESCRIPCIÓN FIRMADA PUEDE BAJARLO, que
+    es lo único del motor que puede. El mínimo de la Tabla III-3b describe a un
+    perro SANO, y ocho patologías piden por su propia fuente menos que eso: el
+    cobre de una hepatopatía por acúmulo son 1,2 mg contra los 2,08 de FEDIAF.
+    Ver `prescripcion.py` para por qué eso no rompe la regla 1.
+
+    ⚠️ Y LA CIFRA PRESCRITA NO SE ESCALA, y es una decisión, no un olvido. Todo
+    lo de arriba —el escalado de §7.2.5, el factor condicional de los
+    aminoácidos, el suelo del perro que trabaja— sube el mínimo del perro SANO
+    por cosas que el veterinario ya sabe cuando escribe su número. Escalarle
+    encima su 900 hasta 1.100 sería cambiarle en silencio lo que firma, y la
+    regla de la ficha de permisos es justo la contraria: se le enseñan las
+    cifras exactas que firma, nunca una etiqueta. Por eso se devuelve tal cual
+    y se declara como excepción.
 
     ⚠️ Y DESDE EL 9 DE SEPTIEMBRE, POR EL FACTOR CONDICIONAL DE FEDIAF §3.2.1:
     los doce aminoácidos esenciales van un 10 % por encima del publicado, porque
@@ -557,6 +600,11 @@ def minimo_de(r, nombre_req, etapa, der_efectiva=None):
     `der_efectiva` son las kcal de la ración por kg de peso metabólico.
     Sin ella (o fuera de adulto) se devuelve el mínimo publicado tal cual.
     """
+    # La prescripción va PRIMERO y corta: lo que firma el veterinario no pasa
+    # por el escalado del perro sano. Ver el aviso de arriba.
+    _pmn = _prescrito(prescripcion, nombre_req, "min")
+    if _pmn is not None:
+        return _pmn
     mn = _num(r.get(f"min{etapa}"))
     if mn is None:
         return None
@@ -637,7 +685,24 @@ def der_efectiva_de(der, peso_referencia_kg):
     return d / (p ** 0.75)
 
 
-def verificar(menu, alimentos, req, der, etapa="Adulto", peso_referencia_kg=None):
+def es_verde(semaforo):
+    """¿Este semáforo deja entregar el menú?
+
+    ⚠️ EXISTE PORQUE «verde» DEJÓ DE SER UNA SOLA PALABRA (17 de septiembre).
+    Un menú PRESCRITO no cumple los requisitos de un perro sano a propósito, y
+    `VETERINARIOS.md` §10 dice que su semáforo «nunca dice verde a secas: dice
+    verde con excepciones, y las lista». Pero diez sitios de `main.py`
+    preguntaban `== "verde"` para decidir si se entrega, y si el valor cambia
+    sin que cambien ellos, un menú prescrito correcto se tiraría a la basura.
+    Así que la pregunta «¿se entrega?» se hace por aquí y el VALOR sigue
+    contando la verdad entera. Un menú normal devuelve exactamente «verde»
+    como siempre: nada cambia para quien no prescribe.
+    """
+    return semaforo in ("verde", "verde_con_excepciones")
+
+
+def verificar(menu, alimentos, req, der, etapa="Adulto", peso_referencia_kg=None,
+              requisitos_prescritos=None):
     """
     Paso 4. Devuelve la ficha honesta de la racion.
 
@@ -652,6 +717,10 @@ def verificar(menu, alimentos, req, der, etapa="Adulto", peso_referencia_kg=None
     # gestación y lactancia, y colapsarlas antes perdería justo esa diferencia.
     etapa_pedida = etapa
     etapa = EQUIVALENCIA.get(etapa, etapa)
+    # Lo que firma el veterinario, y en qué se aparta del perro sano. Los dos
+    # salen de `requisitos_del_paciente()`, que es la única que los calcula.
+    _presc = (requisitos_prescritos or {}).get("limites_prescritos")
+    _excepciones = list((requisitos_prescritos or {}).get("excepciones") or [])
     if etapa not in SUFIJO:
         raise ValueError(
             f"Etapa '{etapa}' no valida. Usa: {sorted(SUFIJO)} "
@@ -720,8 +789,13 @@ def verificar(menu, alimentos, req, der, etapa="Adulto", peso_referencia_kg=None
             continue
         tiene = perfil.get(clave, 0.0)
         tiene_min = perfil_min.get(clave, 0.0)     # con los dudosos a su valor plausible
-        minimo = minimo_de(r, nombre, etapa, _der_ef)
-        maximo = maximo_de(r, nombre, etapa)
+        # ⚠️ EL MISMO `limites_prescritos` QUE LE LLEGA AL SOLVER. Si el
+        #    semáforo midiera contra el mínimo del perro sano y el solver
+        #    contra el prescrito, el motor construiría un menú que el filtro
+        #    final tiraría -- que es exactamente lo que pasó con los suelos de
+        #    patología el 8 de septiembre.
+        minimo = minimo_de(r, nombre, etapa, _der_ef, prescripcion=_presc)
+        maximo = maximo_de(r, nombre, etapa, prescripcion=_presc)
 
         # ⚠️ AÑADIDO (9 septiembre) — LA ARGININA SUBE CON LA PROTEÍNA DEL MENÚ.
         # Tabla VII-13 y Anexo 7.4 de FEDIAF 2025, que publican una tabla entera
@@ -943,7 +1017,12 @@ def verificar(menu, alimentos, req, der, etapa="Adulto", peso_referencia_kg=None
     rojos += se_pasa
 
     if not rojos and not ambar:
-        semaforo = "verde"
+        # ⚠️ UN MENÚ PRESCRITO NUNCA SALE «verde» A SECAS. Un verde limpio
+        #    significa «cumple los requisitos de un perro sano», y esto no los
+        #    cumple a propósito: se ha medido contra un juego de requisitos
+        #    declarado, y eso tiene que poder leerse en el propio semáforo, no
+        #    en un campo de al lado que nadie mira.
+        semaforo = "verde_con_excepciones" if _excepciones else "verde"
     elif not rojos:
         semaforo = "ambar"
     else:
@@ -1010,6 +1089,11 @@ def verificar(menu, alimentos, req, der, etapa="Adulto", peso_referencia_kg=None
         "total": len(correctos) + len(faltan) + len(se_pasa),
         "faltan": sorted(faltan, key=lambda x: x["cubre_pct"]),
         "se_pasa": se_pasa,
+        # ⚠️ VIAJAN CON LA FICHA, no en una clave paralela: la ficha es lo que
+        #    se enseña, lo que se guarda y lo que se firma. Vacía en todo menú
+        #    que no lleve prescripción, que son todos menos los del veterinario.
+        "excepciones": _excepciones,
+        "firma_de_la_prescripcion": (requisitos_prescritos or {}).get("firma"),
         "gramos": round(perfil["_gramos"], 1),
         "kcal": round(perfil["_kcal"], 1),
         "densidad_kcal_g": round(perfil["_kcal"] / perfil["_gramos"], 2) if perfil["_gramos"] else 0,

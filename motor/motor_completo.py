@@ -746,6 +746,11 @@ def _resolver_una_vez(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn
             soltar_limites_patologia=None, estado_del_solver=None,
             objetivos_del_profesional=None, kcal_de_premios=0.0,
             ratios_del_profesional=None,
+            # ⚠️ LO QUE FIRMA EL VETERINARIO, y es lo único que puede bajar un
+            #    mínimo de FEDIAF. Llega YA NORMALIZADO desde
+            #    `requisitos_del_paciente()`, que es quien lo valida y quien
+            #    exige el rol: el solver no decide si se puede, solo aplica.
+            limites_prescritos=None,
             apretar_el_techo_del_libro=True, _techos_subidos_fuera=None,
             # ⚠️ El segundo intento del margen del kelp. Ver
             # `_con_el_margen_del_kelp`: no se puede saber si el menú llevará
@@ -1783,7 +1788,7 @@ def _resolver_una_vez(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn
         r = req.get(nombre_req)
         if not r:
             continue
-        mn = minimo_de(r, nombre_req, et, _der_ef)
+        mn = minimo_de(r, nombre_req, et, _der_ef, prescripcion=limites_prescritos)
         # Y los premios lo suben: ver `_factor_premios`, arriba.
         if mn is not None and _factor_premios != 1.0:
             mn = mn * _factor_premios
@@ -1804,7 +1809,7 @@ def _resolver_una_vez(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn
         # no hay ningun alimento, ni ninguna combinacion, ni quitar ninguna
         # restriccion que lo arregle. Decir «quita alguna restriccion y
         # vuelve a probar» manda a la usuaria a un callejon sin salida.
-        _mx_fediaf = maximo_de(r, nombre_req, et)
+        _mx_fediaf = maximo_de(r, nombre_req, et, prescripcion=limites_prescritos)
         if mn is not None and _mx_fediaf is not None and mn > _mx_fediaf:
             return False, {"_imposible": (
                 f"A estas calorías, el mínimo de {nombre_req.replace('_', ' ').lower()} "
@@ -1815,7 +1820,7 @@ def _resolver_una_vez(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn
                 f"la vez, así que hace falta subir las calorías o una dieta formulada.")}
         if clave in minimos_reforzados:
             mn = minimos_reforzados[clave] if mn is None else max(mn, minimos_reforzados[clave])
-        mx = maximo_de(r, nombre_req, et)
+        mx = maximo_de(r, nombre_req, et, prescripcion=limites_prescritos)
         if clave in topes_patologia:
             mx = topes_patologia[clave] if mx is None else min(mx, topes_patologia[clave])
         if clave in TOPE_CRONICO_KCAL:
