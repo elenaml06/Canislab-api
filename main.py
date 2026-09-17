@@ -4983,7 +4983,17 @@ class PeticionVariosPerros(BaseModel):
     personalizacion_por_menu: Optional[list[Optional[dict]]] = None
 
 
-PRESUPUESTO_SEGUNDOS_VARIOS_PERROS = 24.0
+# ⚠️ SUBIDO DE 24 A 70 EL 17 DE SEPTIEMBRE, Y ES UN TECHO, NO UN COSTE — el
+# bucle sale en cuanto tiene los menús, así que a nadie le hace esperar más.
+# MEDIDO en la casa de tres perros pidiendo 3 menús cada uno: con 24 salen
+# **1, 1 y 1** y en `origin/main` salían **3, 3 y 3**; con 70 salen 3, 3 y 3 en
+# 37-41 s. Ver `SEGUNDOS_AMOLDARSE` aquí abajo para la causa.
+#
+# 70 y no más porque lo que este número protege es real: Render documenta 100 s
+# como máximo de una petición, y es un techo de reloj de PARED del servidor, así
+# que allí el bucle para igual a los 70 y devuelve los menús que tenga —
+# diciéndolo, que es la degradación honesta.
+PRESUPUESTO_SEGUNDOS_VARIOS_PERROS = 70.0
 
 # ⚠️ AÑADIDO (21 agosto) — SUELO DE TIEMPO POR MENÚ.
 #
@@ -5009,8 +5019,27 @@ SEGUNDOS_MINIMOS_POR_MENU = 6.0
 #
 # Por eso el reparto NO es a partes iguales: holgura para ese primer menú,
 # y lo justo para los que solo tienen que encajar cantidades.
+#
+# ⚠️ Y «DÉCIMAS DE SEGUNDO» DEJÓ DE SER VERDAD (17 de septiembre de 2026). Esa
+# medida es de agosto, y desde entonces el solver se ha hecho **3-4 veces más
+# caro** por un motivo que no se puede quitar: los siete máximos LEGALES de la
+# UE pasaron a medirse sobre MATERIA SECA, y eso son siete filas nuevas que
+# acoplan la materia seca de todo el plato dentro del MILP. Medido, el mismo
+# adulto de 24,5 kg con el mismo peldaño:
+#
+#     `origin/main` ....... 1,3-3,8 s
+#     con las siete filas . 4,2-5,8 s
+#
+# Con `SEGUNDOS_AMOLDARSE = 4` eso significa que **amoldar FALLA y hay que
+# rehacer el menú entero**: en la traza de la casa de tres perros, las tres
+# llamadas del cachorro con 4 s salían «el cálculo está tardando más de lo
+# normal» tras gastar 3,3-4,0 s, y luego el mismo menú salía en 3,2-6,3 s con el
+# presupuesto grande. O sea que el suelo corto no ahorraba tiempo: lo tiraba dos
+# veces.
+#
+# Medido con 10: la casa de tres perros vuelve a dar 3, 3 y 3.
 SEGUNDOS_PRIMER_MENU_DE_LA_BASE = 12.0
-SEGUNDOS_AMOLDARSE = 4.0
+SEGUNDOS_AMOLDARSE = 10.0
 
 # Solo lo toca el BLOQUE 48, para comparar la versión de antes con la de
 # ahora en la misma máquina. En producción vale siempre False.
