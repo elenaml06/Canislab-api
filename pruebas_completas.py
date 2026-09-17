@@ -7670,8 +7670,6 @@ _PRESU_REAL_B48 = _api.PRESUPUESTO_SEGUNDOS_VARIOS_PERROS
 # Apretado a propósito: con los 24 s normales y una máquina libre las dos
 # versiones dan 3 menús y esto no probaría nada. El fallo solo asoma cuando
 # el reloj va justo, que es lo que pasa en Render.
-_api.PRESUPUESTO_SEGUNDOS_VARIOS_PERROS = 14.0
-
 _PERROS_B48 = [
     {"nombres_alimentos": [], "modo": "automatico", "der_objetivo": 900,
      "etapa_requisitos": "CachorroJoven", "peso_perro_kg": 12,
@@ -7679,6 +7677,22 @@ _PERROS_B48 = [
     {"nombres_alimentos": [], "modo": "automatico", "der_objetivo": 1211,
      "etapa_requisitos": "Adulto", "peso_perro_kg": 24.5},
 ]
+
+# ⚠️ Y EL APRETÓN SE DERIVA DE LOS SUELOS, NO ES UN 14 ESCRITO A MANO (17 de
+#    septiembre de 2026). Ese 14 se eligió cuando el primer menú costaba 12 s y
+#    amoldar 4. El 17 de septiembre amoldar pasó a 10 --el solver es 3-4 veces
+#    más caro desde que los siete máximos LEGALES van sobre materia seca-- y
+#    entonces 14 s no daba ni para UNA ronda: la casa salía con CERO menús y
+#    este bloque acusaba al motor de recortar en silencio.
+#
+#    Lo que el bloque quiere es un reloj que dé para UNA ronda y no para tres.
+#    Eso es exactamente «primer menú + amoldar x (perros - 1)», y se LEE de las
+#    constantes del motor para que siga valiendo el día que se muevan otra vez
+#    -- que es la lección de siempre: un número medido contra un motor que
+#    cambia deja de medir lo que creía.
+_UNA_RONDA_B48 = (_api.SEGUNDOS_PRIMER_MENU_DE_LA_BASE
+                  + _api.SEGUNDOS_AMOLDARSE * (len(_PERROS_B48) - 1))
+_api.PRESUPUESTO_SEGUNDOS_VARIOS_PERROS = round(_UNA_RONDA_B48 * 1.2, 1)
 
 def _tirada_b48():
     _r = _c.post("/menu/varios-perros", json={
@@ -7706,7 +7720,18 @@ try:
         _api._PEOR_CASO_SIEMPRE_SOLO_PRUEBAS = False
         _cuantos, _resp = _tirada_b48()
         _midiendo_b48.append(_cuantos)
-        if _cuantos < 3 and not _resp.get("menus_pedidos_no_dados"):
+        # ⚠️ CERO MENÚS NO ES «RECORTAR EN SILENCIO»: ES NO DAR MENÚ, Y ESO SE
+        #    DICE POR OTRA CLAVE (17 de septiembre de 2026). `menus_pedidos_no_
+        #    dados` solo existe cuando salió ALGUNO y se pidieron más; cuando no
+        #    sale ninguno la respuesta es `factible: false` con su motivo, y
+        #    medido, ese motivo nombra al perro: «No se ha podido hacer el menú
+        #    de Kira, que es el que menos margen tiene». Eso es decirlo.
+        #
+        #    El fallo que este bloque existe para cazar es el otro: pedías 3,
+        #    recibías 1, y no había ni una palabra.
+        _dijo_algo_b48 = bool(_resp.get("menus_pedidos_no_dados")
+                              or (not _resp.get("factible") and _resp.get("motivo")))
+        if _cuantos < 3 and not _dijo_algo_b48:
             _mudas_b48.append(_cuantos)
 
         _api._PEOR_CASO_SIEMPRE_SOLO_PRUEBAS = True
