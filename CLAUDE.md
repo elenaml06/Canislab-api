@@ -1117,6 +1117,49 @@ cuando entra otro de esa familia, y que **NO salga cuando no entra nadie** — u
 aviso que sale siempre no informa de nada. Comprobado con el fallo puesto de
 dos formas.
 
+### El aviso prometía «menos sal» en un menú con MÁS sal que el de un perro sano
+
+*(17 de septiembre de 2026.)* Encontrado midiendo, no leyendo: la pregunta no era
+«¿qué dice el aviso?» sino **«¿el tope que lo cumpliría llega a morder?»**.
+
+El aviso de la `artrosis` decía «lleva más pescado azul **y menos sal**». Medido
+contra el motor desplegado, cuatro tiradas por celda, perro de 35 kg:
+
+| | perro sano | con artrosis | |
+|---|---|---|---|
+| pescado azul (EPA+DHA) | 0-1 | **3-4** | verdad |
+| fósforo | 1998 | **1365-1741** | verdad |
+| **sal (sodio)** | 504-668 | **576-763** | **FALSO, y al revés** |
+
+La causa es aritmética y se ve sin resolver ningún menú: el tope de sodio de la
+artrosis son **1000** mg/1000 kcal y una ración normal de este motor va a **537
+de mediana**. El tope **no muerde nunca**, así que nada empuja la sal hacia
+abajo — y el menú puede salir con más que el de un perro sano.
+
+Lo mismo le pasaba a **`cardiopatia` sin estadiar** y a **`cardiopatia_b2`**,
+cuyo tope (738,6, el techo LEGAL de la UE para un alimento cardíaco) también
+está por encima de lo que lleva un menú normal: medido, 473-679 contra 474-685
+del sano. La misma distribución.
+
+⚠️ **Y esto es PEOR que la jerga que vigila el BLOQUE 107.** Un aviso que nombra
+un nutriente inquieta; uno que promete un ajuste que no existe **tranquiliza
+sobre algo que no está puesto** — y quien lo lee puede ser quien firma la pauta.
+
+⚠️ **Lo que se toca es el TEXTO, no la cifra.** Los tres topes salen de su fuente
+y se quedan: el 1000 de la artrosis y el 738,6 del límite legal siguen aplicados
+como red de seguridad. Lo que no puede seguir es afirmar un ajuste que la red no
+hace. Cuatro avisos reescritos (artrosis, cardiopatía sin estadiar, B2 y C), y
+`cardiopatia_d` **no se toca** porque el suyo sí muerde: 480 contra 537 de
+mediana, y medido, 412-480 en el plato.
+
+Lo vigila el **BLOQUE 125**, que no resuelve ni un menú: compara la promesa del
+texto contra el tope que tendría que cumplirla y contra lo que lleva una ración
+sana de los menús precalculados. ⚠️ Y la promesa tiene que ser **afirmativa**:
+la primera versión acusaba a `addison` («a un perro con Addison **NO** hay que
+quitarle la sal») y a `cardiopatia_a` («**ni siquiera** bajarle la sal»), que
+dicen exactamente lo contrario — la familia del «purina» dentro de «purinas»
+otra vez. Comprobado con el fallo puesto de dos formas.
+
 ### Y al fusionar, tres perros de verdad se quedaron sin menú — otra vez el reloj
 
 *(17 de septiembre de 2026.)* Encontrado **barriendo el motor DESPLEGADO** justo

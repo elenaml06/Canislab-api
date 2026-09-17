@@ -3101,3 +3101,33 @@ quién la dio — y si de ella sale una decisión, se escribe en `DECISIONES.md`
 y se enlaza.)*
 
 Ninguna todavía.
+
+### ~~P-49 · El oxalato: ¿habría que quitar los alimentos altos en oxalato?~~ — RETIRADA EL MISMO DÍA
+
+**Retirada el 17 de septiembre de 2026, y se deja escrita porque el error es la
+lección.** Se abrió creyendo que el motor NO evitaba ningún alimento por oxalato.
+**Sí lo hace**, y desde antes: la lista vive en `seguridad.OXALATO_ALTO` — 17
+entradas sacadas de la columna de oxalato de la **Tabla 40-3 de SACN5**, sus «H =
+high; avoid feeding», más tres por criterio clínico (acelga, remolacha,
+ruibarbo)— y `resolver()` las quita de los candidatos y de los suplementos.
+
+**Comprobado con un menú de verdad, no leyendo el código:** el adulto de 22 kg
+sano sale con **Boniato** dentro; el mismo perro con `oxalato` sale con **ninguno
+de los 20**.
+
+⚠️ **Por qué me lo salté, que es lo que hay que recordar: hay DOS mecanismos para
+quitar un alimento y yo miré uno.** `restricciones_patologia` en la ficha del
+alimento (lo usan diabetes, hipotiroidismo, pancreatitis y reacción adversa) y
+**las listas de `seguridad.py`**, que son otras diez y las aplica el solver
+(`OXALATO_ALTO`, `PURINAS_ALTAS`, `BORRAJA_EXCLUIR`, `TIROIDES_EXCLUIR`,
+`CLARA_SOLA`, `VISCERAS_METABOLICAS`, `MERCURIO_ALTO`, `TIAMINASA`,
+`PESCADO_HISTAMINA`, `HUESO_RIESGO_ASTILLADO`). Mirar solo el catálogo y concluir
+«no se quita nada» es exactamente el fallo del que este repo avisa: **una
+comprobación que acusa cuando el motor acierta**. Y casi me lleva por delante un
+aviso que decía la verdad.
+
+Lo que queda de verdad abierto no es la lista (H), que está aplicada, sino las
+**(M)** — *«moderate; feed in limited amounts»* —, que el motor no puede aplicar
+porque no sabe limitar un alimento suelto, solo excluirlo o dejarlo libre. Eso ya
+está escrito en `PATOLOGIAS.md` §1.2 y no necesita una pregunta aparte.
+
