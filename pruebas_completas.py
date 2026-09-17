@@ -18510,8 +18510,13 @@ if "§7.6.2.4" in " ".join(_rot107(_gr107, _al107) or []):
 # deja de mirar.
 sys.path.insert(0, "motor")
 import patologias as _pat107
+from motor_completo import avisos_de_patologias as _avisos107_fn
 _NUTRIENTES_QUE_NO_DICEN_NADA_107 = (
-    "vitamina E", "L-carnitina", "carnitina", "omega-6", "linoleico",
+    # ⚠️ «omega-3» ENTRA EL 17 DE SEPTIEMBRE, y faltaba: estaba «omega-6» y no
+    # su pareja, así que un aviso que dijera «se le sube el omega-3» pasaba. Al
+    # dueño se le habla de PESCADO AZUL y de ACEITE DE PESCADO, que es lo que
+    # compra.
+    "vitamina E", "L-carnitina", "carnitina", "omega-6", "omega-3", "linoleico",
     "araquidónico", "taurina", "arginina", "magnesio", "selenio", "yodo",
     "zinc", "potasio", "folato", "colina", "niacina", "riboflavina",
     "molibdeno", "manganeso", "aminoácido", "tiamina", "biotina",
@@ -18538,6 +18543,76 @@ for _k107n, _h107n, _t107n in _sucios107n[:6]:
                   f"COMIDA, NO NUTRIENTES -- «menos sal» y «más pescado azul» se entienden y se "
                   f"compran; esto inquieta en vez de tranquilizar, que es lo contrario de para lo "
                   f"que está el aviso")
+# ⚠️ Y LA CUARTA PUERTA (17 de septiembre de 2026). Todo lo de arriba lee
+#    `avisos.dueno or avisos.general`, o sea el aviso PRINCIPAL -- y lo que el
+#    dueño lee no es eso: es lo que devuelve `avisos_de_patologias()`, que pega
+#    el principal MÁS todos los avisos SUELTOS. Por ese hueco se habían colado
+#    DOS textos de `oxalato` con la CITA LITERAL EN INGLÉS dentro («The
+#    following guidelines are appropriate for all nonhypercalcemic CaOx stone
+#    formers…»), que es exactamente lo que Elena mandó fuera el 13 de
+#    septiembre, y cuatro textos más que nombraban nutrientes.
+#
+#    O sea la lección de siempre, por cuarta vez: **un texto se vigila por la
+#    puerta por la que SALE, no por dónde está escrito.**
+#
+# ⚠️ Y LA EXCEPCIÓN NO SOBRA, porque sin ella este guardia acusa a tres avisos
+#    que están bien. La regla 1 de Elena --«pedirle algo que no está en el
+#    plato»-- obliga a nombrar el potasio que hay que medir en sangre, el zinc
+#    que le pauta el veterinario y la taurina de la analítica. Nombrar un
+#    nutriente para MANDARLE A SU VETERINARIO no es hablarle en jerga: es
+#    decirle qué pedir. Lo que se prohíbe es contarle el ajuste que hizo el
+#    motor, que es la quinta categoría, la que no es una razón.
+_A_SU_VETERINARIO_107 = ("veterinario", "analítica", "analitica", "en sangre",
+                         "pauta", "pregúntale", "preguntale", "laboratorio")
+_puerta107, _ingles107 = [], []
+import re as _re107c
+# ⚠️ Y LAS SEIS ETAPAS, no solo adulto: el registro `dueno_crecimiento` es
+#    OTRO texto, y el 15 de septiembre ya se escapó por ahí uno de la artrosis
+#    que nombraba la vitamina E. Con solo «Adulto» este guardia no lo vería --
+#    y de hecho el 17 de septiembre encontró uno: el de `reaccion_adversa_alimento`,
+#    que le decía a un dueño «ni el refuerzo de omega-3».
+for _k107p, _et107p in [(_k, _e) for _k in sorted(_crudo107n)
+                        for _e in ("Adulto", "CachorroJoven", "CachorroCrecimiento",
+                                   "Senior", "Gestante", "Lactante")]:
+    # ⚠️ Y NO SE PEGAN LOS AVISOS ANTES DE MIRARLOS. `avisos_de_patologias`
+    #    devuelve una LISTA -- el principal y cada suelto --, y juntarlos con un
+    #    espacio hace que un bloque acabe pegado al del aviso de al lado: el
+    #    texto sucio pasaba porque el aviso VECINO decía «tu veterinario».
+    #    Comprobado, con el fallo puesto: pegados, 0 fallos; sueltos, salta.
+    _avs107p = _avisos107_fn([_k107p], _et107p)
+    _t107p = " ".join(_avs107p)
+    if not _t107p:
+        continue
+    # una cita entre comillas angulares con palabras inglesas dentro no es
+    # nuestra prosa: es la fuente, sin traducir, en la pantalla del dueño
+    for _c107p in _re107c.findall(r"«[^»]*»", _t107p):
+        if _re107c.search(r"\b(?:the|and|of|is|are|for|with|that|should|not|only)\b",
+                          _c107p, _re107c.I):
+            _ingles107.append((_k107p, _c107p[:90]))
+    # ⚠️ SE CORTA POR `||` Y NO POR FRASES, y la primera versión lo hacía por
+    #    frases: así acusaba a `cardiopatia_c` y a `dcm_taurina_respondedora`,
+    #    que están BIEN -- su bloque dice «pregúntale a tu veterinario cada
+    #    cuánto quiere mirarle el POTASIO en sangre» y la frase siguiente, que
+    #    es la que lo justifica, ya no nombra al veterinario. El bloque es la
+    #    unidad en la que un aviso manda a alguien a algún sitio; la frase, no.
+    for _tro107 in [_b for _a in _avs107p for _b in _a.split("||")]:
+        if not _tro107:
+            continue
+        _hay107p = [_x for _x in _NUTRIENTES_QUE_NO_DICEN_NADA_107 if _x.lower() in _tro107.lower()]
+        _hay107p += [_x.replace(r"\b", "") for _x in _SUELTAS_107 if _re107c.search(_x, _tro107)]
+        if _hay107p and not any(_y in _tro107.lower() for _y in _A_SU_VETERINARIO_107):
+            _puerta107.append((_k107p, _hay107p, _tro107[:110]))
+for _k107p, _h107p, _t107p in _puerta107[:6]:
+    fallos.append(f"BLOQUE107: por la puerta del DUEÑO de «{_k107p}» sale «{_t107p}…», que nombra "
+                  f"{_h107p} sin mandarle a su veterinario a por nada. Eso es contarle el ajuste "
+                  f"que hizo el motor, que es la unica de las cinco razones que NO es una razon. "
+                  f"Y ojo con donde se arregla: casi siempre no es el aviso principal sino un "
+                  f"aviso SUELTO al que le falta su registro `dueno_`")
+for _k107p, _c107p in _ingles107[:4]:
+    fallos.append(f"BLOQUE107: al dueño de «{_k107p}» se le sirve una cita LITERAL EN INGLÉS: "
+                  f"{_c107p}… Eso es lo que Elena mando fuera el 13 de septiembre, y sale por la "
+                  f"puerta de los avisos SUELTOS, que hasta hoy no miraba nadie")
+
 # Y que el TÉCNICO siga teniéndolos: si el aviso del veterinario perdiera los
 # nutrientes, esto no sería reescribir para el dueño sino vaciar los dos.
 _vet107n = " ".join((( _crudo107n.get(_k) or {}).get("avisos") or {}).get("general") or ""
@@ -21255,6 +21330,239 @@ print(f"  premio declarado: {'entra y se dice' if _r122.get('premios_dentro_del_
 print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
+
+# ============================================================
+# BLOQUE 123 — UN ALIMENTO QUE HAY QUE COCINAR DICE EN QUÉ SE PESA
+# ============================================================
+#
+# ⚠️ POR QUÉ EXISTE (17 de septiembre de 2026). El catálogo tiene TRES fichas con
+# `preparacion: "cocido"` y la nota «⚠️ DAR SIEMPRE COCIDO, no crudo» — Boniato,
+# Berenjena y Espárrago verde — y su composición sale de la fila **CRUDA** de la
+# fuente que manda. No es una sospecha: `bedca:731` se llama literalmente
+# **«Boniato, CRUDO»** y da 422,5 kJ = 101,0 kcal, que son los 101 de la ficha
+# clavados.
+#
+# O sea que el menú dice «616 g de boniato», el propio catálogo dice que hay que
+# cocinarlo, y **nadie dice si esos gramos son antes o después de cocinar**. Y no
+# es lo mismo, medido contra USDA por 100 g tal cual se pesa:
+#
+#     boniato CRUDO (168482) ....... 101 kcal (la cifra del catálogo, vía BEDCA)
+#     boniato HERVIDO (168484) ......  76 kcal
+#     boniato al HORNO (168483) .....  90 kcal
+#
+# En el peor menú del catálogo (616 g) eso son **154 kcal** de diferencia, y el
+# boniato sale en **27 de los 216** precalculados — y es el grueso del plato de
+# la pancreatitis, que se lo come justamente porque su grasa está topada.
+#
+# ⚠️ Y LO QUE ESTÁ MAL NO ES LA CIFRA: es que no se dice la BASE. Los gramos
+# crudos con composición cruda son correctos y coherentes. Lo que no puede pasar
+# es que quien pesa no sepa cuál de las dos cosas le están pidiendo.
+#
+# Lo que se exige, y son las dos mitades:
+#   1. una ficha que haya que cocinar DECLARA en qué se pesa (`se_pesa`) y por qué
+#   2. y lo DICE por el canal que lee quien compra y pesa (`aviso_al_comprar`),
+#      que ya sale por las dos puertas desde el 13 de septiembre
+#
+# Sin la 1 no se puede auditar; sin la 2 vive en una nota técnica que no lee
+# nadie — que es exactamente la lección del cerebro de ternera.
+print("\n=== BLOQUE 123: lo que hay que cocinar dice en qué se pesa ===")
+
+_al123, _ = _api.cargar_v2()
+_HAY_QUE_COCINARLO_123 = [n for n, a in _al123.items()
+                          if str(a.get("preparacion") or "").strip().lower()
+                          not in ("", "crudo")]
+if not _HAY_QUE_COCINARLO_123:
+    fallos.append("BLOQUE123: no hay ninguna ficha con `preparacion` distinta de crudo. O han "
+                  "desaparecido las tres que había (Boniato, Berenjena, Espárrago verde) o el "
+                  "campo se llama de otra forma, y en los dos casos este bloque dejó de vigilar "
+                  "nada sin decirlo")
+for _n123 in _HAY_QUE_COCINARLO_123:
+    _f123 = _al123[_n123]
+    _base123 = str(_f123.get("se_pesa") or "").strip().lower()
+    if not _base123:
+        fallos.append(f"BLOQUE123: «{_n123}» hay que dárselo {_f123.get('preparacion')!r} y la "
+                      f"ficha NO dice en qué se pesa. Sus gramos en el menú son ambiguos: 100 g "
+                      f"de boniato crudo son 101 kcal y 100 g hervido son 76")
+    elif "crudo" not in _base123 and "cocid" not in _base123 and "cocin" not in _base123:
+        fallos.append(f"BLOQUE123: «{_n123}» declara `se_pesa: {_base123!r}`, que no dice ni "
+                      f"crudo ni cocinado. Una base que no se entiende no es una base")
+    if not _f123.get("se_pesa_por_que"):
+        fallos.append(f"BLOQUE123: «{_n123}» dice en qué se pesa y NO dice por qué. La base "
+                      f"tiene que poder rehacerse contra la fila de la fuente, que es lo único "
+                      f"que separa un dato de una afirmación")
+    _av123 = str(_f123.get("aviso_al_comprar") or "")
+    if not _av123:
+        fallos.append(f"BLOQUE123: «{_n123}» hay que cocinarlo y no lo dice por el canal que lee "
+                      f"quien compra. Una condición que solo vive en una nota técnica no la lee "
+                      f"quien está en la cocina con la báscula — es la lección del cerebro de "
+                      f"ternera")
+    else:
+        # ⚠️ NO BASTA CON QUE HAYA TEXTO: tiene que decir las DOS cosas, porque un
+        #    aviso que solo dice «dáselo cocido» deja el peso igual de ambiguo que
+        #    antes, y ése es justamente el fallo que este bloque existe para cerrar.
+        _b123 = _av123.lower()
+        if not any(x in _b123 for x in ("cocid", "cocin", "hervid", "horno")):
+            fallos.append(f"BLOQUE123: el aviso de «{_n123}» no dice que hay que cocinarlo")
+        if not any(x in _b123 for x in ("pesa", "pésa", "pesar", "báscula", "bascula")):
+            fallos.append(f"BLOQUE123: el aviso de «{_n123}» dice que hay que cocinarlo y NO "
+                          f"dice cuándo se pesa. Con eso el dueño sigue sin saber si los "
+                          f"gramos de la lista son antes o después")
+
+# --- y que salga por las DOS puertas, que es lo que lo hace servir -----------
+#
+# Es la misma forma del BLOQUE 51 y por el mismo motivo: con solo el menú, quien
+# elige el alimento a mano no lee nada hasta el final; con solo `GET /alimentos`,
+# quien deja elegir al motor no lo lee nunca.
+_r123 = _c.get("/alimentos").json()
+def _todos_los_alimentos_123(o, acc=None):
+    acc = [] if acc is None else acc
+    if isinstance(o, dict):
+        if o.get("nombre"):
+            acc.append(o)
+        for v in o.values():
+            _todos_los_alimentos_123(v, acc)
+    elif isinstance(o, list):
+        for v in o:
+            _todos_los_alimentos_123(v, acc)
+    return acc
+_servidos123 = {x["nombre"]: x for x in _todos_los_alimentos_123(_r123) if "nombre" in x}
+for _n123 in _HAY_QUE_COCINARLO_123:
+    _x123 = _servidos123.get(_n123)
+    if _x123 is None:
+        fallos.append(f"BLOQUE123: «{_n123}» no lo sirve `GET /alimentos`, así que quien lo "
+                      f"elige a mano no puede leer su aviso")
+    elif not _x123.get("aviso_al_comprar"):
+        fallos.append(f"BLOQUE123: «{_n123}» tiene aviso en el catálogo y `GET /alimentos` lo "
+                      f"sirve SIN él. El texto existe y no lo lee nadie, que es la regla 6 por "
+                      f"el lado que no se ve")
+
+# Y por la otra puerta: con el alimento dentro de un menú, en el canal del dueño.
+_men123 = {_HAY_QUE_COCINARLO_123[0]: 50.0} if _HAY_QUE_COCINARLO_123 else {}
+if _men123:
+    _seg123 = _api._seguridad_completa(_men123, _al123, 1000.0, "Adulto", [], peso_perro_kg=20.0)
+    _txt123 = " ".join(str(x) for x in (_seg123 or []))
+    if _HAY_QUE_COCINARLO_123[0].lower().split()[0] not in _txt123.lower():
+        fallos.append(f"BLOQUE123: con «{_HAY_QUE_COCINARLO_123[0]}» DENTRO del menú, el canal "
+                      f"del dueño (`problemas_seguridad`) no dice nada de cómo pesarlo. Es la "
+                      f"puerta que la app ya pinta en los ocho caminos")
+
+print(f"  {len(_HAY_QUE_COCINARLO_123)} fichas que hay que cocinar, todas con su base de peso "
+      f"declarada y dicha")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
+
+
+#
+
+# ---------------------------------------------------------------------------
+# BLOQUE 124 — LA ESCALERA SE TIENE QUE PODER RECORRER DENTRO DEL PRESUPUESTO
+#
+# ⚠️ CASO REAL, EN PRODUCCIÓN (17 de septiembre de 2026). Barriendo el motor
+# DESPLEGADO tras fusionar, tres de los trece perros de referencia se quedaron
+# sin menú -- el toy de 1,5 kg, el cachorro de raza grande y Cairo con premios
+# --, los tres con «está tardando más de lo normal» y los tres de forma
+# DETERMINISTA, 3 de 3 tiradas. Los tres tenían menú antes de fusionar.
+#
+# Y no era nutrición: preguntándole al solver con reloj de sobra, el menú del
+# toy existe -- en el peldaño 2, tras dos peldaños que salen infactibles
+# DEMOSTRADOS y que cuestan 5,2 s y 20,1 s. O sea que hay que gastar TRES
+# llamadas al solver para llegar a la que da menú.
+#
+# `tiempo_de_un_intento()` le daba a una llamada el 40 % del presupuesto. Con
+# el 40 % **no caben tres**: el presupuesto se agota en dos y pico y la tercera
+# --la única con menú-- se queda sin reloj.
+#
+# Lo que vigila este bloque es esa ARITMÉTICA, que no depende de lo rápida que
+# sea la máquina -- que es la regla del 14 de septiembre: un bloque que le da
+# un presupuesto al solver y luego afirma algo del MOTOR mide dos cosas a la
+# vez. Aquí no se resuelve ni un menú.
+# ---------------------------------------------------------------------------
+print("\n=== BLOQUE 124: la escalera se puede recorrer dentro del presupuesto ===")
+
+# ⚠️ LAS DOS COTAS DEL PRESUPUESTO, Y LAS DOS TIENEN UN CASO REAL DETRÁS.
+#    Por abajo: con 40 s, el toy de 1,5 kg, el cachorro de raza grande y Cairo
+#    con premios se quedaron los tres SIN MENÚ contra el motor desplegado, 3 de
+#    3 tiradas. Medido apretando el reloj a mano, el toy necesita el
+#    equivalente a ~28 s de este equipo para salir 5 de 5. Por arriba: Render
+#    documenta 100 s como máximo de una petición, y lo que hay por encima no es
+#    un aviso que se pueda leer, es un corte de conexión.
+_presu124 = _api.PRESUPUESTO_SEGUNDOS_MENU_UNICO
+_frac124 = _api.FRACCION_DE_UN_INTENTO
+if _presu124 < 60.0:
+    fallos.append(
+        f"BLOQUE124: PRESUPUESTO_SEGUNDOS_MENU_UNICO = {_presu124} s. Con 40 habia perros de "
+        f"verdad sin menu en produccion -- el toy de 1,5 kg, el cachorro de raza grande y Cairo "
+        f"con premios, 3 de 3 tiradas cada uno, y los tres con menu si se les da reloj. Bajarlo "
+        f"sin volver a medir es devolverlos a «esta tardando mas de lo normal»")
+
+# ⚠️ Y UN SOLO INTENTO NO PUEDE COMERSE EL PRESUPUESTO, que es para lo que esa
+#    fraccion existe desde el 8 de septiembre: si la primera llamada se lo lleva
+#    todo, la escalera no se pisa y el menu que esta dos peldanos mas abajo no
+#    se encuentra nunca.
+#    ⚠️ Y TAMPOCO SE BAJA SIN MEDIR: probado a un tercio el 17 de septiembre y el
+#    cachorro de raza grande pasa de 5/5 a 0/5 con el presupuesto apretado,
+#    porque SU menu esta en el peldano 0 y lo que necesita es que el PRIMER
+#    intento tenga tiempo. La tabla entera esta en `tiempo_de_un_intento`.
+if not (0.3 <= _frac124 <= 0.4):
+    fallos.append(
+        f"BLOQUE124: FRACCION_DE_UN_INTENTO = {_frac124:.3f}. Fuera de 0,30-0,40 hay medida que "
+        f"dice que algun perro se queda sin menu: por encima, la primera llamada se lleva el "
+        f"presupuesto y no se baja de peldano; por debajo, el que tiene el menu en el peldano 0 "
+        f"no llega a resolverlo")
+
+# ⚠️ Y QUE `tiempo_de_un_intento` LA LEA DE VERDAD, no que exista. Es la lección
+#    del BLOQUE 86: una constante que no lee nadie se lee y se cree. Se mira el
+#    BYTECODE y no el fuente, porque una línea de comentario ya la nombraría.
+_fn124 = None
+for _c124 in _api._resolver_menu_v2_crudo.__code__.co_consts:
+    if getattr(_c124, "co_name", None) == "tiempo_de_un_intento":
+        _fn124 = _c124
+if _fn124 is None:
+    fallos.append("BLOQUE124: no se encuentra `tiempo_de_un_intento` dentro de "
+                  "`_resolver_menu_v2_crudo`. Si se ha movido, este guardia deja de mirar nada")
+elif "FRACCION_DE_UN_INTENTO" not in _fn124.co_names:
+    fallos.append("BLOQUE124: `tiempo_de_un_intento` NO lee `FRACCION_DE_UN_INTENTO` -- o sea "
+                  "que la fracción que se vigila aquí arriba no es la que aplica el motor, y "
+                  "este bloque saldría verde vigilando un número que no usa nadie")
+
+# ⚠️ NI EL MENÚ SUELTO NI LA SEMANA PUEDEN PASARSE DE LO QUE RENDER AGUANTA.
+#    100 s documentados, y pasarse no es un mensaje que se pueda leer: es un
+#    corte de conexión.
+for _n124, _v124 in (("PRESUPUESTO_SEGUNDOS_MENU_UNICO", _presu124),
+                     ("PRESUPUESTO_SEGUNDOS_SEMANA", _api.PRESUPUESTO_SEGUNDOS_SEMANA),
+                     ("PRESUPUESTO_SEGUNDOS_VARIOS_PERROS", _api.PRESUPUESTO_SEGUNDOS_VARIOS_PERROS)):
+    if _v124 > 95.0:
+        fallos.append(f"BLOQUE124: {_n124} = {_v124} s. Render documenta 100 s como máximo de "
+                      f"una petición, y lo que hay por encima no es un aviso: es un corte")
+
+# ⚠️ Y LA SEMANA NO HEREDA EL PRESUPUESTO DEL MENÚ SUELTO. Si lo heredara,
+#    subirlo para salvar al toy dejaría a los otros seis menús de la semana con
+#    el mínimo -- y eso sería romper la semana sin tocar una línea de la semana.
+_primero124 = _api.SEGUNDOS_PRIMER_MENU_DE_LA_SEMANA
+_minimo124 = _api.SEGUNDOS_MINIMOS_POR_MENU_SEMANA
+if _primero124 + _minimo124 * 6 > _api.PRESUPUESTO_SEGUNDOS_SEMANA:
+    fallos.append(
+        f"BLOQUE124: el primer menú de la semana se lleva {_primero124} s y los otros seis "
+        f"necesitan {_minimo124} s cada uno, o sea {_primero124 + _minimo124*6} s de un total de "
+        f"{_api.PRESUPUESTO_SEGUNDOS_SEMANA}. No caben: la semana se queda coja y el aviso de "
+        f"«se generaron N de 7» tapa el motivo")
+_fuente124 = open("main.py", encoding="utf-8").read()
+_reparto124 = [l for l in _fuente124.splitlines()
+               if "_queda_semana," in l and "if i == 0" in l]
+if not _reparto124:
+    fallos.append("BLOQUE124: no se encuentra el reparto del primer menú de la semana. Si se ha "
+                  "reescrito, este guardia deja de mirar nada")
+elif "PRESUPUESTO_SEGUNDOS_MENU_UNICO" in _reparto124[0]:
+    fallos.append("BLOQUE124: el primer menú de la semana sigue cogiendo "
+                  "`PRESUPUESTO_SEGUNDOS_MENU_UNICO`. Son dos números distintos a propósito: "
+                  "uno protege al perro difícil y el otro a los siete menús de la semana")
+
+print(f"  presupuesto {_presu124:.0f}s · un intento se lleva como mucho el "
+      f"{_frac124*100:.0f}% ({_presu124*_frac124:.0f}s), asi que siempre queda para bajar")
+print(f"  semana {_api.PRESUPUESTO_SEGUNDOS_SEMANA:.0f}s = {_primero124:.0f} el primero "
+      f"+ {_minimo124:.0f}x6 de mínimo para los otros seis")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
+
+
 _tiempos_por_bloque.sort(reverse=True)
 _gastado = sum(t for t, _ in _tiempos_por_bloque)
 # ⚠️ Y CERRAR EL ÚLTIMO BLOQUE VA PEGADO AL GUARDIA, NO DONDE ESTABA (16 de
@@ -21278,7 +21586,6 @@ _cerrar_el_ultimo_bloque()
 #    recuento es lo que lee, y los dos tienen que ver el fichero entero.
 
 # ⚠️ ¿SE HAN EJECUTADO TODOS LOS BLOQUES QUE HAY ESCRITOS? (14 de septiembre).
-#
 # CASO REAL, y lo cometí yo el mismo día que se escribe esto: el BLOQUE 111 se
 # añadió **al final del fichero**, o sea DESPUÉS del `sys.exit()` de aquí abajo.
 # La batería entera salió «✅ TODO EN VERDE» sin haberlo ejecutado nunca, y el
@@ -21336,6 +21643,23 @@ if _tarde_fin:
         f"guardia, asi que cuando mira todavia no han corrido y las acusa de inertes teniendo "
         f"razon el motor. El guardia va SIEMPRE lo ultimo del fichero")
 _cierre_fin = _fuente_fin.rfind("\n_cerrar_el_ultimo_bloque()")
+# ⚠️ Y LA TERCERA CONDICIÓN, DEL 17 DE SEPTIEMBRE DE 2026: ninguna cabecera de
+#    bloque puede quedar ENTRE esa llamada y este guardia. Las dos de arriba no
+#    la cubren -- el BLOQUE 123 estaba escrito justo ahí, o sea después del
+#    cierre y antes del guardia, así que no había ninguna cabecera «después del
+#    guardia» y el cierre sí estaba «antes»: las dos condiciones en verde y el
+#    bloque acusado de muerto teniendo razón el motor. Un bloque escrito ahí
+#    corre, imprime y comprueba, pero su cabecera cierra el bloque ANTERIOR y al
+#    suyo ya no lo cierra nadie, así que no entra en el recuento.
+if _cierre_fin != -1:
+    _enmedio_fin = [c for c in _cabeceras_fin if _cierre_fin < c < _yo_fin]
+    if _enmedio_fin:
+        fallos.append(
+            f"BLOQUE-GUARDIA: hay {len(_enmedio_fin)} cabeceras «=== BLOQUE» escritas ENTRE "
+            f"`_cerrar_el_ultimo_bloque()` y este guardia. Ese bloque corre y comprueba, pero "
+            f"nadie cierra su cronometro, asi que no entra en `_tiempos_por_bloque` y el "
+            f"guardia lo acusa de no haberse ejecutado -- teniendo razon el motor. Va ANTES "
+            f"del recuento de tiempos, con los demas")
 if _cierre_fin == -1 or _cierre_fin > _yo_fin:
     fallos.append(
         "BLOQUE-GUARDIA: `_cerrar_el_ultimo_bloque()` no esta ANTES de este guardia. Un bloque "

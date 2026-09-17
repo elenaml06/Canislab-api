@@ -660,6 +660,57 @@ patología que necesitaba más del 50 % de verdura. El BLOQUE 61 lo cazó, y su
 perro de referencia (20 kg, DER 950, **sin peso objetivo**) no es un perro obeso:
 el obeso de verdad (25→20 kg, DER 830) no sacaba menú **ni en `main`**.
 
+### El boniato se da COCIDO y se pesa CRUDO, y nadie lo decía
+
+*(17 de septiembre de 2026.)* Salió preparando el modo cocinado, y no es una
+pregunta de futuro: **es un fallo que está en producción hoy.**
+
+**TRES fichas del catálogo llevan `preparacion: "cocido"`** desde siempre, con la
+nota «⚠️ DAR SIEMPRE COCIDO, no crudo: crudo es indigesto/duro y da riesgo de
+obstrucción» — **Boniato, Berenjena y Espárrago verde** —, y su composición sale
+de la fila **CRUDA** de la fuente que manda. No es una sospecha: `bedca:731` se
+llama literalmente **«Boniato, CRUDO»** y da 422,5 kJ = **101,0 kcal**, que son
+los 101 de la ficha clavados.
+
+O sea: el menú dice «616 g de boniato», el propio catálogo dice que hay que
+cocinarlo, y **no dice si esos gramos son antes o después de cocinar.**
+
+| por 100 g tal cual se pesa | kcal |
+|---|---|
+| boniato **CRUDO** (`usda:168482`, y es lo que aplica el catálogo vía BEDCA) | **101** |
+| boniato **HERVIDO** (`usda:168484`) | **76** |
+| boniato al horno (`usda:168483`) | 90 |
+
+En el peor menú del catálogo (616 g) eso son **154 kcal** de diferencia. Y el
+boniato sale en **27 de los 216** precalculados (mediana 43 g), y es el grueso
+del plato de la **pancreatitis** (389 g) — que se lo come justamente porque su
+grasa está topada y hay que diluir con algo que no engorde.
+
+⚠️ **Lo que está mal NO es la cifra: es que no se dice la BASE.** Gramos crudos
+con composición cruda es correcto y coherente. Lo que no puede pasar es que quien
+tiene la báscula delante no sepa cuál de las dos cosas le están pidiendo. Así que
+**no se toca ningún número**: se declara (`se_pesa` + `se_pesa_por_que`, que es lo
+que permite rehacerlo contra la fila de la fuente) y **se dice donde se lee**, por
+`aviso_al_comprar`.
+
+⚠️ **Y AL PONERLE EL GUARDIA SALIÓ QUE `aviso_al_comprar` SOLO LO VEÍA UN
+VETERINARIO.** Ese campo nació el 13 de septiembre con el motivo escrito de que
+«sale por las DOS puertas», y una de las dos estaba a medias: se servía en
+`por_categoria` —la lista que lee el **formulador del veterinario**— y **no en
+`pantallas`**, que es **Personalizar**, o sea donde el dueño elige la comida a
+mano. Así que el aviso escrito para quien está delante del mostrador —«si te
+ofrecen sesos de vaca, NO valen»— no lo leía quien va a comprar. Es la regla 6 por
+el lado que no se ve: el motor sirve un texto perfecto y no lo lee nadie.
+
+Lo vigila el **BLOQUE 123**, con las dos mitades —que la ficha declare la base y
+que lo diga por el canal que lee quien pesa— y comprobado con el fallo puesto de
+**cuatro** formas: sin `se_pesa`, con un aviso que dice «dáselo cocido» y no dice
+cuándo pesarlo, sin el porqué, y sin servirlo en la pantalla del dueño.
+
+⚠️ **Y esto cambia la primera frase del apartado de comida cocinada de
+`PENDIENTE_PRODUCTO.md`**, que daba por hecho que el arroz sería «la primera ficha
+cocinada del catálogo». No lo sería: ya hay tres, y llevan meses ahí.
+
 ### Endpoints: cuáles usa la app y cuáles no
 
 Los que llama el frontend hoy: `/menu/v2`, `/menu/semana`,
@@ -1065,6 +1116,73 @@ Lo vigila el **BLOQUE 114**, con las **dos direcciones**: que el texto salga
 cuando entra otro de esa familia, y que **NO salga cuando no entra nadie** — un
 aviso que sale siempre no informa de nada. Comprobado con el fallo puesto de
 dos formas.
+
+### Y al fusionar, tres perros de verdad se quedaron sin menú — otra vez el reloj
+
+*(17 de septiembre de 2026.)* Encontrado **barriendo el motor DESPLEGADO** justo
+después de fusionar, no leyendo el repo. De los trece perros de referencia, tres
+se quedaron sin menú, los tres con «el cálculo está tardando más de lo normal» y
+los tres de forma **DETERMINISTA — 3 de 3 tiradas**, o sea que no era carga de
+Render:
+
+| | antes de fusionar | después |
+|---|---|---|
+| toy 1,5 kg | 20,5 s **con menú** | 40,8 s sin menú |
+| cachorro de raza grande (Cairo) | 8,6 s **con menú** | 40,8 s sin menú |
+| Cairo con premios al 10 % | 10,4 s **con menú** | 48,5 s sin menú |
+
+⚠️ **Y no es nutrición, que es lo primero que había que descartar.**
+Preguntándole al solver con reloj de sobra, los menús existen:
+
+```
+toy 1,5 kg          peldaño 0   5,2 s   infactible DEMOSTRADO
+                    peldaño 1  20,1 s   infactible DEMOSTRADO
+                    peldaño 2   6,2 s   **MENÚ**          (31,5 s en total)
+cachorro grande     peldaño 0   8,9 s   **MENÚ**
+```
+
+Contra el `main` de antes de fusionar, en la misma máquina y con la misma carga,
+los dos salían en el peldaño **estricto**, en 25,4 s y 4,4 s. O sea **dos cosas a
+la vez**: al toy se le cerró el peldaño estricto —las etiquetas de los
+suplementos corregidas el 15 de septiembre le quitaron la vitamina E que era un
+conservante y le movieron cuatro minerales del alga a hueco, así que ahí ya no
+hay menú y hay que bajar dos peldaños, **que es la regla 3 funcionando**— y
+además cada peldaño cuesta ahora el doble.
+
+**El arreglo es UNO y es el presupuesto**: `PRESUPUESTO_SEGUNDOS_MENU_UNICO` pasa
+de **40 a 90 s**. Es un **techo, no un coste** —el bucle sale en cuanto hay
+menú—, así que el perro fácil sigue contestando en los mismos segundos.
+
+⚠️ **Y lo que NO se toca es el reparto, aunque el razonamiento lleve ahí.** Con
+el 40 % por intento no caben tres llamadas enteras y el menú del toy está en la
+tercera, así que bajar la fracción parece la respuesta. **La medida dice que no**
+—cinco peticiones por celda, apretando el reloj a mano como hace el BLOQUE 43:
+
+| presupuesto | reparto | toy 1,5 kg | cachorro grande | Cairo 10 % |
+|---|---|---|---|---|
+| 14 s | 40 % | 0/5 | **5/5** | 5/5 |
+| 14 s | 1/3 | 0/5 | **0/5** | 5/5 |
+| 20 s | 40 % | 2/5 | 5/5 | 5/5 |
+| 20 s | 1/3 | 4/5 | 5/5 | 5/5 |
+| 28 s | 40 % | **5/5** | 5/5 | 5/5 |
+
+Los dos perros tiran en **direcciones opuestas**, que es exactamente lo que ya
+pasó el 15 de septiembre al probar el 70 %: al toy le ayuda que cada peldaño se
+lleve menos, porque el suyo está abajo; al cachorro grande, cuyo menú está en el
+peldaño 0, lo que le hace falta es que el **primer** intento tenga tiempo. Y el
+presupuesto apretado no es de laboratorio: es lo que reciben los menús 2 a 7 de
+`/menu/semana` y los de `/menu/varios-perros`.
+
+⚠️ **Y subirlo obligaba a cortar una herencia que no se ve**: el reparto de la
+semana le da al primer menú «lo que se le daría a un menú suelto». Con el suelto
+a 90 y un total de semana de 85, el primero se habría llevado los 85 y los otros
+seis el mínimo — o sea que **subir el presupuesto del menú suelto habría roto la
+semana sin tocar una línea de la semana**. Ahora son dos números,
+`SEGUNDOS_PRIMER_MENU_DE_LA_SEMANA` aparte.
+
+Lo vigila el **BLOQUE 124**, con las dos cotas del presupuesto, la banda del
+reparto y las dos mitades de la herencia de la semana. Comprobado con el fallo
+puesto de seis formas.
 
 ### El toy con patología no se quedaba sin menú: se quedaba sin RELOJ
 
