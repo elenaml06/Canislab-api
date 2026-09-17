@@ -1223,6 +1223,29 @@ def _kcal_de_premios(datos):
         fraccion = NIVELES_DE_PREMIOS.get(nivel) if nivel else None
         if fraccion and der > 0:
             premios = der * fraccion
+    # ⚠️ Y LO QUE YA SE HA DECLARADO NO SE CUENTA DOS VECES (16 de septiembre de
+    # 2026). Un premio DECLARADO deja de ser un premio y pasa a ser un
+    # ingrediente: entra en el menú con sus gramos, sus kcal van dentro de la
+    # ración y sus nutrientes también. Así que sus calorías ya NO son de la
+    # parte del día que se formula a ciegas.
+    #
+    # Sin esto, un dueño que contesta «más del máximo» Y ADEMÁS dice qué le da
+    # recibía lo peor de los dos mundos: el 20 % del día descontado de la ración
+    # y, encima, los gramos declarados metidos dentro. Medido: ese perro se
+    # quedaba SIN MENÚ teniendo la salida delante, que es peor que no ofrecerla.
+    #
+    # Se resta, no se ignora el nivel: quien da 214 g de corazón Y algo más que
+    # no sabe decir sigue teniendo esa parte a ciegas, y sigue contándose.
+    if premios > 0:
+        try:
+            _al_pr, _ = cargar_v2()
+            _ya_dentro = sum(
+                _al_pr[n]["energia"] * float(g) / 100.0
+                for n, g in (getattr(datos, "premios_declarados", None) or {}).items()
+                if n in _al_pr and float(g) > 0)
+        except Exception:
+            _ya_dentro = 0.0
+        premios = max(0.0, premios - _ya_dentro)
     if premios <= 0:
         return 0.0
     if der > 0:
@@ -3494,7 +3517,8 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
     return resultado
 
 
-def _respuesta_de_premios_sin_sitio(datos, hay_comida, se_agoto_el_tiempo=False):
+def _respuesta_de_premios_sin_sitio(datos, hay_comida, se_agoto_el_tiempo=False,
+                                    escalera=None):
     """La respuesta de «no hay menú» cuando la causa son los premios sin decir.
 
     Devuelve `None` si los premios no se pasan de lo que recomienda la fuente:
@@ -3564,7 +3588,14 @@ def _respuesta_de_premios_sin_sitio(datos, hay_comida, se_agoto_el_tiempo=False)
         "premios_pct_del_dia": round(_pct, 1),
         "premios_pct_recomendado": round(FRACCION_MAXIMA_DE_PREMIOS * 100),
         "se_agoto_el_tiempo": bool(se_agoto_el_tiempo),
-        "se_intento_relajando": [p[2] for p in _escalera_de_relajacion(hay_comida)[1:]]}
+        # ⚠️ LO QUE SE PROBÓ DE VERDAD, NO LA ESCALERA ENTERA (16 de septiembre
+        # de 2026). Con premios por encima del límite y sin declarar se cortan
+        # los peldaños que suben el techo de lo accesorio, así que listarlos
+        # aquí sería decirle a quien lo lee que se intentó algo que no se
+        # intentó -- y el desplegable «Qué dijo el motor» los enseña tal cual.
+        "se_intento_relajando": [
+            p[2] for p in (escalera if escalera is not None
+                           else _escalera_de_relajacion(hay_comida))[1:]]}
 
 
 def _hay_algun_premio(datos, alimentos=None):
@@ -4336,6 +4367,40 @@ def _resolver_menu_v2_crudo(datos: PeticionMenu):
     # calcula UNA vez, aquí, y todo lo de abajo lee esta variable.
     _escalera_de_este_perro = _escalera_de_relajacion(
         _hay_comida_para_peldano, datos.patologias, datos.etapa_requisitos)
+
+    # ⚠️ Y CON PREMIOS POR ENCIMA DE LO QUE RECOMIENDA LA FUENTE Y SIN DECIR
+    # CUÁLES SON, LA ESCALERA NO LLEGA A LOS PELDAÑOS DEL PLATO DE HIERBA
+    # (16 de septiembre de 2026, por la noche).
+    #
+    # Los tres últimos peldaños suben el techo de vísceras, hígado y verdura
+    # hasta ×5. Existen para el perro al que una PATOLOGÍA le topa la grasa y
+    # tiene que diluir con algo que no engorde. Usarlos para tapar que no
+    # sabemos qué hay en el 20 % del día es justo lo que Elena rechazó:
+    #
+    #     «un plato con 484 gramos de alcachofa me parece muy loco»
+    #
+    # Y cuestan el menú entero: MEDIDO, esos dos peldaños tardan 17 s cada uno
+    # en demostrar lo suyo, así que la respuesta llegaba a los 40 s -- por
+    # encima de los 45 s que espera la app, que entonces aborta y enseña
+    # «Despertando el servidor...». Lo cazó la batería de la app de verdad.
+    #
+    # Cortándolos, el mismo perro recibe en ~2 s el mensaje que le sirve: dinos
+    # QUÉ le das y lo metemos en el plato. La salida existe y funciona
+    # (`premios_declarados`), así que esto no deja a nadie sin comer -- le manda
+    # por la puerta buena en vez de hacerle esperar 40 s para lo mismo.
+    #
+    # ⚠️ Solo cuando NO se ha declarado nada: si el dueño dice qué le da, esos
+    # premios son comida y el problema desaparece, así que la escalera entera
+    # vuelve a estar disponible.
+    _kcal_prem_esc = _kcal_de_premios(datos)
+    _der_esc = float(getattr(datos, "der_objetivo", None) or 0.0)
+    if (_kcal_prem_esc > 0 and _der_esc > 0
+            and (_kcal_prem_esc / _der_esc) > FRACCION_MAXIMA_DE_PREMIOS + 1e-6
+            and not getattr(datos, "premios_declarados", None)):
+        _escalera_de_este_perro = [
+            (m, supl, cl) for m, supl, cl in _escalera_de_este_perro
+            if not any(m.get(c, (0.0, 0.0))[1] > MARGENES_V2[c][1]
+                       for c in CATEGORIAS_SECUNDARIAS)]
     _peldano_pedido = _peldano_por_clave(getattr(datos, "peldano", None),
                                          _hay_comida_para_peldano,
                                          datos.patologias, datos.etapa_requisitos)
@@ -4632,7 +4697,8 @@ def _resolver_menu_v2_crudo(datos: PeticionMenu):
             # mentira: con la escalera recorrida se dice que NO CABE; aquí, que
             # no hemos podido. Lo que se OFRECE es lo mismo, porque ayuda igual
             # -- decir qué premio es lo saca del terreno de lo desconocido.
-            _sin_sitio_reloj = _respuesta_de_premios_sin_sitio(datos, hay_comida, True)
+            _sin_sitio_reloj = _respuesta_de_premios_sin_sitio(
+                datos, hay_comida, True, escalera=_escalera_de_este_perro)
             if _sin_sitio_reloj is not None:
                 return _sin_sitio_reloj
             return {"factible": False,
@@ -4774,7 +4840,8 @@ def _resolver_menu_v2_crudo(datos: PeticionMenu):
         #
         # ⚠️ COMIDA, NO NUTRIENTES (regla del 14 de septiembre): ni «dilución»,
         # ni «mg/1000 kcal», ni el nombre de un nutriente.
-        _sin_sitio = _respuesta_de_premios_sin_sitio(datos, hay_comida)
+        _sin_sitio = _respuesta_de_premios_sin_sitio(
+            datos, hay_comida, escalera=_escalera_de_este_perro)
         if _sin_sitio is not None:
             return _sin_sitio
 
