@@ -1454,7 +1454,26 @@ for _cuantos in (1, 3):
                                                                     or _pp.get("der_objetivo")))
                 _etapas11 = {(_pp.get("etapa_requisitos") or "") for _pp in _perros}
                 if len(_proteinas) > 1 and len(set(_proteinas)) == 1:
-                    _otra_b11 = _pedir_casa(_perros, _noms, cuantos=_cuantos)
+                    # ⚠️ Y EL REINTENTO VA CON RELOJ DE SOBRA, QUE ES LO QUE
+                    #    FALTABA (17 de septiembre de 2026). Reintentar con el
+                    #    MISMO presupuesto es volver a tirar la misma moneda: la
+                    #    rotación vive en el OBJETIVO del solver, o sea que es un
+                    #    desempate, y con el reloj justo el solver acepta la
+                    #    primera solución buena y no la mejor. Medido: dentro de
+                    #    la batería completa este bloque acusó al motor de que un
+                    #    ADULTO no rota, y en aislado salió verde 3 de 3.
+                    #
+                    #    Es la familia que este fichero tiene documentada cinco
+                    #    veces —un bloque que le da un presupuesto al solver y
+                    #    luego afirma algo del MOTOR—, y la herramienta es la de
+                    #    siempre: darle holgura ANTES de acusar a nadie. Si con
+                    #    600 s sigue repitiendo, entonces sí es del motor.
+                    _presu_b11 = _api.PRESUPUESTO_SEGUNDOS_VARIOS_PERROS
+                    try:
+                        _api.PRESUPUESTO_SEGUNDOS_VARIOS_PERROS = 600.0
+                        _otra_b11 = _pedir_casa(_perros, _noms, cuantos=_cuantos)
+                    finally:
+                        _api.PRESUPUESTO_SEGUNDOS_VARIOS_PERROS = _presu_b11
                     _mismo_b11 = next((x for x in (_otra_b11.get("perros") or [])
                                        if x.get("nombre") == _p.get("nombre")), None)
                     _seg_b11 = _proteinas_de_b11(_mismo_b11) if _mismo_b11 else []
