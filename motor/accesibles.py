@@ -64,7 +64,14 @@ CARNE = [
     # veía verdura y suplementos -- «infactible» en los cuatro perros de prueba,
     # y la causa no era nutrición ni proporciones: era que la comida no estaba
     # ofrecida. Es literalmente lo que avisa la cabecera de este fichero.
-    "Pollo muslo cocido", "Jarrete de ternera cocido", "Vaca para guisar cocida",
+    # ⚠️ «Pollo muslo cocido» ESTUVO AQUÍ Y YA NO EXISTE, y va dicho porque el
+    # BLOQUE 12 tuvo que cazarlo (18 de septiembre de 2026). Al construir las
+    # fichas cocidas nuevas lo sustituyeron DOS más precisas —«Pollo muslo con
+    # piel cocido» y «Pollo muslo sin piel cocido», que es como está el
+    # catálogo en crudo— y el nombre viejo se quedó en esta lista: el motor lo
+    # filtraba en silencio, sin error y con el menú saliendo igual. Un nombre
+    # que no existe en una lista curada no da error: deja de haber un alimento.
+    "Jarrete de ternera cocido", "Vaca para guisar cocida",
     "Corazón de vaca cocido", "Corazón de pavo cocido",
     "Pollo con piel (sin hueso)", "Pollo muslo con piel", "Pollo pechuga con piel",
     "Pollo muslo sin piel", "Pollo pechuga sin piel", "Pollo ala con piel (sin hueso)",
