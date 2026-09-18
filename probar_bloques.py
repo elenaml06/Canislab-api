@@ -137,6 +137,48 @@ def _los_rapidos(trozos):
     return rapidos, lentos, sin_medir, medida
 
 
+def _el_reparto(trozos, cual, de_cuantos):
+    """Los bloques del trabajo `cual` de `de_cuantos`, equilibrados por TIEMPO.
+
+    ⚠️ POR QUÉ NO SE PARTEN POR NÚMERO (18 de septiembre de 2026). La bateria
+    entera son 71 minutos y el reparto NO es plano: los diez bloques mas caros
+    se llevan la mitad, y el BLOQUE 50 el solo son 8 minutos. Partir «del 1 al
+    30, del 31 al 60...» dejaria un trabajo de 30 minutos al lado de uno de
+    cinco, y la CI tarda lo que tarde EL MAS LENTO -- o sea que no se ganaria
+    casi nada.
+
+    Se reparte por el reloj MEDIDO, con el mas caro al trabajo que menos lleva
+    acumulado. Medido sobre el reparto de hoy:
+
+        con 2 trabajos: el mas largo 35,7 min
+        con 3 trabajos:              23,8 min
+        con 4 trabajos:              17,8 min   <- 71 -> 18
+        con 6 trabajos:              11,9 min
+
+    ⚠️ Y UN BLOQUE SIN MEDIR VA AL TRABAJO 1, no se queda fuera. Es la misma
+    regla que el modo rapido: fallar hacia CORRER. Un bloque nuevo que se
+    cayera de todos los trabajos no lo ejecutaria nadie y la CI saldria verde.
+    """
+    import json
+    if not os.path.exists(MEDIDA):
+        raise SystemExit(f"falta «{os.path.basename(MEDIDA)}». Lo escribe la bateria entera.")
+    medida = {int(x["bloque"]): x["segundos"]
+              for x in json.load(open(MEDIDA, encoding="utf-8"))["bloques"]}
+    trabajos = [[0.0, []] for _ in range(de_cuantos)]
+    for n in sorted(trozos, key=lambda n: -medida.get(n, 0.0)):
+        if n not in medida:
+            trabajos[0][1].append(n)
+            continue
+        t = min(trabajos, key=lambda t: t[0])
+        t[0] += medida[n]
+        t[1].append(n)
+    mios, segundos = sorted(trabajos[cual - 1][1]), trabajos[cual - 1][0]
+    print(f"  TRABAJO {cual} de {de_cuantos}: {len(mios)} bloques, ~{segundos / 60:.0f} min "
+          f"de los ~{sum(medida.values()) / 60:.0f} que cuesta la bateria entera")
+    print(f"  ⚠️  Esto NO es la bateria: es un TROZO. Verde aqui solo dice que estos pasan.\n")
+    return mios
+
+
 def _pedidos(argv):
     fuera = []
     for a in argv:
@@ -177,7 +219,11 @@ def main():
     if len(sys.argv) < 2:
         raise SystemExit(__doc__)
     cabecera, trozos = _trozos()
-    if sys.argv[1] in ("--rapida", "--rapido"):
+    if sys.argv[1].startswith("--reparto"):
+        # --reparto 2/4  ->  el segundo trabajo de cuatro
+        _cual, _de = (sys.argv[2] if len(sys.argv) > 2 else sys.argv[1].split("=")[-1]).split("/")
+        quiero = _el_reparto(trozos, int(_cual), int(_de))
+    elif sys.argv[1] in ("--rapida", "--rapido"):
         quiero, lentos, sin_medir, medida = _los_rapidos(trozos)
         _t_rap = sum(medida.get(n, 0.0) for n in quiero)
         _t_len = sum(medida.get(n, 0.0) for n in lentos)
