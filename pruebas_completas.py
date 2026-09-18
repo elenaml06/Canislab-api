@@ -22911,6 +22911,142 @@ print(f"  documentación: 2 modos · {len(_DOC129['para_que_es_bueno'])} nutrien
 print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
+
+# ---------------------------------------------------------------------------
+# BLOQUE 130 — EN LA TIENDA SE COMPRA CRUDO, Y EL PLATO SE MONTA DE ALGUNA FORMA
+# ============================================================
+#
+# ⚠️ POR QUÉ EXISTE, Y ES UN FALLO MEDIDO (18 de septiembre de 2026). Los gramos
+# de un menú COCINADO son de comida YA COCINADA —la ficha lo declara en
+# `se_pesa` y el `aviso_al_comprar` lo repite— pero **en la tienda se compra
+# CRUDO**. Y la diferencia no es un redondeo: medida sobre las 69 fichas que se
+# pesan cocidas, va de **×0,20 a ×1,99**. Del pulpo hay que comprar el DOBLE de
+# lo que dice el menú y de los copos de avena una QUINTA PARTE. Una lista de la
+# compra que no lo convierta manda a la tienda a por la cantidad equivocada, y
+# en el peor caso por menos de la mitad de la comida del perro.
+#
+# ⚠️ Y LA OTRA MITAD, que es la que convierte esto en un fallo distinto:
+# convertir EN SILENCIO sería tan malo como no convertir. Quien mire el menú y
+# la lista vería dos números distintos para el mismo alimento y no sabría cuál
+# creer. Por eso el factor viaja con su PROCEDENCIA y con si es aproximado.
+#
+# ⚠️ SE DERIVA, no se escribe: del agua de la ficha cocida y la de su crudo. Una
+# tabla de factores a mano se quedaría parada con la primera ficha nueva y no
+# daría ningún error — el fallo de las seis categorías de Personalizar otra vez.
+print("\n=== BLOQUE 130: se compra crudo, y el plato se monta ===")
+
+_al130, _ = _api.cargar_v2()
+_COC130 = {n: a for n, a in _al130.items()
+           if str(a.get("se_pesa") or "").strip().lower() == "ya cocido"}
+if len(_COC130) < 20:
+    fallos.append(f"BLOQUE130: solo {len(_COC130)} fichas se pesan cocidas. Con tan pocas este "
+                  f"bloque deja de vigilar nada y no lo diría")
+
+# ── 1 · el factor se REHACE, no se cree ────────────────────────────────────
+# Llamar a `_calcular_crudo_por_cocido` sería comparar la función consigo misma
+# —la lección del BLOQUE 109— así que aquí se rehace la cuenta desde las dos
+# humedades, que es de donde tiene que salir.
+_ALI130 = _c.get("/alimentos").json()
+_servido130 = {}
+for _p130 in _ALI130.get("pantallas") or []:
+    for _g130 in (_p130.get("grupos") or {}).values():
+        for _a130 in _g130:
+            if _a130.get("cuanto_crudo_hace_falta"):
+                _servido130[_a130["nombre"]] = _a130["cuanto_crudo_hace_falta"]
+
+_mal130, _sin130 = [], []
+for _n130, _f130 in _COC130.items():
+    _hc130 = _f130.get("humedad_g_100g")
+    _base130 = _n130.rsplit(" ", 1)[0] if " " in _n130 else None
+    _herm130 = _al130.get(_base130) if _base130 else None
+    _hr130 = ((_herm130 or {}).get("humedad_g_100g")
+              if (_herm130 and _herm130.get("humedad_g_100g") is not None)
+              else _f130.get("humedad_crudo_g_100g"))
+    if _hc130 is None or _hr130 is None or _hr130 >= 100:
+        _sin130.append(_n130)
+        if _n130 in _servido130:
+            fallos.append(f"BLOQUE130: se sirve un factor para «{_n130}» y no hay con qué "
+                          f"calcularlo — o sea que sale de algún sitio que no son las dos "
+                          f"humedades. Una cifra sin fuente en una lista de la compra es lo "
+                          f"único que aquí no puede pasar")
+        continue
+    _esperado130 = round((100.0 - float(_hc130)) / (100.0 - float(_hr130)), 2)
+    _dado130 = (_servido130.get(_n130) or {}).get("factor")
+    if _dado130 is None:
+        _mal130.append((_n130, _esperado130, "no se sirve"))
+    elif abs(_dado130 - _esperado130) > 0.01:
+        _mal130.append((_n130, _esperado130, _dado130))
+if _mal130:
+    fallos.append(f"BLOQUE130: {len(_mal130)} factores servidos no cuadran con las humedades de "
+                  f"los que salen: {_mal130[:3]}. La materia seca es lo que se conserva al "
+                  f"cocer: gramos_crudos = gramos_cocidos × (MS del cocido / MS del crudo)")
+
+# ── 2 · lo que no se puede calcular se queda SIN cifra, y eso es correcto ───
+# ⚠️ Hoy es UNA ficha, «Vaca para guisar cocida», porque la fila cruda que la
+# ancla (ciqual:6231) no publica agua. Inventarle el factor de otro corte de
+# vaca sería poner una cifra sin fuente. Lo que se vigila es que no aparezca de
+# la nada — y que no crezcan: si mañana son quince, es que se ha roto algo.
+if len(_sin130) > 3:
+    fallos.append(f"BLOQUE130: {len(_sin130)} fichas cocidas no tienen con qué calcular cuánto "
+                  f"crudo comprar: {sorted(_sin130)[:5]}. Eran una. Cada una de esas manda a la "
+                  f"tienda con los gramos del plato, que no son los de la báscula del "
+                  f"carnicero")
+
+# ── 3 · la procedencia viaja, y lo aproximado se dice ──────────────────────
+for _n130, _d130 in _servido130.items():
+    if not str(_d130.get("de_donde") or "").strip():
+        fallos.append(f"BLOQUE130: el factor de «{_n130}» no dice de dónde sale. Sin eso no se "
+                      f"puede rehacer, y lo que no se puede rehacer no está comprobado")
+        break
+_aprox130 = sorted(n for n, d in _servido130.items() if d.get("aproximado"))
+for _n130 in _aprox130:
+    if not str(_servido130[_n130].get("por_que_aproximado") or "").strip():
+        fallos.append(f"BLOQUE130: «{_n130}» va marcado como aproximado y no dice POR QUÉ. Un "
+                      f"«aproximado» sin motivo no se puede juzgar")
+
+# ── 4 · el factor MUERDE: si fueran todos 1, esto no serviría de nada ──────
+_fs130 = sorted(d["factor"] for d in _servido130.values())
+if not _fs130 or _fs130[0] > 0.8 or _fs130[-1] < 1.2:
+    fallos.append(f"BLOQUE130: los factores van de {_fs130[:1]} a {_fs130[-1:]} — o sea que "
+                  f"convertir no cambia nada y esta comprobación no está vigilando nada. "
+                  f"Medido el 18 de septiembre: de 0,20 a 1,99")
+
+# ── 5 · CÓMO SE MONTA EL PLATO, que es lo que preguntó Elena ───────────────
+# «¿se tritura todo junto y se da modo puré? ¿se le echa todo entero?». Había
+# texto de cada alimento y de cada categoría, y ninguno del PLATO.
+_PLATO130 = _ALI130.get("como_se_prepara_el_plato") or {}
+for _m130 in ("crudo", "cocinado"):
+    _e130 = _PLATO130.get(_m130) or {}
+    _pasos130 = _e130.get("pasos") or []
+    if len(_pasos130) < 4:
+        fallos.append(f"BLOQUE130: el modo «{_m130}» no dice cómo se monta el plato ({len(_pasos130)} "
+                      f"pasos). Quien va a cocinar tiene delante el plato entero, no una ficha")
+        continue
+    for _x130 in _pasos130:
+        if not (_x130.get("titulo") and _x130.get("texto")):
+            fallos.append(f"BLOQUE130: un paso de «{_m130}» no tiene título o no tiene texto")
+            break
+# Y las dos cosas que SOLO pasan en cocinado y que nadie contaba: que los botes
+# de vitaminas van al final y en frío, y que se pesa DESPUÉS de cocinar. Son las
+# dos que cambian el menú si se hacen al revés.
+_txt130 = " ".join(f"{x.get('titulo','')} {x.get('texto','')}"
+                   for x in ((_PLATO130.get("cocinado") or {}).get("pasos") or [])).lower()
+if not ("fr" in _txt130 and "vitamina" in _txt130):
+    fallos.append("BLOQUE130: el plato cocinado no dice que los botes de vitaminas van al final y "
+                  "con la comida ya fría. Echarlos en caliente se lleva parte de lo que llevan "
+                  "dentro y el menú deja de cuadrar sin que se note")
+if "después de cocinar" not in _txt130 and "despues de cocinar" not in _txt130:
+    fallos.append("BLOQUE130: el plato cocinado no dice que se pesa DESPUÉS de cocinar, que es la "
+                  "única diferencia que se nota en la báscula")
+
+print(f"  cuánto crudo comprar: {len(_servido130)}/{len(_COC130)} fichas · factores de "
+      f"{_fs130[0] if _fs130 else 0} a {_fs130[-1] if _fs130 else 0} · {len(_aprox130)} aproximados "
+      f"y dichos · {len(_sin130)} sin calcular y dichas")
+print(f"  cómo se monta el plato: {len((_PLATO130.get('crudo') or {}).get('pasos') or [])} pasos en "
+      f"crudo · {len((_PLATO130.get('cocinado') or {}).get('pasos') or [])} en cocinado")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
+
+
 _tiempos_por_bloque.sort(reverse=True)
 _gastado = sum(t for t, _ in _tiempos_por_bloque)
 # ⚠️ Y CERRAR EL ÚLTIMO BLOQUE VA PEGADO AL GUARDIA, NO DONDE ESTABA (16 de

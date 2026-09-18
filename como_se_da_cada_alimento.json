@@ -532,5 +532,70 @@
   "Hígado": "Cocido: hervido en agua sin sal, en trozos pequeños — se da en poca cantidad, no hace falta trocear más de la cuenta. ⚠️ Los gramos del menú son de hígado YA COCIDO — pésalo después de cocinarlo.",
   "Pescados y mariscos": "Cocido: hervido o al vapor, sin sal. Aquí no hace falta congelarlo antes — eso es solo para darlo crudo; cocinándolo el riesgo de parásitos desaparece. Quítale las espinas antes de dárselo. ⚠️ Los gramos del menú son de pescado YA COCIDO — pésalo después de cocinarlo.",
   "Verduras y frutas": "Cocida: hervida o al vapor, en agua sin sal y sin aceite, troceada o en puré. ⚠️ Los gramos del menú son de verdura YA COCIDA — pésala después de cocerla. La FRUTA va cruda también aquí: la fruta no se cocina."
+ },
+ "como_se_prepara_el_plato": {
+  "_por_que": "⚠️ LO PREGUNTÓ ELENA Y NO SE CONTESTABA EN NINGÚN SITIO (17 de septiembre de 2026): «¿cómo se prepara esto cuando se da la comida cocinada? ¿Se tritura todo junto y se da modo puré? ¿Se tritura y se da como si fuese carne picada? ¿Se le echa todo entero?». Había texto de cada alimento y de cada categoría, y ninguno del PLATO — que es lo que tiene delante quien va a cocinar. El registro es el del dueño: sin jerga y con algo que hacer.",
+  "crudo": {
+   "titulo": "Cómo se monta el plato",
+   "pasos": [
+    {
+     "titulo": "No se tritura",
+     "texto": "La carne va en trozos, no picada: masticar le da trabajo a la mandíbula y le limpia los dientes. Los trozos, del tamaño de un bocado suyo — un perro grande puede con una pieza entera."
+    },
+    {
+     "titulo": "El hueso carnoso va entero y crudo",
+     "texto": "Nunca picado ni cocido. Es la pieza que roe, y de ahí sale el calcio."
+    },
+    {
+     "titulo": "La verdura sí, muy picada o triturada",
+     "texto": "Es lo único que conviene romper: un perro no abre la fibra vegetal él solo, y entera le pasa de largo. Picada muy fina o pasada por la batidora."
+    },
+    {
+     "titulo": "Se puede mezclar todo o darlo por separado",
+     "texto": "Da igual para la nutrición. Muchos perros comen mejor si el hueso va aparte y con calma."
+    },
+    {
+     "titulo": "Los botes de vitaminas, por encima al final",
+     "texto": "Justo antes de servir, mezclados con la comida para que no se queden en el fondo."
+    },
+    {
+     "titulo": "A temperatura de nevera o de la cocina",
+     "texto": "Sácalo un rato antes si viene del congelador. Nunca en el microondas: calienta a trozos y el hueso se cocina."
+    }
+   ]
+  },
+  "cocinado": {
+   "titulo": "Cómo se cocina y se monta el plato",
+   "pasos": [
+    {
+     "titulo": "Todo hervido o al vapor, en agua y nada más",
+     "texto": "Sin sal, sin aceite, sin ajo ni cebolla, sin caldo ni pastilla. El agua de la cocción se tira."
+    },
+    {
+     "titulo": "Cada cosa a su ritmo, y luego se junta",
+     "texto": "La verdura y el pescado se hacen en unos minutos y la carne tarda más, así que lo más cómodo es cocer por separado y mezclar al final. En la misma olla también vale: lo que importa es que nada quede crudo por dentro."
+    },
+    {
+     "titulo": "Ni puré ni picadillo: en trozos",
+     "texto": "No hace falta triturar nada, y un puré no aporta nada. La carne cocida se deshace sola en tiras o en tacos. La única que sí conviene triturar o picar muy fina es la VERDURA, por lo mismo que en crudo."
+    },
+    {
+     "titulo": "El hueso se quita después de cocer, y se tira",
+     "texto": "Si cueces un muslo o un jarrete, lo deshuesas ya cocido y el hueso va a la basura entero. Cocido astilla: no se le da nunca, ni para roer."
+    },
+    {
+     "titulo": "⚠️ Los botes de vitaminas se echan al final, con la comida ya FRÍA",
+     "texto": "No los cuezas con la comida ni los eches en caliente: el calor se lleva parte de lo que llevan dentro, y entonces el menú deja de cuadrar sin que se note. Espera a que esté templado y mézclalos por encima."
+    },
+    {
+     "titulo": "⚠️ Se pesa DESPUÉS de cocinar",
+     "texto": "Los gramos del menú son de comida ya cocinada. La lista de la compra sí te da el peso crudo, que es lo que pides en la tienda — son dos números distintos para lo mismo y cada uno está donde hace falta."
+    },
+    {
+     "titulo": "Se deja enfriar antes de dárselo",
+     "texto": "Templado, nunca caliente. Y lo que sobre, a la nevera en cuanto se enfríe: tres días como mucho, o al congelador en raciones."
+    }
+   ]
+  }
  }
 }

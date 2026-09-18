@@ -256,6 +256,20 @@
    "endpoint": "/alimentos",
    "camino": "documentacion.para_que_es_bueno",
    "dato_del_motor": "documentacion_para_el_dueno.json"
+  },
+  {
+   "respaldo": "COMO_SE_PREPARA_EL_PLATO_RESPALDO",
+   "que_es": "Cómo se monta el plato entero en cada modo: qué se tritura, qué no, cuándo entran los botes de vitaminas y cuándo se pesa",
+   "endpoint": "/alimentos",
+   "camino": "como_se_prepara_el_plato",
+   "dato_del_motor": "como_se_da_cada_alimento.json"
+  },
+  {
+   "respaldo": "CUANTO_CRUDO_HACE_FALTA_RESPALDO",
+   "que_es": "Cuánto CRUDO hay que comprar para los gramos cocidos de cada ficha, derivado del agua de las dos filas. Va dentro de cada alimento",
+   "endpoint": "/alimentos",
+   "camino": "pantallas[].grupos[].cuanto_crudo_hace_falta",
+   "dato_del_motor": "alimentos_v3_final.json (humedad_g_100g y humedad_crudo_g_100g)"
   }
  ],
  "de_la_app_a_proposito": [

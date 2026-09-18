@@ -15353,7 +15353,9 @@
    "yodo": "Ninguna de las tres lo publica para este alimento: USDA no publica yodo de NADA, y la fila de la fuente que manda no trae la columna o la deja sin cifra. Se queda en hueco DECLARADO y no en cero: el yodo es uno de los cinco topes crónicos, y un cero mudo aflojaría el techo en vez de apretarlo.",
    "vitA": "La vitamina A tiene CONFLICTO DE CONVENIO declarado en `fuentes_de_composicion.json`: las tres fuentes usan convenios distintos del β-caroteno y ninguno es el 4:1 que FEDIAF define para el perro, así que `auditar_composicion.py` no la toca en ninguna ficha. Queda en hueco hasta que se aplique el convenio de FEDIAF.",
    "purinas": "Ninguna de las tres bases de composición publica purinas: las del catálogo salen de una tabla japonesa aparte (ver `purinas_fuente` en las fichas que la tienen), y esa tabla no se ha consultado todavía para estos cinco alimentos. Hueco declarado."
-  }
+  },
+  "humedad_crudo_g_100g": 12.5,
+  "humedad_crudo_fuente": "ciqual:9100 · Riz blanc, cru"
  },
  {
   "nombre": "Arroz integral cocido",
@@ -15476,7 +15478,9 @@
    "vitA": "La vitamina A tiene CONFLICTO DE CONVENIO declarado en `fuentes_de_composicion.json`: las tres fuentes usan convenios distintos del β-caroteno y ninguno es el 4:1 que FEDIAF define para el perro, así que `auditar_composicion.py` no la toca en ninguna ficha. Queda en hueco hasta que se aplique el convenio de FEDIAF.",
    "purinas": "Ninguna de las tres bases de composición publica purinas: las del catálogo salen de una tabla japonesa aparte (ver `purinas_fuente` en las fichas que la tienen), y esa tabla no se ha consultado todavía para estos cinco alimentos. Hueco declarado."
   },
-  "nota_datos": "⚠️ CÓMO SE COCINA LA FILA DE LA QUE SALEN ESTAS CIFRAS, que no es un detalle. Las filas cocidas de CIQUAL son de alimento hervido en AGUA ABUNDANTE Y ESCURRIDO, y eso se lee en sus propios números: su arroz blanco cocido declara 0,13 g de cenizas contra 0,41 de la fila de USDA, y en materia seca conserva el 43 % del potasio, el 29 % del hierro y el 41 % del zinc de su fila cruda. USDA cuece por ABSORCIÓN, sin tirar agua, y conserva casi todo. Las dos son honestas y describen dos platos distintos. || El cloruro (3,69 mg) de CIQUAL conserva el 13 % de su fila cruda en materia seca. Se queda: el cloruro tiene MÍNIMO en FEDIAF y quedarse corto es el lado seguro. || La NIACINA merece una línea aparte porque las tres fuentes están muy separadas y nuestra cifra (1,3, de BEDCA) es la de en medio: `ciqual:9103` da 0,25 y **su propia fila cruda declara «< 0,05»**, o sea un límite de detección y no una cifra, cuando el grano entero lleva 5-6 mg; y `usda:169704` da 2,561. Además BEDCA publica «equivalentes de niacina totales» y USDA la preformada, que es un conflicto de convenio ya declarado en `fuentes_de_composicion.json`."
+  "nota_datos": "⚠️ CÓMO SE COCINA LA FILA DE LA QUE SALEN ESTAS CIFRAS, que no es un detalle. Las filas cocidas de CIQUAL son de alimento hervido en AGUA ABUNDANTE Y ESCURRIDO, y eso se lee en sus propios números: su arroz blanco cocido declara 0,13 g de cenizas contra 0,41 de la fila de USDA, y en materia seca conserva el 43 % del potasio, el 29 % del hierro y el 41 % del zinc de su fila cruda. USDA cuece por ABSORCIÓN, sin tirar agua, y conserva casi todo. Las dos son honestas y describen dos platos distintos. || El cloruro (3,69 mg) de CIQUAL conserva el 13 % de su fila cruda en materia seca. Se queda: el cloruro tiene MÍNIMO en FEDIAF y quedarse corto es el lado seguro. || La NIACINA merece una línea aparte porque las tres fuentes están muy separadas y nuestra cifra (1,3, de BEDCA) es la de en medio: `ciqual:9103` da 0,25 y **su propia fila cruda declara «< 0,05»**, o sea un límite de detección y no una cifra, cuando el grano entero lleva 5-6 mg; y `usda:169704` da 2,561. Además BEDCA publica «equivalentes de niacina totales» y USDA la preformada, que es un conflicto de convenio ya declarado en `fuentes_de_composicion.json`.",
+  "humedad_crudo_g_100g": 12.6,
+  "humedad_crudo_fuente": "ciqual:9102 · Riz complet, cru"
  },
  {
   "nombre": "Patata cocida",
@@ -15599,7 +15603,9 @@
    "vitA": "La vitamina A tiene CONFLICTO DE CONVENIO declarado en `fuentes_de_composicion.json`: las tres fuentes usan convenios distintos del β-caroteno y ninguno es el 4:1 que FEDIAF define para el perro, así que `auditar_composicion.py` no la toca en ninguna ficha. Queda en hueco hasta que se aplique el convenio de FEDIAF.",
    "purinas": "Ninguna de las tres bases de composición publica purinas: las del catálogo salen de una tabla japonesa aparte (ver `purinas_fuente` en las fichas que la tienen), y esa tabla no se ha consultado todavía para estos cinco alimentos. Hueco declarado."
   },
-  "nota_datos": "⚠️ CÓMO SE COCINA LA FILA DE LA QUE SALEN ESTAS CIFRAS, que no es un detalle. Las filas cocidas de CIQUAL son de alimento hervido en AGUA ABUNDANTE Y ESCURRIDO, y eso se lee en sus propios números: su arroz blanco cocido declara 0,13 g de cenizas contra 0,41 de la fila de USDA, y en materia seca conserva el 43 % del potasio, el 29 % del hierro y el 41 % del zinc de su fila cruda. USDA cuece por ABSORCIÓN, sin tirar agua, y conserva casi todo. Las dos son honestas y describen dos platos distintos. || El linolénico (0,011 g) de CIQUAL conserva el 20 % de su fila cruda en materia seca. Se queda: en adulto el linolénico no tiene requerimiento absoluto en FEDIAF, y quedarse corto es el lado seguro. || La PROTEÍNA es de BEDCA (2,38 g) y es un 39 % más alta que la de CIQUAL (1,8) y la de USDA (1,71); como el aminograma se transfiere POR GRAMO DE NUESTRA PROTEÍNA, esa diferencia viaja a los doce aminoácidos. Los doce suman el 45 % de la proteína, dentro de la banda 25-85 % de `UNIDADES.md`."
+  "nota_datos": "⚠️ CÓMO SE COCINA LA FILA DE LA QUE SALEN ESTAS CIFRAS, que no es un detalle. Las filas cocidas de CIQUAL son de alimento hervido en AGUA ABUNDANTE Y ESCURRIDO, y eso se lee en sus propios números: su arroz blanco cocido declara 0,13 g de cenizas contra 0,41 de la fila de USDA, y en materia seca conserva el 43 % del potasio, el 29 % del hierro y el 41 % del zinc de su fila cruda. USDA cuece por ABSORCIÓN, sin tirar agua, y conserva casi todo. Las dos son honestas y describen dos platos distintos. || El linolénico (0,011 g) de CIQUAL conserva el 20 % de su fila cruda en materia seca. Se queda: en adulto el linolénico no tiene requerimiento absoluto en FEDIAF, y quedarse corto es el lado seguro. || La PROTEÍNA es de BEDCA (2,38 g) y es un 39 % más alta que la de CIQUAL (1,8) y la de USDA (1,71); como el aminograma se transfiere POR GRAMO DE NUESTRA PROTEÍNA, esa diferencia viaja a los doce aminoácidos. Los doce suman el 45 % de la proteína, dentro de la banda 25-85 % de `UNIDADES.md`.",
+  "humedad_crudo_g_100g": 79.0,
+  "humedad_crudo_fuente": "ciqual:4008 · Pomme de terre, sans peau, crue"
  },
  {
   "nombre": "Copos de avena cocidos",
@@ -15722,7 +15728,9 @@
    "vitA": "La vitamina A tiene CONFLICTO DE CONVENIO declarado en `fuentes_de_composicion.json`: las tres fuentes usan convenios distintos del β-caroteno y ninguno es el 4:1 que FEDIAF define para el perro, así que `auditar_composicion.py` no la toca en ninguna ficha. Queda en hueco hasta que se aplique el convenio de FEDIAF.",
    "purinas": "Ninguna de las tres bases de composición publica purinas: las del catálogo salen de una tabla japonesa aparte (ver `purinas_fuente` en las fichas que la tienen), y esa tabla no se ha consultado todavía para estos cinco alimentos. Hueco declarado.",
    "cloruro": "El cloruro SOLO lo publica CIQUAL de las tres bases (así está declarado en `fuentes_de_composicion.json`), y su fila `ciqual:9313` lo deja sin cifra. BEDCA no tiene ninguna fila de copos de avena cocidos y USDA no publica cloruro de nada. Hueco declarado, no cero: el cloruro tiene MÍNIMO en FEDIAF y un cero mudo lo daría por no aportado igual, pero sin dejar constancia de que se miró."
-  }
+  },
+  "humedad_crudo_g_100g": 10.1,
+  "humedad_crudo_fuente": "ciqual:9311 · Flocon d'avoine"
  },
  {
   "nombre": "Quinoa cocida",
@@ -15845,7 +15853,9 @@
    "yodo": "Ninguna de las tres lo publica para este alimento: USDA no publica yodo de NADA, y la fila de la fuente que manda no trae la columna o la deja sin cifra. Se queda en hueco DECLARADO y no en cero: el yodo es uno de los cinco topes crónicos, y un cero mudo aflojaría el techo en vez de apretarlo.",
    "vitA": "La vitamina A tiene CONFLICTO DE CONVENIO declarado en `fuentes_de_composicion.json`: las tres fuentes usan convenios distintos del β-caroteno y ninguno es el 4:1 que FEDIAF define para el perro, así que `auditar_composicion.py` no la toca en ninguna ficha. Queda en hueco hasta que se aplique el convenio de FEDIAF.",
    "purinas": "Ninguna de las tres bases de composición publica purinas: las del catálogo salen de una tabla japonesa aparte (ver `purinas_fuente` en las fichas que la tienen), y esa tabla no se ha consultado todavía para estos cinco alimentos. Hueco declarado."
-  }
+  },
+  "humedad_crudo_g_100g": 13.3,
+  "humedad_crudo_fuente": "ciqual:9340 · Quinoa, cru"
  },
  {
   "nombre": "Jarrete de ternera cocido",
@@ -15963,7 +15973,9 @@
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-17: ciqual:6581 · «Veau, jarret, braisé ou bouilli» · columna «Fibres alimentaires (g/100 g)» = 0.0 g. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
   },
   "humedad_g_100g": 56.7,
-  "humedad_fuente": "ciqual:6581 · «Veau, jarret, braisé ou bouilli» · columna «Eau (g/100 g)» = 56,7"
+  "humedad_fuente": "ciqual:6581 · «Veau, jarret, braisé ou bouilli» · columna «Eau (g/100 g)» = 56,7",
+  "humedad_crudo_g_100g": 75.4,
+  "humedad_crudo_fuente": "ciqual:6583 · Veau, jarret, cru"
  },
  {
   "nombre": "Vaca para guisar cocida",
@@ -22531,7 +22543,9 @@
   },
   "energia": 130.0,
   "humedad_g_100g": 68.98,
-  "humedad_fuente": "usda:172006 · Fish, tuna, yellowfin, fresh, cooked, dry heat"
+  "humedad_fuente": "usda:172006 · Fish, tuna, yellowfin, fresh, cooked, dry heat",
+  "humedad_crudo_g_100g": 74.03,
+  "humedad_crudo_fuente": "usda:175159 · Fish, tuna, fresh, yellowfin, raw"
  },
  {
   "nombre": "Cerdo cocido",
@@ -22646,7 +22660,10 @@
   },
   "energia": 205.0,
   "humedad_g_100g": 59.3,
-  "humedad_fuente": "ciqual:28205 · Porc, viande, cuite (aliment moyen)"
+  "humedad_fuente": "ciqual:28205 · Porc, viande, cuite (aliment moyen)",
+  "humedad_crudo_g_100g": 67.7,
+  "humedad_crudo_fuente": "ciqual:28003 · Porc, longe, crue",
+  "humedad_crudo_aproximada": "la fila cocida es la MEDIA DE CORTES de cerdo y CIQUAL no publica una cruda equivalente: se compara con el lomo crudo, que es el corte magro de esa media"
  },
  {
   "nombre": "Dorada cocida",
@@ -22986,7 +23003,10 @@
   },
   "energia": 169.0,
   "humedad_g_100g": 63.7,
-  "humedad_fuente": "ciqual:6564 · Veau, viande, cuite (aliment moyen)"
+  "humedad_fuente": "ciqual:6564 · Veau, viande, cuite (aliment moyen)",
+  "humedad_crudo_g_100g": 74.9,
+  "humedad_crudo_fuente": "ciqual:6560 · Veau, épaule, crue",
+  "humedad_crudo_aproximada": "la fila cocida es la MEDIA DE CORTES de ternera y CIQUAL no publica una cruda equivalente: se compara con la espaldilla cruda"
  },
  {
   "nombre": "Solomillo de vaca cocido",
@@ -23100,7 +23120,10 @@
   },
   "energia": 165.86,
   "humedad_g_100g": 64.0,
-  "humedad_fuente": "bedca:996 · Vaca/buey, solomillo, a la plancha"
+  "humedad_fuente": "bedca:996 · Vaca/buey, solomillo, a la plancha",
+  "humedad_crudo_g_100g": 75.0,
+  "humedad_crudo_fuente": "bedca:1029 · Ternera, solomillo, sin grasa, crudo",
+  "humedad_crudo_aproximada": "la fila cocida es de VACA O BUEY y la cruda es de TERNERA: el mismo corte en un animal más joven"
  },
  {
   "nombre": "Riñón de vaca cocido",
