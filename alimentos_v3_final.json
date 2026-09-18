@@ -12391,7 +12391,8 @@
       "taurina": "etiqueta:napfcheck_novomineral_proleber · «Taurin: 30.000 mg» /kg · 3000 mg/100 g · 2026-09-15",
       "tiamina": "etiqueta:napfcheck_novomineral_proleber · «Vitamin B1 (als Thiaminmononitrat): 200 mg» /kg · 20 × 0,81 → 16,2 mg · 2026-09-15",
       "vitB6": "etiqueta:napfcheck_novomineral_proleber · «Vitamin B6 (als Pyridoxinhydrochlorid): 100 mg» /kg · 10 × 0,82 → 8,2 mg · 2026-09-15"
-    }
+    },
+    "tipo": "Suplemento"
   },
   {
     "nombre": "astoral MultiVital BARF",
@@ -12493,7 +12494,8 @@
       "tiamina": "etiqueta:almapharm_astoral_multivital_barf · «Vitamin B1 (3a821) 500 mg» /kg (mononitrato) · 50 × 0,81 → 40,5 mg · 2026-09-15",
       "vitB6": "etiqueta:almapharm_astoral_multivital_barf · «Vitamin B6 / Pyridoxinhydrochlorid (3a831) 200 mg» /kg · 20 × 0,82 → 16,4 mg · 2026-09-15",
       "vitE": "etiqueta:almapharm_astoral_multivital_barf · «Vitamin E / rrr-alpha-Tocopherylacetat (3a700) 5000 mg» /kg · 500 mg/100 g × 1,36 UI/mg = 680 UI ÷ 1,49 → 456,4 mg · 2026-09-15"
-    }
+    },
+    "tipo": "Suplemento"
   },
   {
     "nombre": "V-INTEGRA Perro Adulto",
@@ -12593,7 +12595,8 @@
       "humedad_g_100g": "etiqueta:vintegra_cane_adulto · «umidità 1.9 %» · 2026-09-15",
       "taurina": "etiqueta:vintegra_cane_adulto · «Taurina 25.000 mg» /kg · 2500 mg/100 g · 2026-09-15"
     },
-    "humedad_fuente": "etiqueta del fabricante · Etiqueta, componenti analitici: «umidita 1.9%»."
+    "humedad_fuente": "etiqueta del fabricante · Etiqueta, componenti analitici: «umidita 1.9%».",
+    "tipo": "Suplemento"
   },
   {
     "nombre": "Sal común (cloruro sódico)",
@@ -12687,7 +12690,8 @@
     "lcarnitina_fuente": "L-carnitina = 0: compuesto quimico inorganico puro, sin materia organica.",
     "humedad_g_100g": 0.0,
     "humedad_fuente": "composicion quimica · ",
-    "composicion_fuente": {}
+    "composicion_fuente": {},
+    "tipo": "Alimento"
   },
   {
     "nombre": "Yoduro potásico (comprimidos 200 µg)",
@@ -12762,7 +12766,8 @@
     "taurina_fuente": "Taurina = 0: compuesto quimico inorganico puro, sin materia organica.",
     "lcarnitina_fuente": "L-carnitina = 0: compuesto quimico inorganico puro, sin materia organica.",
     "humedad_hueco": "14-sep-2026, buscar_humedad.py: no tiene fila en BEDCA, CIQUAL ni USDA (es Yodo, mandato 5: la etiqueta del fabricante), y la etiqueta no declara humedad. Köber 2017 tampoco la mide: su Tabla 1 es de hueso y cartílago.",
-    "composicion_fuente": {}
+    "composicion_fuente": {},
+    "tipo": "Suplemento"
   },
   {
     "nombre": "Nutratop Vitamínico-Mineral 7:1",
@@ -12864,7 +12869,8 @@
       "fibra": "etiqueta:nutratop_cvm_7_1 · «Fibra Bruta 4.20%» · 4,2 g/100 g · 2026-09-15",
       "grasa": "etiqueta:nutratop_cvm_7_1 · «Aceites y Grasas Brutas 1,20%» · 1,2 g/100 g · 2026-09-15",
       "proteina": "etiqueta:nutratop_cvm_7_1 · «Proteína Bruta 17,00%» · 17 g/100 g · 2026-09-15"
-    }
+    },
+    "tipo": "Suplemento"
   },
   {
     "nombre": "Molleja de pollo",
@@ -12960,7 +12966,8 @@
     },
     "composicion_fuente": {
       "energia": "usda:171456 · «Chicken, gizzard, all classes, raw» · columna «Energy» = 94 KCAL → 94 kcal · 2026-09-18"
-    }
+    },
+    "tipo": "Alimento"
   },
   {
     "nombre": "Molleja de pavo",
@@ -13047,7 +13054,8 @@
     },
     "composicion_fuente": {
       "energia": "usda:171085 · «Turkey, gizzard, all classes, raw» · columna «Energy» = 111 KCAL → 111 kcal · 2026-09-18"
-    }
+    },
+    "tipo": "Alimento"
   },
   {
     "nombre": "Pollo pechuga sin piel",
@@ -13147,7 +13155,8 @@
     "cero_verificado": {
       "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:171077 · «Chicken, broiler or fryers, breast, skinless, boneless, meat only, raw» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
       "vitD": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:171077 · «Chicken, broiler or fryers, breast, skinless, boneless, meat only, raw» · columna «Vitamin D (D2 + D3)» = 0.0 UG. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
-    }
+    },
+    "tipo": "Alimento"
   },
   {
     "nombre": "Pollo muslo sin piel",
@@ -13247,7 +13256,8 @@
     "cero_verificado": {
       "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:173627 · «Chicken, broilers or fryers, dark meat, thigh, meat only, raw» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
       "vitD": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:173627 · «Chicken, broilers or fryers, dark meat, thigh, meat only, raw» · columna «Vitamin D (D2 + D3)» = 0.0 UG. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
-    }
+    },
+    "tipo": "Alimento"
   },
   {
     "nombre": "Hígado de cordero",
@@ -13343,7 +13353,8 @@
     },
     "cero_verificado": {
       "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: ciqual:40102 · «Foie, agneau, cru» · columna «Fibres alimentaires (g/100 g)» = 0.0 g. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
-    }
+    },
+    "tipo": "Alimento"
   },
   {
     "nombre": "Corazón de conejo",
@@ -13452,7 +13463,8 @@
     "hueco_verificado": {
       "linoleico": "Esta ficha NO DECLARA NINGUNA FUENTE: su composición es un proxy declarado en su propia `nota_datos`, y ninguna de las tres bases publica corazón de conejo. Sus ácidos grasos son un hueco, no un cero. ⚠️ 18-sep-2026: salió como SOSPECHOSO por lo mismo que el pavo.",
       "linolenico": "Esta ficha NO DECLARA NINGUNA FUENTE: su composición es un proxy declarado en su propia `nota_datos`, y ninguna de las tres bases publica corazón de conejo. Sus ácidos grasos son un hueco, no un cero. ⚠️ 18-sep-2026: salió como SOSPECHOSO por lo mismo que el pavo."
-    }
+    },
+    "tipo": "Alimento"
   },
   {
     "nombre": "V-INTEGRA Cachorro",
@@ -13552,7 +13564,8 @@
       "humedad_g_100g": "etiqueta:vintegra_cane_cucciolo · «umidità 1.8 %» · 2026-09-15",
       "taurina": "etiqueta:vintegra_cane_cucciolo · «Taurina 39.960 mg» /kg · 3996 mg/100 g · 2026-09-15"
     },
-    "humedad_fuente": "etiqueta del fabricante · Etiqueta, componenti analitici: «umidita 1.8%»."
+    "humedad_fuente": "etiqueta del fabricante · Etiqueta, componenti analitici: «umidita 1.8%».",
+    "tipo": "Suplemento"
   },
   {
     "nombre": "V-INTEGRA Senior",
@@ -13652,7 +13665,8 @@
       "humedad_g_100g": "etiqueta:vintegra_cane_anziano · «umidità 2.5 %» · 2026-09-15",
       "taurina": "etiqueta:vintegra_cane_anziano · «taurina 40.000 mg» /kg · 4000 mg/100 g · 2026-09-15"
     },
-    "humedad_fuente": "etiqueta del fabricante · Etiqueta, componenti analitici: «umidita 2.5%»."
+    "humedad_fuente": "etiqueta del fabricante · Etiqueta, componenti analitici: «umidita 2.5%».",
+    "tipo": "Suplemento"
   },
   {
     "nombre": "V-INTEGRA Epato",
@@ -13756,7 +13770,8 @@
       "proteina": "etiqueta:vintegra_epato · «proteina grezza 7,0 %» · 7,0 g/100 g · 2026-09-15",
       "taurina": "etiqueta:vintegra_epato · «taurina 40.000 mg» /kg · 4000 mg/100 g · 2026-09-15"
     },
-    "humedad_fuente": "etiqueta del fabricante · Etiqueta, componenti analitici: «umidita 2.0%»."
+    "humedad_fuente": "etiqueta del fabricante · Etiqueta, componenti analitici: «umidita 2.0%».",
+    "tipo": "Suplemento"
   },
   {
     "nombre": "V-INTEGRA Renal",
@@ -13856,7 +13871,8 @@
       "humedad_g_100g": "etiqueta:vintegra_renal · «umidità 2.3 %» · 2026-09-15",
       "taurina": "etiqueta:vintegra_renal · «Taurina 40.000 mg» /kg · 4000 mg/100 g · 2026-09-15"
     },
-    "humedad_fuente": "etiqueta del fabricante · Etiqueta, componenti analitici: «umidita 2.3%»."
+    "humedad_fuente": "etiqueta del fabricante · Etiqueta, componenti analitici: «umidita 2.3%».",
+    "tipo": "Suplemento"
   },
   {
     "nombre": "Pecho de ternera con hueso",
@@ -16376,7 +16392,8 @@
     },
     "energia": 20.0,
     "humedad_g_100g": 92.65,
-    "humedad_fuente": "usda:170401 · Chard, swiss, cooked, boiled, drained, without salt"
+    "humedad_fuente": "usda:170401 · Chard, swiss, cooked, boiled, drained, without salt",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Bacalao cocido",
@@ -16494,7 +16511,8 @@
     },
     "energia": 99.14,
     "humedad_g_100g": 76.3,
-    "humedad_fuente": "bedca:795 · Bacalao, fresco, al horno"
+    "humedad_fuente": "bedca:795 · Bacalao, fresco, al horno",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Bazo de cordero cocido",
@@ -16609,7 +16627,8 @@
     },
     "energia": 156.0,
     "humedad_g_100g": 66.38,
-    "humedad_fuente": "usda:174365 · Lamb, variety meats and by-products, spleen, cooked, braised"
+    "humedad_fuente": "usda:174365 · Lamb, variety meats and by-products, spleen, cooked, braised",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Bazo de vaca cocido",
@@ -16724,7 +16743,8 @@
     },
     "energia": 145.0,
     "humedad_g_100g": 69.98,
-    "humedad_fuente": "usda:170597 · Beef, variety meats and by-products, spleen, cooked, braised"
+    "humedad_fuente": "usda:170597 · Beef, variety meats and by-products, spleen, cooked, braised",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Brócoli cocido",
@@ -16840,7 +16860,8 @@
     },
     "energia": 23.5,
     "humedad_g_100g": 92.9,
-    "humedad_fuente": "ciqual:20302 · Brocoli, bouilli/cuit à l'eau, croquant"
+    "humedad_fuente": "ciqual:20302 · Brocoli, bouilli/cuit à l'eau, croquant",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Caballa cocida",
@@ -16955,7 +16976,8 @@
     },
     "energia": 262.0,
     "humedad_g_100g": 53.27,
-    "humedad_fuente": "usda:175120 · Fish, mackerel, Atlantic, cooked, dry heat"
+    "humedad_fuente": "usda:175120 · Fish, mackerel, Atlantic, cooked, dry heat",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Calabacín cocido",
@@ -17068,7 +17090,8 @@
     },
     "energia": 23.0,
     "humedad_g_100g": 93.1,
-    "humedad_fuente": "ciqual:20313 · Courgette, pulpe et peau, rôtie/cuite au four"
+    "humedad_fuente": "ciqual:20313 · Courgette, pulpe et peau, rôtie/cuite au four",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Calabaza cocida",
@@ -17185,7 +17208,8 @@
     },
     "energia": 12.3,
     "humedad_g_100g": 96.5,
-    "humedad_fuente": "bedca:1183 · Calabaza, hervida"
+    "humedad_fuente": "bedca:1183 · Calabaza, hervida",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Calamar cocido",
@@ -17300,7 +17324,8 @@
     },
     "energia": 149.0,
     "humedad_g_100g": 61.1,
-    "humedad_fuente": "ciqual:10037 · Calmar ou calamar ou encornet, bouilli/cuit à l'eau"
+    "humedad_fuente": "ciqual:10037 · Calmar ou calamar ou encornet, bouilli/cuit à l'eau",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Cardo cocido",
@@ -17415,7 +17440,8 @@
     },
     "energia": 20.0,
     "humedad_g_100g": 93.46,
-    "humedad_fuente": "usda:169338 · Cardoon, cooked, boiled, drained, with salt"
+    "humedad_fuente": "usda:169338 · Cardoon, cooked, boiled, drained, with salt",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Cerebro de ternera cocido",
@@ -17531,7 +17557,8 @@
     },
     "energia": 136.0,
     "humedad_g_100g": 76.89,
-    "humedad_fuente": "usda:174352 · Veal, variety meats and by-products, brain, cooked, braised"
+    "humedad_fuente": "usda:174352 · Veal, variety meats and by-products, brain, cooked, braised",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Champiñón cocido",
@@ -17646,7 +17673,8 @@
     },
     "energia": 28.0,
     "humedad_g_100g": 91.08,
-    "humedad_fuente": "usda:169252 · Mushrooms, white, cooked, boiled, drained, without salt"
+    "humedad_fuente": "usda:169252 · Mushrooms, white, cooked, boiled, drained, without salt",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Col lombarda cocida",
@@ -17762,7 +17790,8 @@
     },
     "energia": 17.89,
     "humedad_g_100g": 91.4,
-    "humedad_fuente": "bedca:1178 · Col lombarda, hervida"
+    "humedad_fuente": "bedca:1178 · Col lombarda, hervida",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Coles de Bruselas cocida",
@@ -17877,7 +17906,8 @@
     },
     "energia": 36.0,
     "humedad_g_100g": 88.9,
-    "humedad_fuente": "usda:169971 · Brussels sprouts, cooked, boiled, drained, without salt"
+    "humedad_fuente": "usda:169971 · Brussels sprouts, cooked, boiled, drained, without salt",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Coliflor cocida",
@@ -17992,7 +18022,8 @@
     },
     "energia": 23.0,
     "humedad_g_100g": 93.0,
-    "humedad_fuente": "usda:170397 · Cauliflower, cooked, boiled, drained, without salt"
+    "humedad_fuente": "usda:170397 · Cauliflower, cooked, boiled, drained, without salt",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Conejo cocido",
@@ -18107,7 +18138,8 @@
     },
     "energia": 206.0,
     "humedad_g_100g": 58.82,
-    "humedad_fuente": "usda:174346 · Game meat, rabbit, domesticated, composite of cuts, cooked, stewed"
+    "humedad_fuente": "usda:174346 · Game meat, rabbit, domesticated, composite of cuts, cooked, stewed",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Corazón de cordero cocido",
@@ -18222,7 +18254,8 @@
     },
     "energia": 161.0,
     "humedad_g_100g": 66.65,
-    "humedad_fuente": "usda:174443 · Lamb, New Zealand, imported, heart, cooked, soaked and simmered"
+    "humedad_fuente": "usda:174443 · Lamb, New Zealand, imported, heart, cooked, soaked and simmered",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Corazón de pavo cocido",
@@ -18337,7 +18370,8 @@
     },
     "energia": 174.0,
     "humedad_g_100g": 67.15,
-    "humedad_fuente": "usda:171485 · Turkey, all classes, heart, cooked, simmered"
+    "humedad_fuente": "usda:171485 · Turkey, all classes, heart, cooked, simmered",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Corazón de pollo cocido",
@@ -18452,7 +18486,8 @@
     },
     "energia": 185.0,
     "humedad_g_100g": 64.85,
-    "humedad_fuente": "usda:171059 · Chicken, heart, all classes, cooked, simmered"
+    "humedad_fuente": "usda:171059 · Chicken, heart, all classes, cooked, simmered",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Corazón de vaca cocido",
@@ -18568,7 +18603,8 @@
     },
     "energia": 163.46,
     "humedad_g_100g": 65.0,
-    "humedad_fuente": "bedca:973 · Corazón, de vaca/buey, cocido"
+    "humedad_fuente": "bedca:973 · Corazón, de vaca/buey, cocido",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Espinaca cocida",
@@ -18683,7 +18719,8 @@
     },
     "energia": 23.0,
     "humedad_g_100g": 91.21,
-    "humedad_fuente": "usda:168463 · Spinach, cooked, boiled, drained, without salt"
+    "humedad_fuente": "usda:168463 · Spinach, cooked, boiled, drained, without salt",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Gallina (carne sin hueso) cocida",
@@ -18798,7 +18835,8 @@
     },
     "energia": 285.0,
     "humedad_g_100g": 53.07,
-    "humedad_fuente": "usda:172401 · Chicken, stewing, meat and skin, cooked, stewed"
+    "humedad_fuente": "usda:172401 · Chicken, stewing, meat and skin, cooked, stewed",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Hígado de cordero cocido",
@@ -18913,7 +18951,8 @@
     },
     "energia": 220.0,
     "humedad_g_100g": 56.67,
-    "humedad_fuente": "usda:172532 · Lamb, variety meats and by-products, liver, cooked, braised"
+    "humedad_fuente": "usda:172532 · Lamb, variety meats and by-products, liver, cooked, braised",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Hígado de pavo cocido",
@@ -19028,7 +19067,8 @@
     },
     "energia": 189.0,
     "humedad_g_100g": 63.99,
-    "humedad_fuente": "usda:171487 · Turkey, all classes, liver, cooked, simmered"
+    "humedad_fuente": "usda:171487 · Turkey, all classes, liver, cooked, simmered",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Hígado de pollo cocido",
@@ -19143,7 +19183,8 @@
     },
     "energia": 167.0,
     "humedad_g_100g": 66.81,
-    "humedad_fuente": "usda:171061 · Chicken, liver, all classes, cooked, simmered"
+    "humedad_fuente": "usda:171061 · Chicken, liver, all classes, cooked, simmered",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Hígado de vaca cocido",
@@ -19258,7 +19299,8 @@
     },
     "energia": 191.0,
     "humedad_g_100g": 58.81,
-    "humedad_fuente": "usda:168626 · Beef, variety meats and by-products, liver, cooked, braised"
+    "humedad_fuente": "usda:168626 · Beef, variety meats and by-products, liver, cooked, braised",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Judía verde cocida",
@@ -19373,7 +19415,8 @@
     },
     "energia": 35.0,
     "humedad_g_100g": 89.22,
-    "humedad_fuente": "usda:169141 · Beans, snap, green, cooked, boiled, drained, without salt"
+    "humedad_fuente": "usda:169141 · Beans, snap, green, cooked, boiled, drained, without salt",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Lengua de buey cocida",
@@ -19488,7 +19531,8 @@
     },
     "energia": 271.0,
     "humedad_g_100g": 56.95,
-    "humedad_fuente": "usda:174737 · Beef, New Zealand, imported, variety meats and by-products, tongue, cooked, boiled"
+    "humedad_fuente": "usda:174737 · Beef, New Zealand, imported, variety meats and by-products, tongue, cooked, boiled",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Lengua de cordero cocida",
@@ -19603,7 +19647,8 @@
     },
     "energia": 272.0,
     "humedad_g_100g": 58.74,
-    "humedad_fuente": "usda:172620 · Lamb, New Zealand, imported, tongue - swiss cut, cooked, soaked and simmered"
+    "humedad_fuente": "usda:172620 · Lamb, New Zealand, imported, tongue - swiss cut, cooked, soaked and simmered",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Lengua de ternera cocida",
@@ -19718,7 +19763,8 @@
     },
     "energia": 202.0,
     "humedad_g_100g": 64.08,
-    "humedad_fuente": "usda:174369 · Veal, variety meats and by-products, tongue, cooked, braised"
+    "humedad_fuente": "usda:174369 · Veal, variety meats and by-products, tongue, cooked, braised",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Lenguado cocido",
@@ -19834,7 +19880,8 @@
     },
     "energia": 73.47,
     "humedad_g_100g": 81.6,
-    "humedad_fuente": "bedca:820 · Lenguado, al horno"
+    "humedad_fuente": "bedca:820 · Lenguado, al horno",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Merluza cocida",
@@ -19949,7 +19996,8 @@
     },
     "energia": 112.0,
     "humedad_g_100g": 74.4,
-    "humedad_fuente": "ciqual:26120 · Merlu, cuit à l'étouffée"
+    "humedad_fuente": "ciqual:26120 · Merlu, cuit à l'étouffée",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Molleja de pavo cocida",
@@ -20064,7 +20112,8 @@
     },
     "energia": 155.0,
     "humedad_g_100g": 69.22,
-    "humedad_fuente": "usda:171483 · Turkey, all classes, gizzard, cooked, simmered"
+    "humedad_fuente": "usda:171483 · Turkey, all classes, gizzard, cooked, simmered",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Molleja de pollo cocida",
@@ -20179,7 +20228,8 @@
     },
     "energia": 154.0,
     "humedad_g_100g": 67.93,
-    "humedad_fuente": "usda:171457 · Chicken, gizzard, all classes, cooked, simmered"
+    "humedad_fuente": "usda:171457 · Chicken, gizzard, all classes, cooked, simmered",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Pato (carne sin hueso) cocido",
@@ -20292,7 +20342,8 @@
     },
     "energia": 178.0,
     "humedad_g_100g": 64.6,
-    "humedad_fuente": "usda:171113 · Duck, young duckling, domesticated, White Pekin, leg, meat only, bone in, cooked without skin, braised"
+    "humedad_fuente": "usda:171113 · Duck, young duckling, domesticated, White Pekin, leg, meat only, bone in, cooked without skin, braised",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Pavo muslo con piel cocido",
@@ -20407,7 +20458,8 @@
     },
     "energia": 208.0,
     "humedad_g_100g": 61.19,
-    "humedad_fuente": "usda:171494 · Turkey, all classes, leg, meat and skin, cooked, roasted"
+    "humedad_fuente": "usda:171494 · Turkey, all classes, leg, meat and skin, cooked, roasted",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Pavo pechuga con piel cocido",
@@ -20522,7 +20574,8 @@
     },
     "energia": 189.0,
     "humedad_g_100g": 63.22,
-    "humedad_fuente": "usda:171492 · Turkey, all classes, breast, meat and skin, cooked, roasted"
+    "humedad_fuente": "usda:171492 · Turkey, all classes, breast, meat and skin, cooked, roasted",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Pavo pechuga sin piel cocido",
@@ -20637,7 +20690,8 @@
     },
     "energia": 147.0,
     "humedad_g_100g": 67.88,
-    "humedad_fuente": "usda:171496 · Turkey, whole, breast, meat only, cooked, roasted"
+    "humedad_fuente": "usda:171496 · Turkey, whole, breast, meat only, cooked, roasted",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Perca cocida",
@@ -20752,7 +20806,8 @@
     },
     "energia": 117.0,
     "humedad_g_100g": 73.25,
-    "humedad_fuente": "usda:173679 · Fish, perch, mixed species, cooked, dry heat"
+    "humedad_fuente": "usda:173679 · Fish, perch, mixed species, cooked, dry heat",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Pimiento rojo cocido",
@@ -20867,7 +20922,8 @@
     },
     "energia": 28.0,
     "humedad_g_100g": 91.87,
-    "humedad_fuente": "usda:170110 · Peppers, sweet, red, cooked, boiled, drained, without salt"
+    "humedad_fuente": "usda:170110 · Peppers, sweet, red, cooked, boiled, drained, without salt",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Pollo ala con piel (sin hueso) cocido",
@@ -20982,7 +21038,8 @@
     },
     "energia": 249.0,
     "humedad_g_100g": 62.18,
-    "humedad_fuente": "usda:173631 · Chicken, broilers or fryers, wing, meat and skin, cooked, stewed"
+    "humedad_fuente": "usda:173631 · Chicken, broilers or fryers, wing, meat and skin, cooked, stewed",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Pollo muslo con piel cocido",
@@ -21097,7 +21154,8 @@
     },
     "energia": 229.0,
     "humedad_g_100g": 61.93,
-    "humedad_fuente": "usda:174498 · Chicken, broilers or fryers, dark meat, thigh, meat and skin, cooked, braised"
+    "humedad_fuente": "usda:174498 · Chicken, broilers or fryers, dark meat, thigh, meat and skin, cooked, braised",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Pollo muslo sin piel cocido",
@@ -21212,7 +21270,8 @@
     },
     "energia": 176.0,
     "humedad_g_100g": 66.87,
-    "humedad_fuente": "usda:172853 · Chicken, broilers or fryers, dark meat, thigh, meat only, cooked, braised"
+    "humedad_fuente": "usda:172853 · Chicken, broilers or fryers, dark meat, thigh, meat only, cooked, braised",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Pollo pechuga con piel cocido",
@@ -21327,7 +21386,8 @@
     },
     "energia": 184.0,
     "humedad_g_100g": 66.21,
-    "humedad_fuente": "usda:171076 · Chicken, broilers or fryers, breast, meat and skin, cooked, stewed"
+    "humedad_fuente": "usda:171076 · Chicken, broilers or fryers, breast, meat and skin, cooked, stewed",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Pollo pechuga sin piel cocido",
@@ -21442,7 +21502,8 @@
     },
     "energia": 157.0,
     "humedad_g_100g": 65.32,
-    "humedad_fuente": "usda:171140 · Chicken, broiler or fryers, breast, skinless, boneless, meat only, cooked, braised"
+    "humedad_fuente": "usda:171140 · Chicken, broiler or fryers, breast, skinless, boneless, meat only, cooked, braised",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Pulmón de cordero cocido",
@@ -21557,7 +21618,8 @@
     },
     "energia": 113.0,
     "humedad_g_100g": 75.83,
-    "humedad_fuente": "usda:174360 · Lamb, variety meats and by-products, lungs, cooked, braised"
+    "humedad_fuente": "usda:174360 · Lamb, variety meats and by-products, lungs, cooked, braised",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Pulmón de ternera cocido",
@@ -21672,7 +21734,8 @@
     },
     "energia": 104.0,
     "humedad_g_100g": 77.59,
-    "humedad_fuente": "usda:172536 · Veal, variety meats and by-products, lungs, cooked, braised"
+    "humedad_fuente": "usda:172536 · Veal, variety meats and by-products, lungs, cooked, braised",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Pulmón de vaca cocido",
@@ -21787,7 +21850,8 @@
     },
     "energia": 120.0,
     "humedad_g_100g": 76.4,
-    "humedad_fuente": "usda:168629 · Beef, variety meats and by-products, lungs, cooked, braised"
+    "humedad_fuente": "usda:168629 · Beef, variety meats and by-products, lungs, cooked, braised",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Repollo cocido",
@@ -21902,7 +21966,8 @@
     },
     "energia": 23.0,
     "humedad_g_100g": 92.57,
-    "humedad_fuente": "usda:169976 · Cabbage, cooked, boiled, drained, without salt"
+    "humedad_fuente": "usda:169976 · Cabbage, cooked, boiled, drained, without salt",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Riñón de cordero cocido",
@@ -22017,7 +22082,8 @@
     },
     "energia": 137.0,
     "humedad_g_100g": 70.45,
-    "humedad_fuente": "usda:174355 · Lamb, variety meats and by-products, kidneys, cooked, braised"
+    "humedad_fuente": "usda:174355 · Lamb, variety meats and by-products, kidneys, cooked, braised",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Salmón cocido",
@@ -22134,7 +22200,8 @@
     },
     "energia": 179.35,
     "humedad_g_100g": 68.8,
-    "humedad_fuente": "bedca:2628 · Salmón, plancha"
+    "humedad_fuente": "bedca:2628 · Salmón, plancha",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Timo de ternera cocido",
@@ -22249,7 +22316,8 @@
     },
     "energia": 125.0,
     "humedad_g_100g": 73.63,
-    "humedad_fuente": "usda:172543 · Veal, variety meats and by-products, thymus, cooked, braised"
+    "humedad_fuente": "usda:172543 · Veal, variety meats and by-products, thymus, cooked, braised",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Timo de vaca cocido",
@@ -22364,7 +22432,8 @@
     },
     "energia": 319.0,
     "humedad_g_100g": 52.83,
-    "humedad_fuente": "usda:170195 · Beef, variety meats and by-products, thymus, cooked, braised"
+    "humedad_fuente": "usda:170195 · Beef, variety meats and by-products, thymus, cooked, braised",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Zanahoria cocida",
@@ -22479,7 +22548,8 @@
     },
     "energia": 35.0,
     "humedad_g_100g": 90.17,
-    "humedad_fuente": "usda:169339 · Carrots, cooked, boiled, drained, with salt"
+    "humedad_fuente": "usda:169339 · Carrots, cooked, boiled, drained, with salt",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Atún claro cocido",
@@ -22596,7 +22666,8 @@
     "humedad_g_100g": 68.98,
     "humedad_fuente": "usda:172006 · Fish, tuna, yellowfin, fresh, cooked, dry heat",
     "humedad_crudo_g_100g": 74.03,
-    "humedad_crudo_fuente": "usda:175159 · Fish, tuna, fresh, yellowfin, raw"
+    "humedad_crudo_fuente": "usda:175159 · Fish, tuna, fresh, yellowfin, raw",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Cerdo cocido",
@@ -22716,7 +22787,8 @@
     "humedad_fuente": "ciqual:28205 · Porc, viande, cuite (aliment moyen)",
     "humedad_crudo_g_100g": 67.7,
     "humedad_crudo_fuente": "ciqual:28003 · Porc, longe, crue",
-    "humedad_crudo_aproximada": "la fila cocida es la MEDIA DE CORTES de cerdo y CIQUAL no publica una cruda equivalente: se compara con el lomo crudo, que es el corte magro de esa media"
+    "humedad_crudo_aproximada": "la fila cocida es la MEDIA DE CORTES de cerdo y CIQUAL no publica una cruda equivalente: se compara con el lomo crudo, que es el corte magro de esa media",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Dorada cocida",
@@ -22831,7 +22903,8 @@
     },
     "energia": 148.0,
     "humedad_g_100g": 68.8,
-    "humedad_fuente": "ciqual:27031 · Dorade (Daurade) royale, cuite au four"
+    "humedad_fuente": "ciqual:27031 · Dorade (Daurade) royale, cuite au four",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Pulpo cocido",
@@ -22946,7 +23019,8 @@
     },
     "energia": 164.0,
     "humedad_g_100g": 60.5,
-    "humedad_fuente": "usda:174249 · Mollusks, octopus, common, cooked, moist heat"
+    "humedad_fuente": "usda:174249 · Mollusks, octopus, common, cooked, moist heat",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Ternera cocida",
@@ -23063,7 +23137,8 @@
     "humedad_fuente": "ciqual:6564 · Veau, viande, cuite (aliment moyen)",
     "humedad_crudo_g_100g": 74.9,
     "humedad_crudo_fuente": "ciqual:6560 · Veau, épaule, crue",
-    "humedad_crudo_aproximada": "la fila cocida es la MEDIA DE CORTES de ternera y CIQUAL no publica una cruda equivalente: se compara con la espaldilla cruda"
+    "humedad_crudo_aproximada": "la fila cocida es la MEDIA DE CORTES de ternera y CIQUAL no publica una cruda equivalente: se compara con la espaldilla cruda",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Solomillo de vaca cocido",
@@ -23181,7 +23256,8 @@
     "humedad_fuente": "bedca:996 · Vaca/buey, solomillo, a la plancha",
     "humedad_crudo_g_100g": 75.0,
     "humedad_crudo_fuente": "bedca:1029 · Ternera, solomillo, sin grasa, crudo",
-    "humedad_crudo_aproximada": "la fila cocida es de VACA O BUEY y la cruda es de TERNERA: el mismo corte en un animal más joven"
+    "humedad_crudo_aproximada": "la fila cocida es de VACA O BUEY y la cruda es de TERNERA: el mismo corte en un animal más joven",
+    "tipo": "Alimento"
   },
   {
     "nombre": "Riñón de vaca cocido",

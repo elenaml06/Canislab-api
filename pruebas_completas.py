@@ -3786,6 +3786,44 @@ else:
                       f"datos: {sorted(_arreglados)}. Quítalos de _HUECOS_YA_CONOCIDOS_b19 "
                       f"y de DATOS_QUE_FALTAN.md, o dejan de proteger de una recaída.")
 
+
+# --- 19-bis. Toda ficha dice si es ALIMENTO o SUPLEMENTO --------------------
+#
+# ⚠️ POR QUÉ, Y LO ENCONTRÓ UNA PRUEBA DE LA APP MEDIO CIEGA (18 de septiembre
+# de 2026). `catalogo-app-y-motor.spec.js` comprueba que la app conozca todos
+# los alimentos del motor -- si no, salen como «Extras» con la instrucción de
+# los aceites y las semillas. Para saber cuáles mirar filtra por
+# `tipo == "Alimento"`... y **76 fichas no declaraban `tipo` en absoluto**, 60
+# de ellas las cocidas. O sea que la prueba pasaba por no mirarlas, no porque
+# la app las conociera, y de las 72 cocidas solo vigilaba 4.
+#
+# El campo no se escribe a mano: se DERIVA de la categoría contra
+# `constructor.CAT_SUPLEMENTO`, que es la lista que el motor ya usa para todo lo
+# demás. Y se comprueba en las dos direcciones, porque una ficha con el tipo
+# equivocado es peor que una sin tipo: cuenta en el sitio que no es.
+from constructor import CAT_SUPLEMENTO as _SUP_b19
+import os as _os_b19, json as _js_b19
+_RAIZ_b19 = _os_b19.path.dirname(_os_b19.path.abspath(__file__))
+_sin_tipo_b19, _mal_tipo_b19 = [], []
+for _f_b19 in _js_b19.load(open(_os_b19.path.join(_RAIZ_b19, "alimentos_v3_final.json"),
+                                encoding="utf-8")):
+    _esp_b19 = "Suplemento" if _f_b19.get("categoria") in set(_SUP_b19) else "Alimento"
+    if not _f_b19.get("tipo"):
+        _sin_tipo_b19.append(_f_b19["nombre"])
+    elif _f_b19["tipo"] != _esp_b19:
+        _mal_tipo_b19.append(f"{_f_b19['nombre']}: dice «{_f_b19['tipo']}» y su categoría "
+                             f"«{_f_b19.get('categoria')}» es de {_esp_b19}")
+if _sin_tipo_b19:
+    fallos.append(f"BLOQUE19: {len(_sin_tipo_b19)} fichas no dicen si son ALIMENTO o SUPLEMENTO: "
+                  f"{_sin_tipo_b19[:6]}. No es cosmético -- `catalogo-app-y-motor.spec.js` filtra "
+                  f"por ese campo para saber qué alimentos tiene que conocer la app, así que una "
+                  f"ficha sin él no la vigila NADIE y saldría como «Extras» con la instrucción de "
+                  f"los aceites")
+if _mal_tipo_b19:
+    fallos.append(f"BLOQUE19: {len(_mal_tipo_b19)} fichas declaran un tipo que no cuadra con su "
+                  f"categoría: {_mal_tipo_b19[:4]}")
+print(f"  tipo de cada ficha: {len(_sin_tipo_b19)} sin declarar, {len(_mal_tipo_b19)} que no "
+      f"cuadran con su categoría")
 print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
