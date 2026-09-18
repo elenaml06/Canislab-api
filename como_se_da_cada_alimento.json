@@ -21,7 +21,8 @@
    "Patas de conejo",
    "Rabo de toro"
   ],
-  "las_dos_formas_de_dar_lo_mismo": "⚠️ 17-sep-2026. `por_categoria` es cómo se da en CRUDO y `por_categoria_cocinado` cómo se da en COCINADO, y solo están escritas las CUATRO categorías animales porque son las únicas en las que el modo cambia algo. || Nació de un agujero de verdad, no de una mejora: con el modo cocinado puesto, la pantalla «Cómo darlo» seguía diciendo «Cruda. En trozos, no picada» sobre un muslo de pollo hervido, «Crudas» sobre un riñón cocido y «Crudo SOLO si se ha congelado antes» sobre un salmón que se acababa de hervir. O sea: el texto decía justo lo contrario del plato, y en la pantalla en la que se lee CÓMO SE PREPARA. || Las otras cinco NO se escriben, y es una decisión: en verdura, extras, suplementos y cereales el modo no cambia nada (los cereales ya van cocidos en los dos), y el HUESO CARNOSO no existe en cocinado — cocido se astilla —, así que darle un texto de cocinado sería escribir cómo dar algo que el motor no va a poner nunca. Lo que falte se sirve de `por_categoria`, que es el comportamiento correcto."
+  "las_dos_formas_de_dar_lo_mismo": "⚠️ 17-sep-2026. `por_categoria` es cómo se da en CRUDO y `por_categoria_cocinado` cómo se da en COCINADO, y solo están escritas las CUATRO categorías animales porque son las únicas en las que el modo cambia algo. || Nació de un agujero de verdad, no de una mejora: con el modo cocinado puesto, la pantalla «Cómo darlo» seguía diciendo «Cruda. En trozos, no picada» sobre un muslo de pollo hervido, «Crudas» sobre un riñón cocido y «Crudo SOLO si se ha congelado antes» sobre un salmón que se acababa de hervir. O sea: el texto decía justo lo contrario del plato, y en la pantalla en la que se lee CÓMO SE PREPARA. || Las otras cinco NO se escriben, y es una decisión: en verdura, extras, suplementos y cereales el modo no cambia nada (los cereales ya van cocidos en los dos), y el HUESO CARNOSO no existe en cocinado — cocido se astilla —, así que darle un texto de cocinado sería escribir cómo dar algo que el motor no va a poner nunca. Lo que falte se sirve de `por_categoria`, que es el comportamiento correcto.",
+  "borradas_18_sep_2026": "Quitadas 1 instrucciones de comida que el catálogo ya no tiene: ['Pollo muslo cocido']. Es la lista que se desincroniza sola, y así es como se quedaron dentro las de la borraja después de sacarla. «Pollo muslo cocido» lo sustituyeron dos fichas más precisas —con piel y sin piel— y su instrucción se quedó huérfana."
  },
  "por_categoria": {
   "Carne muscular": "Cruda. En trozos, no picada — picada tiene más riesgo bacteriano.",
@@ -406,10 +407,6 @@
   "Pollo ala con piel (sin hueso) cocido": {
    "pieza": "un ala cruda son unos 90 g, y queda muy poca carne al deshuesarla",
    "como": "Hervida en agua sin sal y deshuesada DESPUÉS de cocerla: el ala es casi todo hueso fino, y cocido astilla. Es una pieza de poca carne, así que hacen falta varias."
-  },
-  "Pollo muslo cocido": {
-   "pieza": "un muslo mediano crudo pesa unos 110 g y se queda en unos 80 g cocido",
-   "como": "Hervido en agua sin sal, sin piel, hasta que no quede rosa junto al hueso. Se deshuesa DESPUÉS de cocerlo y se trocea. El hueso cocido no se le da: se tira."
   },
   "Pollo muslo con piel cocido": {
    "pieza": "un muslo con piel crudo son unos 150 g sin hueso",

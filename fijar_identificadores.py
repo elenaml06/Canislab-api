@@ -243,6 +243,108 @@ EQUIVALEN_A_NUESTRA_PREPARACION = {
 }
 
 
+# ⚠️ «COCIDO» NO ES UN MÉTODO: SON CINCO, Y NO DAN EL MISMO ALIMENTO
+# (18 de septiembre de 2026, y lo encontró este mismo guardia con 37 rojos).
+#
+# Hasta hoy la tabla de arriba decía que una ficha «cocida» acepta cualquier
+# palabra de la familia de HERVIR, y eso valía mientras las únicas fichas
+# cocidas del catálogo fueran los cinco hidratos, que se hierven. Con las 72
+# fichas de comida cocinada entra lo que las fuentes publican de verdad: USDA
+# solo tiene las vísceras «cooked, braised» y el pescado «cooked, dry heat»,
+# BEDCA tiene «al horno» y «a la plancha», y CIQUAL «cuit à la vapeur». O sea
+# que el guardia acusaba a 37 emparejamientos CORRECTOS.
+#
+# ⚠️ Y LA SALIDA NO ERA ABRIR LA MANO, porque las cinco formas NO son la misma
+# comida por 100 g -- lo dice la propia fuente: la trucha al vapor de CIQUAL va
+# a 19 g de proteína y 99 kcal, y la de USDA a fuego seco a 23,8 g y 168 kcal.
+# Aceptar cualquier palabra habría dado por bueno mezclarlas.
+#
+# Lo que se hace es lo contrario: cada ficha cocida acepta EL MÉTODO DE SU
+# PROPIA FILA BASE -- la que le da el agua y la proteína --, y rechaza los otros
+# cuatro. El método NO se escribe en la ficha: se DERIVA de la fila que ella ya
+# declara, porque una etiqueta copiada a mano se desincroniza en silencio y es
+# justo el fallo que este fichero existe para cazar.
+#
+# ⚠️ Y cazó tres de verdad al estrenarse: el bacalao y el lenguado le decían al
+# dueño «al vapor» con las cifras de la fila AL HORNO de BEDCA, y el salmón lo
+# mismo con las de LA PLANCHA. Quien siguiera la instrucción se llevaba un plato
+# más aguado del que el menú tiene en cuenta.
+METODOS_DE_COCCION = {
+    "hervido": ("hervid", "boiled", "simmered", "poached", "moist heat",
+                "blanched", "blanchi", "bouilli", "a l'eau", "pot-au-feu"),
+    # «brais» y no «braised»: CIQUAL lo escribe en francés («Veau, jarret,
+    # braisé ou bouilli») y sin tildes queda «braise», que no casa con la
+    # palabra inglesa. Con el stem casan los dos idiomas.
+    # «brais» Y «braised»: la lista se usa de dos formas -- se busca DENTRO de
+    # la fila (y ahí hace falta el stem, porque CIQUAL lo escribe en francés,
+    # «Veau, jarret, braisé ou bouilli», que sin tildes queda «braise») y se
+    # compara EXACTA contra la palabra de `PREPARACIONES` que saltó. Con solo
+    # el stem, la palabra inglesa entera no casaba y las 17 vísceras de USDA
+    # seguían acusadas.
+    "guisado": ("brais", "braised", "guisad", "estofad", "etuve", "bourguignon"),
+    "vapor": ("vapeur", "steamed", "al vapor"),
+    "horno": ("horno", "au four", "baked", "roasted", "roti", "dry heat"),
+
+    "plancha": ("plancha", "grilled", "grille", "poele", "griddle"),
+}
+
+# ⚠️ Y LOS CINCO MÉTODOS SE AGRUPAN EN DOS FAMILIAS, que es lo que de verdad
+# decide la cifra por 100 g: cocinar no cambia casi nada más que el AGUA, así
+# que lo que separa dos filas no es el nombre del método sino cuánta pierde.
+# Hervir, guisar y cocer al vapor dejan el alimento húmedo; el horno y la
+# plancha lo secan. Medido en las propias fuentes: la trucha al vapor de CIQUAL
+# va a 19 g de proteína y 99 kcal y la de USDA a fuego seco a 23,8 g y 168 --
+# un 70 % más de energía por los mismos 100 g.
+#
+# Dentro de una familia una fila puede prestarle una celda a otra; de una
+# familia a la otra, no. Y de ahí sale una regla que NO es el orden de mandato:
+# el orden de `fuentes_de_composicion.json` elige entre filas que describen EL
+# MISMO alimento, y una fila de la otra familia no lo es -- así que se va al
+# final aunque su fuente mande más. El caso: la calabaza sale de «Calabaza,
+# hervida» (BEDCA) y su manganeso venía de «Potiron, rôti/cuit au four»
+# (CIQUAL, mandato 3) teniendo USDA (mandato 4) la fila «Pumpkin, cooked,
+# boiled», que es la misma cocción.
+FAMILIAS_DE_COCCION = {
+    "hervido": "humedo", "guisado": "humedo", "vapor": "humedo",
+    "horno": "seco", "plancha": "seco",
+}
+
+
+def familias_de(metodos):
+    return {FAMILIAS_DE_COCCION[m] for m in metodos}
+
+
+# Palabras que dicen «esto está cocinado» y no dicen CÓMO. No pueden gatear
+# nada por sí solas: toda fila cocinada de USDA empieza por «cooked,».
+COCINADO_SIN_DECIR_COMO = ("cocid", "cooked", "cuit", "cuite", "cuits", "cuites")
+
+
+def metodo_de_coccion(texto):
+    """Qué métodos nombra un texto (una fila de la fuente, o un aviso al dueño)."""
+    t = cf._sin_tildes(str(texto or "")).lower()
+    return {m for m, palabras in METODOS_DE_COCCION.items()
+            if any(cf._sin_tildes(p) in t for p in palabras)}
+
+
+def coccion_de_la_ficha(ficha):
+    """El método de la fila BASE de una ficha cocida.
+
+    La base es la fila de la que salen su agua y su proteína -- las dos cifras
+    que mueven todo lo demás por 100 g. Se lee de `humedad_fuente` y, si esa no
+    nombra ningún método, de la procedencia de la proteína.
+    """
+    ficha = ficha or {}
+    if not str(ficha.get("preparacion") or "").lower().startswith("coci"):
+        return set()
+    for texto in (ficha.get("humedad_fuente"),
+                  (ficha.get("composicion_fuente") or {}).get("proteina"),
+                  (ficha.get("composicion_fuente") or {}).get("energia")):
+        metodos = metodo_de_coccion(texto)
+        if metodos:
+            return metodos
+    return set()
+
+
 def preparacion_incompatible(nuestro_nombre, ficha, suyo_nombre):
     """¿El candidato declara una preparación que la ficha nuestra no tiene?"""
     if not suyo_nombre:
@@ -251,6 +353,14 @@ def preparacion_incompatible(nuestro_nombre, ficha, suyo_nombre):
     nuestro = cf._sin_tildes(f"{nuestro_nombre} {prep}").lower()
     suyo = cf._sin_tildes(suyo_nombre).lower()
     equivalentes = EQUIVALEN_A_NUESTRA_PREPARACION.get(prep, ())
+    # Una ficha cocida acepta SU método y el vocabulario que solo dice «esto
+    # está cocinado». Los otros cuatro métodos siguen siendo otro alimento.
+    suyos = coccion_de_la_ficha(ficha)
+    if suyos:
+        equivalentes = tuple(equivalentes) + COCINADO_SIN_DECIR_COMO
+        for m, palabras in METODOS_DE_COCCION.items():
+            if FAMILIAS_DE_COCCION[m] in familias_de(suyos):
+                equivalentes += palabras
     for p in PREPARACIONES:
         if p in NO_SON_PREPARACIONES_AUNQUE_LO_PAREZCAN:
             continue

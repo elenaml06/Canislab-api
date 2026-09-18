@@ -17266,6 +17266,11 @@ else:
     print(f"  huecos guardados como cero: {len(_mudos100)}")
 
     # --- 4. cada celda cerrada se rehace desde la instantánea -------------
+    import re as _re100
+    _re_amino100 = _re100.compile(
+        r"aminograma de la ficha cruda «([^»]+)» por gramo de prote[ií]na "
+        r"\(([\d.]+)×([\d.]+)/([\d.]+)\)")
+    _por_nombre100 = {f["nombre"]: f for f in _cat100}
     _reh100 = _mal_reh100 = _etiq100 = 0
     for _ficha100 in _cat100:
         _proc100 = _ficha100.get("composicion_fuente") or {}
@@ -17287,6 +17292,48 @@ else:
             if (_fu100.startswith("etiqueta") or "cota por" in _fu100
                     or "FEDIAF" in _fu100):
                 _etiq100 += 1
+                continue
+            # ⚠️ UN AMINOGRAMA HEREDADO DE LA FICHA CRUDA NO SALE DE NINGUNA
+            #    FUENTE, Y SE REHACE IGUAL (18 de septiembre de 2026). Las 72
+            #    fichas de comida cocinada heredan su aminograma de su hermana
+            #    cruda, porque cocer NO cambia de qué está hecha la proteína:
+            #    se transfiere por gramo de proteína, que es la regla de
+            #    `UNIDADES.md`. Esa procedencia no empieza por `fuente:id`, así
+            #    que la instantánea no la tiene — y saltarla habría dejado 216
+            #    celdas sin rehacer, que es justo lo que este apartado existe
+            #    para no permitir. Aquí se rehace la cuenta contra el CATÁLOGO,
+            #    que es su fuente de verdad.
+            if _fu100.startswith("transferido del aminograma"):
+                _reh100 += 1
+                _m100 = _re_amino100.search(_texto100)
+                if not _m100:
+                    _mal_reh100 += 1
+                    if _mal_reh100 <= 5:
+                        fallos.append(f"BLOQUE104: {_nom100} · {_cl100} dice heredar el aminograma "
+                                      f"de una ficha cruda y no escribe la cuenta "
+                                      f"(«valor×nuestra/suya»), así que no se puede rehacer")
+                    continue
+                _cruda100, _val100, _nue100, _suy100 = _m100.groups()
+                _o100 = _por_nombre100.get(_cruda100)
+                _suyo100 = ((_o100 or {}).get("nutrientes") or {}).get(_cl100)
+                _esp100 = round(float(_val100) * float(_nue100) / float(_suy100), 6)
+                _hay100 = (_ficha100.get("nutrientes") or {}).get(_cl100)
+                _malo100 = None
+                if _o100 is None:
+                    _malo100 = f"la ficha cruda «{_cruda100}» no existe"
+                elif _suyo100 is None or abs(float(_suyo100) - float(_val100)) > 1e-6:
+                    _malo100 = (f"parte de {_val100} y la ficha cruda «{_cruda100}» dice "
+                                f"{_suyo100} hoy")
+                elif _hay100 is None or abs(float(_hay100) - _esp100) > 1e-4:
+                    _malo100 = f"la cuenta da {_esp100} y la ficha lleva {_hay100}"
+                if _malo100:
+                    _mal_reh100 += 1
+                    if _mal_reh100 <= 5:
+                        fallos.append(f"BLOQUE104: {_nom100} · {_cl100} hereda el aminograma de su "
+                                      f"hermana cruda y la transferencia no se rehace: {_malo100}")
+                continue
+            if _fu100.startswith("DESPEJADA"):
+                _reh100 += 1
                 continue
             _reh100 += 1
             _d100 = (_inst100.get(_nom100) or {}).get(_fu100) or {}
@@ -17322,6 +17369,21 @@ else:
     _aceptadas100 = {k: v for k, v in
                      (_decl100.get("emparejamientos_con_preparacion_aceptados") or {}).items()
                      if not k.startswith("_")}
+    # ⚠️ Y LA SEGUNDA LISTA DE ACEPTADAS, QUE NO ES LA MISMA COSA (18 de
+    # septiembre de 2026). La de arriba acepta que la FICHA ENTERA salga de una
+    # fila preparada; ésta acepta que UNAS CELDAS SUELTAS vengan de una fila de
+    # la otra familia de cocción, porque el orden de mandato no da otra. Cada
+    # una lleva qué celdas, la medida de las dos filas y en qué dirección va el
+    # error — sin eso sería un permiso, no una declaración.
+    _otra_coc100 = {k: v for k, v in
+                    (_decl100.get("celdas_de_otra_coccion") or {}).items()
+                    if not k.startswith("_")}
+    # Una FRACCIÓN se transfiere por gramo de su total, así que el método de
+    # cocción se cancela y una fila de la otra familia sirve igual. Es la misma
+    # regla del aminograma de `UNIDADES.md`, leída para la cocción.
+    _FRACC100 = {"arginina", "histidina", "isoleucina", "leucina", "lisina", "metionina",
+                 "cistina", "fenilalanina", "tirosina", "treonina", "triptofano", "valina",
+                 "linoleico", "linolenico", "epa", "dha", "araquidonico"}
     _cocinadas100 = []
     for _ficha100 in _cat100:
         _nom100 = _ficha100["nombre"]
@@ -17329,6 +17391,24 @@ else:
             _p100 = _fid100.preparacion_incompatible(_nom100, _ficha100, _d100.get("fila") or "")
             if not _p100:
                 continue
+            if _fid100.coccion_de_la_ficha(_ficha100):
+                _abs100 = sorted(k for k, v in (_ficha100.get("composicion_fuente") or {}).items()
+                                 if str(v).split(":")[0] == _fu100 and k not in _FRACC100)
+                if not _abs100:
+                    continue          # solo fracciones: el método se cancela
+                _dc100 = _otra_coc100.get(_nom100)
+                if (_dc100 and _dc100.get("fuente") == _fu100
+                        and str(_dc100.get("id")) == str(_d100.get("id"))):
+                    if sorted(_dc100.get("celdas") or []) != _abs100:
+                        fallos.append(f"BLOQUE104: «{_nom100}» declara recibir de {_fu100} celdas "
+                                      f"de otra cocción, pero la lista declarada no es la que hay "
+                                      f"hoy en la ficha ({_dc100.get('celdas')} contra {_abs100}). "
+                                      f"Una declaración que no se rehace no declara nada")
+                    if not (_dc100.get("medida") or "").strip() or not (_dc100.get("por_que") or "").strip():
+                        fallos.append(f"BLOQUE104: «{_nom100}» declara celdas de otra cocción SIN "
+                                      f"medida o SIN motivo. Sin las dos es un permiso, no una "
+                                      f"declaración")
+                    continue
             _ok100 = _aceptadas100.get(_nom100)
             if (_ok100 and _ok100.get("fuente") == _fu100
                     and str(_ok100.get("id")) == str(_d100.get("id"))
@@ -17355,8 +17435,14 @@ else:
     # fila frita o ahumada describe otro alimento por 100 g —, y eso se
     # comprueba aquí en vez de suponerse, porque si la equivalencia se abriera
     # el bloque de arriba saldría verde sin vigilar nada.
+    # ⚠️ Y LA FICHA DE PRUEBA NO PUEDE SER LA PRIMERA QUE DIGA «cocido». La
+    # primera del catálogo es la BERENJENA, que se DA cocida y cuya composición
+    # sale de la fila CRUDA de la fuente (por eso se pesa cruda, BLOQUE 123), o
+    # sea que no tiene cocción de la que hablar y el guardia rechazaba con razón
+    # todo lo que se le pasara. Hace falta una de las que de verdad salen de una
+    # fila cocinada Y de la familia HÚMEDA, que es la de las filas de prueba.
     _prueba100 = next((f for f in _cat100
-                       if str(f.get("preparacion") or "").lower().startswith("cocid")), None)
+                       if "humedo" in _fid100.familias_de(_fid100.coccion_de_la_ficha(f))), None)
     if _prueba100 is None:
         fallos.append("BLOQUE104: no hay ninguna ficha COCIDA en el catálogo, así que la "
                       "equivalencia de preparaciones no se puede comprobar. Si se han quitado "
@@ -17365,7 +17451,10 @@ else:
         _nm100 = _prueba100["nombre"]
         # Lo que TIENE que aceptar (la misma cocción, en los tres idiomas)…
         for _buena100 in ("Riz blanc, cuit, non salé", "Rice, white, cooked",
-                          "Arroz blanco, hervido"):
+                          "Arroz blanco, hervido",
+                          # Las tres formas de la familia HÚMEDA, que es la suya.
+                          "Rice, white, cooked, steamed", "Riz blanc, cuit a la vapeur",
+                          "Rice, white, cooked, braised", "Veau, jarret, braise ou bouilli"):
             if _fid100.preparacion_incompatible(_nm100, _prueba100, _buena100):
                 fallos.append(f"BLOQUE104: «{_nm100}» es una ficha COCIDA y el guardia rechaza "
                               f"«{_buena100}», que es su misma cocción dicha en otro idioma. "
@@ -17374,8 +17463,19 @@ else:
         for _mala100, _esperada100 in (("Rice, white, fried", "frito"),
                                        ("Riz blanc, fume", "ahumado"),
                                        ("Rice, white, roasted", "asado"),
-                                       ("Rice, white, steamed", "al vapor"),
-                                       ("Riz blanc, cuit a la vapeur", "al vapor en francés"),
+                                       # ⚠️ EL VAPOR SALIÓ DE ESTA LISTA EL 18 DE SEPTIEMBRE, y
+                                       # es un cambio de criterio con su motivo: lo que separa
+                                       # dos filas cocinadas es el AGUA, y hervir, guisar y
+                                       # cocer al vapor dejan el alimento húmedo. Estaba aquí
+                                       # cuando las únicas fichas cocidas eran los cinco
+                                       # hidratos; con las 72 de comida cocinada, tratar los
+                                       # cinco métodos como cinco alimentos distintos acusaba a
+                                       # 37 emparejamientos correctos sin que exista ninguna
+                                       # fila mejor. La familia SECA sigue fuera, y eso es lo
+                                       # que de verdad protege.
+                                       ("Rice, white, dry heat", "a fuego seco"),
+                                       ("Riz blanc, roti/cuit au four", "al horno en francés"),
+                                       ("Arroz blanco, a la plancha", "a la plancha"),
                                        ("Arroz blanco, congelado", "congelado")):
             if not _fid100.preparacion_incompatible(_nm100, _prueba100, _mala100):
                 fallos.append(f"BLOQUE104: «{_nm100}» es COCIDA y el guardia ACEPTA "
@@ -17394,6 +17494,45 @@ else:
 
     print(f"  emparejadas con una fila cocinada: {len(_cocinadas100)} "
           f"(+{len(_aceptadas100)} aceptadas con su motivo escrito)")
+
+    # --- 5-bis. lo que se le manda hacer al dueño ES lo que dice la fila ---
+    #
+    # ⚠️ CASO REAL, 18 de septiembre de 2026, y lo encontró el guardia de arriba
+    # al hacerse consciente del método. TRES fichas le decían al dueño «al
+    # vapor» y sus gramos estaban calculados con las cifras de otra cocción: el
+    # bacalao y el lenguado salen de la fila AL HORNO de BEDCA y el salmón de la
+    # de LA PLANCHA. Hornear y hacer a la plancha secan el alimento y cocer al
+    # vapor no, así que quien siguiera la instrucción se llevaba un plato más
+    # aguado del que el menú tiene en cuenta — y el perro, menos nutriente por
+    # gramo del que dice la ficha.
+    #
+    # No lo veía nadie porque las dos mitades están en sitios distintos: la fila
+    # vive en `humedad_fuente` y la instrucción en `aviso_al_comprar`, y las dos
+    # eran verdad por separado. Se comprueba por FAMILIA y no por método porque
+    # eso es lo que mueve la cifra: decirle «hervido o al vapor» a una ficha que
+    # sale de una fila hervida no es un fallo.
+    _dicen_otra100 = []
+    for _ficha100 in _cat100:
+        _base100 = _fid100.coccion_de_la_ficha(_ficha100)
+        if not _base100:
+            continue
+        _dice100 = _fid100.metodo_de_coccion(_ficha100.get("aviso_al_comprar"))
+        if not _dice100:
+            _dicen_otra100.append(f"{_ficha100['nombre']}: su aviso no dice CÓMO cocinarlo")
+            continue
+        if not (_fid100.familias_de(_dice100) & _fid100.familias_de(_base100)):
+            _dicen_otra100.append(
+                f"{_ficha100['nombre']}: el aviso manda {sorted(_dice100)} y sus cifras salen de "
+                f"una fila {sorted(_base100)} ({_ficha100.get('humedad_fuente')})")
+    if _dicen_otra100:
+        fallos.append(f"BLOQUE104: {len(_dicen_otra100)} fichas cocidas le mandan al dueño una "
+                      f"cocción de otra familia que la de la fila de la que salen sus cifras. "
+                      f"Secar y no secar no dan el mismo alimento por 100 g, así que el plato que "
+                      f"sale de esa instrucción no es el que el menú ha calculado: "
+                      + " · ".join(_dicen_otra100[:4]))
+    print(f"  el aviso al dueño dice la cocción de su fila: "
+          f"{len([f for f in _cat100 if _fid100.coccion_de_la_ficha(f)])} fichas cocidas, "
+          f"{len(_dicen_otra100)} que no")
 
     # --- 6. una fracción no puede superar su total ------------------------
     # Un ácido graso es una FRACCIÓN de la grasa y un aminoácido una fracción de

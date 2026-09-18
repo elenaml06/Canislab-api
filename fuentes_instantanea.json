@@ -54450,6 +54450,264 @@
       "value_type": null
      }
     }
+   },
+   "usda": {
+    "id": "168297",
+    "fila": "Pork, fresh, composite of trimmed retail cuts (leg, loin, shoulder, and spareribs), separable lean and fat, cooked",
+    "celdas": {
+     "proteina": {
+      "valor": "26.36",
+      "columna": "Protein",
+      "unidad": "G",
+      "value_type": null
+     },
+     "grasa": {
+      "valor": "13.89",
+      "columna": "Total lipid (fat)",
+      "unidad": "G",
+      "value_type": null
+     },
+     "linoleico": {
+      "valor": "0.907",
+      "columna": "PUFA 18:2 n-6 c,c",
+      "unidad": "G",
+      "value_type": null
+     },
+     "linolenico": {
+      "valor": "0.04",
+      "columna": "PUFA 18:3 n-3 c,c,c (ALA)",
+      "unidad": "G",
+      "value_type": null
+     },
+     "araquidonico": {
+      "valor": "0.079",
+      "columna": "PUFA 20:4",
+      "unidad": "G",
+      "value_type": null
+     },
+     "epa": {
+      "valor": "0",
+      "columna": "PUFA 20:5 n-3 (EPA)",
+      "unidad": "G",
+      "value_type": null
+     },
+     "dha": {
+      "valor": "0",
+      "columna": "PUFA 22:6 n-3 (DHA)",
+      "unidad": "G",
+      "value_type": null
+     },
+     "calcio": {
+      "valor": "20",
+      "columna": "Calcium, Ca",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "fosforo": {
+      "valor": "221",
+      "columna": "Phosphorus, P",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "potasio": {
+      "valor": "341",
+      "columna": "Potassium, K",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "sodio": {
+      "valor": "57",
+      "columna": "Sodium, Na",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "magnesio": {
+      "valor": "24",
+      "columna": "Magnesium, Mg",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "hierro": {
+      "valor": "1.11",
+      "columna": "Iron, Fe",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "cobre": {
+      "valor": "0.09",
+      "columna": "Copper, Cu",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "manganeso": {
+      "valor": "0.01",
+      "columna": "Manganese, Mn",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "zinc": {
+      "valor": "3.06",
+      "columna": "Zinc, Zn",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "selenio": {
+      "valor": "42",
+      "columna": "Selenium, Se",
+      "unidad": "UG",
+      "value_type": null
+     },
+     "vitA": {
+      "valor": "2",
+      "columna": "Vitamin A, RAE",
+      "unidad": "UG",
+      "value_type": null
+     },
+     "vitD": {
+      "valor": "0.9",
+      "columna": "Vitamin D (D2 + D3)",
+      "unidad": "UG",
+      "value_type": null
+     },
+     "vitE": {
+      "valor": "0.13",
+      "columna": "Vitamin E (alpha-tocopherol)",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "tiamina": {
+      "valor": "0.611",
+      "columna": "Thiamin",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "riboflavina": {
+      "valor": "0.29",
+      "columna": "Riboflavin",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "niacina": {
+      "valor": "6.047",
+      "columna": "Niacin",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "acidoPantotenico": {
+      "valor": "0.844",
+      "columna": "Pantothenic acid",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "vitB6": {
+      "valor": "0.542",
+      "columna": "Vitamin B-6",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "folato": {
+      "valor": "2",
+      "columna": "Folate, total",
+      "unidad": "UG",
+      "value_type": null
+     },
+     "vitB12": {
+      "valor": "0.7",
+      "columna": "Vitamin B-12",
+      "unidad": "UG",
+      "value_type": null
+     },
+     "colina": {
+      "valor": "80.1",
+      "columna": "Choline, total",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "energia": {
+      "valor": "238",
+      "columna": "Energy",
+      "unidad": "KCAL",
+      "value_type": null
+     },
+     "fibra": {
+      "valor": "0",
+      "columna": "Fiber, total dietary",
+      "unidad": "G",
+      "value_type": null
+     },
+     "arginina": {
+      "valor": "1.725",
+      "columna": "Arginine",
+      "unidad": "G",
+      "value_type": null
+     },
+     "histidina": {
+      "valor": "1.103",
+      "columna": "Histidine",
+      "unidad": "G",
+      "value_type": null
+     },
+     "isoleucina": {
+      "valor": "1.271",
+      "columna": "Isoleucine",
+      "unidad": "G",
+      "value_type": null
+     },
+     "leucina": {
+      "valor": "2.199",
+      "columna": "Leucine",
+      "unidad": "G",
+      "value_type": null
+     },
+     "lisina": {
+      "valor": "2.418",
+      "columna": "Lysine",
+      "unidad": "G",
+      "value_type": null
+     },
+     "metionina": {
+      "valor": "0.713",
+      "columna": "Methionine",
+      "unidad": "G",
+      "value_type": null
+     },
+     "cistina": {
+      "valor": "0.313",
+      "columna": "Cystine",
+      "unidad": "G",
+      "value_type": null
+     },
+     "fenilalanina": {
+      "valor": "1.089",
+      "columna": "Phenylalanine",
+      "unidad": "G",
+      "value_type": null
+     },
+     "tirosina": {
+      "valor": "0.971",
+      "columna": "Tyrosine",
+      "unidad": "G",
+      "value_type": null
+     },
+     "treonina": {
+      "valor": "1.186",
+      "columna": "Threonine",
+      "unidad": "G",
+      "value_type": null
+     },
+     "triptofano": {
+      "valor": "0.293",
+      "columna": "Tryptophan",
+      "unidad": "G",
+      "value_type": null
+     },
+     "valina": {
+      "valor": "1.392",
+      "columna": "Valine",
+      "unidad": "G",
+      "value_type": null
+     }
+    }
    }
   },
   "Dorada cocida": {
@@ -55098,6 +55356,264 @@
       "value_type": null
      }
     }
+   },
+   "usda": {
+    "id": "173816",
+    "fila": "Veal, composite of trimmed retail cuts, separable lean and fat, cooked",
+    "celdas": {
+     "proteina": {
+      "valor": "30.1",
+      "columna": "Protein",
+      "unidad": "G",
+      "value_type": null
+     },
+     "grasa": {
+      "valor": "11.39",
+      "columna": "Total lipid (fat)",
+      "unidad": "G",
+      "value_type": null
+     },
+     "linoleico": {
+      "valor": "0.63",
+      "columna": "PUFA 18:2",
+      "unidad": "G",
+      "value_type": null
+     },
+     "linolenico": {
+      "valor": "0.07",
+      "columna": "PUFA 18:3",
+      "unidad": "G",
+      "value_type": null
+     },
+     "araquidonico": {
+      "valor": "0.1",
+      "columna": "PUFA 20:4",
+      "unidad": "G",
+      "value_type": null
+     },
+     "epa": {
+      "valor": "0",
+      "columna": "PUFA 20:5 n-3 (EPA)",
+      "unidad": "G",
+      "value_type": null
+     },
+     "dha": {
+      "valor": "0",
+      "columna": "PUFA 22:6 n-3 (DHA)",
+      "unidad": "G",
+      "value_type": null
+     },
+     "calcio": {
+      "valor": "22",
+      "columna": "Calcium, Ca",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "fosforo": {
+      "valor": "239",
+      "columna": "Phosphorus, P",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "potasio": {
+      "valor": "325",
+      "columna": "Potassium, K",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "sodio": {
+      "valor": "87",
+      "columna": "Sodium, Na",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "magnesio": {
+      "valor": "26",
+      "columna": "Magnesium, Mg",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "hierro": {
+      "valor": "1.15",
+      "columna": "Iron, Fe",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "cobre": {
+      "valor": "0.114",
+      "columna": "Copper, Cu",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "manganeso": {
+      "valor": "0.036",
+      "columna": "Manganese, Mn",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "zinc": {
+      "valor": "4.76",
+      "columna": "Zinc, Zn",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "selenio": {
+      "valor": "12.3",
+      "columna": "Selenium, Se",
+      "unidad": "UG",
+      "value_type": null
+     },
+     "vitA": {
+      "valor": "0",
+      "columna": "Vitamin A, RAE",
+      "unidad": "UG",
+      "value_type": null
+     },
+     "vitD": {
+      "valor": "0",
+      "columna": "Vitamin D (D2 + D3)",
+      "unidad": "UG",
+      "value_type": null
+     },
+     "vitE": {
+      "valor": "0.4",
+      "columna": "Vitamin E (alpha-tocopherol)",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "tiamina": {
+      "valor": "0.06",
+      "columna": "Thiamin",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "riboflavina": {
+      "valor": "0.32",
+      "columna": "Riboflavin",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "niacina": {
+      "valor": "7.97",
+      "columna": "Niacin",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "acidoPantotenico": {
+      "valor": "1.26",
+      "columna": "Pantothenic acid",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "vitB6": {
+      "valor": "0.31",
+      "columna": "Vitamin B-6",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "folato": {
+      "valor": "15",
+      "columna": "Folate, total",
+      "unidad": "UG",
+      "value_type": null
+     },
+     "vitB12": {
+      "valor": "1.57",
+      "columna": "Vitamin B-12",
+      "unidad": "UG",
+      "value_type": null
+     },
+     "colina": {
+      "valor": "116.6",
+      "columna": "Choline, total",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "energia": {
+      "valor": "231",
+      "columna": "Energy",
+      "unidad": "KCAL",
+      "value_type": null
+     },
+     "fibra": {
+      "valor": "0",
+      "columna": "Fiber, total dietary",
+      "unidad": "G",
+      "value_type": null
+     },
+     "arginina": {
+      "valor": "1.77",
+      "columna": "Arginine",
+      "unidad": "G",
+      "value_type": null
+     },
+     "histidina": {
+      "valor": "1.092",
+      "columna": "Histidine",
+      "unidad": "G",
+      "value_type": null
+     },
+     "isoleucina": {
+      "valor": "1.482",
+      "columna": "Isoleucine",
+      "unidad": "G",
+      "value_type": null
+     },
+     "leucina": {
+      "valor": "2.395",
+      "columna": "Leucine",
+      "unidad": "G",
+      "value_type": null
+     },
+     "lisina": {
+      "valor": "2.48",
+      "columna": "Lysine",
+      "unidad": "G",
+      "value_type": null
+     },
+     "metionina": {
+      "valor": "0.702",
+      "columna": "Methionine",
+      "unidad": "G",
+      "value_type": null
+     },
+     "cistina": {
+      "valor": "0.34",
+      "columna": "Cystine",
+      "unidad": "G",
+      "value_type": null
+     },
+     "fenilalanina": {
+      "valor": "1.215",
+      "columna": "Phenylalanine",
+      "unidad": "G",
+      "value_type": null
+     },
+     "tirosina": {
+      "valor": "0.96",
+      "columna": "Tyrosine",
+      "unidad": "G",
+      "value_type": null
+     },
+     "treonina": {
+      "valor": "1.315",
+      "columna": "Threonine",
+      "unidad": "G",
+      "value_type": null
+     },
+     "triptofano": {
+      "valor": "0.305",
+      "columna": "Tryptophan",
+      "unidad": "G",
+      "value_type": null
+     },
+     "valina": {
+      "valor": "1.663",
+      "columna": "Valine",
+      "unidad": "G",
+      "value_type": null
+     }
+    }
    }
   },
   "Solomillo de vaca cocido": {
@@ -55236,6 +55752,644 @@
       "columna": "fibra, dietetica total",
       "unidad": "g",
       "value_type": "LZ"
+     }
+    }
+   },
+   "usda": {
+    "id": "171811",
+    "fila": "Beef, tenderloin, steak, separable lean only, trimmed to 1/8\" fat, all grades, cooked, broiled",
+    "celdas": {
+     "proteina": {
+      "valor": "29.04",
+      "columna": "Protein",
+      "unidad": "G",
+      "value_type": null
+     },
+     "grasa": {
+      "valor": "8.39",
+      "columna": "Total lipid (fat)",
+      "unidad": "G",
+      "value_type": null
+     },
+     "linoleico": {
+      "valor": "0.24",
+      "columna": "PUFA 18:2",
+      "unidad": "G",
+      "value_type": null
+     },
+     "linolenico": {
+      "valor": "0.022",
+      "columna": "PUFA 18:3",
+      "unidad": "G",
+      "value_type": null
+     },
+     "araquidonico": {
+      "valor": "0.038",
+      "columna": "PUFA 20:4",
+      "unidad": "G",
+      "value_type": null
+     },
+     "epa": {
+      "valor": "0.003",
+      "columna": "PUFA 20:5 n-3 (EPA)",
+      "unidad": "G",
+      "value_type": null
+     },
+     "dha": {
+      "valor": "0.001",
+      "columna": "PUFA 22:6 n-3 (DHA)",
+      "unidad": "G",
+      "value_type": null
+     },
+     "calcio": {
+      "valor": "19",
+      "columna": "Calcium, Ca",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "fosforo": {
+      "valor": "230",
+      "columna": "Phosphorus, P",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "potasio": {
+      "valor": "370",
+      "columna": "Potassium, K",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "sodio": {
+      "valor": "60",
+      "columna": "Sodium, Na",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "magnesio": {
+      "valor": "25",
+      "columna": "Magnesium, Mg",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "hierro": {
+      "valor": "1.84",
+      "columna": "Iron, Fe",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "cobre": {
+      "valor": "0.086",
+      "columna": "Copper, Cu",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "manganeso": {
+      "valor": "0.011",
+      "columna": "Manganese, Mn",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "zinc": {
+      "valor": "5.38",
+      "columna": "Zinc, Zn",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "selenio": {
+      "valor": "33.7",
+      "columna": "Selenium, Se",
+      "unidad": "UG",
+      "value_type": null
+     },
+     "vitA": {
+      "valor": "0",
+      "columna": "Vitamin A, RAE",
+      "unidad": "UG",
+      "value_type": null
+     },
+     "vitD": {
+      "valor": "0.1",
+      "columna": "Vitamin D (D2 + D3)",
+      "unidad": "UG",
+      "value_type": null
+     },
+     "vitE": {
+      "valor": "0.4",
+      "columna": "Vitamin E (alpha-tocopherol)",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "tiamina": {
+      "valor": "0.079",
+      "columna": "Thiamin",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "riboflavina": {
+      "valor": "0.147",
+      "columna": "Riboflavin",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "niacina": {
+      "valor": "8.31",
+      "columna": "Niacin",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "acidoPantotenico": {
+      "valor": "0.582",
+      "columna": "Pantothenic acid",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "vitB6": {
+      "valor": "0.623",
+      "columna": "Vitamin B-6",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "folato": {
+      "valor": "10",
+      "columna": "Folate, total",
+      "unidad": "UG",
+      "value_type": null
+     },
+     "vitB12": {
+      "valor": "1.66",
+      "columna": "Vitamin B-12",
+      "unidad": "UG",
+      "value_type": null
+     },
+     "colina": {
+      "valor": "110.6",
+      "columna": "Choline, total",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "energia": {
+      "valor": "200",
+      "columna": "Energy",
+      "unidad": "KCAL",
+      "value_type": null
+     },
+     "fibra": {
+      "valor": "0",
+      "columna": "Fiber, total dietary",
+      "unidad": "G",
+      "value_type": null
+     },
+     "arginina": {
+      "valor": "1.878",
+      "columna": "Arginine",
+      "unidad": "G",
+      "value_type": null
+     },
+     "histidina": {
+      "valor": "0.927",
+      "columna": "Histidine",
+      "unidad": "G",
+      "value_type": null
+     },
+     "isoleucina": {
+      "valor": "1.321",
+      "columna": "Isoleucine",
+      "unidad": "G",
+      "value_type": null
+     },
+     "leucina": {
+      "valor": "2.31",
+      "columna": "Leucine",
+      "unidad": "G",
+      "value_type": null
+     },
+     "lisina": {
+      "valor": "2.454",
+      "columna": "Lysine",
+      "unidad": "G",
+      "value_type": null
+     },
+     "metionina": {
+      "valor": "0.756",
+      "columna": "Methionine",
+      "unidad": "G",
+      "value_type": null
+     },
+     "cistina": {
+      "valor": "0.375",
+      "columna": "Cystine",
+      "unidad": "G",
+      "value_type": null
+     },
+     "fenilalanina": {
+      "valor": "1.147",
+      "columna": "Phenylalanine",
+      "unidad": "G",
+      "value_type": null
+     },
+     "tirosina": {
+      "valor": "0.925",
+      "columna": "Tyrosine",
+      "unidad": "G",
+      "value_type": null
+     },
+     "treonina": {
+      "valor": "1.16",
+      "columna": "Threonine",
+      "unidad": "G",
+      "value_type": null
+     },
+     "triptofano": {
+      "valor": "0.191",
+      "columna": "Tryptophan",
+      "unidad": "G",
+      "value_type": null
+     },
+     "valina": {
+      "valor": "1.441",
+      "columna": "Valine",
+      "unidad": "G",
+      "value_type": null
+     }
+    }
+   }
+  },
+  "Riñón de vaca cocido": {
+   "ciqual": {
+    "id": "40403",
+    "fila": "Rognon, boeuf, cuit",
+    "celdas": {
+     "proteina": {
+      "valor": "27",
+      "columna": "Protéines, N x 6.25 (g/100 g)",
+      "unidad": null,
+      "value_type": null
+     },
+     "grasa": {
+      "valor": "7",
+      "columna": "Lipides (g/100 g)",
+      "unidad": null,
+      "value_type": null
+     },
+     "linoleico": {
+      "valor": "-",
+      "columna": "AG 18:2 9c,12c (n-6), linoléique (g/100 g)",
+      "unidad": null,
+      "value_type": null
+     },
+     "linolenico": {
+      "valor": "0,011",
+      "columna": "AG 18:3 c9,c12,c15 (n-3), alpha-linolénique (g/100 g)",
+      "unidad": null,
+      "value_type": null
+     },
+     "araquidonico": {
+      "valor": "-",
+      "columna": "AG 20:4 5c,8c,11c,14c (n-6), arachidonique (g/100 g)",
+      "unidad": null,
+      "value_type": null
+     },
+     "epa": {
+      "valor": "0",
+      "columna": "AG 20:5 5c,8c,11c,14c,17c (n-3) EPA (g/100 g)",
+      "unidad": null,
+      "value_type": null
+     },
+     "dha": {
+      "valor": "0",
+      "columna": "AG 22:6 4c,7c,10c,13c,16c,19c (n-3) DHA (g/100 g)",
+      "unidad": null,
+      "value_type": null
+     },
+     "calcio": {
+      "valor": "19",
+      "columna": "Calcium (mg/100 g)",
+      "unidad": null,
+      "value_type": null
+     },
+     "fosforo": {
+      "valor": "304",
+      "columna": "Phosphore (mg/100 g)",
+      "unidad": null,
+      "value_type": null
+     },
+     "potasio": {
+      "valor": "135",
+      "columna": "Potassium (mg/100 g)",
+      "unidad": null,
+      "value_type": null
+     },
+     "sodio": {
+      "valor": "94",
+      "columna": "Sodium (mg/100 g)",
+      "unidad": null,
+      "value_type": null
+     },
+     "cloruro": {
+      "valor": "-",
+      "columna": "Chlorure (mg/100 g)",
+      "unidad": null,
+      "value_type": null
+     },
+     "magnesio": {
+      "valor": "12",
+      "columna": "Magnésium (mg/100 g)",
+      "unidad": null,
+      "value_type": null
+     },
+     "hierro": {
+      "valor": "9,5",
+      "columna": "Fer (mg/100 g)",
+      "unidad": null,
+      "value_type": null
+     },
+     "cobre": {
+      "valor": "0,56",
+      "columna": "Cuivre (mg/100 g)",
+      "unidad": null,
+      "value_type": null
+     },
+     "manganeso": {
+      "valor": "0,19",
+      "columna": "Manganèse (mg/100 g)",
+      "unidad": null,
+      "value_type": null
+     },
+     "zinc": {
+      "valor": "3,1",
+      "columna": "Zinc (mg/100 g)",
+      "unidad": null,
+      "value_type": null
+     },
+     "yodo": {
+      "valor": "10",
+      "columna": "Iode (µg/100 g)",
+      "unidad": null,
+      "value_type": null
+     },
+     "selenio": {
+      "valor": "-",
+      "columna": "Sélénium (µg/100 g)",
+      "unidad": null,
+      "value_type": null
+     },
+     "vitA": {
+      "valor": "0",
+      "columna": "Rétinol (µg/100 g)",
+      "unidad": null,
+      "value_type": null
+     },
+     "vitD": {
+      "valor": "1,1",
+      "columna": "Vitamine D (µg/100 g)",
+      "unidad": null,
+      "value_type": null
+     },
+     "vitE": {
+      "valor": "0,08",
+      "columna": "Vitamine E (mg/100 g)",
+      "unidad": null,
+      "value_type": null
+     },
+     "tiamina": {
+      "valor": "0,43",
+      "columna": "Vitamine B1 ou Thiamine (mg/100 g)",
+      "unidad": null,
+      "value_type": null
+     },
+     "riboflavina": {
+      "valor": "2,97",
+      "columna": "Vitamine B2 ou Riboflavine (mg/100 g)",
+      "unidad": null,
+      "value_type": null
+     },
+     "niacina": {
+      "valor": "6,5",
+      "columna": "Vitamine B3 ou PP ou Niacine (mg/100 g)",
+      "unidad": null,
+      "value_type": null
+     },
+     "acidoPantotenico": {
+      "valor": "2,34",
+      "columna": "Vitamine B5 ou Acide pantothénique (mg/100 g)",
+      "unidad": null,
+      "value_type": null
+     },
+     "vitB6": {
+      "valor": "0,66",
+      "columna": "Vitamine B6 (mg/100 g)",
+      "unidad": null,
+      "value_type": null
+     },
+     "folato": {
+      "valor": "83",
+      "columna": "Vitamine B9 ou Folates totaux (µg/100 g)",
+      "unidad": null,
+      "value_type": null
+     },
+     "vitB12": {
+      "valor": "26",
+      "columna": "Vitamine B12 (µg/100 g)",
+      "unidad": null,
+      "value_type": null
+     },
+     "energia": {
+      "valor": "171",
+      "columna": "Energie, Règlement UE N° 1169/2011 (kcal/100 g)",
+      "unidad": null,
+      "value_type": null
+     },
+     "fibra": {
+      "valor": "0",
+      "columna": "Fibres alimentaires (g/100 g)",
+      "unidad": null,
+      "value_type": null
+     }
+    }
+   },
+   "usda": {
+    "id": "169450",
+    "fila": "Beef, variety meats and by-products, kidneys, cooked, simmered",
+    "celdas": {
+     "proteina": {
+      "valor": "27.27",
+      "columna": "Protein",
+      "unidad": "G",
+      "value_type": null
+     },
+     "grasa": {
+      "valor": "4.65",
+      "columna": "Total lipid (fat)",
+      "unidad": "G",
+      "value_type": null
+     },
+     "linoleico": {
+      "valor": "0.626",
+      "columna": "PUFA 18:2",
+      "unidad": "G",
+      "value_type": null
+     },
+     "linolenico": {
+      "valor": "0.011",
+      "columna": "PUFA 18:3 n-3 c,c,c (ALA)",
+      "unidad": "G",
+      "value_type": null
+     },
+     "araquidonico": {
+      "valor": "0.443",
+      "columna": "PUFA 20:4",
+      "unidad": "G",
+      "value_type": null
+     },
+     "epa": {
+      "valor": "0",
+      "columna": "PUFA 20:5 n-3 (EPA)",
+      "unidad": "G",
+      "value_type": null
+     },
+     "dha": {
+      "valor": "0",
+      "columna": "PUFA 22:6 n-3 (DHA)",
+      "unidad": "G",
+      "value_type": null
+     },
+     "calcio": {
+      "valor": "19",
+      "columna": "Calcium, Ca",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "fosforo": {
+      "valor": "304",
+      "columna": "Phosphorus, P",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "potasio": {
+      "valor": "135",
+      "columna": "Potassium, K",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "sodio": {
+      "valor": "94",
+      "columna": "Sodium, Na",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "magnesio": {
+      "valor": "12",
+      "columna": "Magnesium, Mg",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "hierro": {
+      "valor": "5.8",
+      "columna": "Iron, Fe",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "cobre": {
+      "valor": "0.564",
+      "columna": "Copper, Cu",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "manganeso": {
+      "valor": "0.185",
+      "columna": "Manganese, Mn",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "zinc": {
+      "valor": "2.84",
+      "columna": "Zinc, Zn",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "selenio": {
+      "valor": "168",
+      "columna": "Selenium, Se",
+      "unidad": "UG",
+      "value_type": null
+     },
+     "vitA": {
+      "valor": "0",
+      "columna": "Vitamin A, RAE",
+      "unidad": "UG",
+      "value_type": null
+     },
+     "vitD": {
+      "valor": "1.1",
+      "columna": "Vitamin D (D2 + D3)",
+      "unidad": "UG",
+      "value_type": null
+     },
+     "vitE": {
+      "valor": "0.08",
+      "columna": "Vitamin E (alpha-tocopherol)",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "tiamina": {
+      "valor": "0.16",
+      "columna": "Thiamin",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "riboflavina": {
+      "valor": "2.97",
+      "columna": "Riboflavin",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "niacina": {
+      "valor": "3.92",
+      "columna": "Niacin",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "acidoPantotenico": {
+      "valor": "1.56",
+      "columna": "Pantothenic acid",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "vitB6": {
+      "valor": "0.391",
+      "columna": "Vitamin B-6",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "folato": {
+      "valor": "83",
+      "columna": "Folate, total",
+      "unidad": "UG",
+      "value_type": null
+     },
+     "vitB12": {
+      "valor": "24.9",
+      "columna": "Vitamin B-12",
+      "unidad": "UG",
+      "value_type": null
+     },
+     "colina": {
+      "valor": "513.2",
+      "columna": "Choline, total",
+      "unidad": "MG",
+      "value_type": null
+     },
+     "energia": {
+      "valor": "158",
+      "columna": "Energy",
+      "unidad": "KCAL",
+      "value_type": null
+     },
+     "fibra": {
+      "valor": "0",
+      "columna": "Fiber, total dietary",
+      "unidad": "G",
+      "value_type": null
      }
     }
    }

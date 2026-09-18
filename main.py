@@ -10069,11 +10069,16 @@ def endpoint_vocabulario():
                            "ejemplo": "la carne y el pescado hervidos o al vapor, sin sal; sin "
                                       "hueso, porque cocido se astilla"},
                  "veterinario": {"titulo": "Ración cocinada",
+                                 # ⚠️ NI UN NÚMERO DE REQUISITOS ESCRITO A MANO. Lo cazó el
+                                 # BLOQUE 107, y su motivo está medido: aquí hubo «los 30
+                                 # requisitos» cuando el motor ya verificaba 43. Un texto con
+                                 # una cifra dentro es un dato, y se separa del código sin dar
+                                 # ningún error.
                                  "detalle": "Fichas cocidas en vez de crudas y hueso carnoso fuera "
                                             "del catálogo de candidatos. El calcio pasa a la "
-                                            "cáscara de huevo o al suplemento. Los 43 requisitos, "
-                                            "los topes crónicos, los de patología y los máximos "
-                                            "legales NO cambian ni una cifra."}},
+                                            "cáscara de huevo o al suplemento. Los requisitos de "
+                                            "FEDIAF, los topes crónicos, los de patología y los "
+                                            "máximos legales NO cambian ni una cifra."}},
             ],
             "ojo": ("⚠️ Los gramos de un menú cocinado son de comida YA COCINADA: pésala después de "
                     "cocinarla. Y el modo viaja CON el menú: uno generado crudo y editado en "
@@ -10691,8 +10696,15 @@ from accesibles import modos_de as _modos_de
 _RICO_EN = None
 # Fuera del cálculo: un bote de vitaminas gana en todo y no es «rico en» nada, y
 # un aceite es grasa pura y desplazaría la mediana de la comida de verdad.
-_NO_ENTRAN_EN_EL_RICO = {"Multivitamínico", "Omega-3", "Vitamina B", "Calcio", "Fibra",
-                         "Yodo", "Vitamina E", "Hierro", "Extras", "Hueso carnoso"}
+# ⚠️ LAS CATEGORÍAS DE SUPLEMENTO SE IMPORTAN, NO SE COPIAN. Aquí estaban
+# escritas a mano y lo cazó el BLOQUE 117: «una lista copiada no da error cuando
+# se queda corta — se queda parada, y una categoría nueva deja de existir para
+# ese trozo de código sin que salte nada». Si mañana entra una categoría de
+# suplemento, este cálculo la contaría como comida y desplazaría la mediana de
+# todo el catálogo.
+from constructor import CAT_SUPLEMENTO as _CAT_SUPLEMENTO_RICO
+
+_NO_ENTRAN_EN_EL_RICO = set(_CAT_SUPLEMENTO_RICO) | {"Extras", "Hueso carnoso"}
 _CUANTOS_RICO = 3
 _FRACCION_ALTA_RICO = 0.15      # el 15 % más alto del catálogo
 _VECES_LA_MEDIANA_RICO = 2.0

@@ -5,7 +5,7 @@
   "por_que_existe_este_fichero": "Porque la ley ya se había dicho y se seguía rompiendo. Una frase no se ejecuta: es la misma lección de `auditar_conversiones.py`. Cinco veces el mismo fallo en dos semanas -- las seis categorías de Personalizar, los cinco niveles de actividad, las 47 patologías, las 255 razas y los 163 alimentos --, y las cinco se descubrieron por casualidad, porque una lista copiada a mano no da error: se queda parada y la pantalla se ve perfecta. || El caso que cerró la discusión: el aceite de salmón Pets Purest entró al catálogo del motor el 7 de septiembre con la foto de su etiqueta, el motor lo usa en 23 de los 216 menús precalculados, y en la app no aparecía. Elena lo dijo dos veces antes de que se mirara.",
   "como_se_comprueba": "Por las DOS puntas, porque cada una tapa un agujero distinto. (1) El BLOQUE 99 de `pruebas_completas.py` exige que el endpoint declarado sirva de verdad esa lista y que no venga vacía: un respaldo que tapa una petición rota se ve igual que una petición buena. (2) `tests/la-ley-del-motor.spec.js` en `canislab-web` recorre `src/` buscando constantes `*_RESPALDO` y exige que TODAS estén declaradas aquí. Una lista nueva escrita a mano en la app, sin motor detrás, falla -- que es el único momento en el que se puede cazar.",
   "lo_que_NO_cubre": "Esto vigila las LISTAS -- lo que el motor enumera --, no las cifras que viajan dentro de un menú ni el DER, que tiene su propio contrato en `der_casos.json`. Y no vigila que la app USE lo que lee: eso es de cada prueba, y la forma de hacerlo es sembrar nombres INVENTADOS, porque con los de verdad «la app lo ha leído» y «la app pinta su respaldo» se ven igual.",
-  "cuantas": 32,
+  "cuantas": 37,
   "lo_que_todavia_no_sale_del_motor": "⚠️ 12-sep-2026, remedido el 13. La ley es para TODO, y se esta cumpliendo por partes. Hoy son **18 listas que ya salen del motor**, 5 que son legitimamente de la app (iconos, meses, cableado) y **11 que faltan**, cada una con su riesgo escrito. || Las cuatro que se trajeron el 13 de septiembre eran las dos peores: `COMO_DAR_ALIMENTO`, indexada POR NOMBRE DE ALIMENTO -- al moverla se vio que tenia 77 entradas para 163 alimentos y 12 de comida que el motor ya no tiene, la BORRAJA incluida --, y `ACTIVIDAD_POR_INDICE`, que es la que decide con que nombre se GUARDA la actividad de un perro: si el motor cambiaba el orden, un perro volvia de la base de datos con otras kcal, sin error y con el menu en verde.",
   "cuantas_de_la_app": 5,
   "cuantas_faltan": 7
@@ -268,8 +268,9 @@
    "respaldo": "CUANTO_CRUDO_HACE_FALTA_RESPALDO",
    "que_es": "Cuánto CRUDO hay que comprar para los gramos cocidos de cada ficha, derivado del agua de las dos filas. Va dentro de cada alimento",
    "endpoint": "/alimentos",
-   "camino": "pantallas[].grupos[].cuanto_crudo_hace_falta",
-   "dato_del_motor": "alimentos_v3_final.json (humedad_g_100g y humedad_crudo_g_100g)"
+   "camino": "pantallas",
+   "dato_del_motor": "alimentos_v3_final.json (humedad_g_100g y humedad_crudo_g_100g)",
+   "dentro_de_cada_alimento": "cuanto_crudo_hace_falta"
   },
   {
    "respaldo": "TRAMOS_TRANSICION_RESPALDO",
