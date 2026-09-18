@@ -3094,6 +3094,71 @@ el mecanismo está puesto y la especie a evitar le llega al solver.
 
 ---
 
+## P-52 · Las plantas: cuál pasa el listón, y por qué puerta entra
+
+*(18 de septiembre de 2026. La abrió Elena: «yo sigo viendo un montón de menús
+de tiendas que venden que meten perejil, romero, tomillo», y la ordenó ella
+misma en el mensaje siguiente, que es el que vale:)*
+
+> «no sería un candidato del solver, lo que sería es… imagínate que se ha
+> demostrado que una de esas plantas es buena para, yo qué sé, para la diarrea,
+> para el pelo más brillante, cosas así. **Si algo está demostrado realmente,
+> pues entonces sí lo podemos meter a una dosis muy bajita**, ¿entiendes?»
+
+⚠️ **LA PUERTA YA EXISTE Y YA SE HA USADO: es el PSYLLIUM.** Está en el catálogo
+desde agosto (`NaturGreen Psyllium Bio`, categoría **Fibra**), es una planta, y
+entró exactamente así — como **suplemento con su tope de dosis**, no como comida
+que el MILP optimiza. Con respaldo de verdad: SACN5 lo recomienda para el
+intestino irritable (cap.63) y el estreñimiento (cap.64), y Fascetti le da
+**dosis escrita** para el perro diabético (cap.17, «1–3 tbsp per day»). O sea que
+esto no hay que construirlo: hay que aplicarlo.
+
+**El criterio, escrito para que la próxima candidata se juzgue sin volver a
+discutirlo.** Una planta entra cuando cumple **las cuatro**:
+
+| | |
+|---|---|
+| **1** | una fuente del repo dice **qué hace, EN PERRO** — no en humano, no in vitro, no «tradicionalmente se usa para» |
+| **2** | con una **dosis**, no con una pizca |
+| **3** | su **seguridad** está establecida en perro |
+| **4** | y entra como **suplemento con su tope**, nunca como candidato del MILP |
+
+La cuarta está medida en este motor y no es burocracia: el solver elige por
+nutrición **por gramo**, y la albahaca —que está dentro como verdura— llegó a
+salir a **651 g en una ración**. Una planta metida como comida no se queda en la
+pizca que pone una tienda.
+
+**Hoy no pasa ninguna de las cuatro que preguntó Elena**, y el detalle una a una
+está en `LECTURAS.md`. En corto: la **cúrcuma** se probó en perro con doble
+ciego y **no ganó al placebo**; el **romero** solo tiene uso documentado como
+conservante del pienso, y ni para eso está aprobado; el **perejil** y el
+**tomillo** no tienen nada — NRC los clasifica como saborizantes.
+
+**Lo que SÍ queda que decidir, y por eso esto sigue abierto:**
+
+1. **El cardo mariano (silimarina)** es la que más cerca está: mecanismo
+   hepatoprotector descrito con detalle, pero SACN5 dice que está «being
+   evaluated» y que los ensayos buenos están por venir. ¿Se vigila y entra el
+   día que salgan, o se deja?
+2. **Si se quiere ofrecer alguna aunque no pase el listón**, porque las tiendas
+   las ponen y su ausencia se puede leer como que nuestro menú es más pobre.
+   Eso es una decisión de producto, no de dato, y es de Elena. Si la respuesta
+   es que sí, la forma es la del psyllium y **el texto tiene que decir que no
+   está demostrado**.
+3. ⚠️ **El arándano rojo hay que decidir si se DESACONSEJA activamente**, que es
+   distinto de no ofrecerlo: no es que no sirva, es que está **contraindicado**
+   en el perro con urolito de oxalato cálcico («high in oxalate, as well as
+   vitamin C», Fascetti cap.16 y SACN5 cap.46) — y es justo al que se lo venden,
+   «para las vías urinarias». Hoy el motor no dice nada de un producto que el
+   dueño puede estar comprando por su cuenta.
+4. ⚠️ **Y el AJO**, que no es una hierba y es lo único de todo esto que puede
+   matar: NRC lo nombra como antiparasitario «natural» y FEDIAF lo marca como
+   tóxico (§7.7.3, con la cebolla). Una receta de tienda con hierbas puede
+   llevarlo al lado con el mismo argumento. Si se le cuenta algo al dueño sobre
+   plantas, **eso** es lo que hay que decirle.
+
+**Dueño de la pregunta: Elena.** Los cuatro puntos son de producto.
+
 ## P-51 · Cuando el mandato manda a USDA y USDA lo cuece de otra manera
 
 *(18 de septiembre de 2026, de madrugada. No la pregunté yo: la encontró el

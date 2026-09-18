@@ -10722,6 +10722,7 @@ def _arbol_de_alimentos():
         if _ricas:
             fila["rico_en"] = [
                 {"nutriente": _c,
+                 "nombre": _DOCUMENTACION["para_que_es_bueno"][_c].get("nombre", _c),
                  "dueno": _DOCUMENTACION["para_que_es_bueno"][_c]["dueno"],
                  "veterinario": _DOCUMENTACION["para_que_es_bueno"][_c]["veterinario"]}
                 for _c in _ricas]

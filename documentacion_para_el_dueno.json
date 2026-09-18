@@ -129,150 +129,175 @@
  },
  "para_que_es_bueno": {
   "proteina": {
+   "nombre": "proteína",
    "dueno": "para los músculos: es de lo que están hechos",
    "veterinario": "Aporte proteico alto por 1000 kcal.",
    "fuente": "FEDIAF 2025, Tabla III-3b",
    "cita": ""
   },
   "calcio": {
+   "nombre": "calcio",
    "dueno": "para los huesos y los dientes",
    "veterinario": "Componente estructural del esqueleto y reservorio iónico.",
    "fuente": "SACN5 5ª ed., cap.6",
    "cita": "Calcium serves two important functions: 1) as a structural component in bones and teeth"
   },
   "fosforo": {
+   "nombre": "fósforo",
    "dueno": "para los huesos, junto con el calcio",
    "veterinario": "Va siempre emparejado con el calcio: lo que importa es el ratio Ca:P.",
    "fuente": "FEDIAF 2025, Tabla III-3b",
    "cita": ""
   },
   "hierro": {
+   "nombre": "hierro",
    "dueno": "para la sangre: es lo que lleva el oxígeno por el cuerpo",
    "veterinario": "Síntesis de hemoglobina y mioglobina.",
    "fuente": "NRC 2006",
    "cita": "The primary role of Fe is in the synthesis of hemoglobin and myoglobin where it functions as a transporter and binder of oxygen"
   },
   "zinc": {
+   "nombre": "zinc",
    "dueno": "para la piel y el pelo",
    "veterinario": "Su carencia da alopecia, úlceras cutáneas, dermatitis y paroniquia; en perro es la dermatosis nutricional mejor caracterizada.",
    "fuente": "SACN5 5ª ed., Tabla 32-1",
    "cita": "Dogs fed a zinc-deficient food developed skin lesions, which improved dramatically within 72 hours of adding zinc to the food"
   },
   "cobre": {
+   "nombre": "cobre",
    "dueno": "para el color y la densidad del pelo",
    "veterinario": "Su carencia da pérdida del color normal, pelo mate o áspero y menor densidad.",
    "fuente": "SACN5 5ª ed., Tabla 32-1",
    "cita": "Loss of normal color"
   },
   "yodo": {
+   "nombre": "yodo",
    "dueno": "para la tiroides, que es la que marca el ritmo del cuerpo",
    "veterinario": "Constituyente de T4 y T3.",
    "fuente": "NRC 2006",
    "cita": "Its biological significance is that it is a major constituent of the thyroid hormones thyroxine (T4) and 3,5,3′-triiodothyronine (T3)"
   },
   "selenio": {
+   "nombre": "selenio",
    "dueno": "es antioxidante: ayuda a las células a defenderse del desgaste",
    "veterinario": "Componente de la glutatión peroxidasa.",
    "fuente": "NRC 2006",
    "cita": "glutathione peroxidase (GSH-Px), an important antioxidant that protects the body"
   },
   "vitA": {
+   "nombre": "vitamina A",
    "dueno": "para la vista y para la piel",
    "veterinario": "Queratinización y visión. ⚠️ Tiene máximo: por eso el hígado va tasado.",
    "fuente": "SACN5 5ª ed., Tabla 32-1",
    "cita": "Keratinization disorders"
   },
   "vitD": {
+   "nombre": "vitamina D",
    "dueno": "para que el calcio llegue de verdad al hueso",
    "veterinario": "⚠️ Es tope crónico en este motor: tiene máximo duro.",
    "fuente": "NRC 2006",
    "cita": ""
   },
   "vitE": {
+   "nombre": "vitamina E",
    "dueno": "es antioxidante, y va de la mano con las grasas buenas",
    "veterinario": "Necesaria para el aprovechamiento de los ácidos grasos esenciales.",
    "fuente": "SACN5 5ª ed., Tabla 32-1",
    "cita": "Provide adequate levels and availability of zinc, B-complex \nvitamins and vitamin E to ensure adequate use of EFA"
   },
   "vitB12": {
+   "nombre": "vitamina B12",
    "dueno": "para la sangre y para el sistema nervioso",
    "veterinario": "Cobalamina: la sintetizan solo microorganismos, así que en la dieta viene de tejido animal.",
    "fuente": "NRC 2006",
    "cita": "All animals, including dogs and cats, ultimately depend on microbially \nsynthesized cobalamin"
   },
   "riboflavina": {
+   "nombre": "vitamina B2",
    "dueno": "ayuda a sacar energía de la comida",
    "veterinario": "Vitamina B2.",
    "fuente": "NRC 2006",
    "cita": ""
   },
   "tiamina": {
+   "nombre": "vitamina B1",
    "dueno": "para el sistema nervioso",
    "veterinario": "Vitamina B1. ⚠️ Es la que destruye la tiaminasa del pescado crudo.",
    "fuente": "NRC 2006",
    "cita": "Both thiaminase I and thiaminase II are inactivated by cooking."
   },
   "niacina": {
+   "nombre": "vitamina B3",
    "dueno": "ayuda a sacar energía de la comida",
    "veterinario": "Vitamina B3.",
    "fuente": "NRC 2006",
    "cita": ""
   },
   "vitB6": {
+   "nombre": "vitamina B6",
    "dueno": "para aprovechar la proteína",
    "veterinario": "Su requerimiento sube con la proteína de la dieta.",
    "fuente": "FEDIAF 2025, §3.3",
    "cita": ""
   },
   "folato": {
+   "nombre": "ácido fólico",
    "dueno": "para fabricar células nuevas",
    "veterinario": "Ácido fólico.",
    "fuente": "NRC 2006",
    "cita": ""
   },
   "colina": {
+   "nombre": "colina",
    "dueno": "para el hígado",
    "veterinario": "Componente de fosfolípidos y precursor de acetilcolina.",
    "fuente": "NRC 2006",
    "cita": ""
   },
   "epa_dha": {
+   "nombre": "omega-3 de pescado",
    "dueno": "para las articulaciones, la piel y —en cachorros— el cerebro y la vista",
    "veterinario": "Los eicosanoides derivados del EPA son mínimamente inflamatorios; el DHA se acumula en retina y cerebro durante el desarrollo.",
    "fuente": "SACN5 5ª ed., cap.34 · NRC 2006",
    "cita": "eicosanoids derived from EPA promote min-\nimal to no inflammatory activity"
   },
   "linoleico": {
+   "nombre": "grasas buenas para la piel",
    "dueno": "para que la piel no se reseque y el pelo brille",
    "veterinario": "Su carencia da seborrea seca, alopecia y pelo seco y mate.",
    "fuente": "SACN5 5ª ed., Tabla 32-1",
    "cita": "Excessive scales (seborrhea sicca)"
   },
   "taurina": {
+   "nombre": "taurina",
    "dueno": "para el corazón",
    "veterinario": "Su carencia se asocia a miocardiopatía dilatada; además conjuga los ácidos biliares.",
    "fuente": "SACN5 5ª ed., cap.36 · NRC 2006",
    "cita": "bile acids normally are conjugated with taurine to form taurocholic acid"
   },
   "lcarnitina": {
+   "nombre": "L-carnitina",
    "dueno": "para el corazón y para quemar grasa",
    "veterinario": "El corazón y el músculo esquelético son los tejidos de mayor concentración.",
    "fuente": "SACN5 5ª ed., cap.36",
    "cita": "heart and skeletal muscle contain very \nhigh levels of carnitine, which underscores its importance in \nthese tissues"
   },
   "fibra": {
+   "nombre": "fibra",
    "dueno": "para que vaya bien al baño",
    "veterinario": "Modula el tránsito y el volumen fecal según su fermentabilidad.",
    "fuente": "SACN5 5ª ed., cap.5",
    "cita": "mentation rate of fiber increases,GI transit time decreases,fecal \nbulk decreases"
   },
   "potasio": {
+   "nombre": "potasio",
    "dueno": "para los músculos y el corazón",
    "veterinario": "Electrolito intracelular principal.",
    "fuente": "NRC 2006",
    "cita": ""
   },
   "magnesio": {
+   "nombre": "magnesio",
    "dueno": "para los huesos y los músculos",
    "veterinario": "Cofactor enzimático y componente óseo.",
    "fuente": "NRC 2006",
