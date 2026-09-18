@@ -9894,6 +9894,80 @@ for _patE in ("renal", "hepatopatia", "obesidad", "artrosis"):
                       f"que ser 67,1. Apagar el suelo del LIBRO no puede tocar el de una "
                       f"PATOLOGIA: son dos cajones distintos y se combinan con max()")
 
+
+# --- 57-bis. El libro también puede pedir un RATIO, y hoy no aplica ninguno --
+#
+# ⚠️ POR QUÉ EXISTE EL MECANISMO (18 de septiembre de 2026). `recomendaciones_
+# libro.json` sabía de techos desde el 8 de septiembre y de suelos desde el 11,
+# y le faltaba la tercera forma: **el cociente entre dos nutrientes**. Sin ella
+# una recomendación del libro que fuera un ratio no tenía dónde vivir -- que es
+# EXACTAMENTE el hueco que tuvo `patologias.json` hasta el 10 de septiembre,
+# cuando el Ca:P de los dos urolitos de calcio llevaba dos días escrito sin
+# poder aplicarse y un perro de 30 kg con oxalato salía a Ca:P 1,06 EN VERDE.
+#
+# Lo que se vigila aquí son las dos mitades, igual que con el suelo de vitamina
+# E: que las cifras escritas sigan APAGADAS con su motivo, y que la maquinaria
+# funcione de verdad -- se enciende una a mano y se exige que el solver la
+# aplique. Sin la segunda, el día que alguien encienda una se encontraría con
+# que el mecanismo nunca funcionó.
+#
+# LAS CIFRAS, Y POR QUÉ NINGUNA SE APLICA: SACN5 se contradice. Su Tabla 17-1
+# pide Ca:P 1:1-1,5:1 al cachorro que pasará de 25 kg, y su Tabla 33-6 --la de
+# los cachorros de raza grande CON RIESGO DE DOD, o sea la población más
+# estrecha-- pide 1,1:1-2:1. Más ancha en la tabla más específica. Y hoy no
+# movería ni un menú: los precalculados van de 1,03 a 1,29.
+import recomendaciones as _rec57b
+_esc57b = _rec57b.ratios_escritos_de_la_etapa("CachorroJoven")
+if not _esc57b:
+    fallos.append("BLOQUE57: no queda ni un ratio escrito en `recomendaciones_libro.json`. "
+                  "O se han borrado --y entonces la contradicción de SACN5 entre su Tabla "
+                  "17-1 y su 33-6 se ha perdido y habrá que volver a descubrirla-- o el "
+                  "lector ya no los ve")
+for _r57b in _esc57b:
+    if _r57b.get("aplicado_por_el_solver") is not False:
+        fallos.append(f"BLOQUE57: el ratio {_r57b.get('numerador')}:{_r57b.get('denominador')} "
+                      f"del libro se ha ENCENDIDO. Si es a propósito hay que medirlo y "
+                      f"cambiar este bloque; si no, es una cifra de una tabla que se "
+                      f"contradice con otra del mismo libro")
+    if not (_r57b.get("fuente") or "").strip() or not (_r57b.get("por_que") or "").strip():
+        fallos.append(f"BLOQUE57: un ratio del libro no dice su fuente o su porqué. Una cifra "
+                      f"apagada sin motivo escrito es una cifra que se pudre")
+if _rec57b.ratios_de_la_etapa("CachorroJoven", peso_adulto_esperado_kg=30):
+    fallos.append("BLOQUE57: `ratios_de_la_etapa` devuelve algún ratio y todos están "
+                  "apagados. La marca `aplicado_por_el_solver` no está filtrando")
+
+# Y LA MAQUINARIA, encendida a mano: un techo de Ca:P de 1,2 tiene que MORDER.
+# Se elige 1,2 y no 1,5 a propósito: los menús reales van de 1,03 a 1,29, así
+# que 1,5 no apretaría y este apartado saldría verde sin comprobar nada.
+_guardado57b = _rec57b.POR_ETAPA["CachorroJoven"].get("ratios")
+try:
+    _rec57b.POR_ETAPA["CachorroJoven"]["ratios"] = [
+        {"numerador": "calcio", "denominador": "fosforo", "sentido": "max", "valor": 1.2,
+         "aplicado_por_el_solver": True, "fuente": "de mentira, solo para esta prueba",
+         "por_que": "de mentira"}]
+    _ok57b, _g57b = resolver(900, "CachorroJoven", al, req, 10,
+                             dosis_maxima_fabricante, peso_adulto_esperado_kg=20)
+    if not _ok57b:
+        print("  ⚠️  ratios del libro: con el techo de prueba no sale menú; no se puede medir")
+    else:
+        _ca57b = sum((valor_nutriente(al[_n]["nutrientes"], "calcio") or 0) * _x / 100.0
+                     for _n, _x in _g57b.items())
+        _p57b = sum((valor_nutriente(al[_n]["nutrientes"], "fosforo") or 0) * _x / 100.0
+                    for _n, _x in _g57b.items())
+        _rat57b = _ca57b / _p57b if _p57b else 0
+        if _rat57b > 1.2 * 1.02:
+            fallos.append(f"BLOQUE57: con un techo de Ca:P del LIBRO puesto a 1,2, el menú "
+                          f"sale a {_rat57b:.2f}. El solver no está aplicando los ratios del "
+                          f"libro, así que el mecanismo no funciona y encender una cifra no "
+                          f"haría nada")
+        print(f"  ratios del libro: {len(_esc57b)} escritos, 0 aplicados · "
+              f"con uno encendido a mano el menú sale a Ca:P {_rat57b:.2f} (techo 1,2)")
+finally:
+    if _guardado57b is None:
+        _rec57b.POR_ETAPA["CachorroJoven"].pop("ratios", None)
+    else:
+        _rec57b.POR_ETAPA["CachorroJoven"]["ratios"] = _guardado57b
+
 print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 # ============================================================
