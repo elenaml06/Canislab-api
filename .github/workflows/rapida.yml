@@ -1,0 +1,70 @@
+# ─────────────────────────────────────────────────────────────────────────
+# LA BATERÍA RÁPIDA, EN CADA EMPUJÓN
+#
+# POR QUÉ EXISTE (18 de septiembre de 2026). Elena: «tenemos que hacer algo
+# para poder bajar el tiempo de las baterías..... es una locura y tardamos días
+# en aplicar cosas diminutas», y después: «¿la gente que hace apps lo hace así,
+# lanzando PRs y tirando baterías infinitas cada vez que hacen un cambio por
+# mínimo que sea?».
+#
+# No. La forma normal es una PIRÁMIDE: una señal en segundos o minutos en cada
+# empujón, y la larga antes de fusionar. Aquí faltaba el escalón de abajo: hasta
+# hoy no había NINGUNA señal hasta que se abría el PR, y entonces eran 70
+# minutos.
+#
+# QUÉ CORRE, Y DE DÓNDE SALE LA LISTA. Todos los bloques que cuestan menos de 8
+# segundos, que hoy son 69 de 131 y suman 65 s en local. La lista NO está
+# escrita aquí ni en ningún sitio a mano: sale de `reparto_de_la_bateria.json`,
+# que escribe la propia batería entera al terminar. Es una MEDIDA, así que el
+# día que un bloque engorde se cae solo del modo rápido sin que nadie tenga que
+# acordarse -- que es como se pudren las listas en este repo.
+#
+# ⚠️ LO QUE ESTO NO ES, Y HAY QUE DECIRLO. No sustituye a nada: los 62 bloques
+# que se quedan fuera son justo los que resuelven menús de verdad con el solver,
+# o sea los que cazan que un perro se quede sin comer. La batería entera sigue
+# siendo la puerta de `main` y del PR, y eso no cambia.
+#
+# ⚠️ Y NO SE LE TRAEN LAS FUENTES a propósito. De los siete bloques que
+# necesitan `canislab-fuentes` solo uno es rápido (el 77), y bajar un repo
+# entero para un bloque le costaría a este flujo más que todo lo que ejecuta.
+# Ese bloque dice en voz alta que no se ha hecho, que es su comportamiento ya
+# probado, y lo cubre la batería entera del PR.
+# ─────────────────────────────────────────────────────────────────────────
+name: La batería rápida
+
+on:
+  push:
+    # `main` no: ahí ya corre la entera, y con la rápida al lado el rojo que
+    # importa quedaría enterrado entre dos resultados.
+    branches-ignore: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: rapida-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  rapida:
+    runs-on: ubuntu-latest
+    # 65 s en local. Veinte minutos es margen de sobra para un runner lento, y
+    # si algún día se acerca es que la lista ha dejado de ser «lo barato»: eso
+    # se arregla mirando el reparto, no subiendo esto.
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: Instalar lo que hace falta
+        run: pip install -r requirements.txt
+
+      # El BLOQUE 0 lo usa para cazar en dos segundos un nombre que no existe.
+      - name: Instalar pyflakes, para el BLOQUE 0
+        run: pip install pyflakes
+
+      - name: Ejecutar los bloques baratos
+        run: python3 -u probar_bloques.py --rapida
