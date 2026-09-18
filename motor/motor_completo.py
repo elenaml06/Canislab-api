@@ -645,6 +645,42 @@ PENALIZACION_DE_ENCARGO = 12.0
 PENALIZACION_DE_ROTACION = 6.0
 
 
+# ⚠️ UN SOLO ALIMENTO NO PUEDE SER MEDIO PLATO (18 de septiembre de 2026).
+#
+# CASO REAL, y es el tercero de la misma familia: el menú precalculado
+# `Grande_Lactante/Conejo` salía con **2.722 g de coles de Bruselas, el 48,7 %
+# del plato**, verde y cumpliendo los 43 requisitos. Antes fueron los 651 g de
+# albahaca (14 de septiembre) y los 3.676 g de coles del último peldaño (15 de
+# septiembre). Las dos veces se arregló el techo de la CATEGORÍA, y las dos
+# veces volvió a salir, porque el problema no era la categoría: es que dentro
+# de un techo de verdura razonable no había nada que impidiera que TODA fuera
+# una sola hierba. Eso quedó escrito como pendiente en `CLAUDE.md` y es lo que
+# se cierra aquí.
+#
+# La causa es la de siempre y no es un fallo del solver: el MILP optimiza
+# NUTRICIÓN POR GRAMO, y las coles de Bruselas son baratas por gramo. Si no se
+# le dice que un plato es comida y no una lista de nutrientes, no lo sabe.
+#
+# ⚠️ ES CRITERIO NUESTRO, O SEA REGLA 3: no hay ninguna fuente que diga cuánta
+# verdura de una sola clase puede llevar una ración. Así que se relaja como
+# todo lo nuestro -- lo suelta la última pasada de la escalera, la misma que
+# suelta el techo del libro -- y NUNCA puede dejar a un perro sin comer.
+#
+# ⚠️ Y SOLO A LAS CATEGORÍAS SECUNDARIAS. La carne SÍ puede ser la mitad del
+# plato: está medido en el repo, 140 de 299 carnes pasan del 40 % y eso es una
+# ración BARF normal -- la carne ES el grueso. Lo que no es comida es medio
+# plato de hierba.
+TOPE_DE_UN_SOLO_ALIMENTO_SECUNDARIO = float(
+    os.environ.get("CANISLAB_TOPE_UN_ALIMENTO", "0.30"))
+
+# Las mismas que `main.CATEGORIAS_SECUNDARIAS`, más los hidratos, que entraron
+# el 17 de septiembre y son la otra categoría que se come el plato cuando la
+# grasa está topada. No se importan de `main` a propósito: el motor no depende
+# de la API.
+CATEGORIAS_CON_TOPE_POR_ALIMENTO = ("Vísceras", "Hígado", "Verduras y frutas",
+                                    "Cereales y tubérculos")
+
+
 def resolver(*args, **kwargs):
     """El solver, con UN reintento y solo uno: el del techo del libro.
 
@@ -709,6 +745,19 @@ def resolver(*args, **kwargs):
         kwargs_2 = dict(kwargs)
         kwargs_2["apretar_el_techo_del_libro"] = False
         ok, gramos = _resolver_una_vez(*args, **kwargs_2)
+    # ⚠️ Y EL TERCERO, por el mismo argumento y con el mismo interruptor: el
+    # tope de un solo alimento es criterio NUESTRO (regla 3), así que no puede
+    # dejar a un perro sin comer. `_soltar` solo es True en la ÚLTIMA pasada de
+    # la escalera, que es cuando ya se ha comprobado que no cabe en ninguna
+    # forma de ración -- soltarlo antes sería el fallo de orden del 15 de
+    # septiembre, tirar un criterio para no bajar de peldaño.
+    if (_soltar and not ok and not kwargs.get("_sin_tope_de_un_alimento")
+            and TOPE_DE_UN_SOLO_ALIMENTO_SECUNDARIO > 0 and not (
+                isinstance(gramos, dict) and gramos.get("_imposible"))):
+        kwargs_3 = dict(kwargs)
+        kwargs_3["_sin_tope_de_un_alimento"] = True
+        kwargs_3["apretar_el_techo_del_libro"] = False
+        ok, gramos = _resolver_una_vez(*args, **kwargs_3)
     return _con_el_margen_del_kelp(ok, gramos, args, kwargs)
 
 
@@ -783,6 +832,9 @@ def _resolver_una_vez(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn
             #    `requisitos_del_paciente()`, que es quien lo valida y quien
             #    exige el rol: el solver no decide si se puede, solo aplica.
             limites_prescritos=None,
+            # ⚠️ Un número NUESTRO de los que ceden: lo suelta la última pasada
+            #    de la escalera. Ver `TOPE_DE_UN_SOLO_ALIMENTO_SECUNDARIO`.
+            _sin_tope_de_un_alimento=False,
             apretar_el_techo_del_libro=True, _techos_subidos_fuera=None,
             # ⚠️ El segundo intento del margen del kelp. Ver
             # `_con_el_margen_del_kelp`: no se puede saber si el menú llevará
@@ -2744,6 +2796,24 @@ def _resolver_una_vez(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn
             _fila("margen_categoria_max", fila_rel_max, -np.inf, 0.0)
             fila_rel_min = [-fila_cat[j] + mnp_con_margen * fila_total[j] for j in range(2 * n_var)]
             _fila("margen_categoria_min", fila_rel_min, -np.inf, 0.0)
+
+            # ⚠️ Y NINGUNO DE ELLOS, ÉL SOLO, PUEDE SER MEDIO PLATO. Ver
+            # `TOPE_DE_UN_SOLO_ALIMENTO_SECUNDARIO`. Es lineal, así que entra
+            # en la misma ecuación y el solver lo resuelve a la vez que decide
+            # los gramos:  g_i  <=  tope · Σ g_j
+            if (not _sin_tope_de_un_alimento
+                    and cat in CATEGORIAS_CON_TOPE_POR_ALIMENTO
+                    and TOPE_DE_UN_SOLO_ALIMENTO_SECUNDARIO > 0):
+                # Nunca más estricto que el techo de su propia categoría: si la
+                # categoría entera cabe en menos que el tope, el tope no pinta
+                # nada y añadir la fila solo cuesta reloj.
+                _tope_solo = min(TOPE_DE_UN_SOLO_ALIMENTO_SECUNDARIO,
+                                 mxp_con_margen if mxp_con_margen else 1.0)
+                if _tope_solo < (mxp_con_margen or 1.0) or len(miembros) > 1:
+                    for _n_solo in miembros:
+                        fila_solo = [(-_tope_solo) * fila_total[j] for j in range(2 * n_var)]
+                        fila_solo[idx[_n_solo]] += 1.0
+                        _fila("tope_de_un_solo_alimento", fila_solo, -np.inf, 0.0)
 
     # ⚠️ AÑADIDO (5 agosto): grasa como % de las kcal (pancreatitis,
     # diabetes) -- restricción propia, no cabe en el bucle de arriba

@@ -23528,6 +23528,125 @@ if _faltan_fin:
         f"`sys.exit()` del final. Un guardia inerte es peor que no tenerlo: sale verde igual")
 
 
+# ============================================================
+# BLOQUE 131 — UN SOLO ALIMENTO NO PUEDE SER MEDIO PLATO
+# ============================================================
+#
+# ⚠️ POR QUÉ EXISTE (18 de septiembre de 2026). Es el TERCERO de la misma
+# familia y los dos anteriores se arreglaron por el sitio equivocado:
+#
+#   · 14 de septiembre — «651 g de albahaca fresca en una ración no es comida».
+#     Se penalizó lo difícil de comprar, y la albahaca es de súper.
+#   · 15 de septiembre — «3.676 g de coles de Bruselas, el 42 % del plato».
+#     Se subió el techo de la CATEGORÍA en dos pasos en vez de levantarlo de
+#     golpe. Quedó escrito en `CLAUDE.md` que lo que seguía sin decidir era
+#     «si dentro de un techo de verdura razonable debería poder ir TODA en una
+#     sola hierba».
+#   · 18 de septiembre — el menú precalculado `Grande_Lactante/Conejo` sale con
+#     **2.722 g de coles de Bruselas, el 48,7 % del plato**, verde y cumpliendo
+#     los 43 requisitos. O sea: volvió, y más grande.
+#
+# La causa nunca fue la categoría: el MILP optimiza NUTRICIÓN POR GRAMO y las
+# coles son baratas por gramo, así que dentro de un techo de verdura correcto
+# no había nada que impidiera que toda fuera una sola. Lo decidió Elena el 18 de
+# septiembre eligiendo entre tres salidas: **tope real en el motor**, no una
+# regla de la vista previa.
+#
+# LA CIFRA ESTÁ MEDIDA sobre diez perros de referencia POR LA API, con la
+# escalera y el presupuesto de verdad:
+#
+#   | tope | perros con menú | peor alimento suelto | coste                    |
+#   | sin  | 8/10            | 39,2 % (quinoa)      | --                       |
+#   | 40 % | 8/10            | 39,2 %               | no muerde                |
+#   | 35 % | 8/10            | 34,7 %               | --                       |
+#   | 30 % | 8/10            | 29,7 %               | NINGUNO                  |
+#   | 25 % | 8/10            | 24,7 %               | la pancreatitis baja peldaño |
+#
+# Los siete perros SANOS no se acercan (máximo 9,9 %), así que esto solo toca a
+# quien tiene que diluir con hidratos. Los dos lactantes sin menú lo están
+# también SIN tope, o sea que no es esto.
+print("\n=== BLOQUE 131: un solo alimento no puede ser medio plato ===")
+import json as _json131
+import motor.motor_completo as _mc131
+
+_TOPE131 = _mc131.TOPE_DE_UN_SOLO_ALIMENTO_SECUNDARIO
+if not (0.0 < _TOPE131 < 1.0):
+    fallos.append(f"BLOQUE131: el tope de un solo alimento vale {_TOPE131}, que lo apaga. Es un "
+                  f"criterio NUESTRO y puede discutirse, pero apagarlo devuelve los 2.722 g de "
+                  f"coles de Bruselas, y eso ya se decidió")
+
+_al131 = {a["nombre"]: a for a in _json131.load(open(_os_b65.path.join(
+    _os_b65.path.dirname(_os_b65.path.abspath(__file__)),
+    "alimentos_v3_final.json"), encoding="utf-8"))}
+_cm131 = _json131.load(open(_os_b65.path.join(
+    _os_b65.path.dirname(_os_b65.path.abspath(__file__)),
+    "catalogo_menus.json"), encoding="utf-8"))
+
+# --- 1. ningún menú de la vista previa se pasa ---------------------------
+_menus131 = []
+for _c131, _e131 in _cm131["CATALOGO"].items():
+    _menus131.append((_c131, _e131["gramos"]))
+    for _v131 in _cm131["CATALOGO_VARIANTES"].get(_c131, []):
+        _menus131.append((f"{_c131}/{_v131.get('proteina')}", _v131["gramos"]))
+_pasados131 = []
+for _etq131, _g131 in _menus131:
+    _tot131 = sum(_g131.values()) or 1.0
+    for _n131, _x131 in _g131.items():
+        if (_al131.get(_n131, {}).get("categoria") in _mc131.CATEGORIAS_CON_TOPE_POR_ALIMENTO
+                and _x131 / _tot131 > _TOPE131 * 1.02):
+            _pasados131.append(f"{_etq131}: {_n131} {_x131:.0f} g, "
+                               f"el {100 * _x131 / _tot131:.1f} % del plato")
+if _pasados131:
+    fallos.append(f"BLOQUE131: {len(_pasados131)} menús de la vista previa llevan UN alimento "
+                  f"secundario por encima del {_TOPE131 * 100:.0f} % del plato. Medio plato de "
+                  f"una sola verdura cumple los 43 requisitos y no es comida: "
+                  + " · ".join(_pasados131[:4]))
+
+# --- 2. y la fila EXISTE de verdad: con ella quitada, se pasa ------------
+#
+# ⚠️ Sin esto el apartado de arriba saldría verde sin vigilar nada -- bastaría
+# con que el solver no eligiera nunca un alimento dominante por casualidad. Se
+# resuelve el MISMO perro con el tope puesto y sin él, y se exige que sin él
+# alguno se pase. Es el perro de la pancreatitis, que es donde está medido que
+# muerde (39,2 % sin tope).
+_cuerpo131 = {"nombres_alimentos": [], "modo": "automatico", "der_objetivo": 950,
+              "etapa_requisitos": "Adulto", "peso_perro_kg": 20,
+              "patologias": ["pancreatitis"]}
+
+
+def _peor_suelto_131(_menu):
+    _t = sum(_menu.values()) or 1.0
+    return max((v / _t for n, v in _menu.items()
+                if _al131.get(n, {}).get("categoria")
+                in _mc131.CATEGORIAS_CON_TOPE_POR_ALIMENTO), default=0.0)
+
+
+_con131 = (_c.post("/menu/v2", json=_cuerpo131).json() or {}).get("menu") or {}
+_viejo131 = _mc131.TOPE_DE_UN_SOLO_ALIMENTO_SECUNDARIO
+try:
+    _mc131.TOPE_DE_UN_SOLO_ALIMENTO_SECUNDARIO = 0.0
+    _sin131 = (_c.post("/menu/v2", json=_cuerpo131).json() or {}).get("menu") or {}
+finally:
+    _mc131.TOPE_DE_UN_SOLO_ALIMENTO_SECUNDARIO = _viejo131
+_p_con131, _p_sin131 = _peor_suelto_131(_con131), _peor_suelto_131(_sin131)
+if not _con131:
+    fallos.append("BLOQUE131: con el tope puesto, el perro con pancreatitis se queda SIN MENÚ. "
+                  "Es criterio nuestro (regla 3) y no puede dejar a un perro sin comer: el "
+                  "reintento que lo suelta en la última pasada de la escalera no está actuando")
+elif _p_con131 > _TOPE131 * 1.02:
+    fallos.append(f"BLOQUE131: el menú entregado con el tope puesto lleva un alimento al "
+                  f"{_p_con131 * 100:.1f} %, por encima del {_TOPE131 * 100:.0f} %. La fila del "
+                  f"MILP no está apretando")
+elif _sin131 and _p_sin131 <= _TOPE131 * 1.02:
+    fallos.append(f"BLOQUE131: quitando el tope el menú sigue por debajo del "
+                  f"{_TOPE131 * 100:.0f} % ({_p_sin131 * 100:.1f} %), así que este bloque no "
+                  f"está comprobando nada: la fila podría no existir y saldría verde igual. "
+                  f"Hace falta un caso donde el tope MUERDA")
+print(f"  vista previa: {len(_menus131)} menús, {len(_pasados131)} por encima del "
+      f"{_TOPE131 * 100:.0f} %")
+print(f"  el tope muerde: con él {_p_con131 * 100:.1f} % · sin él {_p_sin131 * 100:.1f} %")
+
+
 print("\nDÓNDE SE VA EL TIEMPO — los diez bloques más caros:")
 for _t, _nombre in _tiempos_por_bloque[:10]:
     print(f"  {_t:6.0f}s  {100*_t/_gastado:4.1f}%  {_nombre[4:70]}")
