@@ -4,6 +4,28 @@ Parte de `PENDIENTE.md` (secciones 5, 5-bis, 5-ter, 5-quater), separado
 el 6 de septiembre. Si esta sesión toca nutrición, patologías o el
 catálogo, mira también `canislab-fuentes/ESTADO_Y_PROXIMOS_PASOS.md`.
 
+## 5-sexies. El rebase por materia seca vive en la declaración y no en el auditor
+
+*(18 de septiembre de 2026.)* Cuando una celda absoluta viene de una fila de
+**otra cocción**, se rebasa por materia seca: es la misma regla que el repo ya
+aplica a los aminoácidos (por gramo de proteína) y a los ácidos grasos (por
+gramo de grasa), leída para la cocción. Hoy están rebasadas las **29 celdas** de
+las cinco fichas de `celdas_de_otra_coccion`, cada una con las dos aguas y su
+factor escritos, y el **BLOQUE 104 rehace la cuenta**.
+
+**Lo que falta es que la regla se aplique SOLA.** Vive en la declaración, no en
+`auditar_composicion.py`, que es quien escribe las celdas — así que la siguiente
+ficha cocida que entre volverá a copiar la cifra de la fila donante tal cual, y
+lo único que pasará es que el BLOQUE 104 se pondrá rojo y alguien tendrá que
+hacer a mano lo de esta noche. Es la lección de `auditar_conversiones.py` otra
+vez: **una regla que no se ejecuta no es una regla**.
+
+Para eso hace falta que la instantánea guarde el **agua** de cada fila, que hoy
+no guarda: las tres fuentes la publican y el problema es solo que no está entre
+las columnas que se capturan.
+
+---
+
 ## 5. Nutrición — auditado contra el PDF oficial
 
 > ### ⚠️ LO QUE ESTA AUDITORÍA **NO** COMPRUEBA (25 de agosto)

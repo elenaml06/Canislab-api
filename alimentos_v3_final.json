@@ -1045,7 +1045,8 @@
       "araquidonico": "usda:171093 · «Turkey, all classes, breast, meat and skin, raw» · columna «PUFA 20:4» = 0.09 G ×1000 → 90.0 mg · 2026-09-13",
       "dha": "usda:171093 · «Turkey, all classes, breast, meat and skin, raw» · columna «PUFA 22:6 n-3 (DHA)» = 0.01 G → 0.01 g · 2026-09-13",
       "linoleico": "usda:171093 · «Turkey, all classes, breast, meat and skin, raw» · columna «PUFA 18:2» = 1.41 G → 1.41 g · 2026-09-13",
-      "linolenico": "usda:171093 · «Turkey, all classes, breast, meat and skin, raw» · columna «PUFA 18:3» = 0.09 G → 0.09 g · 2026-09-13"
+      "linolenico": "usda:171093 · «Turkey, all classes, breast, meat and skin, raw» · columna «PUFA 18:3» = 0.09 G → 0.09 g · 2026-09-13",
+      "energia": "usda:171093 · «Turkey, all classes, breast, meat and skin, raw» · columna «Energy» = 157 KCAL → 157 kcal · 2026-09-18"
     },
     "cero_verificado": {
       "epa": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:171093 · «Turkey, all classes, breast, meat and skin, raw» · columna «PUFA 20:5 n-3 (EPA)» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
@@ -1135,7 +1136,8 @@
       "dha": "usda:171474 · «Chicken, broilers or fryers, breast, meat and skin, raw» · columna «PUFA 22:6 n-3 (DHA)» = 0.02 G → 0.02 g · 2026-09-13",
       "epa": "usda:171474 · «Chicken, broilers or fryers, breast, meat and skin, raw» · columna «PUFA 20:5 n-3 (EPA)» = 0.01 G → 0.01 g · 2026-09-13",
       "linoleico": "usda:171474 · «Chicken, broilers or fryers, breast, meat and skin, raw» · columna «PUFA 18:2» = 1.74 G → 1.74 g · 2026-09-13",
-      "linolenico": "usda:171474 · «Chicken, broilers or fryers, breast, meat and skin, raw» · columna «PUFA 18:3» = 0.08 G → 0.08 g · 2026-09-13"
+      "linolenico": "usda:171474 · «Chicken, broilers or fryers, breast, meat and skin, raw» · columna «PUFA 18:3» = 0.08 G → 0.08 g · 2026-09-13",
+      "energia": "usda:171474 · «Chicken, broilers or fryers, breast, meat and skin, raw» · columna «Energy» = 172 KCAL → 172 kcal · 2026-09-18"
     },
     "cero_verificado": {
       "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:171474 · «Chicken, broilers or fryers, breast, meat and skin, raw» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
@@ -6011,7 +6013,8 @@
       "dha": "usda:174515 · «Turkey, retail parts, breast, meat only, raw» · columna «PUFA 22:6 n-3 (DHA)» = 0.002 G → 0.002 g · 2026-09-13",
       "epa": "usda:174515 · «Turkey, retail parts, breast, meat only, raw» · columna «PUFA 20:5 n-3 (EPA)» = 0.001 G → 0.001 g · 2026-09-13",
       "linoleico": "usda:174515 · «Turkey, retail parts, breast, meat only, raw» · columna «PUFA 18:2 n-6 c,c» = 0.257 G → 0.257 g · 2026-09-13",
-      "linolenico": "usda:174515 · «Turkey, retail parts, breast, meat only, raw» · columna «PUFA 18:3 n-3 c,c,c (ALA)» = 0.015 G → 0.015 g · 2026-09-13"
+      "linolenico": "usda:174515 · «Turkey, retail parts, breast, meat only, raw» · columna «PUFA 18:3 n-3 c,c,c (ALA)» = 0.015 G → 0.015 g · 2026-09-13",
+      "energia": "usda:174515 · «Turkey, retail parts, breast, meat only, raw» · columna «Energy» = 114 KCAL → 114 kcal · 2026-09-18"
     },
     "cero_verificado": {
       "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:174515 · «Turkey, retail parts, breast, meat only, raw» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
@@ -9009,7 +9012,8 @@
       "triptofano": "usda:172232 · «Basil, fresh» · columna «Tryptophan» = 0.039 G → 0.039 g · 2026-09-13",
       "valina": "usda:172232 · «Basil, fresh» · columna «Valine» = 0.127 G → 0.127 g · 2026-09-13",
       "vitB6": "usda:172232 · «Basil, fresh» · columna «vitB6» = 0.155 → 0.155 · 2026-09-13",
-      "vitE": "usda:172232 · «Basil, fresh» · columna «vitE» = 0.8 → 0.8 · 2026-09-13"
+      "vitE": "usda:172232 · «Basil, fresh» · columna «vitE» = 0.8 → 0.8 · 2026-09-13",
+      "energia": "usda:172232 · «Basil, fresh» · columna «Energy» = 23 KCAL → 23 kcal · 2026-09-18"
     },
     "cero_verificado": {
       "araquidonico": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:172232 · «Basil, fresh» · columna «PUFA 20:4» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
@@ -12109,6 +12113,9 @@
     "cero_verificado": {
       "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:171060 · «Chicken, liver, all classes, raw» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
       "vitD": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:171060 · «Chicken, liver, all classes, raw» · columna «Vitamin D (D2 + D3)» = 0.0 UG. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
+    },
+    "composicion_fuente": {
+      "energia": "usda:171060 · «Chicken, liver, all classes, raw» · columna «Energy» = 119 KCAL → 119 kcal · 2026-09-18"
     }
   },
   {
@@ -12950,6 +12957,9 @@
       "dha": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:171456 · «Chicken, gizzard, all classes, raw» · columna «PUFA 22:6 n-3 (DHA)» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
       "epa": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:171456 · «Chicken, gizzard, all classes, raw» · columna «PUFA 20:5 n-3 (EPA)» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
       "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:171456 · «Chicken, gizzard, all classes, raw» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
+    },
+    "composicion_fuente": {
+      "energia": "usda:171456 · «Chicken, gizzard, all classes, raw» · columna «Energy» = 94 KCAL → 94 kcal · 2026-09-18"
     }
   },
   {
@@ -13034,6 +13044,9 @@
     "cero_verificado": {
       "epa": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:171085 · «Turkey, gizzard, all classes, raw» · columna «PUFA 20:5 n-3 (EPA)» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
       "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:171085 · «Turkey, gizzard, all classes, raw» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
+    },
+    "composicion_fuente": {
+      "energia": "usda:171085 · «Turkey, gizzard, all classes, raw» · columna «Energy» = 111 KCAL → 111 kcal · 2026-09-18"
     }
   },
   {
@@ -13128,7 +13141,8 @@
       "riboflavina": "usda:171077 · «Chicken, broiler or fryers, breast, skinless, boneless, meat only, raw» · columna «Riboflavin» = 0.177 MG → 0.177 mg · 2026-09-13",
       "tiamina": "usda:171077 · «Chicken, broiler or fryers, breast, skinless, boneless, meat only, raw» · columna «Thiamin» = 0.094 MG → 0.094 mg · 2026-09-13",
       "vitB6": "usda:171077 · «Chicken, broiler or fryers, breast, skinless, boneless, meat only, raw» · columna «Vitamin B-6» = 0.811 MG → 0.811 mg · 2026-09-13",
-      "vitE": "usda:171077 · «Chicken, broiler or fryers, breast, skinless, boneless, meat only, raw» · columna «Vitamin E (alpha-tocopherol)» = 0.56 MG → 0.56 mg · 2026-09-13"
+      "vitE": "usda:171077 · «Chicken, broiler or fryers, breast, skinless, boneless, meat only, raw» · columna «Vitamin E (alpha-tocopherol)» = 0.56 MG → 0.56 mg · 2026-09-13",
+      "energia": "usda:171077 · «Chicken, broiler or fryers, breast, skinless, boneless, meat only, raw» · columna «Energy» = 120 KCAL → 120 kcal · 2026-09-18"
     },
     "cero_verificado": {
       "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:171077 · «Chicken, broiler or fryers, breast, skinless, boneless, meat only, raw» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
@@ -13324,7 +13338,8 @@
       "vitB6": "ciqual:40102 · «Foie, agneau, cru» · columna «Vitamine B6 (mg/100 g)» = 0.37 mg → 0.37 mg · 2026-09-13",
       "vitD": "ciqual:40102 · «Foie, agneau, cru» · columna «Vitamine D (µg/100 g)» = 0.45 ug → 0.45 ug · 2026-09-13",
       "vitE": "ciqual:40102 · «Foie, agneau, cru» · columna «Vitamine E (mg/100 g)» = 0.69 mg → 0.69 mg · 2026-09-13",
-      "yodo": "ciqual:40102 · «Foie, agneau, cru» · columna «Iode (µg/100 g)» = 4.0 ug → 4.0 ug · 2026-09-13"
+      "yodo": "ciqual:40102 · «Foie, agneau, cru» · columna «Iode (µg/100 g)» = 4.0 ug → 4.0 ug · 2026-09-13",
+      "energia": "usda:172531 · «Lamb, variety meats and by-products, liver, raw» · columna «Energy» = 139 KCAL → 139 kcal · 2026-09-18"
     },
     "cero_verificado": {
       "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: ciqual:40102 · «Foie, agneau, cru» · columna «Fibres alimentaires (g/100 g)» = 0.0 g. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
@@ -14208,6 +14223,9 @@
       "epa": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:169454 · «Beef, variety meats and by-products, spleen, raw» · columna «PUFA 20:5 n-3 (EPA)» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
       "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:169454 · «Beef, variety meats and by-products, spleen, raw» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
       "linolenico": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:169454 · «Beef, variety meats and by-products, spleen, raw» · columna «PUFA 18:3» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
+    },
+    "composicion_fuente": {
+      "energia": "usda:169454 · «Beef, variety meats and by-products, spleen, raw» · columna «Energy» = 105 KCAL → 105 kcal · 2026-09-18"
     }
   },
   {
@@ -14379,6 +14397,9 @@
     },
     "hueco_verificado": {
       "yodo": "Ninguna fuente la mide: BEDCA no tiene NINGUNA fila de bazo (comprobado el 13 de septiembre), USDA no publica yodo de nada, y CIQUAL no tiene bazo. El yodo es tope crónico, así que el cero mudo lo aflojaba. (2026-09-13)"
+    },
+    "composicion_fuente": {
+      "energia": "usda:174364 · «Lamb, variety meats and by-products, spleen, raw» · columna «Energy» = 101 KCAL → 101 kcal · 2026-09-18"
     }
   },
   {
@@ -14461,7 +14482,10 @@
       "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:170194 · «Beef, variety meats and by-products, thymus, raw» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
     },
     "humedad_g_100g": 67.8,
-    "humedad_fuente": "usda:170194 · Beef, variety meats and by-products, thymus, raw"
+    "humedad_fuente": "usda:170194 · Beef, variety meats and by-products, thymus, raw",
+    "composicion_fuente": {
+      "energia": "usda:170194 · «Beef, variety meats and by-products, thymus, raw» · columna «Energy» = 236 KCAL → 236 kcal · 2026-09-18"
+    }
   },
   {
     "nombre": "Corazón de pavo",
@@ -14545,6 +14569,9 @@
     },
     "cero_verificado": {
       "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:171484 · «Turkey, all classes, heart, raw» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
+    },
+    "composicion_fuente": {
+      "energia": "usda:171484 · «Turkey, all classes, heart, raw» · columna «Energy» = 140 KCAL → 140 kcal · 2026-09-18"
     }
   },
   {
@@ -14628,6 +14655,9 @@
     },
     "cero_verificado": {
       "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:171486 · «Turkey, all classes, liver, raw» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
+    },
+    "composicion_fuente": {
+      "energia": "usda:171486 · «Turkey, all classes, liver, raw» · columna «Energy» = 128 KCAL → 128 kcal · 2026-09-18"
     }
   },
   {
@@ -14718,6 +14748,9 @@
     "fuentes_id": {
       "ciqual": "40121",
       "usda": "174467"
+    },
+    "composicion_fuente": {
+      "energia": "usda:174467 · «Duck, domesticated, liver, raw» · columna «Energy» = 136 KCAL → 136 kcal · 2026-09-18"
     }
   },
   {
@@ -14803,7 +14836,8 @@
     },
     "composicion_fuente": {
       "vitD": "ciqual:40304 · «Ris, veau, cru» · columna «Vitamine D (µg/100 g)» = 0,25 → 0.25 ug · 2026-09-13. «Ris de veau» ES el timo de ternera. BEDCA no tiene ninguna fila de timo (comprobado) y USDA 172542 -- la fila que sembró la ficha, exacta en las tres cifras -- no publica vitamina D, así que se baja al mandato 3. La fila de CIQUAL es el mismo órgano, la misma especie y en crudo; se separa un 4,4 % en energía (96,6 contra 101).",
-      "yodo": "ciqual:40304 · «Ris, veau, cru» · columna «Iode (µg/100 g)» = 3.0 ug → 3.0 ug · 2026-09-17"
+      "yodo": "ciqual:40304 · «Ris, veau, cru» · columna «Iode (µg/100 g)» = 3.0 ug → 3.0 ug · 2026-09-17",
+      "energia": "usda:172542 · «Veal, variety meats and by-products, thymus, raw» · columna «Energy» = 101 KCAL → 101 kcal · 2026-09-18"
     }
   },
   {
@@ -14892,7 +14926,8 @@
       "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:174361 · «Veal, variety meats and by-products, lungs, raw» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
     },
     "composicion_fuente": {
-      "vitD": "bedca:2300 · «Pulmón, de ternera, crudo» · columna «Vitamina D» = 11 → 11 ug · 2026-09-13. `value_type` AR, o sea una MEDIDA. La fuente que manda SÍ la mide aquí: USDA 174361 «Veal… lungs, raw» -- la fila que sembró el resto de esta ficha, exacta en 90 kcal / 16,3 prot / 2,3 grasa / hierro 5,23 / potasio 274 -- no publica vitamina D del pulmón, y CIQUAL no tiene ninguna fila de pulmón. ⚠️ Y esta cifra ESTABA EN EL CATÁLOGO, en la ficha equivocada: la declaraba «Pulmón de vaca», que es una ficha de vacuno adulto sembrada de USDA 168628. Se ha movido a la ficha de la especie que la fuente mide."
+      "vitD": "bedca:2300 · «Pulmón, de ternera, crudo» · columna «Vitamina D» = 11 → 11 ug · 2026-09-13. `value_type` AR, o sea una MEDIDA. La fuente que manda SÍ la mide aquí: USDA 174361 «Veal… lungs, raw» -- la fila que sembró el resto de esta ficha, exacta en 90 kcal / 16,3 prot / 2,3 grasa / hierro 5,23 / potasio 274 -- no publica vitamina D del pulmón, y CIQUAL no tiene ninguna fila de pulmón. ⚠️ Y esta cifra ESTABA EN EL CATÁLOGO, en la ficha equivocada: la declaraba «Pulmón de vaca», que es una ficha de vacuno adulto sembrada de USDA 168628. Se ha movido a la ficha de la especie que la fuente mide.",
+      "energia": "usda:174361 · «Veal, variety meats and by-products, lungs, raw» · columna «Energy» = 90 KCAL → 90 kcal · 2026-09-18"
     }
   },
   {
@@ -14968,7 +15003,10 @@
       "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:1047 · «Sesos, de ternera, crudos» · columna «fibra, dietetica total» = 0.0 g. `value_type` LZ, o sea una MEDIDA y no una celda vacía.",
       "vitD": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:1047 · «Sesos, de ternera, crudos» · columna «Vitamina D» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía."
     },
-    "aviso_al_comprar": "Tienen que ser sesos de TERNERA, de un animal de menos de 12 meses. Si en la carnicería no tienen y te ofrecen sesos de vaca, de buey o de añojo, NO valen y no es lo mismo aunque lo parezca: por ley no se pueden dar a un animal. Si no hay de ternera, mejor cambia de alimento y vuelve a generar el menú."
+    "aviso_al_comprar": "Tienen que ser sesos de TERNERA, de un animal de menos de 12 meses. Si en la carnicería no tienen y te ofrecen sesos de vaca, de buey o de añojo, NO valen y no es lo mismo aunque lo parezca: por ley no se pueden dar a un animal. Si no hay de ternera, mejor cambia de alimento y vuelve a generar el menú.",
+    "composicion_fuente": {
+      "energia": "usda:174351 · «Veal, variety meats and by-products, brain, raw» · columna «Energy» = 118 KCAL → 118 kcal · 2026-09-18"
+    }
   },
   {
     "nombre": "Beaphar Aceite de Germen de Trigo (vitamina E)",
@@ -16121,27 +16159,27 @@
       "linolenico": 0.028184,
       "araquidonico": 17.96748,
       "vitA": 0,
-      "vitD": 19.0,
-      "vitE": 2.79,
-      "folato": 12.0,
-      "niacina": 6.646,
-      "riboflavina": 0.107,
-      "tiamina": 0.143,
-      "vitB12": 4.11,
-      "vitB6": 0.386,
-      "calcio": 30.0,
-      "hierro": 0.36,
-      "potasio": 450.0,
-      "magnesio": 30.0,
-      "sodio": 61.0,
-      "fosforo": 270.0,
+      "vitD": 15.185422,
+      "vitE": 2.229859,
+      "folato": 9.590793,
+      "niacina": 5.311701,
+      "riboflavina": 0.085518,
+      "tiamina": 0.11429,
+      "vitB12": 3.284847,
+      "vitB6": 0.308504,
+      "calcio": 23.976982,
+      "hierro": 0.287724,
+      "potasio": 359.654731,
+      "magnesio": 23.976982,
+      "sodio": 48.753197,
+      "fosforo": 215.792839,
       "yodo": 6.0,
       "selenio": 3.0,
       "zinc": 0.56,
       "cobre": 0.03,
       "manganeso": 0.027,
-      "acidoPantotenico": 1.99,
-      "colina": 77.6,
+      "acidoPantotenico": 1.590473,
+      "colina": 62.02046,
       "cloruro": 0,
       "fibra": 0,
       "arginina": 1.190294,
@@ -16177,45 +16215,45 @@
       "usda": "173718"
     },
     "composicion_fuente": {
-      "acidoPantotenico": "usda:173718 · «Fish, trout, rainbow, farmed, cooked, dry heat» · columna «Pantothenic acid» = 1.99 MG → 1.99 mg · 2026-09-17",
+      "acidoPantotenico": "usda:173718 · «Fish, trout, rainbow, farmed, cooked, dry heat» · columna «Pantothenic acid» = 1.99 MG · rebasado por materia seca de la fila donante, que es de otra cocción: ×(25/31.28) → 1.590473 · agua de la donante: usda:173718 · columna «Water» = 68.72 g · 2026-09-18",
       "araquidonico": "usda:173718 · «Fish, trout, rainbow, farmed, cooked, dry heat» · columna «PUFA 20:4» = 0.051 G ×1000 · transferido por gramo de grasa: 0.051×1000×(2.6/7.38) → 17.96748 mg · 2026-09-17",
       "arginina": "usda:173718 · «Fish, trout, rainbow, farmed, cooked, dry heat» · columna «Arginine» = 1.491 G · transferido por gramo de proteina: 1.491×1×(19.0/23.8) → 1.190294 g · 2026-09-17",
-      "calcio": "usda:173718 · «Fish, trout, rainbow, farmed, cooked, dry heat» · columna «Calcium, Ca» = 30.0 MG → 30.0 mg · 2026-09-17",
+      "calcio": "usda:173718 · «Fish, trout, rainbow, farmed, cooked, dry heat» · columna «Calcium, Ca» = 30.0 MG · rebasado por materia seca de la fila donante, que es de otra cocción: ×(25/31.28) → 23.976982 · agua de la donante: usda:173718 · columna «Water» = 68.72 g · 2026-09-18",
       "cistina": "usda:173718 · «Fish, trout, rainbow, farmed, cooked, dry heat» · columna «Cystine» = 0.267 G · transferido por gramo de proteina: 0.267×1×(19.0/23.8) → 0.213151 g · 2026-09-17",
       "cobre": "ciqual:27007 · «Truite, cuite à la vapeur» · columna «Cuivre (mg/100 g)» = 0.03 mg → 0.03 mg · 2026-09-17",
-      "colina": "usda:173718 · «Fish, trout, rainbow, farmed, cooked, dry heat» · columna «Choline, total» = 77.6 MG → 77.6 mg · 2026-09-17",
+      "colina": "usda:173718 · «Fish, trout, rainbow, farmed, cooked, dry heat» · columna «Choline, total» = 77.6 MG · rebasado por materia seca de la fila donante, que es de otra cocción: ×(25/31.28) → 62.02046 · agua de la donante: usda:173718 · columna «Water» = 68.72 g · 2026-09-18",
       "dha": "ciqual:27007 · «Truite, cuite à la vapeur» · columna «AG 22:6 4c,7c,10c,13c,16c,19c (n-3) DHA (g/100 g)» = 0.64 g → 0.64 g · 2026-09-17",
       "energia": "ciqual:27007 · «Truite, cuite à la vapeur» · columna «Energie, Règlement UE N° 1169/2011 (kcal/100 g)» = 99,4 → 99.4 kcal · 2026-09-17",
       "epa": "ciqual:27007 · «Truite, cuite à la vapeur» · columna «AG 20:5 5c,8c,11c,14c,17c (n-3) EPA (g/100 g)» = 0.29 g → 0.29 g · 2026-09-17",
       "fenilalanina": "usda:173718 · «Fish, trout, rainbow, farmed, cooked, dry heat» · columna «Phenylalanine» = 0.973 G · transferido por gramo de proteina: 0.973×1×(19.0/23.8) → 0.776765 g · 2026-09-17",
-      "folato": "usda:173718 · «Fish, trout, rainbow, farmed, cooked, dry heat» · columna «Folate, total» = 12.0 UG → 12.0 ug · 2026-09-17",
-      "fosforo": "usda:173718 · «Fish, trout, rainbow, farmed, cooked, dry heat» · columna «Phosphorus, P» = 270.0 MG → 270.0 mg · 2026-09-17",
+      "folato": "usda:173718 · «Fish, trout, rainbow, farmed, cooked, dry heat» · columna «Folate, total» = 12.0 UG · rebasado por materia seca de la fila donante, que es de otra cocción: ×(25/31.28) → 9.590793 · agua de la donante: usda:173718 · columna «Water» = 68.72 g · 2026-09-18",
+      "fosforo": "usda:173718 · «Fish, trout, rainbow, farmed, cooked, dry heat» · columna «Phosphorus, P» = 270.0 MG · rebasado por materia seca de la fila donante, que es de otra cocción: ×(25/31.28) → 215.792839 · agua de la donante: usda:173718 · columna «Water» = 68.72 g · 2026-09-18",
       "grasa": "ciqual:27007 · «Truite, cuite à la vapeur» · columna «Lipides (g/100 g)» = 2.6 g → 2.6 g · 2026-09-17",
-      "hierro": "usda:173718 · «Fish, trout, rainbow, farmed, cooked, dry heat» · columna «Iron, Fe» = 0.36 MG → 0.36 mg · 2026-09-17",
+      "hierro": "usda:173718 · «Fish, trout, rainbow, farmed, cooked, dry heat» · columna «Iron, Fe» = 0.36 MG · rebasado por materia seca de la fila donante, que es de otra cocción: ×(25/31.28) → 0.287724 · agua de la donante: usda:173718 · columna «Water» = 68.72 g · 2026-09-18",
       "histidina": "usda:173718 · «Fish, trout, rainbow, farmed, cooked, dry heat» · columna «Histidine» = 0.733 G · transferido por gramo de proteina: 0.733×1×(19.0/23.8) → 0.585168 g · 2026-09-17",
       "isoleucina": "usda:173718 · «Fish, trout, rainbow, farmed, cooked, dry heat» · columna «Isoleucine» = 1.148 G · transferido por gramo de proteina: 1.148×1×(19.0/23.8) → 0.916471 g · 2026-09-17",
       "leucina": "usda:173718 · «Fish, trout, rainbow, farmed, cooked, dry heat» · columna «Leucine» = 2.025 G · transferido por gramo de proteina: 2.025×1×(19.0/23.8) → 1.616597 g · 2026-09-17",
       "linoleico": "usda:173718 · «Fish, trout, rainbow, farmed, cooked, dry heat» · columna «PUFA 18:2» = 0.588 G · transferido por gramo de grasa: 0.588×1×(2.6/7.38) → 0.207154 g · 2026-09-17",
       "linolenico": "usda:173718 · «Fish, trout, rainbow, farmed, cooked, dry heat» · columna «PUFA 18:3» = 0.08 G · transferido por gramo de grasa: 0.08×1×(2.6/7.38) → 0.028184 g · 2026-09-17",
       "lisina": "usda:173718 · «Fish, trout, rainbow, farmed, cooked, dry heat» · columna «Lysine» = 2.287 G · transferido por gramo de proteina: 2.287×1×(19.0/23.8) → 1.825756 g · 2026-09-17",
-      "magnesio": "usda:173718 · «Fish, trout, rainbow, farmed, cooked, dry heat» · columna «Magnesium, Mg» = 30.0 MG → 30.0 mg · 2026-09-17",
+      "magnesio": "usda:173718 · «Fish, trout, rainbow, farmed, cooked, dry heat» · columna «Magnesium, Mg» = 30.0 MG · rebasado por materia seca de la fila donante, que es de otra cocción: ×(25/31.28) → 23.976982 · agua de la donante: usda:173718 · columna «Water» = 68.72 g · 2026-09-18",
       "manganeso": "ciqual:27007 · «Truite, cuite à la vapeur» · columna «Manganèse (mg/100 g)» = 0.027 mg → 0.027 mg · 2026-09-17",
       "metionina": "usda:173718 · «Fish, trout, rainbow, farmed, cooked, dry heat» · columna «Methionine» = 0.738 G · transferido por gramo de proteina: 0.738×1×(19.0/23.8) → 0.58916 g · 2026-09-17",
-      "niacina": "usda:173718 · «Fish, trout, rainbow, farmed, cooked, dry heat» · columna «Niacin» = 6.646 MG → 6.646 mg · 2026-09-17",
-      "potasio": "usda:173718 · «Fish, trout, rainbow, farmed, cooked, dry heat» · columna «Potassium, K» = 450.0 MG → 450.0 mg · 2026-09-17",
+      "niacina": "usda:173718 · «Fish, trout, rainbow, farmed, cooked, dry heat» · columna «Niacin» = 6.646 MG · rebasado por materia seca de la fila donante, que es de otra cocción: ×(25/31.28) → 5.311701 · agua de la donante: usda:173718 · columna «Water» = 68.72 g · 2026-09-18",
+      "potasio": "usda:173718 · «Fish, trout, rainbow, farmed, cooked, dry heat» · columna «Potassium, K» = 450.0 MG · rebasado por materia seca de la fila donante, que es de otra cocción: ×(25/31.28) → 359.654731 · agua de la donante: usda:173718 · columna «Water» = 68.72 g · 2026-09-18",
       "proteina": "ciqual:27007 · «Truite, cuite à la vapeur» · columna «Protéines, N x 6.25 (g/100 g)» = 19.0 g → 19.0 g · 2026-09-17",
-      "riboflavina": "usda:173718 · «Fish, trout, rainbow, farmed, cooked, dry heat» · columna «Riboflavin» = 0.107 MG → 0.107 mg · 2026-09-17",
+      "riboflavina": "usda:173718 · «Fish, trout, rainbow, farmed, cooked, dry heat» · columna «Riboflavin» = 0.107 MG · rebasado por materia seca de la fila donante, que es de otra cocción: ×(25/31.28) → 0.085518 · agua de la donante: usda:173718 · columna «Water» = 68.72 g · 2026-09-18",
       "selenio": "ciqual:27007 · «Truite, cuite à la vapeur» · columna «Sélénium (µg/100 g)» = 3.0 ug → 3.0 ug · 2026-09-17",
-      "sodio": "usda:173718 · «Fish, trout, rainbow, farmed, cooked, dry heat» · columna «Sodium, Na» = 61.0 MG → 61.0 mg · 2026-09-17",
-      "tiamina": "usda:173718 · «Fish, trout, rainbow, farmed, cooked, dry heat» · columna «Thiamin» = 0.143 MG → 0.143 mg · 2026-09-17",
+      "sodio": "usda:173718 · «Fish, trout, rainbow, farmed, cooked, dry heat» · columna «Sodium, Na» = 61.0 MG · rebasado por materia seca de la fila donante, que es de otra cocción: ×(25/31.28) → 48.753197 · agua de la donante: usda:173718 · columna «Water» = 68.72 g · 2026-09-18",
+      "tiamina": "usda:173718 · «Fish, trout, rainbow, farmed, cooked, dry heat» · columna «Thiamin» = 0.143 MG · rebasado por materia seca de la fila donante, que es de otra cocción: ×(25/31.28) → 0.11429 · agua de la donante: usda:173718 · columna «Water» = 68.72 g · 2026-09-18",
       "tirosina": "usda:173718 · «Fish, trout, rainbow, farmed, cooked, dry heat» · columna «Tyrosine» = 0.84 G · transferido por gramo de proteina: 0.84×1×(19.0/23.8) → 0.670588 g · 2026-09-17",
       "treonina": "usda:173718 · «Fish, trout, rainbow, farmed, cooked, dry heat» · columna «Threonine» = 1.092 G · transferido por gramo de proteina: 1.092×1×(19.0/23.8) → 0.871765 g · 2026-09-17",
       "triptofano": "usda:173718 · «Fish, trout, rainbow, farmed, cooked, dry heat» · columna «Tryptophan» = 0.279 G · transferido por gramo de proteina: 0.279×1×(19.0/23.8) → 0.222731 g · 2026-09-17",
       "valina": "usda:173718 · «Fish, trout, rainbow, farmed, cooked, dry heat» · columna «Valine» = 1.283 G · transferido por gramo de proteina: 1.283×1×(19.0/23.8) → 1.024244 g · 2026-09-17",
-      "vitB12": "usda:173718 · «Fish, trout, rainbow, farmed, cooked, dry heat» · columna «Vitamin B-12» = 4.11 UG → 4.11 ug · 2026-09-17",
-      "vitB6": "usda:173718 · «Fish, trout, rainbow, farmed, cooked, dry heat» · columna «Vitamin B-6» = 0.386 MG → 0.386 mg · 2026-09-17",
-      "vitD": "usda:173718 · «Fish, trout, rainbow, farmed, cooked, dry heat» · columna «Vitamin D (D2 + D3)» = 19.0 UG → 19.0 ug · 2026-09-17",
-      "vitE": "usda:173718 · «Fish, trout, rainbow, farmed, cooked, dry heat» · columna «Vitamin E (alpha-tocopherol)» = 2.79 MG → 2.79 mg · 2026-09-17",
+      "vitB12": "usda:173718 · «Fish, trout, rainbow, farmed, cooked, dry heat» · columna «Vitamin B-12» = 4.11 UG · rebasado por materia seca de la fila donante, que es de otra cocción: ×(25/31.28) → 3.284847 · agua de la donante: usda:173718 · columna «Water» = 68.72 g · 2026-09-18",
+      "vitB6": "usda:173718 · «Fish, trout, rainbow, farmed, cooked, dry heat» · columna «Vitamin B-6» = 0.386 MG · rebasado por materia seca de la fila donante, que es de otra cocción: ×(25/31.28) → 0.308504 · agua de la donante: usda:173718 · columna «Water» = 68.72 g · 2026-09-18",
+      "vitD": "usda:173718 · «Fish, trout, rainbow, farmed, cooked, dry heat» · columna «Vitamin D (D2 + D3)» = 19.0 UG · rebasado por materia seca de la fila donante, que es de otra cocción: ×(25/31.28) → 15.185422 · agua de la donante: usda:173718 · columna «Water» = 68.72 g · 2026-09-18",
+      "vitE": "usda:173718 · «Fish, trout, rainbow, farmed, cooked, dry heat» · columna «Vitamin E (alpha-tocopherol)» = 2.79 MG · rebasado por materia seca de la fila donante, que es de otra cocción: ×(25/31.28) → 2.229859 · agua de la donante: usda:173718 · columna «Water» = 68.72 g · 2026-09-18",
       "yodo": "ciqual:27007 · «Truite, cuite à la vapeur» · columna «Iode (µg/100 g)» = 6.0 ug → 6.0 ug · 2026-09-17",
       "zinc": "ciqual:27007 · «Truite, cuite à la vapeur» · columna «Zinc (mg/100 g)» = 0.56 mg → 0.56 mg · 2026-09-17"
     },
@@ -16375,11 +16413,11 @@
       "yodo": 147.7,
       "selenio": 37.6,
       "zinc": 0.4,
-      "cobre": 0.02,
-      "manganeso": 0.01,
-      "acidoPantotenico": 0.23,
+      "cobre": 0.01782,
+      "manganeso": 0.00891,
+      "acidoPantotenico": 0.204925,
       "colina": 83.7,
-      "cloruro": 120.0,
+      "cloruro": 106.917293,
       "fibra": 0,
       "arginina": 1.322322,
       "histidina": 0.650512,
@@ -16408,13 +16446,13 @@
       "vitD"
     ],
     "composicion_fuente": {
-      "acidoPantotenico": "ciqual:26025 · «Cabillaud, cuit à la vapeur» · columna «Vitamine B5 ou Acide pantothénique (mg/100 g)» = 0.23 mg → 0.23 mg · 2026-09-18",
+      "acidoPantotenico": "ciqual:26025 · «Cabillaud, cuit à la vapeur» · columna «Vitamine B5 ou Acide pantothénique (mg/100 g)» = 0.23 mg · rebasado por materia seca de la fila donante, que es de otra cocción: ×(23.7/26.6) → 0.204925 · agua de la donante: ciqual:26025 · columna «Eau (g/100 g)» = 73,4 · 2026-09-18",
       "araquidonico": "ciqual:26025 · «Cabillaud, cuit à la vapeur» · columna «AG 20:4 5c,8c,11c,14c (n-6), arachidonique (g/100 g)» = 0.017 g ×1000 · transferido por gramo de grasa: 0.017×1000×(1.05714/0.95) → 18.917242 mg · 2026-09-18",
       "arginina": "usda:171956 · «Fish, cod, Atlantic, cooked, dry heat» · columna «Arginine» = 1.366 G · transferido por gramo de proteina: 1.366×1×(22.1/22.83) → 1.322322 g · 2026-09-18",
       "calcio": "bedca:795 · «Bacalao, fresco, al horno» · columna «calcio» = 18.0 mg → 18.0 mg · 2026-09-18",
       "cistina": "usda:171956 · «Fish, cod, Atlantic, cooked, dry heat» · columna «Cystine» = 0.245 G · transferido por gramo de proteina: 0.245×1×(22.1/22.83) → 0.237166 g · 2026-09-18",
-      "cloruro": "ciqual:26025 · «Cabillaud, cuit à la vapeur» · columna «Chlorure (mg/100 g)» = 120.0 mg → 120.0 mg · 2026-09-18",
-      "cobre": "ciqual:26025 · «Cabillaud, cuit à la vapeur» · columna «Cuivre (mg/100 g)» = 0.02 mg → 0.02 mg · 2026-09-18",
+      "cloruro": "ciqual:26025 · «Cabillaud, cuit à la vapeur» · columna «Chlorure (mg/100 g)» = 120.0 mg · rebasado por materia seca de la fila donante, que es de otra cocción: ×(23.7/26.6) → 106.917293 · agua de la donante: ciqual:26025 · columna «Eau (g/100 g)» = 73,4 · 2026-09-18",
+      "cobre": "ciqual:26025 · «Cabillaud, cuit à la vapeur» · columna «Cuivre (mg/100 g)» = 0.02 mg · rebasado por materia seca de la fila donante, que es de otra cocción: ×(23.7/26.6) → 0.01782 · agua de la donante: ciqual:26025 · columna «Eau (g/100 g)» = 73,4 · 2026-09-18",
       "colina": "usda:171956 · «Fish, cod, Atlantic, cooked, dry heat» · columna «Choline, total» = 83.7 MG → 83.7 mg · 2026-09-18",
       "dha": "ciqual:26025 · «Cabillaud, cuit à la vapeur» · columna «AG 22:6 4c,7c,10c,13c,16c,19c (n-3) DHA (g/100 g)» = 0.16 g · transferido por gramo de grasa: 0.16×1×(1.05714/0.95) → 0.178045 g · 2026-09-18",
       "energia": "bedca:795 · «Bacalao, fresco, al horno» · columna «energía, total» = 414.814 KJ ÷4,184 -> kcal · 2026-09-18",
@@ -16431,7 +16469,7 @@
       "linolenico": "ciqual:26025 · «Cabillaud, cuit à la vapeur» · columna «AG 18:3 c9,c12,c15 (n-3), alpha-linolénique (g/100 g)» = 0.0017 g · transferido por gramo de grasa: 0.0017×1×(1.05714/0.95) → 0.001892 g · 2026-09-18",
       "lisina": "usda:171956 · «Fish, cod, Atlantic, cooked, dry heat» · columna «Lysine» = 2.097 G · transferido por gramo de proteina: 2.097×1×(22.1/22.83) → 2.029947 g · 2026-09-18",
       "magnesio": "bedca:795 · «Bacalao, fresco, al horno» · columna «magnesio» = 34.0 mg → 34.0 mg · 2026-09-18",
-      "manganeso": "ciqual:26025 · «Cabillaud, cuit à la vapeur» · columna «Manganèse (mg/100 g)» = 0.01 mg → 0.01 mg · 2026-09-18",
+      "manganeso": "ciqual:26025 · «Cabillaud, cuit à la vapeur» · columna «Manganèse (mg/100 g)» = 0.01 mg · rebasado por materia seca de la fila donante, que es de otra cocción: ×(23.7/26.6) → 0.00891 · agua de la donante: ciqual:26025 · columna «Eau (g/100 g)» = 73,4 · 2026-09-18",
       "metionina": "usda:171956 · «Fish, cod, Atlantic, cooked, dry heat» · columna «Methionine» = 0.676 G · transferido por gramo de proteina: 0.676×1×(22.1/22.83) → 0.654385 g · 2026-09-18",
       "niacina": "bedca:795 · «Bacalao, fresco, al horno» · columna «equivalentes de niacina, totales» = 2.1 mg → 2.1 mg · 2026-09-18",
       "potasio": "bedca:795 · «Bacalao, fresco, al horno» · columna «potasio» = 300.0 mg → 300.0 mg · 2026-09-18",
@@ -17068,10 +17106,10 @@
       "selenio": 0,
       "zinc": 0.2,
       "cobre": 0.02,
-      "manganeso": 0.02,
+      "manganeso": 0.007527,
       "acidoPantotenico": 0.3,
       "colina": 6.2,
-      "cloruro": 45.4,
+      "cloruro": 17.086022,
       "fibra": 0.5,
       "arginina": 0.039,
       "histidina": 0.011,
@@ -17103,7 +17141,7 @@
       "arginina": "usda:168449 · «Pumpkin, cooked, boiled, drained, without salt» · columna «Arginine» = 0.039 G → 0.039 g · 2026-09-18",
       "calcio": "bedca:1183 · «Calabaza, hervida» · columna «calcio» = 23.0 mg → 23.0 mg · 2026-09-18",
       "cistina": "usda:168449 · «Pumpkin, cooked, boiled, drained, without salt» · columna «Cystine» = 0.002 G → 0.002 g · 2026-09-18",
-      "cloruro": "ciqual:20332 · «Potiron, rôti/cuit au four» · columna «Chlorure (mg/100 g)» = 45.4 mg → 45.4 mg · 2026-09-18",
+      "cloruro": "ciqual:20332 · «Potiron, rôti/cuit au four» · columna «Chlorure (mg/100 g)» = 45.4 mg · rebasado por materia seca de la fila donante, que es de otra cocción: ×(3.5/9.3) → 17.086022 · agua de la donante: ciqual:20332 · columna «Eau (g/100 g)» = 90,7 · 2026-09-18",
       "cobre": "bedca:1183 · «Calabaza, hervida» · columna «cobre» = 0.02 mg → 0.02 mg · 2026-09-18",
       "colina": "usda:168449 · «Pumpkin, cooked, boiled, drained, without salt» · columna «Choline, total» = 6.2 MG → 6.2 mg · 2026-09-18",
       "energia": "bedca:1183 · «Calabaza, hervida» · columna «energía, total» = 51.45 KJ ÷4,184 -> kcal · 2026-09-18",
@@ -17120,7 +17158,7 @@
       "linolenico": "usda:168449 · «Pumpkin, cooked, boiled, drained, without salt» · columna «PUFA 18:3» = 0.002 G → 0.002 g · 2026-09-18",
       "lisina": "usda:168449 · «Pumpkin, cooked, boiled, drained, without salt» · columna «Lysine» = 0.039 G → 0.039 g · 2026-09-18",
       "magnesio": "bedca:1183 · «Calabaza, hervida» · columna «magnesio» = 7.0 mg → 7.0 mg · 2026-09-18",
-      "manganeso": "ciqual:20332 · «Potiron, rôti/cuit au four» · columna «Manganèse (mg/100 g)» = 0.02 mg → 0.02 mg · 2026-09-18",
+      "manganeso": "ciqual:20332 · «Potiron, rôti/cuit au four» · columna «Manganèse (mg/100 g)» = 0.02 mg · rebasado por materia seca de la fila donante, que es de otra cocción: ×(3.5/9.3) → 0.007527 · agua de la donante: ciqual:20332 · columna «Eau (g/100 g)» = 90,7 · 2026-09-18",
       "metionina": "usda:168449 · «Pumpkin, cooked, boiled, drained, without salt» · columna «Methionine» = 0.008 G → 0.008 g · 2026-09-18",
       "niacina": "bedca:1183 · «Calabaza, hervida» · columna «equivalentes de niacina, totales» = 0.2 mg → 0.2 mg · 2026-09-18",
       "potasio": "bedca:1183 · «Calabaza, hervida» · columna «potasio» = 84.0 mg → 84.0 mg · 2026-09-18",
@@ -19716,11 +19754,11 @@
       "yodo": 16.6,
       "selenio": 19.3,
       "zinc": 0.6,
-      "cobre": 0.01,
+      "cobre": 0.007965,
       "manganeso": 0,
-      "acidoPantotenico": 0.29,
+      "acidoPantotenico": 0.230996,
       "colina": 0,
-      "cloruro": 120.0,
+      "cloruro": 95.584416,
       "fibra": 0,
       "arginina": 1.153939,
       "histidina": 0.391758,
@@ -19749,11 +19787,11 @@
       "vitA"
     ],
     "composicion_fuente": {
-      "acidoPantotenico": "ciqual:26017 · «Limande-sole, cuite à la vapeur» · columna «Vitamine B5 ou Acide pantothénique (mg/100 g)» = 0.29 mg → 0.29 mg · 2026-09-18",
+      "acidoPantotenico": "ciqual:26017 · «Limande-sole, cuite à la vapeur» · columna «Vitamine B5 ou Acide pantothénique (mg/100 g)» = 0.29 mg · rebasado por materia seca de la fila donante, que es de otra cocción: ×(18.4/23.1) → 0.230996 · agua de la donante: ciqual:26017 · columna «Eau (g/100 g)» = 76,9 · 2026-09-18",
       "araquidonico": "ciqual:26017 · «Limande-sole, cuite à la vapeur» · columna «AG 20:4 5c,8c,11c,14c (n-6), arachidonique (g/100 g)» = 0.029 g ×1000 · transferido por gramo de grasa: 0.029×1000×(0.957143/2.27) → 12.227818 mg · 2026-09-18",
       "calcio": "bedca:820 · «Lenguado, al horno» · columna «calcio» = 25.0 mg → 25.0 mg · 2026-09-18",
-      "cloruro": "ciqual:26017 · «Limande-sole, cuite à la vapeur» · columna «Chlorure (mg/100 g)» = 120.0 mg → 120.0 mg · 2026-09-18",
-      "cobre": "ciqual:26017 · «Limande-sole, cuite à la vapeur» · columna «Cuivre (mg/100 g)» = 0.01 mg → 0.01 mg · 2026-09-18",
+      "cloruro": "ciqual:26017 · «Limande-sole, cuite à la vapeur» · columna «Chlorure (mg/100 g)» = 120.0 mg · rebasado por materia seca de la fila donante, que es de otra cocción: ×(18.4/23.1) → 95.584416 · agua de la donante: ciqual:26017 · columna «Eau (g/100 g)» = 76,9 · 2026-09-18",
+      "cobre": "ciqual:26017 · «Limande-sole, cuite à la vapeur» · columna «Cuivre (mg/100 g)» = 0.01 mg · rebasado por materia seca de la fila donante, que es de otra cocción: ×(18.4/23.1) → 0.007965 · agua de la donante: ciqual:26017 · columna «Eau (g/100 g)» = 76,9 · 2026-09-18",
       "dha": "ciqual:26017 · «Limande-sole, cuite à la vapeur» · columna «AG 22:6 4c,7c,10c,13c,16c,19c (n-3) DHA (g/100 g)» = 0.077 g · transferido por gramo de grasa: 0.077×1×(0.957143/2.27) → 0.032467 g · 2026-09-18",
       "energia": "bedca:820 · «Lenguado, al horno» · columna «energía, total» = 307.414 KJ ÷4,184 -> kcal · 2026-09-18",
       "epa": "ciqual:26017 · «Limande-sole, cuite à la vapeur» · columna «AG 20:5 5c,8c,11c,14c,17c (n-3) EPA (g/100 g)» = 0.16 g · transferido por gramo de grasa: 0.16×1×(0.957143/2.27) → 0.067464 g · 2026-09-18",
@@ -22016,11 +22054,11 @@
       "yodo": 37.0,
       "selenio": 0,
       "zinc": 0.6,
-      "cobre": 0.026,
-      "manganeso": 0.007,
-      "acidoPantotenico": 1.09,
+      "cobre": 0.022225,
+      "manganeso": 0.005984,
+      "acidoPantotenico": 0.931726,
       "colina": 0,
-      "cloruro": 63.0,
+      "cloruro": 53.852055,
       "fibra": 0,
       "arginina": 1.208506,
       "histidina": 0.594725,
@@ -22049,13 +22087,13 @@
       "vitA"
     ],
     "composicion_fuente": {
-      "acidoPantotenico": "ciqual:26038 · «Saumon, cuit à la vapeur» · columna «Vitamine B5 ou Acide pantothénique (mg/100 g)» = 1.09 mg → 1.09 mg · 2026-09-18",
+      "acidoPantotenico": "ciqual:26038 · «Saumon, cuit à la vapeur» · columna «Vitamine B5 ou Acide pantothénique (mg/100 g)» = 1.09 mg · rebasado por materia seca de la fila donante, que es de otra cocción: ×(31.2/36.5) → 0.931726 · agua de la donante: ciqual:26038 · columna «Eau (g/100 g)» = 63,5 · 2026-09-18",
       "araquidonico": "ciqual:26038 · «Saumon, cuit à la vapeur» · columna «AG 20:4 5c,8c,11c,14c (n-6), arachidonique (g/100 g)» = 0.052 g ×1000 · transferido por gramo de grasa: 0.052×1000×(11.0/11.5) → 49.73913 mg · 2026-09-18",
       "arginina": "usda:171998 · «Fish, salmon, Atlantic, wild, cooked, dry heat» · columna «Arginine» = 1.522 G · transferido por gramo de proteina: 1.522×1×(20.2/25.44) → 1.208506 g · 2026-09-18",
       "calcio": "bedca:2628 · «Salmón, plancha» · columna «calcio» = 13.0 mg → 13.0 mg · 2026-09-18",
       "cistina": "usda:171998 · «Fish, salmon, Atlantic, wild, cooked, dry heat» · columna «Cystine» = 0.273 G · transferido por gramo de proteina: 0.273×1×(20.2/25.44) → 0.216769 g · 2026-09-18",
-      "cloruro": "ciqual:26038 · «Saumon, cuit à la vapeur» · columna «Chlorure (mg/100 g)» = 63.0 mg → 63.0 mg · 2026-09-18",
-      "cobre": "ciqual:26038 · «Saumon, cuit à la vapeur» · columna «Cuivre (mg/100 g)» = 0.026 mg → 0.026 mg · 2026-09-18",
+      "cloruro": "ciqual:26038 · «Saumon, cuit à la vapeur» · columna «Chlorure (mg/100 g)» = 63.0 mg · rebasado por materia seca de la fila donante, que es de otra cocción: ×(31.2/36.5) → 53.852055 · agua de la donante: ciqual:26038 · columna «Eau (g/100 g)» = 63,5 · 2026-09-18",
+      "cobre": "ciqual:26038 · «Saumon, cuit à la vapeur» · columna «Cuivre (mg/100 g)» = 0.026 mg · rebasado por materia seca de la fila donante, que es de otra cocción: ×(31.2/36.5) → 0.022225 · agua de la donante: ciqual:26038 · columna «Eau (g/100 g)» = 63,5 · 2026-09-18",
       "dha": "ciqual:26038 · «Saumon, cuit à la vapeur» · columna «AG 22:6 4c,7c,10c,13c,16c,19c (n-3) DHA (g/100 g)» = 1.11 g · transferido por gramo de grasa: 1.11×1×(11.0/11.5) → 1.061739 g · 2026-09-18",
       "energia": "bedca:2628 · «Salmón, plancha» · columna «energía, total» = 750.4 KJ ÷4,184 -> kcal · 2026-09-18",
       "epa": "ciqual:26038 · «Saumon, cuit à la vapeur» · columna «AG 20:5 5c,8c,11c,14c,17c (n-3) EPA (g/100 g)» = 0.64 g · transferido por gramo de grasa: 0.64×1×(11.0/11.5) → 0.612174 g · 2026-09-18",
@@ -22071,7 +22109,7 @@
       "linolenico": "ciqual:26038 · «Saumon, cuit à la vapeur» · columna «AG 18:3 c9,c12,c15 (n-3), alpha-linolénique (g/100 g)» = 0.18 g · transferido por gramo de grasa: 0.18×1×(11.0/11.5) → 0.172174 g · 2026-09-18",
       "lisina": "usda:171998 · «Fish, salmon, Atlantic, wild, cooked, dry heat» · columna «Lysine» = 2.336 G · transferido por gramo de proteina: 2.336×1×(20.2/25.44) → 1.854843 g · 2026-09-18",
       "magnesio": "bedca:2628 · «Salmón, plancha» · columna «magnesio» = 27.0 mg → 27.0 mg · 2026-09-18",
-      "manganeso": "ciqual:26038 · «Saumon, cuit à la vapeur» · columna «Manganèse (mg/100 g)» = 0.007 mg → 0.007 mg · 2026-09-18",
+      "manganeso": "ciqual:26038 · «Saumon, cuit à la vapeur» · columna «Manganèse (mg/100 g)» = 0.007 mg · rebasado por materia seca de la fila donante, que es de otra cocción: ×(31.2/36.5) → 0.005984 · agua de la donante: ciqual:26038 · columna «Eau (g/100 g)» = 63,5 · 2026-09-18",
       "metionina": "usda:171998 · «Fish, salmon, Atlantic, wild, cooked, dry heat» · columna «Methionine» = 0.753 G · transferido por gramo de proteina: 0.753×1×(20.2/25.44) → 0.597901 g · 2026-09-18",
       "niacina": "bedca:2628 · «Salmón, plancha» · columna «equivalentes de niacina, totales» = 7.2 mg → 7.2 mg · 2026-09-18",
       "potasio": "bedca:2628 · «Salmón, plancha» · columna «potasio» = 360.0 mg → 360.0 mg · 2026-09-18",
@@ -22548,7 +22586,8 @@
       "vitB6": "usda:172006 · «Fish, tuna, yellowfin, fresh, cooked, dry heat» · columna «Vitamin B-6» = 1.038 MG → 1.038 mg · 2026-09-18",
       "vitD": "usda:172006 · «Fish, tuna, yellowfin, fresh, cooked, dry heat» · columna «Vitamin D (D2 + D3)» = 2.0 UG → 2.0 ug · 2026-09-18",
       "vitE": "usda:172006 · «Fish, tuna, yellowfin, fresh, cooked, dry heat» · columna «Vitamin E (alpha-tocopherol)» = 0.29 MG → 0.29 mg · 2026-09-18",
-      "zinc": "usda:172006 · «Fish, tuna, yellowfin, fresh, cooked, dry heat» · columna «Zinc, Zn» = 0.45 MG → 0.45 mg · 2026-09-18"
+      "zinc": "usda:172006 · «Fish, tuna, yellowfin, fresh, cooked, dry heat» · columna «Zinc, Zn» = 0.45 MG → 0.45 mg · 2026-09-18",
+      "energia": "usda:172006 · «Fish, tuna, yellowfin, fresh, cooked, dry heat» · columna «Energy» = 130 KCAL → 130.0 kcal · 2026-09-18"
     },
     "cero_verificado": {
       "fibra": "Cero de la fuente que manda, comprobado el 2026-09-18: usda:172006 · «Fish, tuna, yellowfin, fresh, cooked, dry heat» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
@@ -22666,7 +22705,8 @@
       "tirosina": "usda:168297 · «Pork, fresh, composite of trimmed retail cuts (leg, loin, shoulder, and spareribs), separable lean and fat, cooked» · columna «Tyrosine» = 0.971 G · transferido por gramo de proteina: 0.971×1×(29.1/26.36) → 1.071931 · 2026-09-18. CIQUAL y BEDCA no publican aminoácidos: el mandato dice que los doce salen solo de USDA.",
       "treonina": "usda:168297 · «Pork, fresh, composite of trimmed retail cuts (leg, loin, shoulder, and spareribs), separable lean and fat, cooked» · columna «Threonine» = 1.186 G · transferido por gramo de proteina: 1.186×1×(29.1/26.36) → 1.309279 · 2026-09-18. CIQUAL y BEDCA no publican aminoácidos: el mandato dice que los doce salen solo de USDA.",
       "triptofano": "usda:168297 · «Pork, fresh, composite of trimmed retail cuts (leg, loin, shoulder, and spareribs), separable lean and fat, cooked» · columna «Tryptophan» = 0.293 G · transferido por gramo de proteina: 0.293×1×(29.1/26.36) → 0.323456 · 2026-09-18. CIQUAL y BEDCA no publican aminoácidos: el mandato dice que los doce salen solo de USDA.",
-      "valina": "usda:168297 · «Pork, fresh, composite of trimmed retail cuts (leg, loin, shoulder, and spareribs), separable lean and fat, cooked» · columna «Valine» = 1.392 G · transferido por gramo de proteina: 1.392×1×(29.1/26.36) → 1.536692 · 2026-09-18. CIQUAL y BEDCA no publican aminoácidos: el mandato dice que los doce salen solo de USDA."
+      "valina": "usda:168297 · «Pork, fresh, composite of trimmed retail cuts (leg, loin, shoulder, and spareribs), separable lean and fat, cooked» · columna «Valine» = 1.392 G · transferido por gramo de proteina: 1.392×1×(29.1/26.36) → 1.536692 · 2026-09-18. CIQUAL y BEDCA no publican aminoácidos: el mandato dice que los doce salen solo de USDA.",
+      "energia": "ciqual:28205 · «Porc, viande, cuite (aliment moyen)» · columna «Energie, Règlement UE N° 1169/2011 (kcal/100 g)» = 205  → 205.0 kcal · 2026-09-18"
     },
     "cero_verificado": {
       "fibra": "Cero de la fuente que manda, comprobado el 2026-09-18: ciqual:28205 · «Porc, viande, cuite (aliment moyen)» · columna «Fibres alimentaires (g/100 g)» = 0.0 g. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
@@ -22783,7 +22823,8 @@
       "tirosina": "transferido del aminograma de la ficha cruda «Dorada» por gramo de proteína (0.574×23.6/17) · 2026-09-18. Un aminograma es una fracción de la proteína y cocer no cambia de qué está hecha: cambia cuánta hay por 100 g, que es lo que corrige el factor.",
       "treonina": "transferido del aminograma de la ficha cruda «Dorada» por gramo de proteína (0.745×23.6/17) · 2026-09-18. Un aminograma es una fracción de la proteína y cocer no cambia de qué está hecha: cambia cuánta hay por 100 g, que es lo que corrige el factor.",
       "triptofano": "transferido del aminograma de la ficha cruda «Dorada» por gramo de proteína (0.191×23.6/17) · 2026-09-18. Un aminograma es una fracción de la proteína y cocer no cambia de qué está hecha: cambia cuánta hay por 100 g, que es lo que corrige el factor.",
-      "valina": "transferido del aminograma de la ficha cruda «Dorada» por gramo de proteína (0.875×23.6/17) · 2026-09-18. Un aminograma es una fracción de la proteína y cocer no cambia de qué está hecha: cambia cuánta hay por 100 g, que es lo que corrige el factor."
+      "valina": "transferido del aminograma de la ficha cruda «Dorada» por gramo de proteína (0.875×23.6/17) · 2026-09-18. Un aminograma es una fracción de la proteína y cocer no cambia de qué está hecha: cambia cuánta hay por 100 g, que es lo que corrige el factor.",
+      "energia": "ciqual:27031 · «Dorade (Daurade) royale, cuite au four» · columna «Energie, Règlement UE N° 1169/2011 (kcal/100 g)» = 148  → 148.0 kcal · 2026-09-18"
     },
     "cero_verificado": {
       "fibra": "Cero de la fuente que manda, comprobado el 2026-09-18: ciqual:27031 · «Dorade (Daurade) royale, cuite au four» · columna «Fibres alimentaires (g/100 g)» = 0.0 g. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
@@ -22895,7 +22936,8 @@
       "vitB12": "usda:174249 · «Mollusks, octopus, common, cooked, moist heat» · columna «Vitamin B-12» = 36.0 UG → 36.0 ug · 2026-09-18",
       "vitB6": "usda:174249 · «Mollusks, octopus, common, cooked, moist heat» · columna «Vitamin B-6» = 0.648 MG → 0.648 mg · 2026-09-18",
       "vitE": "usda:174249 · «Mollusks, octopus, common, cooked, moist heat» · columna «Vitamin E (alpha-tocopherol)» = 1.2 MG → 1.2 mg · 2026-09-18",
-      "zinc": "usda:174249 · «Mollusks, octopus, common, cooked, moist heat» · columna «Zinc, Zn» = 3.36 MG → 3.36 mg · 2026-09-18"
+      "zinc": "usda:174249 · «Mollusks, octopus, common, cooked, moist heat» · columna «Zinc, Zn» = 3.36 MG → 3.36 mg · 2026-09-18",
+      "energia": "usda:174249 · «Mollusks, octopus, common, cooked, moist heat» · columna «Energy» = 164 KCAL → 164.0 kcal · 2026-09-18"
     },
     "cero_verificado": {
       "fibra": "Cero de la fuente que manda, comprobado el 2026-09-18: usda:174249 · «Mollusks, octopus, common, cooked, moist heat» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
@@ -23013,7 +23055,8 @@
       "tirosina": "usda:173816 · «Veal, composite of trimmed retail cuts, separable lean and fat, cooked» · columna «Tyrosine» = 0.96 G · transferido por gramo de proteina: 0.96×1×(29.0/30.1) → 0.924917 · 2026-09-18. CIQUAL y BEDCA no publican aminoácidos: el mandato dice que los doce salen solo de USDA.",
       "treonina": "usda:173816 · «Veal, composite of trimmed retail cuts, separable lean and fat, cooked» · columna «Threonine» = 1.315 G · transferido por gramo de proteina: 1.315×1×(29.0/30.1) → 1.266944 · 2026-09-18. CIQUAL y BEDCA no publican aminoácidos: el mandato dice que los doce salen solo de USDA.",
       "triptofano": "usda:173816 · «Veal, composite of trimmed retail cuts, separable lean and fat, cooked» · columna «Tryptophan» = 0.305 G · transferido por gramo de proteina: 0.305×1×(29.0/30.1) → 0.293854 · 2026-09-18. CIQUAL y BEDCA no publican aminoácidos: el mandato dice que los doce salen solo de USDA.",
-      "valina": "usda:173816 · «Veal, composite of trimmed retail cuts, separable lean and fat, cooked» · columna «Valine» = 1.663 G · transferido por gramo de proteina: 1.663×1×(29.0/30.1) → 1.602226 · 2026-09-18. CIQUAL y BEDCA no publican aminoácidos: el mandato dice que los doce salen solo de USDA."
+      "valina": "usda:173816 · «Veal, composite of trimmed retail cuts, separable lean and fat, cooked» · columna «Valine» = 1.663 G · transferido por gramo de proteina: 1.663×1×(29.0/30.1) → 1.602226 · 2026-09-18. CIQUAL y BEDCA no publican aminoácidos: el mandato dice que los doce salen solo de USDA.",
+      "energia": "ciqual:6564 · «Veau, viande, cuite (aliment moyen)» · columna «Energie, Règlement UE N° 1169/2011 (kcal/100 g)» = 169  → 169.0 kcal · 2026-09-18"
     },
     "energia": 169.0,
     "humedad_g_100g": 63.7,

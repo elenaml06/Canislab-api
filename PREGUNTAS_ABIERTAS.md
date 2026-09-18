@@ -3094,6 +3094,56 @@ el mecanismo está puesto y la especie a evitar le llega al solver.
 
 ---
 
+## P-53 · Las kcal que guardamos son las de la fuente, y FEDIAF dice que se calculen
+
+**Dueño: el nutricionista** · **¿Bloquea?** no, pero mueve el denominador de
+todo · **Abierta desde** el 18 de septiembre de 2026
+
+**Lo que pasa.** FEDIAF §7.2.2.2 b) dice que la energía metabolizable de un
+producto en estado natural *«has to be predicted»* con su ecuación: **4 × proteína
++ 9 × grasa + 4 × NFE**. Nosotros no la predecimos: **copiamos la kcal que publica
+la fuente**. Y las fuentes no usan esos factores.
+
+Lo destapó el BLOQUE 71 con 14 rojos al entrar la comida cocinada, y la causa no
+era ningún dato mal: **USDA publica sus kcal con los factores ESPECÍFICOS de
+Atwater**, que para la carne y el pescado son **4,27 y 9,02** en vez de 4 y 9.
+
+**Medido** sobre las 122 fichas de origen animal con energía, agrupando por la
+fuente que declara la celda:
+
+| fuente | n | mediana contra 4/9 | mediana contra 4,27/9,02 |
+|---|---|---|---|
+| **USDA** | 34 | **1,045** | **1,001** |
+| CIQUAL | 6 | 1,000 | 0,953 |
+| BEDCA | 4 | 1,012 | 0,960 |
+
+O sea: no es ruido ni es glucógeno, es **la convención de la fuente**, y solo la
+de USDA. En el catálogo crudo se notaba poco porque la carne cruda es más de la
+mitad agua; en la cocinada, que está concentrada, el mismo 4,5 % relativo se sale
+de la banda y por eso aparecieron 14 de golpe.
+
+**Por qué importa de verdad.** La columna `energia` es el **DENOMINADOR de las 43
+comprobaciones** del semáforo. Si va un 4,5 % alta, todas las concentraciones de
+un menú con esa ficha van un 4,5 % bajas — y **ninguna prueba lo ve**, porque
+todas usan el mismo denominador.
+
+**Lo que se ha hecho:** el BLOQUE 71 compara con los factores de la fuente que
+declara la celda, así que deja de acusar a un número que está bien. Lo que **no**
+se ha hecho es cambiar el número.
+
+**La pregunta.** ¿El catálogo debe guardar la kcal **calculada con la ecuación de
+FEDIAF** en lugar de la publicada por la fuente? A favor: la regla del repo es
+que **gana FEDIAF**, y su texto no dice «puede», dice *«has to be predicted»*. En
+contra: son **34 fichas** cuyo denominador se movería a la vez, y la ecuación pide
+un tercer término —el **NFE**— que el catálogo **no tiene como columna**, así que
+aplicarla hoy dejaría fuera el glucógeno del hígado y del pulpo, que es real y
+está medido (1,11 y 1,12 veces la ecuación sin NFE).
+
+⚠️ **Lo que NO puede pasar es quedarse a medias**: calcular unas fichas y copiar
+otras haría que dos alimentos del mismo plato midieran su energía con dos reglas
+distintas, y eso es peor que cualquiera de las dos opciones enteras.
+
+
 ## P-52 · Las plantas: cuál pasa el listón, y por qué puerta entra
 
 *(18 de septiembre de 2026. La abrió Elena: «yo sigo viendo un montón de menús
@@ -3235,6 +3285,51 @@ horno no.
 **Dueño: Elena**, porque es qué comen sus perros y porque las tres salidas son
 un juicio y no una cuenta — que es lo que este repo dice de las 253
 discrepancias que no se tocan.
+
+---
+
+### ⚠️ ACTUALIZADA LA MISMA NOCHE: se ha hecho la salida 1, y la pregunta se REDUCE
+
+*(18 de septiembre de 2026.)* Arriba pone «lo que se ha hecho de momento: NADA».
+Ya no es verdad, y esto es lo que cambió: **la salida 1 sí era un arreglo de una
+noche**, porque lo único que faltaba era el agua de la fila donante y las dos
+fuentes la publican. Lo que no la tenía era nuestra instantánea.
+
+Con las dos aguas, el factor es una cuenta y la celda se rehace:
+
+| ficha | MS nuestra | MS de la donante | factor |
+|---|---|---|---|
+| **Trucha cocida** | 25,00 | 31,28 | **×0,7992** |
+| Bacalao cocido | 23,70 | 26,60 | ×0,8910 |
+| Lenguado cocido | 18,40 | 23,10 | ×0,7965 |
+| Salmón cocido | 31,20 | 36,50 | ×0,8548 |
+| Calabaza cocida | 3,50 | 9,30 | **×0,3763** |
+
+Es la misma regla que el repo ya aplica a los aminoácidos (por gramo de
+proteína) y a los ácidos grasos (por gramo de grasa), leída para la cocción: un
+mineral vive en la materia seca, así que su cantidad por gramo de MS se conserva
+y lo que cambia por 100 g es cuánta MS hay. El fósforo de la trucha pasa de 270
+a **215,8 mg** y su vitamina D de 19 a **15,2 µg**.
+
+Las 29 celdas quedan declaradas en `celdas_de_otra_coccion` de
+`fuentes_de_composicion.json` con las dos aguas y el factor, y el **BLOQUE 104
+REHACE la cuenta** en vez de leerla — comprobado con el fallo puesto.
+
+**LO QUE SIGUE ABIERTO, y es más estrecho:** el rebase corrige el agua y **no el
+lavado**. Hervir arrastra las vitaminas hidrosolubles y parte de los minerales al
+agua de cocción, y eso no es agua: es pérdida. Así que donde la donante es seca y
+la nuestra húmeda —la trucha y la calabaza— las celdas siguen quedando **altas**,
+solo que mucho menos. Cuantificarlo pide un **factor de retención por
+nutriente**, y **ninguna de las tres fuentes lo publica**. Está en
+`DATOS_QUE_FALTAN.md`.
+
+⚠️ Y una segunda mitad que es de código y no de dato: la regla general —rebasar
+toda celda absoluta que venga de una fila de otra cocción— vive hoy en la
+declaración y **no en `auditar_composicion.py`**, que es donde tendría que estar
+para aplicarse sola a la siguiente ficha cocida que entre. Eso es trabajo, no
+pregunta: va a `PENDIENTE_NUTRICION.md`.
+
+**Dueño: el nutricionista**, para el factor de retención. Lo demás está hecho.
 
 
 ## P-50 · Tres cosas que sé de los hidratos y que NINGUNA fuente del repo dice

@@ -1496,7 +1496,7 @@
     "y_el_limite_de_esta_regla": "⚠️ No decide los CONVENIOS. Que el número salga de BEDCA no dice en qué convenio tiene que estar la columna, y ahí manda FEDIAF. Los dos conflictos declarados -- la vitamina A (β-caroteno a 6:1 en BEDCA contra el 4:1 que FEDIAF define para el perro) y la niacina (BEDCA da equivalentes, USDA preformada) -- siguen abiertos."
   },
   "celdas_de_otra_coccion": {
-    "_por_que": "⚠️ LO QUE SEPARA DOS FILAS COCINADAS ES EL AGUA, NO EL NOMBRE DEL MÉTODO (18 de septiembre de 2026). Hervir, guisar y cocer al vapor dejan el alimento húmedo; el horno y la plancha lo secan. Medido en las propias fuentes: la trucha al vapor de CIQUAL va a 19 g de proteína y 99 kcal y la de USDA a fuego seco a 23,8 g y 168 — un 70 % más de energía por los mismos 100 g. Una celda ABSOLUTA por 100 g se lleva esa diferencia dentro; una FRACCIÓN no, porque se transfiere por gramo de su total y el método se cancela (es la misma regla del aminograma de `UNIDADES.md`). || Aquí quedan las cinco fichas a las que el orden de mandato les da una celda absoluta desde una fila de la OTRA familia. No se cambia ningún número: la alternativa es un hueco, y un hueco contra un mínimo cuenta 0. Lo que se hace es decir cuánto vale la diferencia y en qué dirección, que es lo que nadie podía leer hasta hoy. || CÓMO SE CIERRA: con el agua de la fila donante, que la instantánea todavía no guarda. Con ella la celda se rebasa por materia seca, igual que un aminoácido se rebasa por gramo de proteína. Está en `DATOS_QUE_FALTAN.md`.",
+    "_por_que": "⚠️ LO QUE SEPARA DOS FILAS COCINADAS ES EL AGUA, NO EL NOMBRE DEL MÉTODO (18 de septiembre de 2026). Hervir, guisar y cocer al vapor dejan el alimento húmedo; el horno y la plancha lo secan. Medido en las propias fuentes: la trucha al vapor de CIQUAL va a 19 g de proteína y 99 kcal y la de USDA a fuego seco a 23,8 g y 168 — un 70 % más de energía por los mismos 100 g. || Una FRACCIÓN no se entera: se transfiere por gramo de su total y el método se cancela (la regla del aminograma de `UNIDADES.md`). Una celda ABSOLUTA por 100 g sí, y por eso estas se REBASAN POR MATERIA SECA, que es la misma regla leída para la cocción: un mineral vive en la materia seca, así que su cantidad por gramo de MS se conserva y lo que cambia por 100 g es cuánta MS hay. El factor se calcula con el agua de las DOS filas y va escrito en cada celda, así que se puede rehacer. || ⚠️ LO QUE ESTE REBASE NO MODELA, y hay que saberlo: hervir LAVA las vitaminas hidrosolubles y los minerales hacia el agua de cocción, y eso no es agua: es pérdida. Así que donde la donante es seca y la nuestra húmeda (la trucha y la calabaza) el rebase sigue quedándose ALTO, solo que mucho menos — la trucha pasa de un 25 % de exceso a ~0 por agua y lo que quede es lavado. Cuantificarlo pide un factor de retención por nutriente, que ninguna de las tres fuentes publica. Está en `DATOS_QUE_FALTAN.md`. || Y la regla general —rebasar toda celda absoluta que venga de una fila de otra cocción— vive hoy AQUÍ y no en `auditar_composicion.py`, que es donde tendría que estar para que se aplicara sola a la siguiente ficha cocida que entre.",
     "Trucha cocida": {
       "fuente": "usda",
       "id": "173718",
@@ -1531,9 +1531,10 @@
         "vitD",
         "vitE"
       ],
-      "medida": "nuestra fila base va a 19.0 g de proteína, 2.6 g de grasa y 99.4 kcal por 100 g; la donante, a 23.8 · 7.38 · 168.",
-      "direccion": "La fila donante es de la familia SECA y la nuestra de la húmeda, así que trae más materia seca por 100 g: estas celdas van ALTAS.",
-      "por_que": "CIQUAL declara «-» (no disponible) en las dieciséis, así que el orden de mandato baja hasta USDA y ahí la única trucha cocida es a fuego seco. No hay fila de la familia húmeda que las publique: o se toman de ésta o se quedan las dieciséis en hueco, que contra un MÍNIMO cuenta 0 y dejaría a la trucha sin fósforo, sin calcio y sin vitamina D."
+      "agua_de_la_fila_donante": "usda:173718 · columna «Water» = 68.72 g",
+      "rebase": "materia seca 25 g/100 g la nuestra contra 31.28 la suya: ×0.7992",
+      "por_que": "CIQUAL declara «-» en las dieciséis, así que el mandato baja a USDA y ahí la única trucha cocida es a fuego seco. No hay fila de la familia húmeda que las publique: o se rebasan desde ésta o se quedan las dieciséis en hueco, y con quince huecos la trucha deja de ser una ficha.",
+      "agua_de_la_fila_donante_g_100g": 68.72
     },
     "Bacalao cocido": {
       "fuente": "ciqual",
@@ -1557,9 +1558,10 @@
         "cobre",
         "manganeso"
       ],
-      "medida": "nuestra fila base va a 22.1 g de proteína, 1.05714 g de grasa y 99.14 kcal por 100 g; la donante, a 24,5 · 0,95 · 106.",
-      "direccion": "La fila donante es de la familia HÚMEDA y la nuestra de la seca, así que trae menos materia seca por 100 g: estas celdas van BAJAS.",
-      "por_que": "El cloruro solo lo publica CIQUAL — está escrito en el mandato por nutriente —, y su única fila de bacalao cocido es al vapor. Las otras tres vienen de la misma fila por no partir una celda de otra: el ácido pantoténico, el cobre y el manganeso de USDA son de una fila de fuego seco, que es la familia de nuestra base, y cambiarlas sería elegir entre dos fuentes honestas que no dicen lo mismo — eso es un juicio, no una cuenta."
+      "agua_de_la_fila_donante": "ciqual:26025 · columna «Eau (g/100 g)» = 73,4",
+      "rebase": "materia seca 23.7 g/100 g la nuestra contra 26.6 la suya: ×0.8910",
+      "por_que": "El cloruro SOLO lo publica CIQUAL —está en el mandato por nutriente— y su única fila de bacalao cocido es al vapor. Las otras tres van con él para no partir la celda entre dos filas del mismo alimento.",
+      "agua_de_la_fila_donante_g_100g": 73.4
     },
     "Calabaza cocida": {
       "fuente": "ciqual",
@@ -1581,9 +1583,10 @@
         "cloruro",
         "manganeso"
       ],
-      "medida": "nuestra fila base va a 0.6 g de proteína, 0.15 g de grasa y 12.3 kcal por 100 g; la donante, a < 0,5 · < 0,3 · 30,2.",
-      "direccion": "La fila donante es de la familia SECA y la nuestra de la húmeda, así que trae más materia seca por 100 g: estas celdas van ALTAS.",
-      "por_que": "El cloruro solo lo publica CIQUAL, y su única fila de calabaza cocida es al horno. El manganeso va con él para no partir la celda entre dos filas del mismo alimento."
+      "agua_de_la_fila_donante": "ciqual:20332 · columna «Eau (g/100 g)» = 90,7",
+      "rebase": "materia seca 3.5 g/100 g la nuestra contra 9.3 la suya: ×0.3763",
+      "por_que": "El cloruro solo lo publica CIQUAL, y su única fila de calabaza cocida es al horno. El manganeso va con él para no partir la celda.",
+      "agua_de_la_fila_donante_g_100g": 90.7
     },
     "Lenguado cocido": {
       "fuente": "ciqual",
@@ -1606,9 +1609,10 @@
         "cloruro",
         "cobre"
       ],
-      "medida": "nuestra fila base va a 16.0 g de proteína, 0.957143 g de grasa y 73.47 kcal por 100 g; la donante, a 17,4 · 2,27 · 90,1.",
-      "direccion": "La fila donante es de la familia HÚMEDA y la nuestra de la seca, así que trae menos materia seca por 100 g: estas celdas van BAJAS.",
-      "por_que": "CIQUAL es la única de las tres que publica lenguado cocido con estas celdas (BEDCA no las trae y USDA no tiene fila), y la publica al vapor. Sin ella las tres se quedan en hueco."
+      "agua_de_la_fila_donante": "ciqual:26017 · columna «Eau (g/100 g)» = 76,9",
+      "rebase": "materia seca 18.4 g/100 g la nuestra contra 23.1 la suya: ×0.7965",
+      "por_que": "CIQUAL es la única de las tres que publica lenguado cocido con estas celdas (BEDCA no las trae y USDA no tiene fila), y lo publica al vapor.",
+      "agua_de_la_fila_donante_g_100g": 76.9
     },
     "Salmón cocido": {
       "fuente": "ciqual",
@@ -1632,9 +1636,10 @@
         "cobre",
         "manganeso"
       ],
-      "medida": "nuestra fila base va a 20.2 g de proteína, 11.0 g de grasa y 179.35 kcal por 100 g; la donante, a 23 · 11,5 · 195.",
-      "direccion": "La fila donante es de la familia HÚMEDA y la nuestra de la seca, así que trae menos materia seca por 100 g: estas celdas van BAJAS.",
-      "por_que": "El cloruro solo lo publica CIQUAL y su única fila de salmón cocido es al vapor. Las otras tres se quedan con ella por lo mismo que el bacalao: la alternativa de USDA es salmón SALVAJE del Atlántico y la nuestra es de piscifactoría, y su cobre es doce veces el de CIQUAL — elegir entre las dos es un juicio."
+      "agua_de_la_fila_donante": "ciqual:26038 · columna «Eau (g/100 g)» = 63,5",
+      "rebase": "materia seca 31.2 g/100 g la nuestra contra 36.5 la suya: ×0.8548",
+      "por_que": "El cloruro solo lo publica CIQUAL y su única fila de salmón cocido es al vapor. Las otras tres van con él por lo mismo que el bacalao.",
+      "agua_de_la_fila_donante_g_100g": 63.5
     }
   }
 }

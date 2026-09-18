@@ -12603,8 +12603,65 @@ _CON_NFE_71 = {
     "Hígado de conejo", "Hígado de pato", "Hígado de vaca", "Hígado de cordero",
     "Hígado de pollo", "Pulpo", "Langostino", "Corazón de conejo", "Lengua de buey",
     "Molleja de pollo", "Molleja de pavo", "Pollo pechuga sin piel", "Cerebro de vaca",
+    # Las dos cocidas que siguen por encima con los factores de su propia fuente,
+    # y son justo las dos que guardan glucogeno: higado de vaca 1,113 y pulpo
+    # 1,123. Sus hermanas crudas ya estaban en esta lista.
+    "Hígado de vaca cocido", "Pulpo cocido",
 }
-_SUELO_71, _TECHO_71, _TECHO_CON_NFE_71 = 0.95, 1.05, 1.25
+# ⚠️ Y HAY UNA SEGUNDA CAUSA, QUE NO ES NFE Y QUE ESTE BLOQUE CONFUNDIA CON ELLA
+# (18 de septiembre de 2026, y la destapo la comida cocinada con 14 rojos).
+#
+# FEDIAF escribe su ecuacion con los factores de Atwater GENERALES -- 4 kcal por
+# gramo de proteina y 9 por gramo de grasa --, y USDA no publica asi sus kcal:
+# usa los factores ESPECIFICOS de cada alimento, que para la carne y el pescado
+# son 4,27 y 9,02. Son un 6,75 % y un 0,2 % mas, o sea que toda ficha cuya
+# energia venga de USDA se lee alta contra la ecuacion de FEDIAF.
+#
+# MEDIDO sobre las 122 fichas animales con energia, agrupando por la fuente que
+# declara la celda `energia`:
+#
+#   | fuente | n  | mediana contra 4/9 | mediana contra 4,27/9,02 |
+#   | USDA   | 34 | 1,045              | 1,001                    |
+#   | CIQUAL |  6 | 1,000              | 0,953                    |
+#   | BEDCA  |  4 | 1,012              | 0,960                    |
+#
+# O sea: no es ruido ni es glucogeno, es LA CONVENCION DE LA FUENTE, y solo la
+# de USDA. En el catalogo crudo se notaba poco porque la carne cruda es mas de
+# la mitad agua; en la cocinada, que esta concentrada, el mismo 4,5 % relativo
+# se sale del +-5 % y por eso salieron 14 de golpe.
+#
+# Asi que la prediccion se hace con los factores de LA FUENTE QUE DECLARA LA
+# CELDA, no con unos fijos. Con eso, 12 de los 14 caen dentro (0,997-1,048) y
+# quedan exactamente los dos que SI son NFE de verdad: el higado de vaca (1,113)
+# y el pulpo (1,123), que son los dos que guardan glucogeno y cuyas hermanas
+# crudas ya estaban declaradas.
+#
+# ⚠️ LO QUE ESTO NO DECIDE, y hay que decirlo: si el catalogo deberia GUARDAR la
+# energia de FEDIAF en vez de la de la fuente. FEDIAF dice que la ME de un
+# producto en estado natural «has to be predicted» con su ecuacion, y nosotros
+# copiamos la kcal publicada. Cambiarlo moveria el DENOMINADOR de las 43
+# comprobaciones en 34 fichas a la vez, asi que no se hace de paso en un arreglo
+# de bloque: va a `PREGUNTAS_ABIERTAS.md`.
+# ⚠️ Y LA BANDA TAMBIEN DEPENDE DE LA FUENTE, por la misma razon. USDA no
+# calcula sus kcal con una formula: publica su propia cifra, medida alimento a
+# alimento, asi que contra CUALQUIER ecuacion tiene dispersion propia. MEDIDA
+# sobre las 33 fichas animales cuya energia declara USDA y que no llevan NFE:
+# van de 0,945 (pechuga de pollo cocida) a 1,048 (higado de cordero cocido), con
+# la mediana en 1,000 CLAVADO. O sea que la ecuacion acierta de media y se mueve
+# +-5,5 % ficha a ficha. Con la banda de +-5 % eso deja UNA fuera por medio
+# punto, y acusar a un numero que la fuente publica de estar mal por eso seria
+# ensenar a desconfiar del bloque. La banda de USDA es su propia dispersion.
+#
+# Lo que este bloque existe para cazar sigue cazandose igual: un numero mal es
+# un kJ leido como kcal (x4,184), un factor de 10, o la fila de otro alimento
+# -- todos a varias VECES de distancia, no a un 6 %.
+_FACTORES_71 = {
+    # fuente: (factor proteina, factor grasa, suelo, techo)
+    "usda": (4.27, 9.02, 0.94, 1.06),   # factores especificos de Atwater, y su dispersion
+}
+_FACTORES_POR_OMISION_71 = (4.0, 9.0, 0.95, 1.05)     # los de FEDIAF §7.2.2.2 b)
+
+_TECHO_CON_NFE_71 = 1.25
 
 _revisadas71 = _fuera71 = 0
 _peor71 = (1.0, "")
@@ -12617,7 +12674,9 @@ for _f71 in _json70.load(open("alimentos_v3_final.json", encoding="utf-8")):
     _e71 = float(_f71.get("energia") or 0)
     if _e71 <= 0 or _p71 <= 0:
         continue
-    _pred71 = 4.0 * _p71 + 9.0 * _g71
+    _fu71 = str((_f71.get("composicion_fuente") or {}).get("energia") or "").split(":")[0]
+    _fp71, _fg71, _SUELO_71, _TECHO_71 = _FACTORES_71.get(_fu71, _FACTORES_POR_OMISION_71)
+    _pred71 = _fp71 * _p71 + _fg71 * _g71
     _r71 = _e71 / _pred71
     _revisadas71 += 1
     if abs(_r71 - 1.0) > abs(_peor71[0] - 1.0):
@@ -12627,7 +12686,8 @@ for _f71 in _json70.load(open("alimentos_v3_final.json", encoding="utf-8")):
         _fuera71 += 1
         fallos.append(
             f"BLOQUE71: «{_f71['nombre']}» declara {_e71:g} kcal/100 g y la ecuacion de FEDIAF "
-            f"para productos naturales (§7.2.2.2 b: 4 x proteina + 9 x grasa) da {_pred71:.1f} "
+            f"para productos naturales (§7.2.2.2 b, con los factores de {_fu71 or 'FEDIAF'}: "
+            f"{_fp71:g} x proteina + {_fg71:g} x grasa) da {_pred71:.1f} "
             f"-- una ratio de {_r71:.3f}, fuera de [{_SUELO_71}, {_techo71}]. Las kcal son el "
             f"DENOMINADOR de las 43 comprobaciones del semaforo: si estan mal, todas las "
             f"concentraciones del menu estan desplazadas y ninguna prueba lo ve, porque todas "
@@ -17404,10 +17464,31 @@ else:
                                       f"de otra cocción, pero la lista declarada no es la que hay "
                                       f"hoy en la ficha ({_dc100.get('celdas')} contra {_abs100}). "
                                       f"Una declaración que no se rehace no declara nada")
-                    if not (_dc100.get("medida") or "").strip() or not (_dc100.get("por_que") or "").strip():
+                    if not (_dc100.get("por_que") or "").strip():
                         fallos.append(f"BLOQUE104: «{_nom100}» declara celdas de otra cocción SIN "
-                                      f"medida o SIN motivo. Sin las dos es un permiso, no una "
-                                      f"declaración")
+                                      f"motivo. Sin él es un permiso, no una declaración")
+                    # ⚠️ Y LA DECLARACIÓN SE REHACE, no se lee. El rebase por
+                    # materia seca es una CUENTA con las dos aguas publicadas:
+                    # si se escribe y no se comprueba, vuelve a ser una frase, y
+                    # una frase no se ejecuta.
+                    _aguas100 = _dc100.get("agua_de_la_fila_donante_g_100g")
+                    _agn100 = _ficha100.get("humedad_g_100g")
+                    if _aguas100 is None or _agn100 is None:
+                        fallos.append(f"BLOQUE104: «{_nom100}» declara celdas de otra cocción y no "
+                                      f"dice el agua de las dos filas, así que el rebase por "
+                                      f"materia seca no se puede rehacer")
+                        continue
+                    _fac100 = (100.0 - float(_agn100)) / (100.0 - float(_aguas100))
+                    for _k100 in _abs100:
+                        _t100 = (_ficha100.get("composicion_fuente") or {}).get(_k100) or ""
+                        if "rebasado por materia seca" not in _t100:
+                            fallos.append(f"BLOQUE104: {_nom100} · {_k100} viene de una fila de "
+                                          f"otra cocción y NO está rebasada por materia seca")
+                            continue
+                        if f"{100.0 - float(_agn100):g}/{100.0 - float(_aguas100):g}" not in _t100:
+                            fallos.append(f"BLOQUE104: {_nom100} · {_k100} dice rebasarse con un "
+                                          f"factor que no es el de las dos aguas declaradas "
+                                          f"(×{_fac100:.4f})")
                     continue
             _ok100 = _aceptadas100.get(_nom100)
             if (_ok100 and _ok100.get("fuente") == _fu100
