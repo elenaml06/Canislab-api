@@ -24,6 +24,28 @@ COMUN mas los bloques que se le pidan. Nada del fichero original se toca.
     python3 probar_bloques.py 95          # solo el 95
     python3 probar_bloques.py 43 95       # dos
     python3 probar_bloques.py 90-95       # un rango
+    python3 probar_bloques.py --rapida    # todos los BARATOS, para iterar
+
+⚠️ EL MODO RAPIDO (18 de septiembre de 2026), y el porque es de Elena otra vez:
+«tenemos que hacer algo para poder bajar el tiempo de las baterias..... es una
+locura y tardamos dias en aplicar cosas diminutas» y «¿la gente que hace apps lo
+hace asi, tirando baterias infinitas cada vez que hacen un cambio por minimo que
+sea?».
+
+No. La forma normal es una piramide: segundos en cada cambio, un par de minutos
+al abrir el PR, y la larga antes de publicar. Aqui se estaba corriendo la de
+«antes de publicar» para cambiar un texto.
+
+`--rapida` corre TODOS los bloques que cuestan poco -- no una seleccion a mano,
+que es lo que se desincroniza -- y deja fuera los que resuelven menus de verdad
+con el solver, que es donde se va la mitad del reloj. La lista sale de
+`reparto_de_la_bateria.json`, que **escribe la propia bateria al terminar**: es
+una MEDIDA, no una opinion, y el dia que un bloque engorde se cae solo del modo
+rapido sin que nadie tenga que acordarse.
+
+⚠️ Y FALLA HACIA CORRER, NO HACIA SALTAR. Un bloque que no este en la medida
+--porque es nuevo-- se ejecuta igual y se dice. Al reves seria lo peor posible:
+un bloque nuevo que no corre en el bucle rapido y nadie se entera.
 
 ⚠️ LO QUE ESTO **NO** ES, Y HAY QUE DECIRLO CLARO. No sustituye a la bateria:
     · Un bloque puede usar variables que define OTRO de mas arriba (`_al43`,
@@ -86,6 +108,35 @@ def _trozos():
     return cabecera, trozos
 
 
+# Cuanto puede costar un bloque para seguir siendo «barato». No es una cifra de
+# ninguna fuente: es donde esta el corte natural de la medida -- por debajo
+# estan los que no resuelven menus, por encima los que si.
+SEGUNDOS_PARA_SER_RAPIDO = float(os.environ.get("CANISLAB_SEGUNDOS_RAPIDO", "8"))
+MEDIDA = os.path.join(RAIZ, "reparto_de_la_bateria.json")
+
+
+def _los_rapidos(trozos):
+    """Los bloques baratos, segun la ultima medida de la bateria entera."""
+    import json
+    if not os.path.exists(MEDIDA):
+        raise SystemExit(
+            f"falta «{os.path.basename(MEDIDA)}», que es de donde sale la lista de bloques\n"
+            f"baratos. Lo escribe la bateria entera al terminar, asi que hace falta correrla\n"
+            f"una vez:  python3 pruebas_completas.py")
+    medida = {int(x["bloque"]): x["segundos"]
+              for x in json.load(open(MEDIDA, encoding="utf-8"))["bloques"]}
+    rapidos, lentos, sin_medir = [], [], []
+    for n in sorted(trozos):
+        if n not in medida:
+            sin_medir.append(n)
+            rapidos.append(n)          # un bloque nuevo CORRE, no se salta
+        elif medida[n] < SEGUNDOS_PARA_SER_RAPIDO:
+            rapidos.append(n)
+        else:
+            lentos.append(n)
+    return rapidos, lentos, sin_medir, medida
+
+
 def _pedidos(argv):
     fuera = []
     for a in argv:
@@ -126,7 +177,20 @@ def main():
     if len(sys.argv) < 2:
         raise SystemExit(__doc__)
     cabecera, trozos = _trozos()
-    quiero = _pedidos(sys.argv[1:])
+    if sys.argv[1] in ("--rapida", "--rapido"):
+        quiero, lentos, sin_medir, medida = _los_rapidos(trozos)
+        _t_rap = sum(medida.get(n, 0.0) for n in quiero)
+        _t_len = sum(medida.get(n, 0.0) for n in lentos)
+        print(f"  MODO RAPIDO: {len(quiero)} bloques de {len(trozos)} "
+              f"(~{_t_rap / 60:.0f} min de ~{(_t_rap + _t_len) / 60:.0f})")
+        print(f"  NO se ejecutan los {len(lentos)} que resuelven menus con el solver: "
+              f"{lentos}")
+        if sin_medir:
+            print(f"  ⚠️  y {len(sin_medir)} sin medir todavia (bloques nuevos), que SI se "
+                  f"ejecutan: {sin_medir}")
+        print()
+    else:
+        quiero = _pedidos(sys.argv[1:])
     faltan = [n for n in quiero if n not in trozos]
     if faltan:
         raise SystemExit(f"no existen los bloques {faltan}. Hay del "

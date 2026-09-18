@@ -9813,7 +9813,7 @@ def endpoint_vocabulario():
     from der import BASE_ACTIVIDAD, RAZAS_CIFRA_FEDIAF
     from requisitos import ETAPAS_VALIDAS, EQUIVALENCIA_ETAPAS
 
-    from motor.patologias import cargar_crudo
+    from patologias import cargar_crudo
     from catalogo_menus import CATALOGO
 
     al_v, _req_v = cargar_v2()
@@ -10387,8 +10387,8 @@ def listar_patologias():
     debajo de FEDIAF (ver `_es_profesional_acreditado`), no leer el numero
     que ya viaja dentro de cada menu.
     """
-    from motor.patologias import cargar_crudo
-    from motor.verificar import MAPA, maximo_de
+    from patologias import cargar_crudo
+    from verificar import MAPA, maximo_de
     from requisitos import cargar_requerimientos
 
     reqs = cargar_requerimientos()

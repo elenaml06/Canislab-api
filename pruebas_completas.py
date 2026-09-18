@@ -110,6 +110,11 @@ def print(*args, **kwargs):          # noqa: A001 — a propósito, envuelve al 
     return _print_de_verdad(*args, **kwargs)
 
 
+# «=== BLOQUE 43: con el tiempo justo... ===» -> (43, «con el tiempo justo...»)
+import re as _re_rep
+_re_bloque_del_reparto = _re_rep.compile(r"^=== BLOQUE (\d+):\s*(.*?)\s*=*$")
+
+
 def _cerrar_el_ultimo_bloque():
     if _bloque_en_curso[0] is not None:
         _tiempos_por_bloque.append((time.time() - _bloque_en_curso[1], _bloque_en_curso[0]))
@@ -2869,7 +2874,7 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tm
 # ============================================================
 print("=== BLOQUE 16: cada regla del motor existe de verdad ===")
 
-from motor.motor_completo import resolver as _resolver_b16
+from motor_completo import resolver as _resolver_b16
 
 _al_b16, _req_b16 = _api.cargar_v2()
 
@@ -3858,7 +3863,7 @@ print("=== BLOQUE 21: EPA+DHA se suma y el techo es semanal ===")
 
 from constructor import valor_nutriente as _valor_b21
 from verificar import MAPA as _MAPA_b21, verificar as _verificar_b21
-import motor.seguridad as _seg21
+import seguridad as _seg21
 
 _al21, _req21 = _api.cargar_v2()
 
@@ -7175,8 +7180,8 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tm
 #      suelta, y quien firma no puede comprobarla.
 # ============================================================
 print("=== BLOQUE 44: la tabla de patologias que lee el veterinario ===")
-from motor.patologias import cargar_crudo as _crudo_44
-from motor.verificar import MAPA as _MAPA_44, maximo_de as _maximo_de_44
+from patologias import cargar_crudo as _crudo_44
+from verificar import MAPA as _MAPA_44, maximo_de as _maximo_de_44
 
 
 def _num_44(v):
@@ -8186,7 +8191,7 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tm
 #      esto.
 # ============================================================
 print("=== BLOQUE 50: perros de verdad, patologias mezcladas ===")
-from motor.patologias import cargar_crudo as _crudo_46
+from patologias import cargar_crudo as _crudo_46
 from motor_completo import topes_de_patologias as _topes_46
 
 _TABLA_46 = _crudo_46()["patologias"]
@@ -8459,26 +8464,69 @@ if not _r52.get("factible") and _r52.get("menu"):
     fallos.append("BLOQUE52: la respuesta infactible trae un menú dentro. El diagnóstico "
                   "construye menús para preguntar y TIENE que tirarlos todos.")
 
-# --- 3. Las dos copias de la tabla de patologías dicen lo mismo -------------
-# ⚠️ `motor.patologias` y el módulo suelto `patologias` son DOS módulos
-# distintos para el mismo archivo, cada uno con su propio `PATOLOGIAS`:
-#     >>> import motor.patologias as A, motor_completo as MC
-#     >>> MC.PATOLOGIAS is A.PATOLOGIAS
+# --- 3. Ningún módulo del motor puede estar cargado DOS VECES ---------------
+#
+# ⚠️ POR QUÉ, Y ES UNA TRAMPA QUE YA HA MORDIDO (18 de septiembre de 2026).
+#
+# `motor/` es una carpeta SIN `__init__.py`. `main.py` hace
+# `sys.path.insert(0, "./motor")`, así que `import motor_completo` encuentra el
+# fichero directo -- y como la raíz del repo también está en el path, `import
+# motor.motor_completo` funciona IGUAL, por los paquetes de espacio de nombres
+# de Python 3. Mismo fichero, DOS objetos de módulo, cada uno con su copia de
+# todas las variables:
+#
+#     >>> import motor.patologias as A, patologias as B
+#     >>> A.PATOLOGIAS is B.PATOLOGIAS
 #     False
-# El solver usa la copia del módulo suelto; `GET /patologias` usa la otra.
-# Hoy tienen el mismo contenido, así que no hay ningún fallo vivo -- pero es
-# la misma familia que la tabla duplicada del `POST /menu` borrado (BLOQUE
-# 24), solo que en memoria en vez de en disco, y por eso no la veía nadie.
+#
+# Hasta hoy esto se vigilaba SOLO para `patologias`, comparando que las dos
+# copias dijeran lo mismo -- una de quince, y comparando el DATO, que es lo que
+# nunca se separa porque sale del mismo JSON. Lo que sí se separa es cualquier
+# cosa que se cambie en tiempo de ejecución, y eso costó una medida entera:
+# escribiendo el BLOQUE 131 se apagó el tope de un solo alimento en
+# `motor.motor_completo` para comprobar que muerde, el solver seguía leyendo
+# `motor_completo`, y la prueba «con el fallo puesto» NO PONÍA NINGÚN FALLO --
+# medía el mismo menú dos veces y salía verde. Lo cazó el propio bloque.
+#
+# Así que ya no se comparan las copias: se prohíbe que existan. Las dos mitades
+# hacen falta -- la estática caza que alguien vuelva a escribirlo, y la de
+# memoria caza que entre por un camino que la estática no ve (un import dentro
+# de una función, una dependencia de terceros).
+import sys as _sys52, os as _os52, re as _re52
+_RAIZ52 = _os52.path.dirname(_os52.path.abspath(__file__))
+_dobles52 = sorted(m for m in list(_sys52.modules)
+                   if m.startswith("motor.") and m.split(".", 1)[1] in _sys52.modules
+                   and _sys52.modules[m] is not _sys52.modules[m.split(".", 1)[1]])
+# El único con permiso es el que usa este mismo apartado para poder comprobarlo:
+# sin cargar uno de los dos no hay nada que mirar.
+_dobles52 = [m for m in _dobles52 if m != "motor.patologias"]
+if _dobles52:
+    fallos.append(f"BLOQUE52: estos módulos del motor están cargados DOS VECES en memoria, con "
+                  f"el nombre corto y con el largo: {_dobles52}. Son objetos distintos con sus "
+                  f"propias variables, así que lo que se cambie en uno no lo ve el otro -- y el "
+                  f"solver usa el corto. Se importan SIN el prefijo «motor.»")
+_con_punto52 = []
+for _f52 in sorted(_os52.listdir(_RAIZ52)):
+    if not _f52.endswith(".py"):
+        continue
+    _txt52 = open(_os52.path.join(_RAIZ52, _f52), encoding="utf-8").read()
+    for _m52 in _re52.finditer(r"^\s*(?:from|import) motor\.(\w+)", _txt52, _re52.M):
+        # La línea que este mismo apartado necesita para poder comprobarlo.
+        if _f52 == "pruebas_completas.py" and _m52.group(1) == "patologias":
+            continue
+        _con_punto52.append(f"{_f52}: {_m52.group(0).strip()}")
+if _con_punto52:
+    fallos.append(f"BLOQUE52: {len(_con_punto52)} imports escriben «motor.X» en vez de «X», y eso "
+                  f"carga el módulo POR SEGUNDA VEZ con sus propias variables: {_con_punto52[:4]}")
+# Y que el guardia no pueda quedarse sin nada que vigilar: si un día
+# desapareciera el import de arriba, esto lo diría en vez de salir verde.
 import motor.patologias as _pat_paquete
 import patologias as _pat_suelto
-if json.dumps(_pat_paquete.PATOLOGIAS, sort_keys=True, ensure_ascii=False) != \
-   json.dumps(_pat_suelto.PATOLOGIAS, sort_keys=True, ensure_ascii=False):
-    fallos.append("BLOQUE52: las DOS copias en memoria de la tabla de patologías "
-                  "(`motor.patologias` y el módulo suelto `patologias`) NO dicen lo mismo. "
-                  "El solver usa una y `GET /patologias` la otra.")
-if json.dumps(_pat_paquete.CRUDO, sort_keys=True, ensure_ascii=False) != \
-   json.dumps(_pat_suelto.CRUDO, sort_keys=True, ensure_ascii=False):
-    fallos.append("BLOQUE52: las dos copias del JSON crudo de patologías no coinciden")
+if _pat_paquete is _pat_suelto:
+    fallos.append("BLOQUE52: `motor.patologias` y `patologias` han salido el MISMO objeto, así "
+                  "que la trampa de la doble carga ya no se puede reproducir y este apartado no "
+                  "vigila nada. O se ha arreglado de raíz (un `__init__.py`, o sacar «./motor» "
+                  "del path) y entonces sobra, o algo ha cambiado sin querer")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
@@ -9343,7 +9391,7 @@ for _et57 in ("Adulto", "Senior", "CachorroJoven", "CachorroCrecimiento"):
             f"solos (el boquerón llega a ~11.000). Pasó el 11 de septiembre y lo cazó el "
             f"BLOQUE 9 en GitHub Actions: el adulto de 20 kg con ocho especies fuera se quedó "
             f"sin menú")
-import motor.seguridad as _seg57
+import seguridad as _seg57
 if abs(getattr(_seg57, "TOPE_EPA_DHA_SEMANAL_KCAL", 0) - 2.8) > 1e-9:
     fallos.append(
         "BLOQUE57: `TOPE_EPA_DHA_SEMANAL_KCAL` ya no vale 2,8 g/1000 kcal. Es el único sitio "
@@ -11716,7 +11764,7 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tm
 # ============================================================
 print("\n=== BLOQUE 64: los avisos sueltos de patologia llegan enteros ===")
 
-from motor.patologias import cargar_crudo as _crudo_64, PATOLOGIAS as _solver64
+from patologias import cargar_crudo as _crudo_64, PATOLOGIAS as _solver64
 
 _RESERVADOS_64 = ("general", "crecimiento", "profesional", "profesional_crecimiento",
                   # ⚠️ AÑADIDAS (13 septiembre, noche) — los avisos tienen dos
@@ -11889,8 +11937,8 @@ print("\n=== BLOQUE 65: el documento para la nutricionista, contra el motor vivo
 
 import re as _re_b65
 import os as _os_b65
-import motor.seguridad as _sg_b65
-import motor.verificar as _vf_b65
+import seguridad as _sg_b65
+import verificar as _vf_b65
 from motor_completo import RAZA_GRANDE_O_GIGANTE_KG as _RG_B65
 
 try:
@@ -15889,8 +15937,8 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tm
 print("\n" + "=" * 60)
 print("=== BLOQUE 95: los premios diluyen la ración ===")
 
-from motor.motor_completo import resolver as _res95
-from motor.verificar import verificar as _ver95
+from motor_completo import resolver as _res95
+from verificar import verificar as _ver95
 from constructor import cargar as _cargar95, MARGENES as _MARG95
 from requisitos import dosis_maxima_fabricante as _dosis95
 
@@ -17282,7 +17330,7 @@ else:
                                  encoding="utf-8"))
 
     # --- 1. la unidad del catálogo ES la del requisito -------------------
-    import motor.verificar as _ver100
+    import verificar as _ver100
     _req100 = {}
     for _fila100 in _json100.load(open(_os100.path.join(_raiz100,
                                   "requerimientos_v2_final.json"), encoding="utf-8")):
@@ -22018,11 +22066,42 @@ import statistics as _st125
 from constructor import valor_nutriente as _vn125
 from main import PeticionMenu as _Peticion125
 _CAT125 = {a["nombre"]: a for a in json.load(open("alimentos_v3_final.json"))}
-_MEN125 = json.load(open("catalogo_menus.json"))["CATALOGO"]
-_SANOS125 = [v["gramos"] for v in _MEN125.values() if v.get("etapa") == "Adulto"]
+# ⚠️ LA REFERENCIA NO PUEDEN SER LOS MENÚS DE LA VISTA PREVIA, y esto costó un
+# rojo que acusaba al motor teniendo razón el motor (18 de septiembre de 2026).
+#
+# Este bloque nació el 17 de septiembre comparando el tope de cada patología
+# contra «lo que lleva una ración sana», y para eso usaba los menús
+# precalculados de adulto. Funcionó mientras su sodio rondaba los 537
+# mg/1000 kcal. Al regenerar el catálogo esa mediana bajó a 479 y el bloque
+# acusó a `cardiopatia_d` de prometer una bajada de sal que no hace --con su
+# tope en 480, o sea justo por encima.
+#
+# MEDIDO contra el motor, cuatro perros adultos por celda:
+#
+#     perro sano ......... 571-634, mediana 578
+#     cardiopatia_d ...... 449-480, mediana 468     -> el tope SÍ muerde
+#     cardiopatia_c ...... 558-622, mediana 585     -> no muerde (ya reescrito)
+#
+# O sea que el tope de la D baja la sal un 19 % de verdad. Lo que no vale es la
+# referencia: los menús de la vista previa se construyen con un catálogo
+# RECORTADO --206 alimentos de 233, fuera lo premium y lo de tienda
+# especializada-- así que no son la ración que recibe un perro de verdad.
+#
+# Así que la referencia se RESUELVE, tres menús de adulto sano. Cuesta unos
+# segundos y es la única forma de que la comparación sea entre lo mismo. La
+# regla del 9 de septiembre sigue valiendo y por eso son TRES y se usa la
+# mediana: de un menú suelto no se puede afirmar nada, de la mediana de tres sí.
+_SANOS125 = []
+for _der125, _peso125 in ((950, 20), (1600, 35), (700, 12)):
+    _r125 = _c.post("/menu/v2", json={"nombres_alimentos": [], "modo": "automatico",
+                                      "der_objetivo": _der125, "etapa_requisitos": "Adulto",
+                                      "peso_perro_kg": _peso125}).json() or {}
+    if _r125.get("menu"):
+        _SANOS125.append(_r125["menu"])
 if len(_SANOS125) < 3:
-    fallos.append(f"BLOQUE125: solo {len(_SANOS125)} menús de adulto sano en el catálogo. Con "
-                  f"tan pocos la referencia no vale y este bloque no vigila nada")
+    fallos.append(f"BLOQUE125: solo {len(_SANOS125)} menús de adulto sano de los 3 pedidos. Sin "
+                  f"referencia este bloque no vigila nada -- y no se cae a los precalculados a "
+                  f"propósito: salen de un catálogo recortado y dan un 17 % menos de sodio")
 
 def _por1000_125(gramos, clave):
     kcal = sum(g * float(_CAT125[n].get("energia") or 0) / 100.0
@@ -23427,6 +23506,133 @@ _gastado = sum(t for t, _ in _tiempos_por_bloque)
 #    mismo fallo que la vez anterior en su tercera cara: no basta con que el
 #    guardia sea lo último, es que **lo que lee tiene que estar completo cuando
 #    lo lee**. Los dos van juntos y en este orden, siempre.
+# ============================================================
+# BLOQUE 131 — UN SOLO ALIMENTO NO PUEDE SER MEDIO PLATO
+# ============================================================
+#
+# ⚠️ POR QUÉ EXISTE (18 de septiembre de 2026). Es el TERCERO de la misma
+# familia y los dos anteriores se arreglaron por el sitio equivocado:
+#
+#   · 14 de septiembre — «651 g de albahaca fresca en una ración no es comida».
+#     Se penalizó lo difícil de comprar, y la albahaca es de súper.
+#   · 15 de septiembre — «3.676 g de coles de Bruselas, el 42 % del plato».
+#     Se subió el techo de la CATEGORÍA en dos pasos en vez de levantarlo de
+#     golpe. Quedó escrito en `CLAUDE.md` que lo que seguía sin decidir era
+#     «si dentro de un techo de verdura razonable debería poder ir TODA en una
+#     sola hierba».
+#   · 18 de septiembre — el menú precalculado `Grande_Lactante/Conejo` sale con
+#     **2.722 g de coles de Bruselas, el 48,7 % del plato**, verde y cumpliendo
+#     los 43 requisitos. O sea: volvió, y más grande.
+#
+# La causa nunca fue la categoría: el MILP optimiza NUTRICIÓN POR GRAMO y las
+# coles son baratas por gramo, así que dentro de un techo de verdura correcto
+# no había nada que impidiera que toda fuera una sola. Lo decidió Elena el 18 de
+# septiembre eligiendo entre tres salidas: **tope real en el motor**, no una
+# regla de la vista previa.
+#
+# LA CIFRA ESTÁ MEDIDA sobre diez perros de referencia POR LA API, con la
+# escalera y el presupuesto de verdad:
+#
+#   | tope | perros con menú | peor alimento suelto | coste                    |
+#   | sin  | 8/10            | 39,2 % (quinoa)      | --                       |
+#   | 40 % | 8/10            | 39,2 %               | no muerde                |
+#   | 35 % | 8/10            | 34,7 %               | --                       |
+#   | 30 % | 8/10            | 29,7 %               | NINGUNO                  |
+#   | 25 % | 8/10            | 24,7 %               | la pancreatitis baja peldaño |
+#
+# Los siete perros SANOS no se acercan (máximo 9,9 %), así que esto solo toca a
+# quien tiene que diluir con hidratos. Los dos lactantes sin menú lo están
+# también SIN tope, o sea que no es esto.
+print("\n=== BLOQUE 131: un solo alimento no puede ser medio plato ===")
+import json as _json131
+import os as _os131
+_RAIZ131 = _os131.path.dirname(_os131.path.abspath(__file__))
+# ⚠️ SE IMPORTA COMO LO IMPORTA `main`, Y NO ES UN DETALLE (18 de septiembre de
+# 2026). La carpeta `motor/` está en el `sys.path`, así que `motor_completo` y
+# `motor.motor_completo` son DOS OBJETOS DE MÓDULO DISTINTOS con sus propias
+# variables. La primera versión de este bloque importaba el segundo y apagaba
+# ahí el tope para comprobar que muerde -- y el solver seguía leyendo el
+# primero, o sea que la mitad de «con el fallo puesto» no ponía ningún fallo:
+# medía el mismo menú dos veces y se declaraba a sí mismo inútil. Lo cazó él
+# solo, que es justo para lo que está.
+import motor_completo as _mc131
+
+_TOPE131 = _mc131.TOPE_DE_UN_SOLO_ALIMENTO_SECUNDARIO
+if not (0.0 < _TOPE131 < 1.0):
+    fallos.append(f"BLOQUE131: el tope de un solo alimento vale {_TOPE131}, que lo apaga. Es un "
+                  f"criterio NUESTRO y puede discutirse, pero apagarlo devuelve los 2.722 g de "
+                  f"coles de Bruselas, y eso ya se decidió")
+
+_al131 = {a["nombre"]: a for a in _json131.load(
+    open(_os131.path.join(_RAIZ131, "alimentos_v3_final.json"), encoding="utf-8"))}
+_cm131 = _json131.load(
+    open(_os131.path.join(_RAIZ131, "catalogo_menus.json"), encoding="utf-8"))
+
+# --- 1. ningún menú de la vista previa se pasa ---------------------------
+_menus131 = []
+for _c131, _e131 in _cm131["CATALOGO"].items():
+    _menus131.append((_c131, _e131["gramos"]))
+    for _v131 in _cm131["CATALOGO_VARIANTES"].get(_c131, []):
+        _menus131.append((f"{_c131}/{_v131.get('proteina')}", _v131["gramos"]))
+_pasados131 = []
+for _etq131, _g131 in _menus131:
+    _tot131 = sum(_g131.values()) or 1.0
+    for _n131, _x131 in _g131.items():
+        if (_al131.get(_n131, {}).get("categoria") in _mc131.CATEGORIAS_CON_TOPE_POR_ALIMENTO
+                and _x131 / _tot131 > _TOPE131 * 1.02):
+            _pasados131.append(f"{_etq131}: {_n131} {_x131:.0f} g, "
+                               f"el {100 * _x131 / _tot131:.1f} % del plato")
+if _pasados131:
+    fallos.append(f"BLOQUE131: {len(_pasados131)} menús de la vista previa llevan UN alimento "
+                  f"secundario por encima del {_TOPE131 * 100:.0f} % del plato. Medio plato de "
+                  f"una sola verdura cumple los 43 requisitos y no es comida: "
+                  + " · ".join(_pasados131[:4]))
+
+# --- 2. y la fila EXISTE de verdad: con ella quitada, se pasa ------------
+#
+# ⚠️ Sin esto el apartado de arriba saldría verde sin vigilar nada -- bastaría
+# con que el solver no eligiera nunca un alimento dominante por casualidad. Se
+# resuelve el MISMO perro con el tope puesto y sin él, y se exige que sin él
+# alguno se pase. Es el perro de la pancreatitis, que es donde está medido que
+# muerde (39,2 % sin tope).
+_cuerpo131 = {"nombres_alimentos": [], "modo": "automatico", "der_objetivo": 950,
+              "etapa_requisitos": "Adulto", "peso_perro_kg": 20,
+              "patologias": ["pancreatitis"]}
+
+
+def _peor_suelto_131(_menu):
+    _t = sum(_menu.values()) or 1.0
+    return max((v / _t for n, v in _menu.items()
+                if _al131.get(n, {}).get("categoria")
+                in _mc131.CATEGORIAS_CON_TOPE_POR_ALIMENTO), default=0.0)
+
+
+_con131 = (_c.post("/menu/v2", json=_cuerpo131).json() or {}).get("menu") or {}
+_viejo131 = _mc131.TOPE_DE_UN_SOLO_ALIMENTO_SECUNDARIO
+try:
+    _mc131.TOPE_DE_UN_SOLO_ALIMENTO_SECUNDARIO = 0.0
+    _sin131 = (_c.post("/menu/v2", json=_cuerpo131).json() or {}).get("menu") or {}
+finally:
+    _mc131.TOPE_DE_UN_SOLO_ALIMENTO_SECUNDARIO = _viejo131
+_p_con131, _p_sin131 = _peor_suelto_131(_con131), _peor_suelto_131(_sin131)
+if not _con131:
+    fallos.append("BLOQUE131: con el tope puesto, el perro con pancreatitis se queda SIN MENÚ. "
+                  "Es criterio nuestro (regla 3) y no puede dejar a un perro sin comer: el "
+                  "reintento que lo suelta en la última pasada de la escalera no está actuando")
+elif _p_con131 > _TOPE131 * 1.02:
+    fallos.append(f"BLOQUE131: el menú entregado con el tope puesto lleva un alimento al "
+                  f"{_p_con131 * 100:.1f} %, por encima del {_TOPE131 * 100:.0f} %. La fila del "
+                  f"MILP no está apretando")
+elif _sin131 and _p_sin131 <= _TOPE131 * 1.02:
+    fallos.append(f"BLOQUE131: quitando el tope el menú sigue por debajo del "
+                  f"{_TOPE131 * 100:.0f} % ({_p_sin131 * 100:.1f} %), así que este bloque no "
+                  f"está comprobando nada: la fila podría no existir y saldría verde igual. "
+                  f"Hace falta un caso donde el tope MUERDA")
+print(f"  vista previa: {len(_menus131)} menús, {len(_pasados131)} por encima del "
+      f"{_TOPE131 * 100:.0f} %")
+print(f"  el tope muerde: con él {_p_con131 * 100:.1f} % · sin él {_p_sin131 * 100:.1f} %")
+
+
 _cerrar_el_ultimo_bloque()
 
 # ⚠️ Y ESTE GUARDIA TIENE QUE SER LO ÚLTIMO DEL FICHERO, Y EL 16 DE SEPTIEMBRE
@@ -23528,124 +23734,47 @@ if _faltan_fin:
         f"`sys.exit()` del final. Un guardia inerte es peor que no tenerlo: sale verde igual")
 
 
-# ============================================================
-# BLOQUE 131 — UN SOLO ALIMENTO NO PUEDE SER MEDIO PLATO
-# ============================================================
+# ⚠️ Y LA MEDIDA SE GUARDA EN EL REPO, que es lo que convierte el cronómetro en
+# una herramienta en vez de en una curiosidad (18 de septiembre de 2026). De
+# este fichero sale la lista de bloques del MODO RÁPIDO
+# (`probar_bloques.py --rapida`): los baratos se corren en el bucle de escribir
+# y los que resuelven menús se dejan para la batería entera.
 #
-# ⚠️ POR QUÉ EXISTE (18 de septiembre de 2026). Es el TERCERO de la misma
-# familia y los dos anteriores se arreglaron por el sitio equivocado:
+# Es una MEDIDA y no una lista a mano, y eso es justo el punto: el día que un
+# bloque engorde se cae solo del modo rápido, sin que nadie tenga que acordarse
+# de moverlo. Una lista escrita a mano es la que se queda parada -- la Borraja,
+# las categorías de Personalizar, los niveles de actividad.
 #
-#   · 14 de septiembre — «651 g de albahaca fresca en una ración no es comida».
-#     Se penalizó lo difícil de comprar, y la albahaca es de súper.
-#   · 15 de septiembre — «3.676 g de coles de Bruselas, el 42 % del plato».
-#     Se subió el techo de la CATEGORÍA en dos pasos en vez de levantarlo de
-#     golpe. Quedó escrito en `CLAUDE.md` que lo que seguía sin decidir era
-#     «si dentro de un techo de verdura razonable debería poder ir TODA en una
-#     sola hierba».
-#   · 18 de septiembre — el menú precalculado `Grande_Lactante/Conejo` sale con
-#     **2.722 g de coles de Bruselas, el 48,7 % del plato**, verde y cumpliendo
-#     los 43 requisitos. O sea: volvió, y más grande.
-#
-# La causa nunca fue la categoría: el MILP optimiza NUTRICIÓN POR GRAMO y las
-# coles son baratas por gramo, así que dentro de un techo de verdura correcto
-# no había nada que impidiera que toda fuera una sola. Lo decidió Elena el 18 de
-# septiembre eligiendo entre tres salidas: **tope real en el motor**, no una
-# regla de la vista previa.
-#
-# LA CIFRA ESTÁ MEDIDA sobre diez perros de referencia POR LA API, con la
-# escalera y el presupuesto de verdad:
-#
-#   | tope | perros con menú | peor alimento suelto | coste                    |
-#   | sin  | 8/10            | 39,2 % (quinoa)      | --                       |
-#   | 40 % | 8/10            | 39,2 %               | no muerde                |
-#   | 35 % | 8/10            | 34,7 %               | --                       |
-#   | 30 % | 8/10            | 29,7 %               | NINGUNO                  |
-#   | 25 % | 8/10            | 24,7 %               | la pancreatitis baja peldaño |
-#
-# Los siete perros SANOS no se acercan (máximo 9,9 %), así que esto solo toca a
-# quien tiene que diluir con hidratos. Los dos lactantes sin menú lo están
-# también SIN tope, o sea que no es esto.
-print("\n=== BLOQUE 131: un solo alimento no puede ser medio plato ===")
-import json as _json131
-import motor.motor_completo as _mc131
-
-_TOPE131 = _mc131.TOPE_DE_UN_SOLO_ALIMENTO_SECUNDARIO
-if not (0.0 < _TOPE131 < 1.0):
-    fallos.append(f"BLOQUE131: el tope de un solo alimento vale {_TOPE131}, que lo apaga. Es un "
-                  f"criterio NUESTRO y puede discutirse, pero apagarlo devuelve los 2.722 g de "
-                  f"coles de Bruselas, y eso ya se decidió")
-
-_al131 = {a["nombre"]: a for a in _json131.load(open(_os_b65.path.join(
-    _os_b65.path.dirname(_os_b65.path.abspath(__file__)),
-    "alimentos_v3_final.json"), encoding="utf-8"))}
-_cm131 = _json131.load(open(_os_b65.path.join(
-    _os_b65.path.dirname(_os_b65.path.abspath(__file__)),
-    "catalogo_menus.json"), encoding="utf-8"))
-
-# --- 1. ningún menú de la vista previa se pasa ---------------------------
-_menus131 = []
-for _c131, _e131 in _cm131["CATALOGO"].items():
-    _menus131.append((_c131, _e131["gramos"]))
-    for _v131 in _cm131["CATALOGO_VARIANTES"].get(_c131, []):
-        _menus131.append((f"{_c131}/{_v131.get('proteina')}", _v131["gramos"]))
-_pasados131 = []
-for _etq131, _g131 in _menus131:
-    _tot131 = sum(_g131.values()) or 1.0
-    for _n131, _x131 in _g131.items():
-        if (_al131.get(_n131, {}).get("categoria") in _mc131.CATEGORIAS_CON_TOPE_POR_ALIMENTO
-                and _x131 / _tot131 > _TOPE131 * 1.02):
-            _pasados131.append(f"{_etq131}: {_n131} {_x131:.0f} g, "
-                               f"el {100 * _x131 / _tot131:.1f} % del plato")
-if _pasados131:
-    fallos.append(f"BLOQUE131: {len(_pasados131)} menús de la vista previa llevan UN alimento "
-                  f"secundario por encima del {_TOPE131 * 100:.0f} % del plato. Medio plato de "
-                  f"una sola verdura cumple los 43 requisitos y no es comida: "
-                  + " · ".join(_pasados131[:4]))
-
-# --- 2. y la fila EXISTE de verdad: con ella quitada, se pasa ------------
-#
-# ⚠️ Sin esto el apartado de arriba saldría verde sin vigilar nada -- bastaría
-# con que el solver no eligiera nunca un alimento dominante por casualidad. Se
-# resuelve el MISMO perro con el tope puesto y sin él, y se exige que sin él
-# alguno se pase. Es el perro de la pancreatitis, que es donde está medido que
-# muerde (39,2 % sin tope).
-_cuerpo131 = {"nombres_alimentos": [], "modo": "automatico", "der_objetivo": 950,
-              "etapa_requisitos": "Adulto", "peso_perro_kg": 20,
-              "patologias": ["pancreatitis"]}
-
-
-def _peor_suelto_131(_menu):
-    _t = sum(_menu.values()) or 1.0
-    return max((v / _t for n, v in _menu.items()
-                if _al131.get(n, {}).get("categoria")
-                in _mc131.CATEGORIAS_CON_TOPE_POR_ALIMENTO), default=0.0)
-
-
-_con131 = (_c.post("/menu/v2", json=_cuerpo131).json() or {}).get("menu") or {}
-_viejo131 = _mc131.TOPE_DE_UN_SOLO_ALIMENTO_SECUNDARIO
-try:
-    _mc131.TOPE_DE_UN_SOLO_ALIMENTO_SECUNDARIO = 0.0
-    _sin131 = (_c.post("/menu/v2", json=_cuerpo131).json() or {}).get("menu") or {}
-finally:
-    _mc131.TOPE_DE_UN_SOLO_ALIMENTO_SECUNDARIO = _viejo131
-_p_con131, _p_sin131 = _peor_suelto_131(_con131), _peor_suelto_131(_sin131)
-if not _con131:
-    fallos.append("BLOQUE131: con el tope puesto, el perro con pancreatitis se queda SIN MENÚ. "
-                  "Es criterio nuestro (regla 3) y no puede dejar a un perro sin comer: el "
-                  "reintento que lo suelta en la última pasada de la escalera no está actuando")
-elif _p_con131 > _TOPE131 * 1.02:
-    fallos.append(f"BLOQUE131: el menú entregado con el tope puesto lleva un alimento al "
-                  f"{_p_con131 * 100:.1f} %, por encima del {_TOPE131 * 100:.0f} %. La fila del "
-                  f"MILP no está apretando")
-elif _sin131 and _p_sin131 <= _TOPE131 * 1.02:
-    fallos.append(f"BLOQUE131: quitando el tope el menú sigue por debajo del "
-                  f"{_TOPE131 * 100:.0f} % ({_p_sin131 * 100:.1f} %), así que este bloque no "
-                  f"está comprobando nada: la fila podría no existir y saldría verde igual. "
-                  f"Hace falta un caso donde el tope MUERDA")
-print(f"  vista previa: {len(_menus131)} menús, {len(_pasados131)} por encima del "
-      f"{_TOPE131 * 100:.0f} %")
-print(f"  el tope muerde: con él {_p_con131 * 100:.1f} % · sin él {_p_sin131 * 100:.1f} %")
-
+# ⚠️ Se escribe SIEMPRE, también cuando hay fallos: si solo se escribiera en
+# verde, una batería roja dejaría la medida vieja y el modo rápido correría con
+# el reparto de antes del cambio.
+import json as _json_rep, os as _os_rep
+_reparto_json = {
+    "_meta": {
+        "que_es": "Cuánto tarda cada bloque de `pruebas_completas.py`, medido en la "
+                  "última pasada entera. De aquí sale la lista del modo rápido de "
+                  "`probar_bloques.py --rapida`.",
+        "cuidado": "Los segundos son DE ESTA MÁQUINA. En otra cambian todos a la vez, "
+                   "así que lo que vale es el ORDEN y el corte entre los que resuelven "
+                   "menús y los que no, no la cifra exacta.",
+        "se_escribe": "sola, al terminar `python3 pruebas_completas.py`",
+    },
+    "total_segundos": round(sum(s for s, _ in _tiempos_por_bloque), 1),
+    "bloques": [],
+}
+for _seg_rep, _nom_rep in sorted(_tiempos_por_bloque, reverse=True):
+    _m_rep = _re_bloque_del_reparto.match(_nom_rep)
+    if not _m_rep:
+        continue
+    _reparto_json["bloques"].append({
+        "bloque": int(_m_rep.group(1)),
+        "titulo": _m_rep.group(2).strip().rstrip("="). strip(),
+        "segundos": round(_seg_rep, 1),
+    })
+_reparto_json["bloques"].sort(key=lambda x: x["bloque"])
+with open(_os_rep.path.join(_os_rep.path.dirname(_os_rep.path.abspath(__file__)),
+                            "reparto_de_la_bateria.json"), "w", encoding="utf-8") as _f_rep:
+    _json_rep.dump(_reparto_json, _f_rep, ensure_ascii=False, indent=1)
 
 print("\nDÓNDE SE VA EL TIEMPO — los diez bloques más caros:")
 for _t, _nombre in _tiempos_por_bloque[:10]:
