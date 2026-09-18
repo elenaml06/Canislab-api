@@ -5,7 +5,7 @@
     "por_que_existe_este_fichero": "Porque la ley ya se había dicho y se seguía rompiendo. Una frase no se ejecuta: es la misma lección de `auditar_conversiones.py`. Cinco veces el mismo fallo en dos semanas -- las seis categorías de Personalizar, los cinco niveles de actividad, las 47 patologías, las 255 razas y los 163 alimentos --, y las cinco se descubrieron por casualidad, porque una lista copiada a mano no da error: se queda parada y la pantalla se ve perfecta. || El caso que cerró la discusión: el aceite de salmón Pets Purest entró al catálogo del motor el 7 de septiembre con la foto de su etiqueta, el motor lo usa en 23 de los 216 menús precalculados, y en la app no aparecía. Elena lo dijo dos veces antes de que se mirara.",
     "como_se_comprueba": "Por las DOS puntas, porque cada una tapa un agujero distinto. (1) El BLOQUE 99 de `pruebas_completas.py` exige que el endpoint declarado sirva de verdad esa lista y que no venga vacía: un respaldo que tapa una petición rota se ve igual que una petición buena. (2) `tests/la-ley-del-motor.spec.js` en `canislab-web` recorre `src/` buscando constantes `*_RESPALDO` y exige que TODAS estén declaradas aquí. Una lista nueva escrita a mano en la app, sin motor detrás, falla -- que es el único momento en el que se puede cazar.",
     "lo_que_NO_cubre": "Esto vigila las LISTAS -- lo que el motor enumera --, no las cifras que viajan dentro de un menú ni el DER, que tiene su propio contrato en `der_casos.json`. Y no vigila que la app USE lo que lee: eso es de cada prueba, y la forma de hacerlo es sembrar nombres INVENTADOS, porque con los de verdad «la app lo ha leído» y «la app pinta su respaldo» se ven igual.",
-    "cuantas": 28,
+    "cuantas": 31,
     "lo_que_todavia_no_sale_del_motor": "⚠️ 12-sep-2026, remedido el 13. La ley es para TODO, y se esta cumpliendo por partes. Hoy son **18 listas que ya salen del motor**, 5 que son legitimamente de la app (iconos, meses, cableado) y **11 que faltan**, cada una con su riesgo escrito. || Las cuatro que se trajeron el 13 de septiembre eran las dos peores: `COMO_DAR_ALIMENTO`, indexada POR NOMBRE DE ALIMENTO -- al moverla se vio que tenia 77 entradas para 163 alimentos y 12 de comida que el motor ya no tiene, la BORRAJA incluida --, y `ACTIVIDAD_POR_INDICE`, que es la que decide con que nombre se GUARDA la actividad de un perro: si el motor cambiaba el orden, un perro volvia de la base de datos con otras kcal, sin error y con el menu en verde.",
     "cuantas_de_la_app": 5,
     "cuantas_faltan": 7
@@ -211,6 +211,29 @@
       "camino": "patologias.salida",
       "dato_del_motor": "main.py (LA_SALIDA_DE_LAS_PATOLOGIAS) + la clave `otra` de patologias.json",
       "ojo": "No es una patología y por eso no va en ningún aparato: es lo que quita el menú automático. Si la app la pintara como una casilla más, quien la marca no tiene forma de saber que se queda sin menú."
+    },
+    {
+      "respaldo": "CATEGORIAS_QUE_QUITA_EL_DUENO_RESPALDO",
+      "que_es": "La categoría que el DUEÑO puede quitar entera de la ración — hoy solo el hueso carnoso. No es la misma lista que la del formulador del veterinario (`CATEGORIAS_QUE_PUEDE_EXCLUIR_RESPALDO`), que las ofrece las siete: al dueño se le pregunta qué NO PUEDE comer, y de las siete solo el hueso contesta eso",
+      "endpoint": "/vocabulario",
+      "camino": "categorias_que_excluye_el_dueno.categorias",
+      "dato_del_motor": "main.CATEGORIAS_QUE_EXCLUYE_EL_DUENO"
+    },
+    {
+      "respaldo": "HIDRATOS_RESPALDO",
+      "que_es": "Las dos respuestas que se pueden pulsar a «¿quieres que su menú lleve hidratos?» — «no» y «sí». El motor sirve TRES estados y el tercero (sin contestar, valor null) no se pinta: es la ausencia de respuesta, no una respuesta",
+      "endpoint": "/vocabulario",
+      "camino": "hidratos.estados",
+      "dato_del_motor": "main.py (el bloque `hidratos` de /vocabulario) + la categoría «Cereales y tubérculos» de alimentos_v3_final.json",
+      "ojo": "⚠️ La clave que viaja al motor es un BOOLEANO de tres estados (`con_hidratos`), no una cadena. Si la app se quedara con dos, un perro con la grasa topada perdería la ración que le conviene por una respuesta que nadie dio."
+    },
+    {
+      "respaldo": "PREGUNTA_HIDRATOS_RESPALDO",
+      "que_es": "El titular de esa pregunta, ya en el registro del dueño: «¿Quieres que su menú pueda llevar arroz, patata o avena?»",
+      "endpoint": "/vocabulario",
+      "camino": "hidratos.pregunta_dueno",
+      "dato_del_motor": "main.py (el bloque `hidratos` de /vocabulario)",
+      "ojo": "No es una lista, es un texto, y va declarado igual: el registro del dueño se escribe UNA vez y en el motor. Escrito en la app, el día que se reescriba sin jerga la app seguiría pintando el de antes."
     }
   ],
   "de_la_app_a_proposito": [

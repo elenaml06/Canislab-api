@@ -114,7 +114,8 @@ def cargar():
 # colara como "suplemento de linoleico" sin dosis de fabricante que lo
 # frenara: 13.800 g en una racion.)
 PILARES = ["Carne muscular", "Hueso carnoso", "Pescados y mariscos",
-           "Vísceras", "Hígado", "Verduras y frutas", "Extras"]
+           "Vísceras", "Hígado", "Verduras y frutas", "Cereales y tubérculos",
+           "Extras"]
 
 # Los 5 pilares BARF de verdad: los que NUNCA pueden faltar ni desaparecer.
 # Pescado y extras son deseables pero no imprescindibles.
@@ -234,6 +235,44 @@ MARGENES = {
     "Verduras y frutas":    (0.02, 0.10),
     "Vísceras":             (0.02, 0.12),   # tope por SELENIO
     "Hígado":               (0.02, 0.06),   # tope por COBRE — el más estricto
+    # ⚠️ LOS HIDRATOS EMPIEZAN EN CERO, Y ESO NO ES UN DESCUIDO (17 de
+    # septiembre de 2026). Es la ÚNICA categoría del motor sin mínimo, porque
+    # una ración BARF no lleva ninguno y eso está bien: un perro sano no
+    # necesita hidratos. Ponerle un suelo metería arroz en el plato de todos
+    # los perros por una decisión nuestra, que es exactamente lo contrario de
+    # para qué entran — entran para el perro al que hay que TOPARLE la grasa
+    # (pancreatitis, EPI, SIBO, linfangiectasia, enteropatía, hiperlipidemia y
+    # obesidad), donde con la grasa en 37,5 g y la proteína en 75 hacen falta
+    # 362 de cada 1000 kcal en hidratos por pura aritmética.
+    #
+    # ⚠️ Y el CERO tiene una consecuencia que hay que conocer: en
+    # `_aviso_de_lo_que_falta` de `main.py`, las categorías que se echan de
+    # menos se DERIVAN de que su mínimo sea mayor que cero. Sin eso, todo menú
+    # BARF normal le diría al dueño «este menú no lleva cereales», que es ruido
+    # y además sugiere que falta algo cuando no falta nada.
+    # ⚠️ Y EL TECHO DEL 10 % ES EL MISMO QUE EL DE LA VERDURA, Y POR EL MISMO
+    # MOTIVO (17 de septiembre de 2026, MEDIDO antes de ponerlo). Con el techo
+    # en el 40 %, el perro SANO se llevaba un tercio del plato en quinoa: el
+    # adulto de 20 kg salía con 212 g (36 %) y el gigante de 50 con 458 g
+    # (35 %). El MILP los elige porque son baratos por gramo y fáciles de
+    # comprar, exactamente igual que elegía 651 g de albahaca. Y un BARF con un
+    # tercio de quinoa no es un BARF.
+    #
+    # El 10 % no es un número nuevo: es el que la propia Elena le puso a la
+    # verdura el 5 de agosto al ver 384 g de canónigos, «para que el resto del
+    # plato lo cubran carne, hueso, víscera e hígado». Un hidrato es accesorio
+    # en una ración BARF por el mismo argumento.
+    #
+    # ⚠️ Y NO ES CERO, que sería lo fácil: con el techo a cero, elegir arroz a
+    # mano en Personalizar no haría nada — y lo que se elige a mano se respeta
+    # (regla 5). Un techo del 10 % deja que se pueda elegir y que se use.
+    #
+    # Donde SÍ se abre es donde hacen falta: `_escalera_de_relajacion` lo sube
+    # al 40 % cuando la patología TOPA LA GRASA, que es el mismo sitio y el
+    # mismo `_la_patologia_topa_la_grasa` con el que se suelta el suelo del
+    # hueso desde el 16 de septiembre. Con grasa ≤ 37,5 g y proteína ≤ 75 g por
+    # 1000 kcal, el resto de la energía solo puede venir de hidratos.
+    "Cereales y tubérculos": (0.00, 0.10),
 }
 
 

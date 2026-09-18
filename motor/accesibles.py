@@ -216,6 +216,23 @@ VERDURA = [
     "Albaricoque",
 ]
 
+# ⚠️ LOS HIDRATOS, Y POR QUE ES UNA CATEGORIA APARTE Y NO VERDURA (17 de
+# septiembre de 2026). Elena: «tenemos que meter los hidratos de carbono en el
+# catalogo». Meterlos en «Verduras y frutas» habria sido no meterlos: esa
+# categoria tiene el techo en el 10 % del plato desde el 5 de agosto —lo bajo
+# la propia Elena al ver 384 g de canonigos— y a una pancreatitis le hacen
+# falta 362 de cada 1000 kcal en hidratos por pura aritmetica, con la grasa
+# topada en 37,5 g y la proteina en 75.
+#
+# Los cinco se DAN COCIDOS y se PESAN COCIDOS, que no es lo mismo que el
+# Boniato, la Berenjena y el Esparrago verde —esos se dan cocidos y se pesan
+# CRUDOS, porque su composicion sale de la fila cruda—. Lo dice cada ficha en
+# `se_pesa` y lo vigila el BLOQUE 123.
+CEREALES = [
+    "Arroz blanco cocido", "Arroz integral cocido", "Patata cocida",
+    "Copos de avena cocidos", "Quinoa cocida",
+]
+
 ACCESIBLES = {
     "Carne muscular": CARNE,
     "Hueso carnoso": HUESO,
@@ -223,6 +240,7 @@ ACCESIBLES = {
     "Vísceras": VISCERAS,
     "Hígado": HIGADO,
     "Verduras y frutas": VERDURA,
+    "Cereales y tubérculos": CEREALES,
 }
 
 

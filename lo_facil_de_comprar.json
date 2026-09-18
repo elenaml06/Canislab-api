@@ -102,7 +102,12 @@
   "Ternera con grasa",
   "Ternera solomillo sin grasa",
   "Trucha",
-  "Zanahoria"
+  "Zanahoria",
+  "Arroz blanco cocido",
+  "Arroz integral cocido",
+  "Patata cocida",
+  "Copos de avena cocidos",
+  "Quinoa cocida"
  ],
  "de_encargo": {
   "Bacaladilla": "Muy estacional y poco habitual.",

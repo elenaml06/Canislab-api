@@ -36,6 +36,10 @@ CUANTOS_MAX = {
     "Vísceras": 2,
     "Hígado": 1,
     "Verduras y frutas": 3,
+    # Uno solo: dos cereales distintos en el mismo plato no aportan variedad
+    # nutricional y sí complican la compra y la cocción, que es el mismo
+    # argumento por el que el hígado va a 1.
+    "Cereales y tubérculos": 1,
     # ⚠️ UN SOLO MULTIVITAMÍNICO (15 de septiembre de 2026). Elena, sobre el
     # menú de su perro en Personalizar: «me ha metido 3 suplementos... tiene
     # que intentar 1 o 2».
