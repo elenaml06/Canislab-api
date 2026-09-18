@@ -32,7 +32,8 @@ sys.path.insert(0, "./motor")
 from especies import cargar_alimentos, filtrar_alimentos_disponibles
 from der import calcular_der
 from requisitos import ETAPAS_VALIDAS, dosis_maxima_fabricante
-from transicion import calcular_tramo_transicion, menu_activo_y_bloqueados, nivel_indicador_nutrientes
+from transicion import (calcular_tramo_transicion, menu_activo_y_bloqueados,
+                        nivel_indicador_nutrientes, TRAMOS as _TRAMOS_TRANSICION)
 from analizador import analizar_dieta
 import persistencia
 
@@ -10019,6 +10020,32 @@ def endpoint_vocabulario():
                                  "quiero comprarlo», que es otra pregunta y todavía no se hace."),
         },
         # ── CRUDO O COCINADO ─────────────────────────────────────────────
+        # ⚠️ EL CALENDARIO DE LA TRANSICIÓN, QUE VIVÍA COPIADO EN LA APP (18 de
+        # septiembre de 2026). Los cuatro tramos están en `transicion.py` desde
+        # agosto CON SU FUENTE —la Tabla 1-1 de SACN5, el calendario LARGO, que
+        # es el que la fuente recomienda cuando «the food change is known to be
+        # significant»— y `src/App.jsx` los tenía escritos a mano. Es la regla 6
+        # otra vez: el día que se cambiara el calendario, la app seguiría
+        # pintando el viejo sin dar ningún error.
+        #
+        # Y con el modo cocinado la copia dejó de ser solo una copia: la app
+        # escribía «25 % BARF» pasara lo que pasara, así que a quien iba a
+        # cocinar le decía que le diera BARF. Por eso el nombre del modo se
+        # sirve aquí también, en el registro del dueño.
+        "transicion": {
+            "de_donde": ("SACN5 5ª ed., cap.1, Tabla 1-1 «Recommended short- and long-term food "
+                         "transition schedules for dogs and cats». Se usa el LARGO, que es el que "
+                         "la fuente recomienda «for situations in which the food change is known "
+                         "to be significant»: pasar de pienso a ración casera lo es."),
+            "tramos": [
+                {"dias": t["dias_desde"], "hasta": t["dias_hasta"], "nuevo_pct": t["barf_pct"],
+                 "anterior_pct": 100 - t["barf_pct"]}
+                for t in _TRAMOS_TRANSICION],
+            "dueno": {
+                "ojo": ("Dáselo en tomas separadas, no mezclado en el mismo plato: se digieren a "
+                        "ritmos distintos."),
+            },
+        },
         "modo_de_preparacion": {
             "de_donde": ("Criterio NUESTRO en lo que toca a la forma, y de fuente en lo único que "
                          "no se negocia: el hueso. SACN5 5ª ed., cap. 50 — 46 de 60 cuerpos "

@@ -270,6 +270,13 @@
    "endpoint": "/alimentos",
    "camino": "pantallas[].grupos[].cuanto_crudo_hace_falta",
    "dato_del_motor": "alimentos_v3_final.json (humedad_g_100g y humedad_crudo_g_100g)"
+  },
+  {
+   "respaldo": "TRAMOS_TRANSICION_RESPALDO",
+   "que_es": "Los cuatro tramos del cambio gradual de dieta (25/50/75/100), que son el calendario LARGO de la Tabla 1-1 de SACN5",
+   "endpoint": "/vocabulario",
+   "camino": "transicion.tramos",
+   "dato_del_motor": "transicion.py (TRAMOS)"
   }
  ],
  "de_la_app_a_proposito": [
