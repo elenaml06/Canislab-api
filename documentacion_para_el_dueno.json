@@ -1,0 +1,289 @@
+{
+ "_meta": {
+  "que_es": "Lo que se le CUENTA al dueño: qué es el BARF, qué es la comida cocinada, y para qué es bueno cada alimento.",
+  "por_que_existe": "Elena, 18 de septiembre de 2026: «si vamos a tener esos dos modos, deberíamos también tener una parte en la aplicación que sea información sobre los beneficios del BARF y qué es el BARF, los beneficios de la comida cocinada y qué es la comida cocinada, y luego tener un poquito la información de los alimentos, rollo: oye, pues esto es la hostia para el pelo, esto es la hostia para el hígado. Esto no es para el veterinario, es solo para el usuario».",
+  "las_dos_reglas_que_lo_ordenan": [
+   "1 · SIN CITAS EN EL TEXTO DEL DUEÑO. Elena: «no tienes que poner las citas en ese texto. Está bien que busques las citas para ponerlo bien, pero no tienes que ponerlas, porque es para el usuario y no tiene que ser técnico, tiene que ser user-friendly». Así que cada cosa va en los dos registros de siempre: `dueno` es lo que se lee, y `veterinario` lleva la fuente y la cita literal, para que se pueda comprobar.",
+   "2 · DE QUÉ ES RICO CADA ALIMENTO NO SE ESCRIBE: SE DERIVA. Una lista a mano de 232 alimentos se queda parada el día que entre uno nuevo, y no daría ningún error — es el fallo que este repo lleva cazando desde septiembre. Lo calcula `main.py` con el criterio de `como_se_calcula`, contra el catálogo vivo."
+  ],
+  "lo_que_este_fichero_NO_es": "No es consejo clínico ni sustituye a un veterinario, y no dice que ningún alimento cure nada. Dice de qué es rico y para qué sirve ESO, que es otra cosa."
+ },
+ "modos": {
+  "crudo": {
+   "titulo": "Qué es el BARF",
+   "que_es": "BARF es dar de comer comida de verdad, cruda y en crudo: carne, hueso carnoso, víscera, hígado, pescado y verdura, en las proporciones que hacen falta para que el día entero cuadre. No es «echarle carne»: es una ración calculada, con sus cantidades, que cumple todo lo que un perro necesita. El hueso carnoso es la pieza clave, porque de ahí sale el calcio.",
+   "por_que": [
+    {
+     "titulo": "Sabes exactamente lo que hay en el cuenco",
+     "texto": "Cada gramo tiene nombre y apellido. No hay harinas, ni subproductos sin identificar, ni un procesado del que no sabes nada."
+    },
+    {
+     "titulo": "Lleva mucha agua",
+     "texto": "La carne fresca es agua en dos terceras partes. Un perro que come así bebe menos porque ya viene bebido, y eso le viene bien a los riñones y a la vejiga."
+    },
+    {
+     "titulo": "Masticar hueso carnoso le limpia los dientes",
+     "texto": "Es lo único de esta lista que un pienso no puede hacer: el trabajo de roer arrastra la placa. Tiene que ser hueso CRUDO y carnoso, nunca cocido."
+    },
+    {
+     "titulo": "Se adapta a tu perro",
+     "texto": "Si es alérgico a algo, se quita y el resto se recalcula. Si tiene una enfermedad que pide menos grasa o menos fósforo, el cálculo lo tiene en cuenta."
+    }
+   ],
+   "a_tener_en_cuenta": [
+    {
+     "titulo": "La carne cruda lleva bacterias, y eso se maneja",
+     "texto": "Tabla y cuchillo solo para su comida, manos lavadas, el cuenco fregado después y nada de dejar la ración fuera de la nevera. Si en casa hay un bebé, alguien mayor o alguien con las defensas bajas, la comida cocinada es la opción prudente."
+    },
+    {
+     "titulo": "El pescado que se da crudo se congela antes",
+     "texto": "Tres días a −20 °C matan al parásito. Si lo cocinas, no hace falta."
+    },
+    {
+     "titulo": "El hueso va siempre crudo",
+     "texto": "Cocido astilla y puede clavarse o hacer un tapón. Nunca le des un hueso que haya pasado por la olla o por el horno, ni de tu plato."
+    },
+    {
+     "titulo": "Una ración mal calculada es peor que un pienso corriente",
+     "texto": "Por eso esto se calcula y no se improvisa: lo que se entrega está comprobado contra todos los requisitos, uno a uno, antes de dártelo."
+    }
+   ],
+   "veterinario": {
+    "de_donde_sale": [
+     {
+      "afirmacion": "La ración cruda mal formulada es un problema real, no una precaución de manual",
+      "fuente": "TVT Merkblatt 181 (2017)",
+      "cita": "Die Ernährung von Hund und Katze mit einer inadäquaten BARF-Ration muss als tierschutzrelevant betrachtet werden."
+     },
+     {
+      "afirmacion": "Riesgo infeccioso para personas vulnerables en el hogar",
+      "fuente": "TVT Merkblatt 181 (2017)",
+      "cita": "Wenn sich im Haushalt gleichzeitig immungeschwächte oder alte Personen, schwangere Frauen oder Kleinkinder befinden, sollte wegen der Infektionsgefahr des Menschen vom „Barfen“ abgesehen werden."
+     }
+    ]
+   }
+  },
+  "cocinado": {
+   "titulo": "Qué es la comida cocinada",
+   "que_es": "Es exactamente la misma idea —comida de verdad, calculada al gramo— pero cocinada en casa: hervida o al vapor, sin sal, sin aceite y sin nada más. Cambian dos cosas. La primera, que no lleva hueso: el hueso cocido astilla, así que el calcio viene de otro sitio y el cálculo ya lo tiene en cuenta. La segunda, que los gramos del menú son de comida YA COCINADA: se pesa después de cocinarla, no antes.",
+   "por_que": [
+    {
+     "titulo": "El calor mata las bacterias y los parásitos",
+     "texto": "Es la razón principal, y la que pesa si en casa hay niños pequeños, personas mayores o alguien con las defensas bajas. Tampoco hay que congelar el pescado antes."
+    },
+    {
+     "titulo": "Le sienta mejor a los estómagos delicados",
+     "texto": "La comida cocinada es más blanda y más fácil de digerir. A un perro que viene de una diarrea, que acaba de operarse o que es muy tiquismiquis, suele entrarle mejor."
+    },
+    {
+     "titulo": "Vale para perros a los que el hueso no les conviene",
+     "texto": "Un perro que ha tenido pancreatitis, al que le falta un trozo de intestino, o uno mayor con los dientes gastados, no debería roer hueso. Aquí no hace falta."
+    },
+    {
+     "titulo": "Huele mejor y muchos perros lo prefieren",
+     "texto": "El olor de la comida caliente tira mucho. Con un perro que come mal, a veces es lo que lo desatasca."
+    },
+    {
+     "titulo": "Sigue cumpliendo lo mismo",
+     "texto": "Un menú cocinado se comprueba contra los mismos requisitos, uno a uno, que uno crudo. No es una versión menor: es el mismo cálculo con otra comida."
+    }
+   ],
+   "a_tener_en_cuenta": [
+    {
+     "titulo": "Se pesa DESPUÉS de cocinar",
+     "texto": "Al cocerse pierde agua, así que 100 g de pollo crudo no son 100 g de pollo cocido. Los gramos del menú son los de después. Cada alimento te lo dice en su ficha."
+    },
+    {
+     "titulo": "Sin sal, sin aceite y sin nada más",
+     "texto": "Ni ajo, ni cebolla, ni caldo, ni el sofrito. El agua de la cocción se tira."
+    },
+    {
+     "titulo": "Nunca le des el hueso de la cocción",
+     "texto": "Si cueces un muslo o un jarrete, se deshuesa DESPUÉS de cocerlo y el hueso se tira entero. Cocido astilla."
+    },
+    {
+     "titulo": "El calor se lleva parte de algunas vitaminas",
+     "texto": "Por eso el cálculo usa las cifras del alimento YA COCINADO, que es lo que de verdad se come, y completa lo que falte."
+    }
+   ],
+   "veterinario": {
+    "de_donde_sale": [
+     {
+      "afirmacion": "Las ventajas del BARF se consiguen también con una ración cocinada, sin el riesgo infeccioso",
+      "fuente": "TVT Merkblatt 181 (2017)",
+      "cita": "Zusammenfassend ist zu sagen, dass alle Vorteile des „Barfens“ auch durch die Verfütterung gekochter Rationen erreicht werden, ohne dass jedoch Hunde / Katzen und ihre Halter dem Risiko von   Infektionserkrankungen ausgesetzt sind."
+     },
+     {
+      "afirmacion": "La tiaminasa del pescado crudo se destruye al cocinar",
+      "fuente": "NRC 2006",
+      "cita": "Both thiaminase I and thiaminase II are inactivated by cooking."
+     },
+     {
+      "afirmacion": "El mercurio NO se destruye al cocinar: su tope sigue aplicándose igual",
+      "fuente": "decisión del motor, 18 de septiembre de 2026 (BLOQUE 128)",
+      "cita": ""
+     }
+    ]
+   }
+  }
+ },
+ "para_que_es_bueno": {
+  "proteina": {
+   "dueno": "para los músculos: es de lo que están hechos",
+   "veterinario": "Aporte proteico alto por 1000 kcal.",
+   "fuente": "FEDIAF 2025, Tabla III-3b",
+   "cita": ""
+  },
+  "calcio": {
+   "dueno": "para los huesos y los dientes",
+   "veterinario": "Componente estructural del esqueleto y reservorio iónico.",
+   "fuente": "SACN5 5ª ed., cap.6",
+   "cita": "Calcium serves two important functions: 1) as a structural component in bones and teeth"
+  },
+  "fosforo": {
+   "dueno": "para los huesos, junto con el calcio",
+   "veterinario": "Va siempre emparejado con el calcio: lo que importa es el ratio Ca:P.",
+   "fuente": "FEDIAF 2025, Tabla III-3b",
+   "cita": ""
+  },
+  "hierro": {
+   "dueno": "para la sangre: es lo que lleva el oxígeno por el cuerpo",
+   "veterinario": "Síntesis de hemoglobina y mioglobina.",
+   "fuente": "NRC 2006",
+   "cita": "The primary role of Fe is in the synthesis of hemoglobin and myoglobin where it functions as a transporter and binder of oxygen"
+  },
+  "zinc": {
+   "dueno": "para la piel y el pelo",
+   "veterinario": "Su carencia da alopecia, úlceras cutáneas, dermatitis y paroniquia; en perro es la dermatosis nutricional mejor caracterizada.",
+   "fuente": "SACN5 5ª ed., Tabla 32-1",
+   "cita": "Dogs fed a zinc-deficient food developed skin lesions, which improved dramatically within 72 hours of adding zinc to the food"
+  },
+  "cobre": {
+   "dueno": "para el color y la densidad del pelo",
+   "veterinario": "Su carencia da pérdida del color normal, pelo mate o áspero y menor densidad.",
+   "fuente": "SACN5 5ª ed., Tabla 32-1",
+   "cita": "Loss of normal color"
+  },
+  "yodo": {
+   "dueno": "para la tiroides, que es la que marca el ritmo del cuerpo",
+   "veterinario": "Constituyente de T4 y T3.",
+   "fuente": "NRC 2006",
+   "cita": "Its biological significance is that it is a major constituent of the thyroid hormones thyroxine (T4) and 3,5,3′-triiodothyronine (T3)"
+  },
+  "selenio": {
+   "dueno": "es antioxidante: ayuda a las células a defenderse del desgaste",
+   "veterinario": "Componente de la glutatión peroxidasa.",
+   "fuente": "NRC 2006",
+   "cita": "glutathione peroxidase (GSH-Px), an important antioxidant that protects the body"
+  },
+  "vitA": {
+   "dueno": "para la vista y para la piel",
+   "veterinario": "Queratinización y visión. ⚠️ Tiene máximo: por eso el hígado va tasado.",
+   "fuente": "SACN5 5ª ed., Tabla 32-1",
+   "cita": "Keratinization disorders"
+  },
+  "vitD": {
+   "dueno": "para que el calcio llegue de verdad al hueso",
+   "veterinario": "⚠️ Es tope crónico en este motor: tiene máximo duro.",
+   "fuente": "NRC 2006",
+   "cita": ""
+  },
+  "vitE": {
+   "dueno": "es antioxidante, y va de la mano con las grasas buenas",
+   "veterinario": "Necesaria para el aprovechamiento de los ácidos grasos esenciales.",
+   "fuente": "SACN5 5ª ed., Tabla 32-1",
+   "cita": "Provide adequate levels and availability of zinc, B-complex \nvitamins and vitamin E to ensure adequate use of EFA"
+  },
+  "vitB12": {
+   "dueno": "para la sangre y para el sistema nervioso",
+   "veterinario": "Cobalamina: la sintetizan solo microorganismos, así que en la dieta viene de tejido animal.",
+   "fuente": "NRC 2006",
+   "cita": "All animals, including dogs and cats, ultimately depend on microbially \nsynthesized cobalamin"
+  },
+  "riboflavina": {
+   "dueno": "ayuda a sacar energía de la comida",
+   "veterinario": "Vitamina B2.",
+   "fuente": "NRC 2006",
+   "cita": ""
+  },
+  "tiamina": {
+   "dueno": "para el sistema nervioso",
+   "veterinario": "Vitamina B1. ⚠️ Es la que destruye la tiaminasa del pescado crudo.",
+   "fuente": "NRC 2006",
+   "cita": "Both thiaminase I and thiaminase II are inactivated by cooking."
+  },
+  "niacina": {
+   "dueno": "ayuda a sacar energía de la comida",
+   "veterinario": "Vitamina B3.",
+   "fuente": "NRC 2006",
+   "cita": ""
+  },
+  "vitB6": {
+   "dueno": "para aprovechar la proteína",
+   "veterinario": "Su requerimiento sube con la proteína de la dieta.",
+   "fuente": "FEDIAF 2025, §3.3",
+   "cita": ""
+  },
+  "folato": {
+   "dueno": "para fabricar células nuevas",
+   "veterinario": "Ácido fólico.",
+   "fuente": "NRC 2006",
+   "cita": ""
+  },
+  "colina": {
+   "dueno": "para el hígado",
+   "veterinario": "Componente de fosfolípidos y precursor de acetilcolina.",
+   "fuente": "NRC 2006",
+   "cita": ""
+  },
+  "epa_dha": {
+   "dueno": "para las articulaciones, la piel y —en cachorros— el cerebro y la vista",
+   "veterinario": "Los eicosanoides derivados del EPA son mínimamente inflamatorios; el DHA se acumula en retina y cerebro durante el desarrollo.",
+   "fuente": "SACN5 5ª ed., cap.34 · NRC 2006",
+   "cita": "eicosanoids derived from EPA promote min-\nimal to no inflammatory activity"
+  },
+  "linoleico": {
+   "dueno": "para que la piel no se reseque y el pelo brille",
+   "veterinario": "Su carencia da seborrea seca, alopecia y pelo seco y mate.",
+   "fuente": "SACN5 5ª ed., Tabla 32-1",
+   "cita": "Excessive scales (seborrhea sicca)"
+  },
+  "taurina": {
+   "dueno": "para el corazón",
+   "veterinario": "Su carencia se asocia a miocardiopatía dilatada; además conjuga los ácidos biliares.",
+   "fuente": "SACN5 5ª ed., cap.36 · NRC 2006",
+   "cita": "bile acids normally are conjugated with taurine to form taurocholic acid"
+  },
+  "lcarnitina": {
+   "dueno": "para el corazón y para quemar grasa",
+   "veterinario": "El corazón y el músculo esquelético son los tejidos de mayor concentración.",
+   "fuente": "SACN5 5ª ed., cap.36",
+   "cita": "heart and skeletal muscle contain very \nhigh levels of carnitine, which underscores its importance in \nthese tissues"
+  },
+  "fibra": {
+   "dueno": "para que vaya bien al baño",
+   "veterinario": "Modula el tránsito y el volumen fecal según su fermentabilidad.",
+   "fuente": "SACN5 5ª ed., cap.5",
+   "cita": "mentation rate of fiber increases,GI transit time decreases,fecal \nbulk decreases"
+  },
+  "potasio": {
+   "dueno": "para los músculos y el corazón",
+   "veterinario": "Electrolito intracelular principal.",
+   "fuente": "NRC 2006",
+   "cita": ""
+  },
+  "magnesio": {
+   "dueno": "para los huesos y los músculos",
+   "veterinario": "Cofactor enzimático y componente óseo.",
+   "fuente": "NRC 2006",
+   "cita": ""
+  }
+ },
+ "como_se_calcula": {
+  "que_hace": "Para cada alimento se mira cuánto lleva de cada nutriente POR 1000 kcal —que es la unidad en la que trabaja el motor— y se compara con la mediana de toda la comida del catálogo.",
+  "el_criterio": "Un alimento «es rico en» algo cuando está en el 15 % más alto del catálogo para ese nutriente Y además lleva al menos el doble de la mediana. Se enseñan como mucho TRES, los que más destaquen.",
+  "que_queda_fuera_y_por_que": "Los suplementos, los aceites, las semillas y el huevo. Un bote de vitaminas gana en todo y no es «rico en» nada: es un bote. Y un aceite es grasa pura, así que desplazaría la mediana de toda la comida de verdad.",
+  "por_que_por_1000_kcal_y_no_por_100_g": "Porque es lo que decide la ración. Un pescado blanco tiene muy pocas kcal, así que cualquier cosa que lleve se le convierte en mucha concentración — y eso es exactamente lo que el motor tiene que mirar. Medirlo por 100 g diría otra cosa.",
+  "lo_que_NO_se_dice": "Nada sobre curar ni tratar. «Rico en cobre» es un hecho medido del alimento; «bueno para el hígado» es para qué sirve el cobre. Lo que no se dice en ningún sitio es que un alimento arregle una enfermedad."
+ }
+}

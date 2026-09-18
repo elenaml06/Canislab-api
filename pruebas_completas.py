@@ -22743,6 +22743,174 @@ print(f"  fichas animales cocinadas: {len(_COCINADAS_128)} · perros con menú c
 print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
+
+# ---------------------------------------------------------------------------
+# BLOQUE 129 — LO QUE SE LE CUENTA AL DUEÑO, Y DE DÓNDE SALE
+# ============================================================
+#
+# ⚠️ POR QUÉ EXISTE (18 de septiembre de 2026). Elena: «deberíamos tener una
+# parte en la aplicación que sea información sobre los beneficios del BARF y qué
+# es el BARF, los beneficios de la comida cocinada y qué es la comida cocinada,
+# y luego la información de los alimentos, rollo: esto es la hostia para el
+# pelo, esto es la hostia para el hígado. Esto no es para el veterinario, es
+# solo para el usuario». Y la regla, del mensaje siguiente: «no tienes que poner
+# las citas en ese texto; está bien que busques las citas para ponerlo bien,
+# pero es para el usuario y no tiene que ser técnico».
+#
+# Así que hay DOS cosas que vigilar y son distintas:
+#
+#   1 · QUE EL TEXTO DEL DUEÑO ESTÉ LIMPIO. Sin citas, sin nombres de fuente,
+#       sin capítulos ni tablas. Es la misma regla del BLOQUE 107 con los avisos
+#       de patología, y ahí se aprendió que el registro llano se escapa por la
+#       puerta que nadie mira.
+#
+#   2 · QUE «DE QUÉ ES RICO» SEA VERDAD Y SE DERIVE. Lo que más daño haría aquí
+#       no es una falta de ortografía: es que la app enseñe «el hígado es la
+#       hostia para la sangre» sobre un catálogo en el que eso ya no es cierto
+#       porque la ficha cambió. Por eso no hay ni una frase escrita por alimento
+#       —se calcula contra el catálogo VIVO— y por eso aquí se rehace la cuenta
+#       en vez de creerse la respuesta.
+print("\n=== BLOQUE 129: lo que se le cuenta al dueño ===")
+
+import os as _os129
+_DOC129 = json.load(open(_os129.path.join(_os129.path.dirname(_os129.path.abspath(__file__)),
+                                          "documentacion_para_el_dueno.json"), encoding="utf-8"))
+_al129, _ = _api.cargar_v2()
+_ALI129 = _c.get("/alimentos").json()
+
+# ── 1 · se sirve, y por la puerta que la app ya lee ─────────────────────────
+_docsrv129 = _ALI129.get("documentacion") or {}
+if not _docsrv129:
+    fallos.append("BLOQUE129: `GET /alimentos` no sirve la documentación del dueño, así que la "
+                  "app tendría que escribirla ella — regla 6, y es el fallo de las seis "
+                  "categorías de Personalizar otra vez")
+for _k129 in ("crudo", "cocinado"):
+    _m129 = (_docsrv129.get("modos") or {}).get(_k129) or {}
+    if not (_m129.get("que_es") and _m129.get("por_que") and _m129.get("a_tener_en_cuenta")):
+        fallos.append(f"BLOQUE129: el modo «{_k129}» no cuenta las tres cosas: qué es, por qué, y "
+                      f"qué hay que tener en cuenta. Contar solo las ventajas de una forma de dar "
+                      f"de comer es publicidad, no información")
+
+# ── 2 · EL TEXTO DEL DUEÑO, SIN UNA SOLA CITA ──────────────────────────────
+# ⚠️ Las palabras se buscan en MINÚSCULAS y con `\b` donde haría falta, que es
+# la lección del «epa» dentro de «reparte» del BLOQUE 107.
+_FUERA_129 = ("fediaf", "sacn5", "nrc ", "nrc2006", "aafco", "ettinger", "fascetti",
+              "tabla iii", "tabla 3", "cap.", "capítulo", "et al", "merkblatt", "tvt",
+              "/1000 kcal", "materia seca", "reglamento")
+def _sucio_129(txt):
+    b = str(txt or "").lower()
+    return [w for w in _FUERA_129 if w in b]
+
+_sucios129 = []
+for _k129, _m129 in (_docsrv129.get("modos") or {}).items():
+    _trozos = [_m129.get("que_es") or ""]
+    for _lista in ("por_que", "a_tener_en_cuenta"):
+        for _x in _m129.get(_lista) or []:
+            _trozos += [_x.get("titulo") or "", _x.get("texto") or ""]
+    for _tr in _trozos:
+        _mal = _sucio_129(_tr)
+        if _mal:
+            _sucios129.append((_k129, _mal, _tr[:50]))
+for _cl129, _e129 in (_docsrv129.get("para_que_es_bueno") or {}).items():
+    _mal = _sucio_129(_e129.get("dueno"))
+    if _mal:
+        _sucios129.append((_cl129, _mal, str(_e129.get("dueno"))[:50]))
+if _sucios129:
+    fallos.append(f"BLOQUE129: {len(_sucios129)} textos del DUEÑO nombran una fuente, una tabla o "
+                  f"una unidad del motor: {_sucios129[:3]}. «No tienes que poner las citas en ese "
+                  f"texto» — van en el registro `veterinario`, que es donde se pueden comprobar")
+
+# Y la mitad simétrica, que es la que de verdad protege: limpiar no puede ser
+# PERDER la cita. Si el registro técnico se queda sin fuente, el canal del dueño
+# sale impecable y ya no hay forma de comprobar nada. Es el fallo que el BLOQUE
+# 107 tuvo que rehacer.
+_sin_fuente129 = sorted(k for k, e in (_DOC129.get("para_que_es_bueno") or {}).items()
+                        if not str(e.get("fuente") or "").strip())
+if _sin_fuente129:
+    fallos.append(f"BLOQUE129: {len(_sin_fuente129)} nutrientes dicen para qué son buenos y NO "
+                  f"dicen de dónde sale: {_sin_fuente129[:5]}. Una afirmación sobre la salud de un "
+                  f"perro sin fuente es una opinión con aspecto de dato")
+_sin_tecnico129 = sorted(k for k, e in (_DOC129.get("para_que_es_bueno") or {}).items()
+                         if not str(e.get("veterinario") or "").strip())
+if _sin_tecnico129:
+    fallos.append(f"BLOQUE129: {len(_sin_tecnico129)} nutrientes no tienen registro de "
+                  f"veterinario: {_sin_tecnico129[:5]}. Quitarle la jerga al dueño es mover el "
+                  f"texto técnico, no borrarlo")
+
+# ── 3 · «DE QUÉ ES RICO» SE REHACE, NO SE CREE ─────────────────────────────
+# ⚠️ Se rehace con el criterio ESCRITO en el JSON y contra el catálogo vivo. Una
+# comprobación que llamara a `_calcular_rico_en` estaría comparando la función
+# consigo misma, que es la lección del BLOQUE 109 y del 107: una prueba que no
+# puede fallar es peor que no tenerla.
+import statistics as _st129
+from constructor import valor_nutriente as _vn129
+_COMIDA129 = [a for a in _al129.values()
+              if a.get("categoria") not in _api._NO_ENTRAN_EN_EL_RICO
+              and (a.get("energia") or 0) > 20]
+_esperado129 = {}
+for _cl129 in _DOC129["para_que_es_bueno"]:
+    _v129 = [(a["nombre"], _vn129(a.get("nutrientes") or {}, _cl129) * 1000.0 / a["energia"])
+             for a in _COMIDA129
+             if (a.get("energia") or 0) > 0 and _vn129(a.get("nutrientes") or {}, _cl129)]
+    if len(_v129) < 20:
+        continue
+    _med129 = _st129.median(v for _, v in _v129)
+    _ord129 = sorted(_v129, key=lambda x: -x[1])
+    _corte129 = _ord129[max(0, int(len(_ord129) * 0.15)) - 1][1]
+    for _n129, _val129 in _ord129:
+        if _val129 < _corte129 or (_med129 > 0 and _val129 < _med129 * 2.0):
+            break
+        _esperado129.setdefault(_n129, []).append((_val129 / _med129 if _med129 else 0, _cl129))
+_esperado129 = {n: [c for _, c in sorted(l, reverse=True)][:3] for n, l in _esperado129.items()}
+
+_servido129 = {}
+for _p129 in _ALI129.get("pantallas") or []:
+    for _g129 in (_p129.get("grupos") or {}).values():
+        for _a129 in _g129:
+            if _a129.get("rico_en"):
+                _servido129[_a129["nombre"]] = [x["nutriente"] for x in _a129["rico_en"]]
+_dif129 = [(n, _esperado129.get(n), _servido129.get(n))
+           for n in set(_esperado129) | set(_servido129)
+           if _esperado129.get(n) != _servido129.get(n)]
+if _dif129:
+    fallos.append(f"BLOQUE129: «de qué es rico» servido y rehecho no coinciden en "
+                  f"{len(_dif129)} alimentos: {_dif129[:2]}. O el criterio ha cambiado sin "
+                  f"escribirlo en `como_se_calcula`, o alguien ha escrito una frase a mano")
+
+# Y que el criterio MUERDA: si todos los alimentos fueran «ricos» en todo, esto
+# no informaría de nada. Con el catálogo de hoy salen unos 119 de 232.
+if not (20 <= len(_servido129) <= int(len(_al129) * 0.75)):
+    fallos.append(f"BLOQUE129: {len(_servido129)} de {len(_al129)} alimentos tienen «rico en». Si son "
+                  f"casi todos el criterio no distingue nada, y si son cuatro es que ha dejado de "
+                  f"calcularse")
+
+# Ninguna clave servida puede quedarse sin su frase: sería enseñar «epa_dha».
+_huerfanas129 = sorted({c for l in _servido129.values() for c in l}
+                       - set(_DOC129["para_que_es_bueno"]))
+if _huerfanas129:
+    fallos.append(f"BLOQUE129: se sirven nutrientes sin frase para el dueño: {_huerfanas129}. La "
+                  f"app enseñaría la clave del motor tal cual")
+
+# ── 4 · Y NO SE PROMETE CURAR NADA ─────────────────────────────────────────
+# ⚠️ La diferencia es la que hace que esto se pueda publicar: «rico en cobre» es
+# un hecho medido del alimento y «para qué sirve el cobre» es información; «cura
+# el hígado» es otra cosa, y de las que no se pueden desdecir.
+_CURAR_129 = ("cura", "curar", "trata ", "tratamiento", "previene", "elimina la enfermedad",
+              "sustituye la medicación", "adelgaza")
+_promesas129 = []
+for _cl129, _e129 in (_DOC129.get("para_que_es_bueno") or {}).items():
+    _b129 = str(_e129.get("dueno") or "").lower()
+    _promesas129 += [(_cl129, w) for w in _CURAR_129 if w in _b129]
+if _promesas129:
+    fallos.append(f"BLOQUE129: hay textos del dueño que prometen curar o tratar: {_promesas129}. "
+                  f"Un alimento es rico en algo; no arregla una enfermedad, y decirlo en la app es "
+                  f"exactamente lo que un dueño no puede comprobar")
+
+print(f"  documentación: 2 modos · {len(_DOC129['para_que_es_bueno'])} nutrientes con frase y "
+      f"fuente · {len(_servido129)}/{len(_al129)} alimentos con «de qué es rico», rehecho")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
+
+
 _tiempos_por_bloque.sort(reverse=True)
 _gastado = sum(t for t, _ in _tiempos_por_bloque)
 # ⚠️ Y CERRAR EL ÚLTIMO BLOQUE VA PEGADO AL GUARDIA, NO DONDE ESTABA (16 de

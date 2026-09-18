@@ -10561,6 +10561,60 @@ with open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
                         "como_se_da_cada_alimento.json"), encoding="utf-8") as _f:
     _COMO_SE_DA = _json.load(_f)
 
+# Lo que se le CUENTA al dueño: qué es el BARF, qué es la comida cocinada, y
+# para qué es bueno cada alimento. Lo pidió Elena el 18 de septiembre de 2026
+# —«esto es la hostia para el pelo, esto es la hostia para el hígado… esto no es
+# para el veterinario, es solo para el usuario»— con la regla de que el texto
+# del dueño NO lleva citas: van en el registro `veterinario`, que es donde se
+# pueden comprobar.
+with open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
+                        "documentacion_para_el_dueno.json"), encoding="utf-8") as _f:
+    _DOCUMENTACION = _json.load(_f)
+
+
+# ⚠️ DE QUÉ ES RICO CADA ALIMENTO SE DERIVA, NO SE ESCRIBE. Una lista a mano de
+# 232 alimentos se queda parada el día que entre uno nuevo y no da ningún error
+# -- es el fallo de las seis categorías de Personalizar, el de los cinco niveles
+# de actividad y el de las 255 razas, otra vez. Aquí se calcula contra el
+# catálogo vivo y con el criterio escrito en `como_se_calcula` del propio JSON,
+# para que se pueda discutir el criterio en vez de discutir 232 frases.
+_RICO_EN = None
+# Fuera del cálculo: un bote de vitaminas gana en todo y no es «rico en» nada, y
+# un aceite es grasa pura y desplazaría la mediana de la comida de verdad.
+_NO_ENTRAN_EN_EL_RICO = {"Multivitamínico", "Omega-3", "Vitamina B", "Calcio", "Fibra",
+                         "Yodo", "Vitamina E", "Hierro", "Extras", "Hueso carnoso"}
+_CUANTOS_RICO = 3
+_FRACCION_ALTA_RICO = 0.15      # el 15 % más alto del catálogo
+_VECES_LA_MEDIANA_RICO = 2.0
+
+
+def _calcular_rico_en(alimentos):
+    """{alimento: [clave de nutriente, ...]} — como mucho tres, los que más destaquen."""
+    import statistics as _st
+    from constructor import valor_nutriente as _vn
+    comida = [a for a in alimentos.values()
+              if a.get("categoria") not in _NO_ENTRAN_EN_EL_RICO
+              and (a.get("energia") or 0) > 20]
+    salida = {}
+    for clave in _DOCUMENTACION["para_que_es_bueno"]:
+        vals = []
+        for a in comida:
+            kcal = a.get("energia") or 0
+            v = _vn(a.get("nutrientes") or {}, clave)
+            if kcal > 0 and v:
+                vals.append((a["nombre"], v * 1000.0 / kcal))
+        if len(vals) < 20:
+            continue                      # con pocos datos el percentil no dice nada
+        med = _st.median(v for _, v in vals)
+        orden = sorted(vals, key=lambda x: -x[1])
+        corte = orden[max(0, int(len(orden) * _FRACCION_ALTA_RICO)) - 1][1]
+        for nombre, v in orden:
+            if v < corte or (med > 0 and v < med * _VECES_LA_MEDIANA_RICO):
+                break
+            salida.setdefault(nombre, []).append((v / med if med else 0, clave))
+    return {n: [c for _, c in sorted(l, reverse=True)][:_CUANTOS_RICO]
+            for n, l in salida.items()}
+
 # La Tabla VII-1 de FEDIAF: COMO SE RECONOCE cada punto de condicion corporal,
 # mirando y palpando. No es la VII-2 -- aquella dice CUANTO se desvia del peso
 # ideal cada punto, y esta dice que numero escribe quien mira al perro. Vivia en
@@ -10635,6 +10689,11 @@ def _arbol_de_alimentos():
         for c in p["categorias_del_motor"]:
             donde[c] = p
     salida, sueltos = {}, []
+    # Se calcula UNA vez por catálogo, no por alimento: recorre las 25 filas de
+    # nutrientes y ordena, y hacerlo dentro del bucle lo multiplicaría por 232.
+    global _RICO_EN
+    if _RICO_EN is None:
+        _RICO_EN = _calcular_rico_en({a["nombre"]: a for a in _ca()})
     for a in _ca():
         p = donde.get(a["categoria"])
         if p is None:
@@ -10654,6 +10713,18 @@ def _arbol_de_alimentos():
         comodar = _COMO_SE_DA["por_alimento"].get(a["nombre"])
         if comodar:
             fila["como_se_da"] = comodar
+        # ⚠️ PARA QUÉ ES BUENO, JUNTO AL ALIMENTO Y DERIVADO DEL CATÁLOGO (18 de
+        # septiembre de 2026). Cada clave viene con su frase para el dueño ya
+        # resuelta: si la app tuviera que traducir «epa_dha» a «para las
+        # articulaciones» sería la regla 6 rota otra vez, y el día que se cambie
+        # la frase habría que cambiarla en dos sitios.
+        _ricas = (_RICO_EN or {}).get(a["nombre"]) or []
+        if _ricas:
+            fila["rico_en"] = [
+                {"nutriente": _c,
+                 "dueno": _DOCUMENTACION["para_que_es_bueno"][_c]["dueno"],
+                 "veterinario": _DOCUMENTACION["para_que_es_bueno"][_c]["veterinario"]}
+                for _c in _ricas]
         # ⚠️ Y EL AVISO DE COMPRA TAMBIÉN AQUÍ, QUE ES LA PANTALLA DEL DUEÑO
         # (17 de septiembre de 2026, y lo encontró el BLOQUE 123 nada más
         # escribirse).
@@ -10746,6 +10817,9 @@ def listar_alimentos():
         # El texto general de cada pantalla, que la app enseña SIEMPRE, y el
         # del alimento solo si existe. Los dos vivian en la app.
         "como_se_da_por_categoria": _COMO_SE_DA["por_categoria"],
+        # La documentación del dueño viaja con el catálogo: es lo que se lee al
+        # mirar un alimento, y así la app no tiene que pedirla aparte.
+        "documentacion": _DOCUMENTACION,
         # ⚠️ Y EL MISMO TEXTO PARA UN MENÚ COCINADO, QUE NO ES UN AÑADIDO: ES
         # UN AGUJERO DEL MODO COCINADO (17 de septiembre de 2026).
         #
