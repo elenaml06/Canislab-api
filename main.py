@@ -5965,6 +5965,21 @@ def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None, restringir_e
                 # tienen el campo, pero /menu/revalidar usa esta misma
                 # función con otro modelo.
                 patologias=getattr(datos, "patologias", None),
+                # ⚠️ Y EL MODO, QUE ES LA TERCERA VEZ QUE ESTA MISMA FUNCIÓN SE
+                # DEJA UN ARGUMENTO (18 de septiembre de 2026). Justo arriba está
+                # contado lo de las patologías (24 de agosto) y más arriba lo del
+                # presupuesto semanal (5 de agosto): `resolver()` lo recibe en
+                # todos los demás caminos y aquí no llegaba nunca.
+                #
+                # CASO REAL, lo cazó el BLOQUE 128: cambiar, quitar o añadir un
+                # alimento en un menú COCINADO metía carcasa de pollo, gallina,
+                # hígado de vaca y riñón de vaca CRUDOS. Nadie los había pedido
+                # por su nombre -- los ponía el motor al rehacer el menú --, así
+                # que quien había elegido cocinar se encontraba un plato con las
+                # dos cosas y sin una palabra. Es la misma forma de fallo que
+                # todas las de esta función: sale VERDE, porque el semáforo mira
+                # los 43 requisitos y un pollo crudo los cumple igual de bien.
+                modo_de_preparacion=getattr(datos, "modo_de_preparacion", None),
                 kcal_de_premios=_kcal_de_premios(datos),
                 # Y lo que el dueño DECLARA que le da entra como gramos fijos: donde
                 # viajan las kcal de premios tienen que viajar los declarados, o el

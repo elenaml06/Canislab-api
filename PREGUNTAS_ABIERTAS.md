@@ -3144,6 +3144,24 @@ otras haría que dos alimentos del mismo plato midieran su energía con dos regl
 distintas, y eso es peor que cualquiera de las dos opciones enteras.
 
 
+## ~~P-52~~ · Las plantas: CERRADA. No entra ninguna
+
+> ⚠️ **CERRADA EL 18 DE SEPTIEMBRE POR ELENA**, y con esto no se vuelve a abrir:
+>
+> > «te dije que dejaras todo lo de las plantas porque **no hay nada probado que
+> > demuestre que son beneficiosas**»
+>
+> Y el repo le da la razón con la medida delante: de las cuatro que se miraron,
+> la **cúrcuma** se probó en perro con doble ciego y **no ganó al placebo**, el
+> **romero** solo tiene uso documentado como conservante del pienso, y el
+> **perejil** y el **tomillo** no tienen nada (NRC los clasifica como
+> saborizantes). El **cardo mariano** lo cerró ella misma el mismo día.
+>
+> **No se ofrece ninguna planta nueva.** Lo que sigue abajo se queda escrito —no
+> borrado— porque una pregunta borrada se vuelve a hacer, y porque el criterio de
+> las cuatro condiciones es lo que hay que aplicar el día que alguien proponga
+> otra. **Ya no tiene dueño ni espera respuesta.**
+
 ## P-52 · Las plantas: cuál pasa el listón, y por qué puerta entra
 
 *(18 de septiembre de 2026. La abrió Elena: «yo sigo viendo un montón de menús

@@ -17175,6 +17175,26 @@ if _sobran100:
     fallos.append(f"BLOQUE100: se dice dónde comprar alimentos que el catálogo ya no tiene: "
                   f"{_sobran100}. Es la Borraja otra vez -- una lista por nombre que se quedó "
                   f"parada cuando el catálogo cambió debajo")
+# ⚠️ Y LOS DOS FICHEROS DE COMPRA TIENEN QUE DECIR LO MISMO DE LA MISMA COMPRA
+# (18 de septiembre de 2026). Son dos cosas distintas a propósito -- éste dice
+# DÓNDE y `lo_facil_de_comprar.json` dice si es fácil o de encargo, que es lo
+# que penaliza el solver -- pero un alimento «de encargo» que aquí dijera
+# «supermercado» sería el repo contradiciéndose en dos ficheros que nadie
+# cruza. Nada más escribirlo encontró TRES que ya estaban así: la Bacaladilla,
+# las Costillas de cordero --con las palabras de Elena escritas en su motivo,
+# «no son alimentos ni baratos ni accesibles»-- y el Pato. Manda el fichero que
+# tiene el motivo escrito, así que lo corregido fue el sitio.
+_ENCARGO100 = set(_json_b99.load(open(_os_b65.path.join(
+    _os_b65.path.dirname(_os_b65.path.abspath(__file__)),
+    "lo_facil_de_comprar.json"), encoding="utf-8"))["de_encargo"])
+_contra100 = sorted(n for n in _ENCARGO100
+                    if (_DONDE100["por_alimento"].get(n) or {}).get("donde") == "supermercado")
+if _contra100:
+    fallos.append(f"BLOQUE100: {len(_contra100)} alimentos son «de encargo» en "
+                  f"`lo_facil_de_comprar.json` y «supermercado» aquí: {_contra100}. De encargo "
+                  f"significa justamente que en el súper no está, así que uno de los dos miente "
+                  f"-- y el que lleva el motivo escrito es el otro")
+
 _sitios100 = set(_DONDE100["donde_se_compra"])
 for _n100, _v100 in _DONDE100["por_alimento"].items():
     if _v100.get("donde") not in _sitios100:
