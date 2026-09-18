@@ -3094,6 +3094,84 @@ el mecanismo está puesto y la especie a evitar le llega al solver.
 
 ---
 
+## P-51 · Cuando el mandato manda a USDA y USDA lo cuece de otra manera
+
+*(18 de septiembre de 2026, de madrugada. No la pregunté yo: la encontró el
+BLOQUE 104 al rebasar el modo cocinado, con NUEVE emparejamientos acusados. Y
+lo primero que hay que decir es que el guardia tenía razón y yo no.)*
+
+**Qué pasa.** Las once fichas cocidas del modo cocinado sacan su composición de
+la cadena de mandato de siempre: BEDCA no tiene ninguna de ellas, CIQUAL es el
+mandato 3 y USDA el 4. Y en tres pescados **la única fila que publica USDA está
+cocinada de otra manera que la nuestra**: `cooked, dry heat` —al horno o a la
+plancha— mientras la ficha se da hervida o al vapor.
+
+Cocinar en seco pierde mucha más agua que hervir o vaporizar, así que esa fila
+describe un alimento **más concentrado** por 100 g. Medido con la proteína como
+proxy (el agua no está en la instantánea):
+
+| ficha | su proteína | la de la fila de USDA | está |
+|---|---|---|---|
+| **Trucha cocida** | 19,0 g | 23,8 g | **25 % más concentrada** |
+| Salmón cocido | 25,0 g | 22,1 g | 12 % menos |
+| Bacalao cocido | 24,5 g | 22,83 g | 7 % menos |
+
+Y comparando celda a celda el bacalao al vapor de CIQUAL contra el de horno de
+USDA: **mediana del 42 % de diferencia**, con la vitamina A al 600 % y el hierro
+al 390 %. No es redondeo: es otro alimento.
+
+**Lo que NO es el problema, y hay que decirlo porque fue mi primera lectura.**
+No es que eligiera mal la fila. Las tres celdas del salmón que parecían venir de
+la fila equivocada —cobre, manganeso, selenio— CIQUAL las da como **`< 0,1`,
+`< 0,1` y `< 5`**, que son **límites de detección y no números** (la tercera de
+las tres marcas que el repo ya tiene escritas), y su vitamina B12 como `-`. O
+sea que bajar al mandato 4 era **lo correcto**. El problema no es la elección:
+es que en el mandato 4 solo hay pescado al horno.
+
+**Dónde muerde, por fichas:**
+
+| ficha | celdas directas de la fila de horno | ¿las publica CIQUAL? |
+|---|---|---|
+| **Trucha cocida** | **15** | **ninguna** |
+| Salmón cocido | 4 | ninguna (tres `< X` y una `-`) |
+| Bacalao cocido | 1 (hierro) | sí, 0,1 mg — y la override a USDA la decidí yo |
+
+⚠️ **Los aminoácidos NO están en esta pregunta, y por eso importa separarlos**:
+los doce se transfieren **por gramo de proteína**, que es la regla que el repo ya
+tiene escrita, y esa transferencia **cancela** la diferencia de agua. Un
+aminoácido es una fracción de la proteína; un mineral no lo es de nada, así que
+para él no hay transferencia legítima y la celda entra tal cual.
+
+**Las tres salidas posibles, y ninguna es obvia:**
+
+1. **Normalizar por materia seca.** Es lo correcto en espíritu y es la misma
+   regla de los aminoácidos y los ácidos grasos generalizada. USDA publica el
+   agua de sus filas; lo que pasa es que nuestra instantánea no la captura para
+   estas celdas. Cambia **cómo se construye el catálogo**, así que no es un
+   arreglo de una noche.
+2. **Aceptar la celda con su medida escrita**, como se hizo con los dos
+   emparejamientos de CONGELADO que ya están declarados. Defendible para el
+   bacalao y el salmón (7 % y 12 %); **no** para la trucha (25 % y quince
+   celdas).
+3. **Dejar hueco.** Es seguro en las dos direcciones —está medido en el repo—
+   pero con quince huecos la trucha deja de ser una ficha.
+
+**Lo que se ha hecho de momento: NADA, y el modo cocinado NO se fusiona.**
+Declarar una excepción para que la batería salga verde sería exactamente lo que
+este repo tiene escrito que no se hace: un fallo tapado con forma de dato bueno.
+
+⚠️ **Y los dos de CARNE son otro caso y puede que se cierren solos**: el jarrete
+de ternera y el hígado de vaca salen acusados por `braised`, y la fila de CIQUAL
+de la que vienen sus números se llama literalmente **«Veau, jarret, braisé ou
+bouilli»** — o sea que **la propia fuente trata estofado y hervido como lo
+mismo**. Estofar es cocer en líquido. Eso tiene cita y se puede declarar; el
+horno no.
+
+**Dueño: Elena**, porque es qué comen sus perros y porque las tres salidas son
+un juicio y no una cuenta — que es lo que este repo dice de las 253
+discrepancias que no se tocan.
+
+
 ## P-50 · Tres cosas que sé de los hidratos y que NINGUNA fuente del repo dice
 
 *(17 de septiembre de 2026. Las preguntó Elena el día que entraron los cinco
