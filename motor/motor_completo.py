@@ -901,7 +901,8 @@ def _resolver_una_vez(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn
     _factor_premios = (der / der_racion) if der_racion > 0 else 1.0
 
 
-    from accesibles import ACCESIBLES, vale_en, MODO_COCINADO
+    from accesibles import (ACCESIBLES, vale_en, MODO_COCINADO,
+                        peligro_de_preparacion)
     from exclusiones import filtrar
 
     if cuantos_max is None:
@@ -1081,7 +1082,31 @@ def _resolver_una_vez(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn
         # nuestra. La seguridad de la preparación no cede: el hueso cocido
         # astilla.
         if _modo:
-            disp = [n for n in disp if vale_en(alimentos.get(n), _modo)]
+            # ⚠️ PERO LO ELEGIDO A MANO NO SE TIRA (18 de septiembre de 2026).
+            # Lo pidió Elena con dos casos: alguien en BARF que quiere meter
+            # HUEVO aunque vaya cocido, y alguien en cocinado que quiere meter
+            # fruta o verdura CRUDA muy triturada. Las dos tienen que poder
+            # hacerse: el modo es una restricción del AUTOMÁTICO, no una
+            # exclusión — regla 5, la misma con la que los hidratos entran a
+            # mano en un menú BARF aunque el automático no los proponga.
+            #
+            # La primera versión filtraba a secas y se llevaba por delante la
+            # elección, sin decir nada: el alimento pedido simplemente no salía.
+            #
+            # Y cede TODO menos una cosa: el hueso carnoso en cocinado, que no
+            # es incoherencia sino peligro — cocido astilla. Eso lo decide
+            # `peligro_de_preparacion`, no esta línea, para que la excepción
+            # viva donde vive la regla.
+            # ⚠️ `restringir_a_elegidos` es {categoría: [nombres]}, no una
+            # lista: iterarlo a secas da los nombres de las CATEGORÍAS, que no
+            # son alimentos, y entonces no protege ninguna elección.
+            _a_mano = set(forzar or [])
+            for _elegidos in (restringir_a_elegidos or {}).values():
+                _a_mano |= set(_elegidos or [])
+            disp = [n for n in disp
+                    if vale_en(alimentos.get(n), _modo)
+                    or (n in _a_mano
+                        and not peligro_de_preparacion(alimentos.get(n), _modo))]
 
         # ⚠️ CORREGIDO (21 agosto) — FALLO GRAVE ENCONTRADO POR UNA PRUEBA
         # NUEVA: LAS ALERGIAS SE PODÍAN SALTAR FORZANDO UN ALIMENTO.

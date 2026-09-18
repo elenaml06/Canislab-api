@@ -22534,6 +22534,83 @@ if _tia128:
                   f"sobrar — pero sobrar es el lado seguro y quitarlo es aflojar un tope "
                   f"crónico (regla 2): se mide antes de tocarlo y se dice")
 
+# ── 9 · LO QUE SE ELIGE A MANO NO LO TIRA EL MODO (regla 5) ────────────────
+# ⚠️ POR QUÉ EXISTE (18 de septiembre de 2026). Lo pidió Elena con dos casos de
+# verdad: «a lo mejor alguien le da BARF a su perro pero le apetece meterle
+# huevo porque le encantan las propiedades del huevo, aunque vaya cocido», y
+# «a lo mejor alguien que hace comida cocinada le quiere meter fruta o verdura
+# sin cocinar, muy triturada».
+#
+# El modo es una restricción del AUTOMÁTICO, no una exclusión: decide qué
+# PROPONE el motor cuando elige él, y nunca qué se le puede pedir. Es el mismo
+# criterio que ya llevan los hidratos desde el 17 de septiembre, y la regla 5
+# de siempre — lo que se elige a mano se respeta.
+#
+# La primera versión del filtro de modo corría al final del bucle de candidatos
+# y se llevaba por delante la elección SIN DECIR NADA: el alimento pedido
+# simplemente no salía en el menú, que es justo lo que Elena describió el 15 de
+# septiembre con los suplementos («borraba uno y metía otro y así todo el
+# rato»).
+#
+# ⚠️ Y LOS CASOS SE DERIVAN DEL CATÁLOGO, no se escriben a mano, porque una
+# ficha elegida a dedo puede dejar de ser del modo que se creía y entonces el
+# bloque saldría verde sin comprobar nada. Lo que hace falta es una ficha que
+# el modo SÍ quite: hoy son 72 en cocinado y 57 en crudo.
+#
+# ⚠️ Ojo con una trampa que costó una vuelta: el huevo y la verdura cruda del
+# ejemplo de Elena **valen en los dos modos**, así que probarlos NO ejercita
+# nada — pasan con el fallo puesto. Lo que de verdad quita el filtro es la
+# ficha COCIDA en un menú crudo y la carne CRUDA en uno cocinado.
+def _solo_en_128(modo):
+    """Fichas que el modo `modo` deja fuera, ordenadas para que no cambie."""
+    return sorted(n for n, a in _al128.items()
+                  if _acc128.modos_de(a) == (modo,)
+                  and a.get("categoria") != "Hueso carnoso")
+
+_CASOS_129 = []
+for _m128, _otro128 in (("cocinado", "crudo"), ("crudo", "cocinado")):
+    # una ficha del modo contrario, de una categoría que exista en los dos
+    for _cat129 in ("Verduras y frutas", "Carne muscular"):
+        _cand129 = [n for n in _solo_en_128(_m128)
+                    if _al128[n].get("categoria") == _cat129]
+        if _cand129:
+            _CASOS_129.append((_otro128, _cand129[0]))
+
+if len(_CASOS_129) < 2:
+    fallos.append("BLOQUE128: no hay fichas que el modo deje fuera en los dos sentidos, así que "
+                  "esta comprobación de la regla 5 no está ejercitando nada. O el catálogo ha "
+                  "cambiado, o `modos_de` ha dejado de derivar")
+
+for _modo129, _pedido129 in _CASOS_129:
+    _d129 = _menu128(_modo129, forzar=[_pedido129])
+    if not _d129.get("factible"):
+        fallos.append(f"BLOQUE128: pedir «{_pedido129}» A MANO en un menú «{_modo129}» deja al "
+                      f"perro sin menú. El modo es una restricción del automático: lo que se "
+                      f"elige a mano se respeta (regla 5)")
+    elif _pedido129 not in (_d129.get("menu") or {}):
+        fallos.append(f"BLOQUE128: se eligió «{_pedido129}» A MANO en un menú «{_modo129}» y el "
+                      f"filtro de modo se lo llevó por delante, sin decir nada. Es la regla 5: "
+                      f"alguien en BARF puede querer meter un alimento cocido, y alguien en "
+                      f"cocinado puede querer meter verdura cruda muy triturada")
+
+# Y la excepción sigue siendo UNA: el hueso. Que ceda todo lo demás no puede
+# arrastrarlo, y eso lo vigila el apartado 3 — aquí se comprueba la función que
+# lo decide, para que la excepción no se pueda ampliar ni encoger en silencio.
+_peligrosas_129 = sorted(n for n, a in _al128.items()
+                         if _acc128.peligro_de_preparacion(a, "cocinado"))
+if _peligrosas_129 != sorted(_HUESO_128):
+    fallos.append(f"BLOQUE128: `peligro_de_preparacion` en cocinado dice {_peligrosas_129} y los "
+                  f"huesos del catálogo son {sorted(_HUESO_128)}. Ampliarla convierte una "
+                  f"incoherencia en una prohibición que nadie pidió; encogerla deja entrar hueso "
+                  f"cocido")
+if any(_acc128.peligro_de_preparacion(a, "crudo") for a in _al128.values()):
+    fallos.append("BLOQUE128: `peligro_de_preparacion` dice que algo es peligroso en CRUDO. Este "
+                  "motor lleva desde el principio dando raciones crudas: lo que sea que quite "
+                  "tiene que decidirse en otro sitio y con su medida")
+
+
+print(f"  regla 5 contra el modo: {len(_CASOS_129)} casos ejercitados "
+      f"({_CASOS_129}) · peligro_de_preparacion: {len(_peligrosas_129)} fichas, todas hueso")
 print(f"  topes de crudo en cocinado: 0 fichas cocidas con tiaminasa, 0 con mercurio")
 print(f"  cómo darlo cocinado: {len(_COC_CAT_128)}/4 categorías · "
       f"{len(_COCINADAS_128) - len(_sin128)}/{len(_COCINADAS_128)} fichas con instrucción propia")

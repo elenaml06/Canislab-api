@@ -413,6 +413,36 @@ def _tiene_hermana_cruda(ficha):
     return " " in nombre and nombre.rsplit(" ", 1)[0] in _CRUDAS_DEL_CATALOGO
 
 
+def peligro_de_preparacion(ficha, modo):
+    """¿Esta ficha en este modo es un PELIGRO, y no solo una incoherencia?
+
+    ⚠️ LA DISTINCIÓN ES LA REGLA 5 (18 de septiembre de 2026), y la pidió Elena
+    con dos casos de verdad: «a lo mejor alguien le da BARF a su perro pero le
+    apetece meterle huevo porque le encantan las propiedades del huevo, aunque
+    vaya cocido» y «a lo mejor alguien que hace comida cocinada le quiere meter
+    fruta o verdura sin cocinar, muy triturada».
+
+    Las dos tienen que poder hacerse. Lo que el usuario elige A MANO se respeta
+    —eso es la regla 5— y el modo es una restricción del AUTOMÁTICO: decide qué
+    propone el motor cuando elige él, no qué se le permite pedir a una persona.
+    Es exactamente el mismo criterio con el que los hidratos entran a mano en un
+    menú BARF aunque el automático no los proponga.
+
+    Y hay UNA excepción, una sola: el **hueso carnoso en modo cocinado**. Eso no
+    es incoherencia, es un peligro — el hueso cocido ASTILLA y puede clavarse o
+    hacer un tapón (SACN5 5ª ed., cap. 50: 46 de 60 cuerpos extraños esofágicos
+    retirados a perros eran hueso). Un peligro no cede ante una elección, igual
+    que no cede una alergia.
+
+    Dar carne cruda dentro de un menú cocinado NO entra aquí: eso es exactamente
+    lo que hace una ración BARF, y quien lo pide sabe lo que pide.
+    """
+    if not modo:
+        return False
+    return ((ficha or {}).get("categoria") == "Hueso carnoso"
+            and modo == MODO_COCINADO)
+
+
 def modos_de(ficha):
     """En qué modos vale esta ficha. Se DERIVA, no se escribe ficha a ficha.
 
