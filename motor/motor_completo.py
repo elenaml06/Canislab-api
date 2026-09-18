@@ -901,7 +901,7 @@ def _resolver_una_vez(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn
     _factor_premios = (der / der_racion) if der_racion > 0 else 1.0
 
 
-    from accesibles import (ACCESIBLES, vale_en, MODO_COCINADO,
+    from accesibles import (ACCESIBLES, vale_en, MODO_CRUDO, MODO_COCINADO,
                         peligro_de_preparacion)
     from exclusiones import filtrar
 
@@ -1005,7 +1005,26 @@ def _resolver_una_vez(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn
     # Elegir a mano un hueso crudo para un menú que se va a cocinar es
     # exactamente el error que este filtro existe para impedir, así que la
     # comprobación se repite abajo, después del `forzar`.
-    _modo = modo_de_preparacion or None
+    # ⚠️ SIN MODO, CRUDO — Y NO «TODO» (18 de septiembre de 2026). Aquí ponía
+    # `or None`, que apagaba el filtro entero: un camino que se olvidara de
+    # pasar el modo veía a la vez las fichas crudas Y las cocidas, y montaba un
+    # plato con las dos. O sea exactamente la incoherencia que el modo existe
+    # para quitar, y en silencio — el menú sale, sale verde, y nadie se entera.
+    #
+    # ⚠️ LO ENCONTRÓ LA BATERÍA, no una lectura: el BLOQUE 27 acusó a un menú de
+    # cachorro de sacar el 20 % de su proteína de alimentos sin aminograma, y
+    # uno de ellos era «Lenguado cocido» — en un menú que nadie había pedido
+    # cocinado.
+    #
+    # Es la familia de fallo que este fichero ya tiene escrita para las
+    # patologías: «si un camino nuevo llama al motor, tiene que pasarle
+    # `patologias` — se olvidó una vez en la edición y una sola edición tiraba
+    # el tope». La diferencia es que aquí el olvido no se ve en ninguna cifra.
+    #
+    # Crudo es lo que este motor ha hecho siempre y es lo que declara el propio
+    # vocabulario (`por_omision: "crudo"`), así que un olvido devuelve lo de
+    # siempre en vez de algo nuevo que nadie ha pedido.
+    _modo = str(modo_de_preparacion or "").strip().lower() or MODO_CRUDO
 
     candidatos_por_cat = {}
     for cat, lista in ACCESIBLES.items():

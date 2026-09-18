@@ -3715,6 +3715,45 @@ _HUECOS_YA_CONOCIDOS_b19 = {
     # comprobación. El aviso tuvo razón las dos veces -- primero sobre un
     # error que yo acababa de meter, y ahora sobre un hecho real.
     ("OMEGA", "Cerebro de ternera"),
+
+    # ── 18 DE SEPTIEMBRE DE 2026 ────────────────────────────────────────────
+    #
+    # ⚠️ ONCE OMEGA NUEVOS, Y NINGUNO ES UN FALLO — pero hay que decir por qué,
+    # porque el aviso que disparan es EXACTAMENTE el de la peor trampa que tiene
+    # este catálogo: «linoleico es omega-6 y linolenico es omega-3; si se cargan
+    # cambiados no salta nada y el menú sale verde igual» (`UNIDADES.md`).
+    #
+    # Salen de dos sitios y los dos están comprobados contra la fila de USDA:
+    # las fichas COCIDAS de verdura, y cuatro CRUDAS a las que
+    # `auditar_composicion.py --cerrar` les cerró el hueco de sus ácidos grasos.
+    # En una hoja verde el omega-3 POR ENCIMA del omega-6 es lo normal: la
+    # espinaca da 0,026 g de linoleico y 0,138 de linolénico en USDA, y la judía
+    # verde 0,037 contra 0,069. Comprobado uno a uno: no están cambiados. El
+    # aviso dice «es posible, pero revisa» — esto es la revisión, escrita.
+    ("OMEGA", "Brócoli"), ("OMEGA", "Brócoli cocido"), ("OMEGA", "Calabacín"),
+    ("OMEGA", "Col lombarda cocida"), ("OMEGA", "Coles de Bruselas cocida"),
+    ("OMEGA", "Coliflor"), ("OMEGA", "Coliflor cocida"), ("OMEGA", "Espinaca cocida"),
+    ("OMEGA", "Judía verde"), ("OMEGA", "Judía verde cocida"), ("OMEGA", "Lechuga"),
+    ("OMEGA", "Perca cocida"), ("OMEGA", "Repollo cocido"),
+    #
+    # ⚠️ Y SEIS AMINO QUE SON HERENCIA EXACTA DE SU FICHA CRUDA, cuya excepción
+    # ya está documentada en `auditar_catalogo.py` desde el 7 de septiembre
+    # —«valina ≈ isoleucina en calamar, pulpo y sepia, confirmado con tres FDC
+    # ID distintos» y «pulmón de cordero Leu/Ile 2,537 aquí, USDA da 2,547»—.
+    # Su aminograma se transfiere POR GRAMO DE PROTEÍNA, y un cociente no cambia
+    # al multiplicarlo por un escalar: son literalmente los mismos números.
+    #
+    # ⚠️ Y ESTO NO ES UNA LISTA PARA CALLAR AVISOS. El mismo día, otras SIETE
+    # fichas cocidas dispararon el mismo aviso y NO están aquí: se arreglaron,
+    # porque su cociente NO coincidía con el de su cruda. El corazón, el hígado
+    # y la molleja de pavo cocidos daban los tres exactamente 2,525 — tres
+    # órganos distintos con el mismo aminograma es la huella de una fila
+    # prestada, que es justo lo que el auditor existe para encontrar. Cocer no
+    # cambia de qué está hecha la proteína, así que se rehicieron desde su
+    # hermana cruda, que es la que ya estaba vetada.
+    ("AMINO", "Calamar cocido"), ("AMINO", "Pulpo cocido"),
+    ("AMINO", "Molleja de pavo cocida"), ("AMINO", "Molleja de pollo cocida"),
+    ("AMINO", "Pavo pechuga sin piel cocido"), ("AMINO", "Pulmón de cordero cocido"),
 }
 
 import re as _re_b19
@@ -3994,9 +4033,23 @@ _SIN_FUENTE_A_PROPOSITO_b21 = {
     # No se ha mirado su ficha todavía.
     "Calamar",
 }
+# ⚠️ Y LA PROCEDENCIA VALE DE LAS DOS FORMAS (18 de septiembre de 2026). Este
+# bloque nació mirando SOLO `fuente_epa_dha`, que es un campo de la ficha
+# entera, y desde el 13 de septiembre existe algo mejor: `composicion_fuente`,
+# que dice de qué fila y de qué columna sale CADA celda. Las once fichas de
+# pescado cocido lo declaran así —es como las llenó `auditar_composicion.py`—
+# y este bloque las acusaba de no declarar nada.
+#
+# No es aflojarlo: se sigue exigiendo procedencia, y de las dos el segundo es
+# MÁS estricto (dice la fila y la columna, no solo «de dónde salió la ficha»).
+# Un pescado sin ninguna de las dos sigue cayendo, que es lo que importa.
+def _dice_de_donde_sale_su_epa_b21(a):
+    proc = a.get("composicion_fuente") or {}
+    return bool(a.get("fuente_epa_dha")) or bool(proc.get("epa") and proc.get("dha"))
+
 _sin_fuente_b21 = sorted(n for n, a in _al21.items()
                          if a.get("categoria") == "Pescados y mariscos"
-                         and not a.get("fuente_epa_dha")
+                         and not _dice_de_donde_sale_su_epa_b21(a)
                          and n not in _SIN_FUENTE_A_PROPOSITO_b21)
 if _sin_fuente_b21:
     fallos.append(f"BLOQUE21: estos pescados no declaran de dónde salen sus datos: "
@@ -4006,7 +4059,7 @@ if _sin_fuente_b21:
 # Y al revés: si alguien consigue la fuente de una de las dos excepciones,
 # esta lista deja de proteger y hay que quitarla de aquí.
 _ya_resueltos_b21 = sorted(n for n in _SIN_FUENTE_A_PROPOSITO_b21
-                           if _al21.get(n, {}).get("fuente_epa_dha"))
+                           if _dice_de_donde_sale_su_epa_b21(_al21.get(n, {})))
 if _ya_resueltos_b21:
     fallos.append(f"BLOQUE21: {_ya_resueltos_b21} ya declaran fuente. Quítalos de "
                   f"_SIN_FUENTE_A_PROPOSITO_b21 o esa lista tapará el siguiente hueco.")
