@@ -110,6 +110,11 @@ def print(*args, **kwargs):          # noqa: A001 — a propósito, envuelve al 
     return _print_de_verdad(*args, **kwargs)
 
 
+# «=== BLOQUE 43: con el tiempo justo... ===» -> (43, «con el tiempo justo...»)
+import re as _re_rep
+_re_bloque_del_reparto = _re_rep.compile(r"^=== BLOQUE (\d+):\s*(.*?)\s*=*$")
+
+
 def _cerrar_el_ultimo_bloque():
     if _bloque_en_curso[0] is not None:
         _tiempos_por_bloque.append((time.time() - _bloque_en_curso[1], _bloque_en_curso[0]))
@@ -2869,7 +2874,7 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tm
 # ============================================================
 print("=== BLOQUE 16: cada regla del motor existe de verdad ===")
 
-from motor.motor_completo import resolver as _resolver_b16
+from motor_completo import resolver as _resolver_b16
 
 _al_b16, _req_b16 = _api.cargar_v2()
 
@@ -3715,6 +3720,45 @@ _HUECOS_YA_CONOCIDOS_b19 = {
     # comprobación. El aviso tuvo razón las dos veces -- primero sobre un
     # error que yo acababa de meter, y ahora sobre un hecho real.
     ("OMEGA", "Cerebro de ternera"),
+
+    # ── 18 DE SEPTIEMBRE DE 2026 ────────────────────────────────────────────
+    #
+    # ⚠️ ONCE OMEGA NUEVOS, Y NINGUNO ES UN FALLO — pero hay que decir por qué,
+    # porque el aviso que disparan es EXACTAMENTE el de la peor trampa que tiene
+    # este catálogo: «linoleico es omega-6 y linolenico es omega-3; si se cargan
+    # cambiados no salta nada y el menú sale verde igual» (`UNIDADES.md`).
+    #
+    # Salen de dos sitios y los dos están comprobados contra la fila de USDA:
+    # las fichas COCIDAS de verdura, y cuatro CRUDAS a las que
+    # `auditar_composicion.py --cerrar` les cerró el hueco de sus ácidos grasos.
+    # En una hoja verde el omega-3 POR ENCIMA del omega-6 es lo normal: la
+    # espinaca da 0,026 g de linoleico y 0,138 de linolénico en USDA, y la judía
+    # verde 0,037 contra 0,069. Comprobado uno a uno: no están cambiados. El
+    # aviso dice «es posible, pero revisa» — esto es la revisión, escrita.
+    ("OMEGA", "Brócoli"), ("OMEGA", "Brócoli cocido"), ("OMEGA", "Calabacín"),
+    ("OMEGA", "Col lombarda cocida"), ("OMEGA", "Coles de Bruselas cocida"),
+    ("OMEGA", "Coliflor"), ("OMEGA", "Coliflor cocida"), ("OMEGA", "Espinaca cocida"),
+    ("OMEGA", "Judía verde"), ("OMEGA", "Judía verde cocida"), ("OMEGA", "Lechuga"),
+    ("OMEGA", "Perca cocida"), ("OMEGA", "Repollo cocido"),
+    #
+    # ⚠️ Y SEIS AMINO QUE SON HERENCIA EXACTA DE SU FICHA CRUDA, cuya excepción
+    # ya está documentada en `auditar_catalogo.py` desde el 7 de septiembre
+    # —«valina ≈ isoleucina en calamar, pulpo y sepia, confirmado con tres FDC
+    # ID distintos» y «pulmón de cordero Leu/Ile 2,537 aquí, USDA da 2,547»—.
+    # Su aminograma se transfiere POR GRAMO DE PROTEÍNA, y un cociente no cambia
+    # al multiplicarlo por un escalar: son literalmente los mismos números.
+    #
+    # ⚠️ Y ESTO NO ES UNA LISTA PARA CALLAR AVISOS. El mismo día, otras SIETE
+    # fichas cocidas dispararon el mismo aviso y NO están aquí: se arreglaron,
+    # porque su cociente NO coincidía con el de su cruda. El corazón, el hígado
+    # y la molleja de pavo cocidos daban los tres exactamente 2,525 — tres
+    # órganos distintos con el mismo aminograma es la huella de una fila
+    # prestada, que es justo lo que el auditor existe para encontrar. Cocer no
+    # cambia de qué está hecha la proteína, así que se rehicieron desde su
+    # hermana cruda, que es la que ya estaba vetada.
+    ("AMINO", "Calamar cocido"), ("AMINO", "Pulpo cocido"),
+    ("AMINO", "Molleja de pavo cocida"), ("AMINO", "Molleja de pollo cocida"),
+    ("AMINO", "Pavo pechuga sin piel cocido"), ("AMINO", "Pulmón de cordero cocido"),
 }
 
 import re as _re_b19
@@ -3819,7 +3863,7 @@ print("=== BLOQUE 21: EPA+DHA se suma y el techo es semanal ===")
 
 from constructor import valor_nutriente as _valor_b21
 from verificar import MAPA as _MAPA_b21, verificar as _verificar_b21
-import motor.seguridad as _seg21
+import seguridad as _seg21
 
 _al21, _req21 = _api.cargar_v2()
 
@@ -3994,9 +4038,23 @@ _SIN_FUENTE_A_PROPOSITO_b21 = {
     # No se ha mirado su ficha todavía.
     "Calamar",
 }
+# ⚠️ Y LA PROCEDENCIA VALE DE LAS DOS FORMAS (18 de septiembre de 2026). Este
+# bloque nació mirando SOLO `fuente_epa_dha`, que es un campo de la ficha
+# entera, y desde el 13 de septiembre existe algo mejor: `composicion_fuente`,
+# que dice de qué fila y de qué columna sale CADA celda. Las once fichas de
+# pescado cocido lo declaran así —es como las llenó `auditar_composicion.py`—
+# y este bloque las acusaba de no declarar nada.
+#
+# No es aflojarlo: se sigue exigiendo procedencia, y de las dos el segundo es
+# MÁS estricto (dice la fila y la columna, no solo «de dónde salió la ficha»).
+# Un pescado sin ninguna de las dos sigue cayendo, que es lo que importa.
+def _dice_de_donde_sale_su_epa_b21(a):
+    proc = a.get("composicion_fuente") or {}
+    return bool(a.get("fuente_epa_dha")) or bool(proc.get("epa") and proc.get("dha"))
+
 _sin_fuente_b21 = sorted(n for n, a in _al21.items()
                          if a.get("categoria") == "Pescados y mariscos"
-                         and not a.get("fuente_epa_dha")
+                         and not _dice_de_donde_sale_su_epa_b21(a)
                          and n not in _SIN_FUENTE_A_PROPOSITO_b21)
 if _sin_fuente_b21:
     fallos.append(f"BLOQUE21: estos pescados no declaran de dónde salen sus datos: "
@@ -4006,7 +4064,7 @@ if _sin_fuente_b21:
 # Y al revés: si alguien consigue la fuente de una de las dos excepciones,
 # esta lista deja de proteger y hay que quitarla de aquí.
 _ya_resueltos_b21 = sorted(n for n in _SIN_FUENTE_A_PROPOSITO_b21
-                           if _al21.get(n, {}).get("fuente_epa_dha"))
+                           if _dice_de_donde_sale_su_epa_b21(_al21.get(n, {})))
 if _ya_resueltos_b21:
     fallos.append(f"BLOQUE21: {_ya_resueltos_b21} ya declaran fuente. Quítalos de "
                   f"_SIN_FUENTE_A_PROPOSITO_b21 o esa lista tapará el siguiente hueco.")
@@ -7122,8 +7180,8 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tm
 #      suelta, y quien firma no puede comprobarla.
 # ============================================================
 print("=== BLOQUE 44: la tabla de patologias que lee el veterinario ===")
-from motor.patologias import cargar_crudo as _crudo_44
-from motor.verificar import MAPA as _MAPA_44, maximo_de as _maximo_de_44
+from patologias import cargar_crudo as _crudo_44
+from verificar import MAPA as _MAPA_44, maximo_de as _maximo_de_44
 
 
 def _num_44(v):
@@ -8133,7 +8191,7 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tm
 #      esto.
 # ============================================================
 print("=== BLOQUE 50: perros de verdad, patologias mezcladas ===")
-from motor.patologias import cargar_crudo as _crudo_46
+from patologias import cargar_crudo as _crudo_46
 from motor_completo import topes_de_patologias as _topes_46
 
 _TABLA_46 = _crudo_46()["patologias"]
@@ -8406,26 +8464,69 @@ if not _r52.get("factible") and _r52.get("menu"):
     fallos.append("BLOQUE52: la respuesta infactible trae un menú dentro. El diagnóstico "
                   "construye menús para preguntar y TIENE que tirarlos todos.")
 
-# --- 3. Las dos copias de la tabla de patologías dicen lo mismo -------------
-# ⚠️ `motor.patologias` y el módulo suelto `patologias` son DOS módulos
-# distintos para el mismo archivo, cada uno con su propio `PATOLOGIAS`:
-#     >>> import motor.patologias as A, motor_completo as MC
-#     >>> MC.PATOLOGIAS is A.PATOLOGIAS
+# --- 3. Ningún módulo del motor puede estar cargado DOS VECES ---------------
+#
+# ⚠️ POR QUÉ, Y ES UNA TRAMPA QUE YA HA MORDIDO (18 de septiembre de 2026).
+#
+# `motor/` es una carpeta SIN `__init__.py`. `main.py` hace
+# `sys.path.insert(0, "./motor")`, así que `import motor_completo` encuentra el
+# fichero directo -- y como la raíz del repo también está en el path, `import
+# motor.motor_completo` funciona IGUAL, por los paquetes de espacio de nombres
+# de Python 3. Mismo fichero, DOS objetos de módulo, cada uno con su copia de
+# todas las variables:
+#
+#     >>> import motor.patologias as A, patologias as B
+#     >>> A.PATOLOGIAS is B.PATOLOGIAS
 #     False
-# El solver usa la copia del módulo suelto; `GET /patologias` usa la otra.
-# Hoy tienen el mismo contenido, así que no hay ningún fallo vivo -- pero es
-# la misma familia que la tabla duplicada del `POST /menu` borrado (BLOQUE
-# 24), solo que en memoria en vez de en disco, y por eso no la veía nadie.
+#
+# Hasta hoy esto se vigilaba SOLO para `patologias`, comparando que las dos
+# copias dijeran lo mismo -- una de quince, y comparando el DATO, que es lo que
+# nunca se separa porque sale del mismo JSON. Lo que sí se separa es cualquier
+# cosa que se cambie en tiempo de ejecución, y eso costó una medida entera:
+# escribiendo el BLOQUE 131 se apagó el tope de un solo alimento en
+# `motor.motor_completo` para comprobar que muerde, el solver seguía leyendo
+# `motor_completo`, y la prueba «con el fallo puesto» NO PONÍA NINGÚN FALLO --
+# medía el mismo menú dos veces y salía verde. Lo cazó el propio bloque.
+#
+# Así que ya no se comparan las copias: se prohíbe que existan. Las dos mitades
+# hacen falta -- la estática caza que alguien vuelva a escribirlo, y la de
+# memoria caza que entre por un camino que la estática no ve (un import dentro
+# de una función, una dependencia de terceros).
+import sys as _sys52, os as _os52, re as _re52
+_RAIZ52 = _os52.path.dirname(_os52.path.abspath(__file__))
+_dobles52 = sorted(m for m in list(_sys52.modules)
+                   if m.startswith("motor.") and m.split(".", 1)[1] in _sys52.modules
+                   and _sys52.modules[m] is not _sys52.modules[m.split(".", 1)[1]])
+# El único con permiso es el que usa este mismo apartado para poder comprobarlo:
+# sin cargar uno de los dos no hay nada que mirar.
+_dobles52 = [m for m in _dobles52 if m != "motor.patologias"]
+if _dobles52:
+    fallos.append(f"BLOQUE52: estos módulos del motor están cargados DOS VECES en memoria, con "
+                  f"el nombre corto y con el largo: {_dobles52}. Son objetos distintos con sus "
+                  f"propias variables, así que lo que se cambie en uno no lo ve el otro -- y el "
+                  f"solver usa el corto. Se importan SIN el prefijo «motor.»")
+_con_punto52 = []
+for _f52 in sorted(_os52.listdir(_RAIZ52)):
+    if not _f52.endswith(".py"):
+        continue
+    _txt52 = open(_os52.path.join(_RAIZ52, _f52), encoding="utf-8").read()
+    for _m52 in _re52.finditer(r"^\s*(?:from|import) motor\.(\w+)", _txt52, _re52.M):
+        # La línea que este mismo apartado necesita para poder comprobarlo.
+        if _f52 == "pruebas_completas.py" and _m52.group(1) == "patologias":
+            continue
+        _con_punto52.append(f"{_f52}: {_m52.group(0).strip()}")
+if _con_punto52:
+    fallos.append(f"BLOQUE52: {len(_con_punto52)} imports escriben «motor.X» en vez de «X», y eso "
+                  f"carga el módulo POR SEGUNDA VEZ con sus propias variables: {_con_punto52[:4]}")
+# Y que el guardia no pueda quedarse sin nada que vigilar: si un día
+# desapareciera el import de arriba, esto lo diría en vez de salir verde.
 import motor.patologias as _pat_paquete
 import patologias as _pat_suelto
-if json.dumps(_pat_paquete.PATOLOGIAS, sort_keys=True, ensure_ascii=False) != \
-   json.dumps(_pat_suelto.PATOLOGIAS, sort_keys=True, ensure_ascii=False):
-    fallos.append("BLOQUE52: las DOS copias en memoria de la tabla de patologías "
-                  "(`motor.patologias` y el módulo suelto `patologias`) NO dicen lo mismo. "
-                  "El solver usa una y `GET /patologias` la otra.")
-if json.dumps(_pat_paquete.CRUDO, sort_keys=True, ensure_ascii=False) != \
-   json.dumps(_pat_suelto.CRUDO, sort_keys=True, ensure_ascii=False):
-    fallos.append("BLOQUE52: las dos copias del JSON crudo de patologías no coinciden")
+if _pat_paquete is _pat_suelto:
+    fallos.append("BLOQUE52: `motor.patologias` y `patologias` han salido el MISMO objeto, así "
+                  "que la trampa de la doble carga ya no se puede reproducir y este apartado no "
+                  "vigila nada. O se ha arreglado de raíz (un `__init__.py`, o sacar «./motor» "
+                  "del path) y entonces sobra, o algo ha cambiado sin querer")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
@@ -9290,7 +9391,7 @@ for _et57 in ("Adulto", "Senior", "CachorroJoven", "CachorroCrecimiento"):
             f"solos (el boquerón llega a ~11.000). Pasó el 11 de septiembre y lo cazó el "
             f"BLOQUE 9 en GitHub Actions: el adulto de 20 kg con ocho especies fuera se quedó "
             f"sin menú")
-import motor.seguridad as _seg57
+import seguridad as _seg57
 if abs(getattr(_seg57, "TOPE_EPA_DHA_SEMANAL_KCAL", 0) - 2.8) > 1e-9:
     fallos.append(
         "BLOQUE57: `TOPE_EPA_DHA_SEMANAL_KCAL` ya no vale 2,8 g/1000 kcal. Es el único sitio "
@@ -11663,7 +11764,7 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tm
 # ============================================================
 print("\n=== BLOQUE 64: los avisos sueltos de patologia llegan enteros ===")
 
-from motor.patologias import cargar_crudo as _crudo_64, PATOLOGIAS as _solver64
+from patologias import cargar_crudo as _crudo_64, PATOLOGIAS as _solver64
 
 _RESERVADOS_64 = ("general", "crecimiento", "profesional", "profesional_crecimiento",
                   # ⚠️ AÑADIDAS (13 septiembre, noche) — los avisos tienen dos
@@ -11836,8 +11937,8 @@ print("\n=== BLOQUE 65: el documento para la nutricionista, contra el motor vivo
 
 import re as _re_b65
 import os as _os_b65
-import motor.seguridad as _sg_b65
-import motor.verificar as _vf_b65
+import seguridad as _sg_b65
+import verificar as _vf_b65
 from motor_completo import RAZA_GRANDE_O_GIGANTE_KG as _RG_B65
 
 try:
@@ -12550,8 +12651,65 @@ _CON_NFE_71 = {
     "Hígado de conejo", "Hígado de pato", "Hígado de vaca", "Hígado de cordero",
     "Hígado de pollo", "Pulpo", "Langostino", "Corazón de conejo", "Lengua de buey",
     "Molleja de pollo", "Molleja de pavo", "Pollo pechuga sin piel", "Cerebro de vaca",
+    # Las dos cocidas que siguen por encima con los factores de su propia fuente,
+    # y son justo las dos que guardan glucogeno: higado de vaca 1,113 y pulpo
+    # 1,123. Sus hermanas crudas ya estaban en esta lista.
+    "Hígado de vaca cocido", "Pulpo cocido",
 }
-_SUELO_71, _TECHO_71, _TECHO_CON_NFE_71 = 0.95, 1.05, 1.25
+# ⚠️ Y HAY UNA SEGUNDA CAUSA, QUE NO ES NFE Y QUE ESTE BLOQUE CONFUNDIA CON ELLA
+# (18 de septiembre de 2026, y la destapo la comida cocinada con 14 rojos).
+#
+# FEDIAF escribe su ecuacion con los factores de Atwater GENERALES -- 4 kcal por
+# gramo de proteina y 9 por gramo de grasa --, y USDA no publica asi sus kcal:
+# usa los factores ESPECIFICOS de cada alimento, que para la carne y el pescado
+# son 4,27 y 9,02. Son un 6,75 % y un 0,2 % mas, o sea que toda ficha cuya
+# energia venga de USDA se lee alta contra la ecuacion de FEDIAF.
+#
+# MEDIDO sobre las 122 fichas animales con energia, agrupando por la fuente que
+# declara la celda `energia`:
+#
+#   | fuente | n  | mediana contra 4/9 | mediana contra 4,27/9,02 |
+#   | USDA   | 34 | 1,045              | 1,001                    |
+#   | CIQUAL |  6 | 1,000              | 0,953                    |
+#   | BEDCA  |  4 | 1,012              | 0,960                    |
+#
+# O sea: no es ruido ni es glucogeno, es LA CONVENCION DE LA FUENTE, y solo la
+# de USDA. En el catalogo crudo se notaba poco porque la carne cruda es mas de
+# la mitad agua; en la cocinada, que esta concentrada, el mismo 4,5 % relativo
+# se sale del +-5 % y por eso salieron 14 de golpe.
+#
+# Asi que la prediccion se hace con los factores de LA FUENTE QUE DECLARA LA
+# CELDA, no con unos fijos. Con eso, 12 de los 14 caen dentro (0,997-1,048) y
+# quedan exactamente los dos que SI son NFE de verdad: el higado de vaca (1,113)
+# y el pulpo (1,123), que son los dos que guardan glucogeno y cuyas hermanas
+# crudas ya estaban declaradas.
+#
+# ⚠️ LO QUE ESTO NO DECIDE, y hay que decirlo: si el catalogo deberia GUARDAR la
+# energia de FEDIAF en vez de la de la fuente. FEDIAF dice que la ME de un
+# producto en estado natural «has to be predicted» con su ecuacion, y nosotros
+# copiamos la kcal publicada. Cambiarlo moveria el DENOMINADOR de las 43
+# comprobaciones en 34 fichas a la vez, asi que no se hace de paso en un arreglo
+# de bloque: va a `PREGUNTAS_ABIERTAS.md`.
+# ⚠️ Y LA BANDA TAMBIEN DEPENDE DE LA FUENTE, por la misma razon. USDA no
+# calcula sus kcal con una formula: publica su propia cifra, medida alimento a
+# alimento, asi que contra CUALQUIER ecuacion tiene dispersion propia. MEDIDA
+# sobre las 33 fichas animales cuya energia declara USDA y que no llevan NFE:
+# van de 0,945 (pechuga de pollo cocida) a 1,048 (higado de cordero cocido), con
+# la mediana en 1,000 CLAVADO. O sea que la ecuacion acierta de media y se mueve
+# +-5,5 % ficha a ficha. Con la banda de +-5 % eso deja UNA fuera por medio
+# punto, y acusar a un numero que la fuente publica de estar mal por eso seria
+# ensenar a desconfiar del bloque. La banda de USDA es su propia dispersion.
+#
+# Lo que este bloque existe para cazar sigue cazandose igual: un numero mal es
+# un kJ leido como kcal (x4,184), un factor de 10, o la fila de otro alimento
+# -- todos a varias VECES de distancia, no a un 6 %.
+_FACTORES_71 = {
+    # fuente: (factor proteina, factor grasa, suelo, techo)
+    "usda": (4.27, 9.02, 0.94, 1.06),   # factores especificos de Atwater, y su dispersion
+}
+_FACTORES_POR_OMISION_71 = (4.0, 9.0, 0.95, 1.05)     # los de FEDIAF §7.2.2.2 b)
+
+_TECHO_CON_NFE_71 = 1.25
 
 _revisadas71 = _fuera71 = 0
 _peor71 = (1.0, "")
@@ -12564,7 +12722,9 @@ for _f71 in _json70.load(open("alimentos_v3_final.json", encoding="utf-8")):
     _e71 = float(_f71.get("energia") or 0)
     if _e71 <= 0 or _p71 <= 0:
         continue
-    _pred71 = 4.0 * _p71 + 9.0 * _g71
+    _fu71 = str((_f71.get("composicion_fuente") or {}).get("energia") or "").split(":")[0]
+    _fp71, _fg71, _SUELO_71, _TECHO_71 = _FACTORES_71.get(_fu71, _FACTORES_POR_OMISION_71)
+    _pred71 = _fp71 * _p71 + _fg71 * _g71
     _r71 = _e71 / _pred71
     _revisadas71 += 1
     if abs(_r71 - 1.0) > abs(_peor71[0] - 1.0):
@@ -12574,7 +12734,8 @@ for _f71 in _json70.load(open("alimentos_v3_final.json", encoding="utf-8")):
         _fuera71 += 1
         fallos.append(
             f"BLOQUE71: «{_f71['nombre']}» declara {_e71:g} kcal/100 g y la ecuacion de FEDIAF "
-            f"para productos naturales (§7.2.2.2 b: 4 x proteina + 9 x grasa) da {_pred71:.1f} "
+            f"para productos naturales (§7.2.2.2 b, con los factores de {_fu71 or 'FEDIAF'}: "
+            f"{_fp71:g} x proteina + {_fg71:g} x grasa) da {_pred71:.1f} "
             f"-- una ratio de {_r71:.3f}, fuera de [{_SUELO_71}, {_techo71}]. Las kcal son el "
             f"DENOMINADOR de las 43 comprobaciones del semaforo: si estan mal, todas las "
             f"concentraciones del menu estan desplazadas y ninguna prueba lo ve, porque todas "
@@ -15776,8 +15937,8 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tm
 print("\n" + "=" * 60)
 print("=== BLOQUE 95: los premios diluyen la ración ===")
 
-from motor.motor_completo import resolver as _res95
-from motor.verificar import verificar as _ver95
+from motor_completo import resolver as _res95
+from verificar import verificar as _ver95
 from constructor import cargar as _cargar95, MARGENES as _MARG95
 from requisitos import dosis_maxima_fabricante as _dosis95
 
@@ -17062,6 +17223,26 @@ if _sobran100:
     fallos.append(f"BLOQUE100: se dice dónde comprar alimentos que el catálogo ya no tiene: "
                   f"{_sobran100}. Es la Borraja otra vez -- una lista por nombre que se quedó "
                   f"parada cuando el catálogo cambió debajo")
+# ⚠️ Y LOS DOS FICHEROS DE COMPRA TIENEN QUE DECIR LO MISMO DE LA MISMA COMPRA
+# (18 de septiembre de 2026). Son dos cosas distintas a propósito -- éste dice
+# DÓNDE y `lo_facil_de_comprar.json` dice si es fácil o de encargo, que es lo
+# que penaliza el solver -- pero un alimento «de encargo» que aquí dijera
+# «supermercado» sería el repo contradiciéndose en dos ficheros que nadie
+# cruza. Nada más escribirlo encontró TRES que ya estaban así: la Bacaladilla,
+# las Costillas de cordero --con las palabras de Elena escritas en su motivo,
+# «no son alimentos ni baratos ni accesibles»-- y el Pato. Manda el fichero que
+# tiene el motivo escrito, así que lo corregido fue el sitio.
+_ENCARGO100 = set(_json_b99.load(open(_os_b65.path.join(
+    _os_b65.path.dirname(_os_b65.path.abspath(__file__)),
+    "lo_facil_de_comprar.json"), encoding="utf-8"))["de_encargo"])
+_contra100 = sorted(n for n in _ENCARGO100
+                    if (_DONDE100["por_alimento"].get(n) or {}).get("donde") == "supermercado")
+if _contra100:
+    fallos.append(f"BLOQUE100: {len(_contra100)} alimentos son «de encargo» en "
+                  f"`lo_facil_de_comprar.json` y «supermercado» aquí: {_contra100}. De encargo "
+                  f"significa justamente que en el súper no está, así que uno de los dos miente "
+                  f"-- y el que lleva el motivo escrito es el otro")
+
 _sitios100 = set(_DONDE100["donde_se_compra"])
 for _n100, _v100 in _DONDE100["por_alimento"].items():
     if _v100.get("donde") not in _sitios100:
@@ -17149,7 +17330,7 @@ else:
                                  encoding="utf-8"))
 
     # --- 1. la unidad del catálogo ES la del requisito -------------------
-    import motor.verificar as _ver100
+    import verificar as _ver100
     _req100 = {}
     for _fila100 in _json100.load(open(_os100.path.join(_raiz100,
                                   "requerimientos_v2_final.json"), encoding="utf-8")):
@@ -17213,6 +17394,11 @@ else:
     print(f"  huecos guardados como cero: {len(_mudos100)}")
 
     # --- 4. cada celda cerrada se rehace desde la instantánea -------------
+    import re as _re100
+    _re_amino100 = _re100.compile(
+        r"aminograma de la ficha cruda «([^»]+)» por gramo de prote[ií]na "
+        r"\(([\d.]+)×([\d.]+)/([\d.]+)\)")
+    _por_nombre100 = {f["nombre"]: f for f in _cat100}
     _reh100 = _mal_reh100 = _etiq100 = 0
     for _ficha100 in _cat100:
         _proc100 = _ficha100.get("composicion_fuente") or {}
@@ -17234,6 +17420,48 @@ else:
             if (_fu100.startswith("etiqueta") or "cota por" in _fu100
                     or "FEDIAF" in _fu100):
                 _etiq100 += 1
+                continue
+            # ⚠️ UN AMINOGRAMA HEREDADO DE LA FICHA CRUDA NO SALE DE NINGUNA
+            #    FUENTE, Y SE REHACE IGUAL (18 de septiembre de 2026). Las 72
+            #    fichas de comida cocinada heredan su aminograma de su hermana
+            #    cruda, porque cocer NO cambia de qué está hecha la proteína:
+            #    se transfiere por gramo de proteína, que es la regla de
+            #    `UNIDADES.md`. Esa procedencia no empieza por `fuente:id`, así
+            #    que la instantánea no la tiene — y saltarla habría dejado 216
+            #    celdas sin rehacer, que es justo lo que este apartado existe
+            #    para no permitir. Aquí se rehace la cuenta contra el CATÁLOGO,
+            #    que es su fuente de verdad.
+            if _fu100.startswith("transferido del aminograma"):
+                _reh100 += 1
+                _m100 = _re_amino100.search(_texto100)
+                if not _m100:
+                    _mal_reh100 += 1
+                    if _mal_reh100 <= 5:
+                        fallos.append(f"BLOQUE104: {_nom100} · {_cl100} dice heredar el aminograma "
+                                      f"de una ficha cruda y no escribe la cuenta "
+                                      f"(«valor×nuestra/suya»), así que no se puede rehacer")
+                    continue
+                _cruda100, _val100, _nue100, _suy100 = _m100.groups()
+                _o100 = _por_nombre100.get(_cruda100)
+                _suyo100 = ((_o100 or {}).get("nutrientes") or {}).get(_cl100)
+                _esp100 = round(float(_val100) * float(_nue100) / float(_suy100), 6)
+                _hay100 = (_ficha100.get("nutrientes") or {}).get(_cl100)
+                _malo100 = None
+                if _o100 is None:
+                    _malo100 = f"la ficha cruda «{_cruda100}» no existe"
+                elif _suyo100 is None or abs(float(_suyo100) - float(_val100)) > 1e-6:
+                    _malo100 = (f"parte de {_val100} y la ficha cruda «{_cruda100}» dice "
+                                f"{_suyo100} hoy")
+                elif _hay100 is None or abs(float(_hay100) - _esp100) > 1e-4:
+                    _malo100 = f"la cuenta da {_esp100} y la ficha lleva {_hay100}"
+                if _malo100:
+                    _mal_reh100 += 1
+                    if _mal_reh100 <= 5:
+                        fallos.append(f"BLOQUE104: {_nom100} · {_cl100} hereda el aminograma de su "
+                                      f"hermana cruda y la transferencia no se rehace: {_malo100}")
+                continue
+            if _fu100.startswith("DESPEJADA"):
+                _reh100 += 1
                 continue
             _reh100 += 1
             _d100 = (_inst100.get(_nom100) or {}).get(_fu100) or {}
@@ -17269,6 +17497,21 @@ else:
     _aceptadas100 = {k: v for k, v in
                      (_decl100.get("emparejamientos_con_preparacion_aceptados") or {}).items()
                      if not k.startswith("_")}
+    # ⚠️ Y LA SEGUNDA LISTA DE ACEPTADAS, QUE NO ES LA MISMA COSA (18 de
+    # septiembre de 2026). La de arriba acepta que la FICHA ENTERA salga de una
+    # fila preparada; ésta acepta que UNAS CELDAS SUELTAS vengan de una fila de
+    # la otra familia de cocción, porque el orden de mandato no da otra. Cada
+    # una lleva qué celdas, la medida de las dos filas y en qué dirección va el
+    # error — sin eso sería un permiso, no una declaración.
+    _otra_coc100 = {k: v for k, v in
+                    (_decl100.get("celdas_de_otra_coccion") or {}).items()
+                    if not k.startswith("_")}
+    # Una FRACCIÓN se transfiere por gramo de su total, así que el método de
+    # cocción se cancela y una fila de la otra familia sirve igual. Es la misma
+    # regla del aminograma de `UNIDADES.md`, leída para la cocción.
+    _FRACC100 = {"arginina", "histidina", "isoleucina", "leucina", "lisina", "metionina",
+                 "cistina", "fenilalanina", "tirosina", "treonina", "triptofano", "valina",
+                 "linoleico", "linolenico", "epa", "dha", "araquidonico"}
     _cocinadas100 = []
     for _ficha100 in _cat100:
         _nom100 = _ficha100["nombre"]
@@ -17276,6 +17519,45 @@ else:
             _p100 = _fid100.preparacion_incompatible(_nom100, _ficha100, _d100.get("fila") or "")
             if not _p100:
                 continue
+            if _fid100.coccion_de_la_ficha(_ficha100):
+                _abs100 = sorted(k for k, v in (_ficha100.get("composicion_fuente") or {}).items()
+                                 if str(v).split(":")[0] == _fu100 and k not in _FRACC100)
+                if not _abs100:
+                    continue          # solo fracciones: el método se cancela
+                _dc100 = _otra_coc100.get(_nom100)
+                if (_dc100 and _dc100.get("fuente") == _fu100
+                        and str(_dc100.get("id")) == str(_d100.get("id"))):
+                    if sorted(_dc100.get("celdas") or []) != _abs100:
+                        fallos.append(f"BLOQUE104: «{_nom100}» declara recibir de {_fu100} celdas "
+                                      f"de otra cocción, pero la lista declarada no es la que hay "
+                                      f"hoy en la ficha ({_dc100.get('celdas')} contra {_abs100}). "
+                                      f"Una declaración que no se rehace no declara nada")
+                    if not (_dc100.get("por_que") or "").strip():
+                        fallos.append(f"BLOQUE104: «{_nom100}» declara celdas de otra cocción SIN "
+                                      f"motivo. Sin él es un permiso, no una declaración")
+                    # ⚠️ Y LA DECLARACIÓN SE REHACE, no se lee. El rebase por
+                    # materia seca es una CUENTA con las dos aguas publicadas:
+                    # si se escribe y no se comprueba, vuelve a ser una frase, y
+                    # una frase no se ejecuta.
+                    _aguas100 = _dc100.get("agua_de_la_fila_donante_g_100g")
+                    _agn100 = _ficha100.get("humedad_g_100g")
+                    if _aguas100 is None or _agn100 is None:
+                        fallos.append(f"BLOQUE104: «{_nom100}» declara celdas de otra cocción y no "
+                                      f"dice el agua de las dos filas, así que el rebase por "
+                                      f"materia seca no se puede rehacer")
+                        continue
+                    _fac100 = (100.0 - float(_agn100)) / (100.0 - float(_aguas100))
+                    for _k100 in _abs100:
+                        _t100 = (_ficha100.get("composicion_fuente") or {}).get(_k100) or ""
+                        if "rebasado por materia seca" not in _t100:
+                            fallos.append(f"BLOQUE104: {_nom100} · {_k100} viene de una fila de "
+                                          f"otra cocción y NO está rebasada por materia seca")
+                            continue
+                        if f"{100.0 - float(_agn100):g}/{100.0 - float(_aguas100):g}" not in _t100:
+                            fallos.append(f"BLOQUE104: {_nom100} · {_k100} dice rebasarse con un "
+                                          f"factor que no es el de las dos aguas declaradas "
+                                          f"(×{_fac100:.4f})")
+                    continue
             _ok100 = _aceptadas100.get(_nom100)
             if (_ok100 and _ok100.get("fuente") == _fu100
                     and str(_ok100.get("id")) == str(_d100.get("id"))
@@ -17302,8 +17584,14 @@ else:
     # fila frita o ahumada describe otro alimento por 100 g —, y eso se
     # comprueba aquí en vez de suponerse, porque si la equivalencia se abriera
     # el bloque de arriba saldría verde sin vigilar nada.
+    # ⚠️ Y LA FICHA DE PRUEBA NO PUEDE SER LA PRIMERA QUE DIGA «cocido». La
+    # primera del catálogo es la BERENJENA, que se DA cocida y cuya composición
+    # sale de la fila CRUDA de la fuente (por eso se pesa cruda, BLOQUE 123), o
+    # sea que no tiene cocción de la que hablar y el guardia rechazaba con razón
+    # todo lo que se le pasara. Hace falta una de las que de verdad salen de una
+    # fila cocinada Y de la familia HÚMEDA, que es la de las filas de prueba.
     _prueba100 = next((f for f in _cat100
-                       if str(f.get("preparacion") or "").lower().startswith("cocid")), None)
+                       if "humedo" in _fid100.familias_de(_fid100.coccion_de_la_ficha(f))), None)
     if _prueba100 is None:
         fallos.append("BLOQUE104: no hay ninguna ficha COCIDA en el catálogo, así que la "
                       "equivalencia de preparaciones no se puede comprobar. Si se han quitado "
@@ -17312,7 +17600,10 @@ else:
         _nm100 = _prueba100["nombre"]
         # Lo que TIENE que aceptar (la misma cocción, en los tres idiomas)…
         for _buena100 in ("Riz blanc, cuit, non salé", "Rice, white, cooked",
-                          "Arroz blanco, hervido"):
+                          "Arroz blanco, hervido",
+                          # Las tres formas de la familia HÚMEDA, que es la suya.
+                          "Rice, white, cooked, steamed", "Riz blanc, cuit a la vapeur",
+                          "Rice, white, cooked, braised", "Veau, jarret, braise ou bouilli"):
             if _fid100.preparacion_incompatible(_nm100, _prueba100, _buena100):
                 fallos.append(f"BLOQUE104: «{_nm100}» es una ficha COCIDA y el guardia rechaza "
                               f"«{_buena100}», que es su misma cocción dicha en otro idioma. "
@@ -17321,8 +17612,19 @@ else:
         for _mala100, _esperada100 in (("Rice, white, fried", "frito"),
                                        ("Riz blanc, fume", "ahumado"),
                                        ("Rice, white, roasted", "asado"),
-                                       ("Rice, white, steamed", "al vapor"),
-                                       ("Riz blanc, cuit a la vapeur", "al vapor en francés"),
+                                       # ⚠️ EL VAPOR SALIÓ DE ESTA LISTA EL 18 DE SEPTIEMBRE, y
+                                       # es un cambio de criterio con su motivo: lo que separa
+                                       # dos filas cocinadas es el AGUA, y hervir, guisar y
+                                       # cocer al vapor dejan el alimento húmedo. Estaba aquí
+                                       # cuando las únicas fichas cocidas eran los cinco
+                                       # hidratos; con las 72 de comida cocinada, tratar los
+                                       # cinco métodos como cinco alimentos distintos acusaba a
+                                       # 37 emparejamientos correctos sin que exista ninguna
+                                       # fila mejor. La familia SECA sigue fuera, y eso es lo
+                                       # que de verdad protege.
+                                       ("Rice, white, dry heat", "a fuego seco"),
+                                       ("Riz blanc, roti/cuit au four", "al horno en francés"),
+                                       ("Arroz blanco, a la plancha", "a la plancha"),
                                        ("Arroz blanco, congelado", "congelado")):
             if not _fid100.preparacion_incompatible(_nm100, _prueba100, _mala100):
                 fallos.append(f"BLOQUE104: «{_nm100}» es COCIDA y el guardia ACEPTA "
@@ -17341,6 +17643,45 @@ else:
 
     print(f"  emparejadas con una fila cocinada: {len(_cocinadas100)} "
           f"(+{len(_aceptadas100)} aceptadas con su motivo escrito)")
+
+    # --- 5-bis. lo que se le manda hacer al dueño ES lo que dice la fila ---
+    #
+    # ⚠️ CASO REAL, 18 de septiembre de 2026, y lo encontró el guardia de arriba
+    # al hacerse consciente del método. TRES fichas le decían al dueño «al
+    # vapor» y sus gramos estaban calculados con las cifras de otra cocción: el
+    # bacalao y el lenguado salen de la fila AL HORNO de BEDCA y el salmón de la
+    # de LA PLANCHA. Hornear y hacer a la plancha secan el alimento y cocer al
+    # vapor no, así que quien siguiera la instrucción se llevaba un plato más
+    # aguado del que el menú tiene en cuenta — y el perro, menos nutriente por
+    # gramo del que dice la ficha.
+    #
+    # No lo veía nadie porque las dos mitades están en sitios distintos: la fila
+    # vive en `humedad_fuente` y la instrucción en `aviso_al_comprar`, y las dos
+    # eran verdad por separado. Se comprueba por FAMILIA y no por método porque
+    # eso es lo que mueve la cifra: decirle «hervido o al vapor» a una ficha que
+    # sale de una fila hervida no es un fallo.
+    _dicen_otra100 = []
+    for _ficha100 in _cat100:
+        _base100 = _fid100.coccion_de_la_ficha(_ficha100)
+        if not _base100:
+            continue
+        _dice100 = _fid100.metodo_de_coccion(_ficha100.get("aviso_al_comprar"))
+        if not _dice100:
+            _dicen_otra100.append(f"{_ficha100['nombre']}: su aviso no dice CÓMO cocinarlo")
+            continue
+        if not (_fid100.familias_de(_dice100) & _fid100.familias_de(_base100)):
+            _dicen_otra100.append(
+                f"{_ficha100['nombre']}: el aviso manda {sorted(_dice100)} y sus cifras salen de "
+                f"una fila {sorted(_base100)} ({_ficha100.get('humedad_fuente')})")
+    if _dicen_otra100:
+        fallos.append(f"BLOQUE104: {len(_dicen_otra100)} fichas cocidas le mandan al dueño una "
+                      f"cocción de otra familia que la de la fila de la que salen sus cifras. "
+                      f"Secar y no secar no dan el mismo alimento por 100 g, así que el plato que "
+                      f"sale de esa instrucción no es el que el menú ha calculado: "
+                      + " · ".join(_dicen_otra100[:4]))
+    print(f"  el aviso al dueño dice la cocción de su fila: "
+          f"{len([f for f in _cat100 if _fid100.coccion_de_la_ficha(f)])} fichas cocidas, "
+          f"{len(_dicen_otra100)} que no")
 
     # --- 6. una fracción no puede superar su total ------------------------
     # Un ácido graso es una FRACCIÓN de la grasa y un aminoácido una fracción de
@@ -21725,11 +22066,42 @@ import statistics as _st125
 from constructor import valor_nutriente as _vn125
 from main import PeticionMenu as _Peticion125
 _CAT125 = {a["nombre"]: a for a in json.load(open("alimentos_v3_final.json"))}
-_MEN125 = json.load(open("catalogo_menus.json"))["CATALOGO"]
-_SANOS125 = [v["gramos"] for v in _MEN125.values() if v.get("etapa") == "Adulto"]
+# ⚠️ LA REFERENCIA NO PUEDEN SER LOS MENÚS DE LA VISTA PREVIA, y esto costó un
+# rojo que acusaba al motor teniendo razón el motor (18 de septiembre de 2026).
+#
+# Este bloque nació el 17 de septiembre comparando el tope de cada patología
+# contra «lo que lleva una ración sana», y para eso usaba los menús
+# precalculados de adulto. Funcionó mientras su sodio rondaba los 537
+# mg/1000 kcal. Al regenerar el catálogo esa mediana bajó a 479 y el bloque
+# acusó a `cardiopatia_d` de prometer una bajada de sal que no hace --con su
+# tope en 480, o sea justo por encima.
+#
+# MEDIDO contra el motor, cuatro perros adultos por celda:
+#
+#     perro sano ......... 571-634, mediana 578
+#     cardiopatia_d ...... 449-480, mediana 468     -> el tope SÍ muerde
+#     cardiopatia_c ...... 558-622, mediana 585     -> no muerde (ya reescrito)
+#
+# O sea que el tope de la D baja la sal un 19 % de verdad. Lo que no vale es la
+# referencia: los menús de la vista previa se construyen con un catálogo
+# RECORTADO --206 alimentos de 233, fuera lo premium y lo de tienda
+# especializada-- así que no son la ración que recibe un perro de verdad.
+#
+# Así que la referencia se RESUELVE, tres menús de adulto sano. Cuesta unos
+# segundos y es la única forma de que la comparación sea entre lo mismo. La
+# regla del 9 de septiembre sigue valiendo y por eso son TRES y se usa la
+# mediana: de un menú suelto no se puede afirmar nada, de la mediana de tres sí.
+_SANOS125 = []
+for _der125, _peso125 in ((950, 20), (1600, 35), (700, 12)):
+    _r125 = _c.post("/menu/v2", json={"nombres_alimentos": [], "modo": "automatico",
+                                      "der_objetivo": _der125, "etapa_requisitos": "Adulto",
+                                      "peso_perro_kg": _peso125}).json() or {}
+    if _r125.get("menu"):
+        _SANOS125.append(_r125["menu"])
 if len(_SANOS125) < 3:
-    fallos.append(f"BLOQUE125: solo {len(_SANOS125)} menús de adulto sano en el catálogo. Con "
-                  f"tan pocos la referencia no vale y este bloque no vigila nada")
+    fallos.append(f"BLOQUE125: solo {len(_SANOS125)} menús de adulto sano de los 3 pedidos. Sin "
+                  f"referencia este bloque no vigila nada -- y no se cae a los precalculados a "
+                  f"propósito: salen de un catálogo recortado y dan un 17 % menos de sodio")
 
 def _por1000_125(gramos, clave):
     kcal = sum(g * float(_CAT125[n].get("energia") or 0) / 100.0
@@ -22304,6 +22676,825 @@ print(f"  cereales en el catálogo: {len(_CEREALES_127)} · patologías que topa
 print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
+# ---------------------------------------------------------------------------
+# BLOQUE 128 — CRUDO O COCINADO, Y EL HUESO COCIDO NO EXISTE
+# ============================================================
+#
+# ⚠️ POR QUÉ EXISTE (17 de septiembre de 2026). Elena: «serían dos cosas
+# distintas, el usuario tiene que poder elegir, o el veterinario, si quiere
+# hacer menú barf o cocinado, y en función [de eso] que le proponga los
+# ingredientes correctos para cada caso».
+#
+# ⚠️ LA ASIMETRÍA QUE ORDENA TODO ESTE BLOQUE. Equivocarse en «creo que es
+# cocinado y era crudo» quita unos topes y el perro come pescado con tiaminasa:
+# malo, y a largo plazo. Equivocarse al revés mete HUESO CARNOSO en un plato que
+# se va a cocinar, y el hueso cocido ASTILLA — daño físico inmediato. SACN5
+# cap.50: 46 de 60 cuerpos extraños esofágicos retirados a perros eran hueso.
+#
+# Por eso el hueso en cocinado NO se evita: NO EXISTE, como una alergia (regla
+# 4) y no como una proporción que cede (regla 3). Y por eso la comprobación se
+# repite DESPUÉS del `forzar`: lo que el usuario elige a mano manda sobre
+# `ACCESIBLES` —que es comodidad nuestra— y nunca sobre esto.
+#
+# ⚠️ Y LO QUE **NO** CAMBIA, que es la mitad que hay que vigilar igual: los 43
+# requisitos, el ratio Ca:P, los cinco topes crónicos, los de patología y los
+# siete máximos legales son los mismos. FEDIAF no habla de BARF ni de cocinado:
+# habla de una dieta completa. Un menú cocinado sale VERDE o no sale.
+print("\n=== BLOQUE 128: crudo o cocinado ===")
+
+import accesibles as _acc128
+_al128, _ = _api.cargar_v2()
+_ANIMALES_128 = ("Carne muscular", "Pescados y mariscos", "Vísceras", "Hígado")
+_HUESO_128 = [n for n, a in _al128.items() if a.get("categoria") == "Hueso carnoso"]
+_COCINADAS_128 = [n for n, a in _al128.items()
+                  if a.get("categoria") in _ANIMALES_128
+                  and str(a.get("preparacion") or "crudo").lower() != "crudo"]
+if len(_COCINADAS_128) < 5:
+    fallos.append(f"BLOQUE128: solo hay {len(_COCINADAS_128)} fichas ANIMALES cocinadas en el "
+                  f"catálogo. Con menos de cinco no se puede montar una ración cocinada —carne, "
+                  f"pescado, hígado y víscera— y este bloque dejaría de vigilar nada sin decirlo")
+
+# ── 1 · la derivación: el hueso NUNCA vale cocinado ─────────────────────────
+for _n128 in _HUESO_128:
+    if "cocinado" in _acc128.modos_de(_al128[_n128]):
+        fallos.append(f"BLOQUE128: «{_n128}» es hueso carnoso y `modos_de` dice que vale COCINADO. "
+                      f"El hueso cocido astilla: esto es lo único de todo el modo que no admite "
+                      f"matices")
+for _n128 in _COCINADAS_128:
+    if "crudo" in _acc128.modos_de(_al128[_n128]):
+        fallos.append(f"BLOQUE128: «{_n128}» es una ficha COCIDA y `modos_de` la da por válida en "
+                      f"crudo. Sus cifras son de alimento cocido: en un menú crudo declararían un "
+                      f"agua y una energía que ese plato no tiene")
+
+def _menu128(modo=None, forzar=None, peso=22.0, der=1000.0, etapa="Adulto", pat=()):
+    cuerpo = {"nombres_alimentos": list(forzar or []), "der_objetivo": der,
+              "etapa_requisitos": etapa, "peso_perro_kg": peso, "patologias": list(pat)}
+    if modo:
+        cuerpo["modo_de_preparacion"] = modo
+    if forzar:
+        cuerpo["modo"] = "personalizar"
+        cuerpo["forzar_presencia"] = list(forzar)
+    r = _c.post("/menu/v2", json=cuerpo)
+    return r.json() if r.status_code == 200 else {"factible": False, "http": r.status_code}
+
+def _mal128(d, modo="cocinado"):
+    """Lo que NUNCA puede estar en un menú de este modo salido del AUTOMÁTICO.
+
+    ⚠️ LA SEGUNDA LISTA ERA MEDIA LISTA hasta el 18 de septiembre de 2026, y lo
+    vio Elena leyendo lo que yo le había contado: «menú cocinado sin nada crudo
+    animal, has dicho. No del todo. O sea, menú cocinado sin nada crudo animal y
+    **sin nada crudo vegetal**, ¿no?».
+
+    Tenía razón: se miraban las cuatro categorías ANIMALES y nada más, así que
+    un menú cocinado podía traer «Zanahoria» cruda teniendo «Zanahoria cocida»
+    al lado —dos composiciones del mismo alimento en el mismo plato— y este
+    bloque salía verde. Ahora se pregunta por `vale_en`, que es la MISMA función
+    que usa el solver: si el motor no debería haberlo puesto, aquí se ve, sea de
+    la categoría que sea y sin listas que mantener.
+
+    Lo que NO es un intruso: lo que existe en una sola forma. La lechuga, el
+    pepino, la fruta, el boniato y el arroz valen en los dos modos, y eso es
+    correcto — nadie cuece una lechuga.
+    """
+    g = d.get("menu") or {}
+    hueso = [n for n in g if n in _HUESO_128]
+    fuera = [n for n in g if n not in _HUESO_128 and not _acc128.vale_en(_al128.get(n), modo)]
+    return hueso, fuera
+
+# ── 2 · sale menú, y sale VERDE ────────────────────────────────────────────
+_salen128 = 0
+for _etq128, _peso128, _der128, _etapa128 in (("adulto 22 kg", 22.0, 1000.0, "Adulto"),
+                                              ("toy 3 kg", 3.0, 260.0, "Adulto"),
+                                              ("cachorro 10 kg", 10.0, 1100.0, "CachorroCrecimiento"),
+                                              ("sénior 40 kg", 40.0, 1800.0, "Senior")):
+    _d128 = _menu128("cocinado", peso=_peso128, der=_der128, etapa=_etapa128)
+    if not _d128.get("factible"):
+        continue
+    _salen128 += 1
+    _h128, _cr128 = _mal128(_d128)
+    if _h128:
+        fallos.append(f"BLOQUE128: el menú COCINADO de «{_etq128}» lleva hueso: {_h128}. El hueso "
+                      f"cocido astilla — esto es daño físico inmediato, no una carencia")
+    if _cr128:
+        fallos.append(f"BLOQUE128: el menú COCINADO de «{_etq128}» lleva comida que en cocinado no "
+                      f"vale: {_cr128}. O son cifras de alimento crudo en un plato cocinado, o es "
+                      f"la versión cruda de algo que tiene su ficha cocida en el catálogo — y "
+                      f"entonces el mismo alimento sale dos veces con dos composiciones")
+    _sem128 = (_d128.get("verificado") or {}).get("semaforo")
+    if _sem128 and not _api._es_verde(_sem128):
+        fallos.append(f"BLOQUE128: el menú COCINADO de «{_etq128}» sale «{_sem128}». Los 43 "
+                      f"requisitos NO cambian con la preparación: un menú cocinado sale verde o no "
+                      f"sale")
+if _salen128 == 0:
+    fallos.append("BLOQUE128: NINGUNO de los cuatro perros saca menú cocinado. Si la funcionalidad "
+                  "no da un solo menú, ofrecerla es peor que no tenerla — es la misma regla del "
+                  "BLOQUE 61 con las patologías formulables")
+
+# ── 3 · ni eligiéndolo A MANO entra el hueso ───────────────────────────────
+if _HUESO_128:
+    _f128 = _menu128("cocinado", forzar=[_HUESO_128[0]])
+    if _f128.get("factible") and _HUESO_128[0] in (_f128.get("menu") or {}):
+        fallos.append(f"BLOQUE128: se eligió «{_HUESO_128[0]}» A MANO en un menú cocinado y ha "
+                      f"entrado. Lo que se elige a mano manda sobre `ACCESIBLES`, que es comodidad "
+                      f"nuestra, y NUNCA sobre la seguridad de la preparación")
+
+# ── 4 · la simetría: en crudo no entra una ficha cocida de carne ────────────
+_d128c = _menu128("crudo")
+if _d128c.get("factible"):
+    _h128c, _intrusas = _mal128(_d128c, "crudo")
+    if _intrusas:
+        fallos.append(f"BLOQUE128: el menú CRUDO lleva fichas que en crudo no valen: {_intrusas}. "
+                      f"La simetría es la misma: si un alimento existe en las dos formas, cada "
+                      f"ficha va a su modo")
+
+# ── 5 · el modo viaja en la respuesta y SE DICE ────────────────────────────
+_d128m = _menu128("cocinado")
+if _d128m.get("factible"):
+    if _d128m.get("modo_de_preparacion") != "cocinado":
+        fallos.append("BLOQUE128: el menú no dice en qué modo salió. Un menú generado en un modo y "
+                      "EDITADO en otro es el fallo del 24 de agosto con las patologías, y aquí "
+                      "metería hueso crudo en un plato que se va a cocer")
+    _txt128 = " ".join(str(x) for x in ((_d128m.get("avisos_extra") or [])
+                                        + (_d128m.get("problemas_seguridad") or []))).lower()
+    if not any(x in _txt128 for x in ("cocinad", "cocid", "hervid")):
+        fallos.append("BLOQUE128: el menú cocinado no le dice al dueño que hay que cocinarlo")
+    if "hueso" not in _txt128:
+        fallos.append("BLOQUE128: el menú cocinado NO dice que no lleva hueso a propósito. Quien "
+                      "mire el plato va a ver que falta y se lo va a añadir — que es justo lo "
+                      "peligroso. Es la misma regla que el suelo de hueso suelto del 16 de "
+                      "septiembre: se mueve la forma, pero nunca en silencio")
+_d128r = _menu128("crudo")
+if _d128r.get("factible") and _d128r.get("modo_de_preparacion") != "crudo":
+    fallos.append("BLOQUE128: un menú sin modo pedido tiene que decir «crudo», que es lo que este "
+                  "motor ha hecho siempre")
+
+# ── 6 · y el vocabulario lo sirve, para que la app no se lo invente ────────
+_voc128 = _c.get("/vocabulario").json()
+if "modo_de_preparacion" not in _voc128:
+    fallos.append("BLOQUE128: `GET /vocabulario` no sirve los modos, así que la app tendría que "
+                  "escribirlos — regla 6")
+else:
+    _cl128 = [m.get("clave") for m in (_voc128["modo_de_preparacion"].get("modos") or [])]
+    if sorted(_cl128) != ["cocinado", "crudo"]:
+        fallos.append(f"BLOQUE128: el vocabulario sirve los modos {_cl128} y son dos: crudo y "
+                      f"cocinado")
+
+# ── 7 · Y EL TEXTO DE «CÓMO DARLO», QUE ES LA PUERTA POR LA QUE SE LEE ─────
+# ⚠️ AGUJERO DE VERDAD, encontrado el 17 de septiembre mirando la pantalla y no
+# el repo: con el modo cocinado puesto, «Cómo darlo» servía el texto de CRUDO.
+# Un muslo de pollo hervido con «Cruda. En trozos, no picada» encima, un riñón
+# cocido con «Crudas», y un salmón recién cocido con «Crudo SOLO si se ha
+# congelado antes». O sea el texto diciendo lo CONTRARIO del plato, y justo en
+# la pantalla que se abre para saber cómo se prepara.
+#
+# Es la lección de la tercera puerta: un texto se vigila por la puerta por la
+# que SALE. El `aviso_al_comprar` de cada ficha ya decía «se compra crudo y se
+# da cocido» — y al lado, más grande, la instrucción de la categoría decía
+# «Cruda». Van tres.
+import re as _re128
+_ALIM128 = _c.get("/alimentos").json()
+_COC_CAT_128 = _ALIM128.get("como_se_da_por_categoria_cocinado") or {}
+_CRU_CAT_128 = _ALIM128.get("como_se_da_por_categoria") or {}
+for _cat128 in _ANIMALES_128:
+    _t128 = _COC_CAT_128.get(_cat128)
+    if not _t128:
+        fallos.append(f"BLOQUE128: `GET /alimentos` no sirve el «cómo darlo» COCINADO de "
+                      f"«{_cat128}», así que la app enseñaría el de crudo sobre un plato "
+                      f"hervido. Las cuatro categorías animales lo necesitan; las demás no, "
+                      f"porque en ellas el modo no cambia nada")
+        continue
+    # La mitad que de verdad protege: que no diga «crudo». Se mira la palabra
+    # suelta, no la subcadena: «se compra CRUDO y se da cocido» es correcto y
+    # dice «crudo» — lo que no puede es MANDAR darlo crudo.
+    _malas128 = [w for w in ("cruda", "crudas", "crudos")
+                 if _re128.search(r"\b%s\b" % w, _t128.lower())]
+    if _malas128:
+        fallos.append(f"BLOQUE128: el «cómo darlo» cocinado de «{_cat128}» dice "
+                      f"{_malas128} — es el texto de crudo, o uno escrito copiándolo")
+    if _t128 == _CRU_CAT_128.get(_cat128):
+        fallos.append(f"BLOQUE128: el «cómo darlo» cocinado de «{_cat128}» es LITERALMENTE el "
+                      f"de crudo. Declararlo sin cambiarlo deja el agujero abierto y encima "
+                      f"parece que alguien lo miró")
+
+# Y las fichas cocidas tienen que tener su propia instrucción: sin ella la app
+# solo enseña la de la categoría, y quien tiene que deshuesar un muslo DESPUÉS
+# de cocerlo no lo lee en ningún sitio.
+_PORALIM_128 = {}
+for _p128 in _ALIM128.get("pantallas") or []:
+    for _lista128 in (_p128.get("grupos") or {}).values():
+        for _a128 in _lista128:
+            if _a128.get("como_se_da"):
+                _PORALIM_128[_a128["nombre"]] = _a128["como_se_da"]
+_sin128 = [n for n in _COCINADAS_128 if not (_PORALIM_128.get(n) or {}).get("como")]
+if _sin128:
+    fallos.append(f"BLOQUE128: {len(_sin128)} fichas cocidas no dicen cómo se dan: "
+                  f"{sorted(_sin128)[:4]}. Son alimentos que hay que COCINAR, y la instrucción "
+                  f"de la categoría no puede decir que un muslo se deshuesa después de hervirlo")
+
+# ── 8 · LOS TOPES QUE EXISTEN PORQUE LA COMIDA VA CRUDA ────────────────────
+# ⚠️ ESTO ERA UN CABLE TRAMPA HASTA EL 18 DE SEPTIEMBRE DE 2026, y ese día se
+# disparó — que es exactamente para lo que estaba. Entraron «Atún claro cocido»
+# y «Caballa cocida», o sea las dos primeras fichas COCIDAS que están en los
+# conjuntos de tiaminasa y de mercurio, y el cable obligaba a decidir aquí en
+# vez de dar nada por hecho. Decidido, medido y escrito:
+#
+# ⚠️ LOS DOS TOPES NO SON LA MISMA CLASE DE COSA, y confundirlos es la trampa:
+#
+#   · El MERCURIO es un METAL PESADO, está en el músculo del pez y cocinar no le
+#     hace absolutamente nada. Su tope SIGUE APLICÁNDOSE igual que en crudo, y
+#     aquí se comprueba que es verdad en vez de suponerlo.
+#   · La TIAMINASA es una ENZIMA, y la fuente lo dice con todas las letras: «Both
+#     thiaminase I and thiaminase II are inactivated by cooking» (NRC 2006, y es
+#     la misma fuente de la que sale el tope). Sobre una ficha cocida el tope
+#     SOBRA — pero sobrar es el lado seguro, y quitarlo sería aflojar un tope
+#     crónico (regla 2). Se queda, y lo que cuesta está MEDIDO: cero. En los
+#     cuatro perros cocinados el solver no mete ni atún ni caballa NI CON EL TOPE
+#     NI SIN ÉL; lo que elige es lenguado y salmón. O sea que no se está pagando
+#     nada por dejarlo puesto.
+#
+# Lo que se vigila ahora son las dos direcciones, y ninguna resuelve un menú:
+# que los dos topes SIGAN alcanzando a las fichas cocidas —aflojarlos en
+# silencio es lo que el cable existía para impedir— y que el filtro final
+# rechace de verdad un menú cocinado que se pase de mercurio.
+import seguridad as _seg128
+_COC_TODAS_128 = [n for n, a in _al128.items()
+                  if str(a.get("preparacion") or "crudo").lower() != "crudo"]
+_merc128 = sorted(n for n in _COC_TODAS_128 if _seg128._es(n, _seg128.MERCURIO_ALTO))
+_tia128 = sorted(n for n in _COC_TODAS_128 if _seg128._es(n, _seg128.TIAMINASA))
+if not _merc128:
+    fallos.append("BLOQUE128: ninguna ficha COCIDA está en `MERCURIO_ALTO`. O ha salido del "
+                  "catálogo el atún cocido —y entonces esta comprobación ya no vigila nada y hay "
+                  "que decirlo— o alguien ha aflojado el conjunto por la preparación, que es el "
+                  "error que este apartado existe para impedir: el mercurio es un METAL y cocinar "
+                  "no lo quita")
+if not _tia128:
+    fallos.append("BLOQUE128: ninguna ficha COCIDA está en `TIAMINASA`. Que el tope SOBRE sobre "
+                  "comida cocida es verdad —NRC 2006: «Both thiaminase I and thiaminase II are "
+                  "inactivated by cooking»— pero quitarlo es aflojar un tope crónico (regla 2) y "
+                  "lo que cuesta dejarlo puesto está medido en CERO. Si se ha quitado, tiene que "
+                  "estar escrito aquí con su medida")
+
+# Y que el filtro final lo aplique de verdad: un menú cocinado construido a mano
+# POR ENCIMA del tope de mercurio no se entrega. Es determinista —no resuelve
+# ningún menú— y falla si alguien desconecta la fila.
+_atun128 = next((n for n in _merc128 if _seg128._es(n, _seg128.MERCURIO_ALTO)), None)
+if _atun128:
+    _kcal_atun = (_al128[_atun128].get("energia") or 0) / 100.0
+    if _kcal_atun > 0:
+        _der128 = 1000.0
+        # el 25 % de las kcal del día en atún, contra un tope del 10 %
+        _g128 = round(0.25 * _der128 / _kcal_atun, 1)
+        _problemas128 = _seg128.revisar_seguridad({_atun128: _g128}, _al128, _der128, "Adulto")
+        if not any("mercurio" in str(x).lower() for x in _problemas128):
+            fallos.append(f"BLOQUE128: {_g128} g de «{_atun128}» son el 25 % de las kcal del día, "
+                          f"contra un tope del {_seg128.TOPE_MERCURIO_KCAL * 100:.0f} %, y "
+                          f"`revisar_seguridad` no dice nada. El mercurio no se va con el calor")
+        if not _api._menu_precalculado_es_seguro({_atun128: _g128}, _al128, _der128):
+            pass                                     # bien: el filtro final lo tira
+        else:
+            fallos.append(f"BLOQUE128: el filtro final ACEPTA un menú cocinado con {_g128} g de "
+                          f"«{_atun128}», que es el 25 % de las kcal en un pescado con mercurio. "
+                          f"Un tope crónico es restricción dura (regla 2), no un aviso")
+
+# ── 10 · EL TEXTO DE «CÓMO DARLO» NO PUEDE OFRECER LAS DOS FORMAS ──────────
+# ⚠️ POR QUÉ EXISTE (18 de septiembre de 2026). Lo vio Elena en cuanto quedaron
+# separadas las fichas crudas de las cocidas: «en los textos de las verduras
+# pone cruda, troceada o cocida. Entonces ya no debería poner cocida, en la
+# BARF. Y para la cocinada no debería poner muy troceada, cruda; debería poner
+# solo cocida».
+#
+# Tiene razón y no es de estilo: mientras la ficha valía en los dos modos, «al
+# vapor o muy troceada» era una alternativa honesta. Ahora la MISMA verdura son
+# DOS fichas con DOS composiciones, y un texto con alternativa le dice a quien
+# tiene la báscula delante que haga la otra — o sea, que pese una cosa y
+# cocine otra. Es la familia del Boniato del 17 de septiembre: lo que estaba mal
+# nunca fue la cifra, era no decir la base.
+#
+# Dos reglas, una por lado:
+#   · Ficha SOLO CRUDA que dice «cocido» -> solo vale si además declara
+#     `se_pesa`, que es lo que dice «se da cocida y se pesa CRUDA». Sin eso, el
+#     texto manda cocer un alimento cuya composición es cruda y no lo dice.
+#   · Ficha SOLO COCIDA que dice «crudo» -> solo vale si lo NIEGA. «Cruda no se
+#     le da» es correcto; «cocida o muy troceada cruda» es la alternativa que
+#     sobra. ⚠️ La negación hay que mirarla, y no es puntillismo: el texto del
+#     «Cerdo cocido» dice «NO se puede dar crudo de ninguna manera», que es lo
+#     más importante de esa ficha — es la familia del «purina» dentro de
+#     «purinas» que este repo lleva cazando desde septiembre.
+import re as _re10
+_COMO_10 = json.load(open("como_se_da_cada_alimento.json", encoding="utf-8"))["por_alimento"]
+_NIEGA_10 = ("nunca", "no se le da", "no se le dan", "no se puede", " ni ", "jamás")
+
+def _clausulas_10(txt):
+    return [c for c in _re10.split(r"[.·—|]", txt) if c.strip()]
+
+# ⚠️ Y LA FORMA ES PARTE DEL CONTRATO, encontrado al escribir esto: las CINCO
+# fichas de hidratos guardaban su texto como una CADENA suelta en vez de
+# `{"como": ...}`, y `main.py` lo sirve tal cual. La app hace `...a.como_se_da`,
+# y desplegar una cadena da `{0:"H", 1:"i", ...}`: el texto no se veía y no
+# saltaba nada. Es la regla 6 por el lado que no se ve.
+_forma_mal_10 = sorted(k for k, v in _COMO_10.items() if not isinstance(v, dict))
+if _forma_mal_10:
+    fallos.append(f"BLOQUE128: {len(_forma_mal_10)} entradas de «cómo se da» no son un objeto con "
+                  f"`como`: {_forma_mal_10[:5]}. `main.py` las sirve tal cual y la app las despliega "
+                  f"con `...a.como_se_da`, así que una cadena se convierte en un objeto de letras y "
+                  f"el texto desaparece sin dar ningún error")
+
+_mal_crudo_10, _mal_cocido_10 = [], []
+for _n10, _a10 in _al128.items():
+    _e10 = _COMO_10.get(_n10) or {}
+    _txt10 = str(_e10.get("como") or "")
+    if not _txt10:
+        continue
+    _modos10 = _acc128.modos_de(_a10)
+    _bajo10 = _txt10.lower()
+    if _modos10 == ("crudo",) and _re10.search(r"cocid[oa]s?\b", _bajo10):
+        # vale si la ficha declara que se pesa en crudo (el caso del Boniato)
+        if not _a10.get("se_pesa"):
+            _mal_crudo_10.append(_n10)
+    if _modos10 == ("cocinado",):
+        for _c10 in _clausulas_10(_bajo10):
+            if _re10.search(r"\bcrud[oa]s?\b", _c10) and not any(x in _c10 for x in _NIEGA_10):
+                _mal_cocido_10.append((_n10, _c10.strip()[:60]))
+                break
+if _mal_crudo_10:
+    fallos.append(f"BLOQUE128: {len(_mal_crudo_10)} fichas que SOLO valen en crudo tienen un «cómo "
+                  f"darlo» que manda cocerlas y no declaran `se_pesa`: {sorted(_mal_crudo_10)[:5]}. "
+                  f"O el texto dice la forma cruda, o la ficha declara que se pesa CRUDA aunque se "
+                  f"dé cocida — lo que no puede es dejar a quien tiene la báscula sin saber cuál "
+                  f"de las dos cosas le están pidiendo")
+if _mal_cocido_10:
+    fallos.append(f"BLOQUE128: {len(_mal_cocido_10)} fichas COCIDAS ofrecen la forma cruda como "
+                  f"alternativa: {_mal_cocido_10[:3]}. Su composición es de alimento cocido, así "
+                  f"que darlo crudo con esos gramos es otro plato. Negarlo sí vale («cruda no se "
+                  f"le da»); ofrecerlo, no")
+
+print(f"  textos sin alternativa: {len(_mal_crudo_10)} crudas que mandan cocer sin declararlo · "
+      f"{len(_mal_cocido_10)} cocidas que ofrecen crudo")
+
+print(f"  topes de crudo en cocinado: mercurio sigue alcanzando a {_merc128} · "
+      f"tiaminasa a {_tia128} (sobra, y dejarlo cuesta 0 menús: medido)")
+# ── 9 · LO QUE SE ELIGE A MANO NO LO TIRA EL MODO (regla 5) ────────────────
+# ⚠️ POR QUÉ EXISTE (18 de septiembre de 2026). Lo pidió Elena con dos casos de
+# verdad: «a lo mejor alguien le da BARF a su perro pero le apetece meterle
+# huevo porque le encantan las propiedades del huevo, aunque vaya cocido», y
+# «a lo mejor alguien que hace comida cocinada le quiere meter fruta o verdura
+# sin cocinar, muy triturada».
+#
+# El modo es una restricción del AUTOMÁTICO, no una exclusión: decide qué
+# PROPONE el motor cuando elige él, y nunca qué se le puede pedir. Es el mismo
+# criterio que ya llevan los hidratos desde el 17 de septiembre, y la regla 5
+# de siempre — lo que se elige a mano se respeta.
+#
+# La primera versión del filtro de modo corría al final del bucle de candidatos
+# y se llevaba por delante la elección SIN DECIR NADA: el alimento pedido
+# simplemente no salía en el menú, que es justo lo que Elena describió el 15 de
+# septiembre con los suplementos («borraba uno y metía otro y así todo el
+# rato»).
+#
+# ⚠️ Y LOS CASOS SE DERIVAN DEL CATÁLOGO, no se escriben a mano, porque una
+# ficha elegida a dedo puede dejar de ser del modo que se creía y entonces el
+# bloque saldría verde sin comprobar nada.
+#
+# ⚠️ Ojo con una trampa que costó una vuelta: el huevo y la verdura cruda del
+# ejemplo de Elena **valen en los dos modos**, así que probarlos NO ejercita
+# nada — pasan con el fallo puesto. Lo que de verdad quita el filtro es la
+# ficha COCIDA en un menú crudo y la CRUDA que tiene gemela cocida en uno
+# cocinado.
+def _solo_en_128(modo):
+    """Fichas que el modo `modo` deja fuera, ordenadas para que no cambie."""
+    return sorted(n for n, a in _al128.items()
+                  if _acc128.modos_de(a) == (modo,)
+                  and a.get("categoria") != "Hueso carnoso")
+
+_CASOS_129 = []
+for _m128, _otro128 in (("cocinado", "crudo"), ("crudo", "cocinado")):
+    for _cat129 in ("Verduras y frutas", "Carne muscular"):
+        _cand129 = [n for n in _solo_en_128(_m128)
+                    if _al128[n].get("categoria") == _cat129]
+        if _cand129:
+            _CASOS_129.append((_otro128, _cand129[0]))
+
+if len(_CASOS_129) < 2:
+    fallos.append("BLOQUE128: no hay fichas que el modo deje fuera en los dos sentidos, así que "
+                  "esta comprobación de la regla 5 no está ejercitando nada. O el catálogo ha "
+                  "cambiado, o `modos_de` ha dejado de derivar")
+
+for _modo129, _pedido129 in _CASOS_129:
+    _d129 = _menu128(_modo129, forzar=[_pedido129])
+    if not _d129.get("factible"):
+        fallos.append(f"BLOQUE128: pedir «{_pedido129}» A MANO en un menú «{_modo129}» deja al "
+                      f"perro sin menú. El modo es una restricción del automático: lo que se "
+                      f"elige a mano se respeta (regla 5)")
+    elif _pedido129 not in (_d129.get("menu") or {}):
+        fallos.append(f"BLOQUE128: se eligió «{_pedido129}» A MANO en un menú «{_modo129}» y el "
+                      f"filtro de modo se lo llevó por delante, sin decir nada. Es la regla 5: "
+                      f"alguien en BARF puede querer meter un alimento cocido, y alguien en "
+                      f"cocinado puede querer meter verdura cruda muy triturada")
+
+# Y la excepción sigue siendo UNA: el hueso. Que ceda todo lo demás no puede
+# arrastrarlo, y eso lo vigila el apartado 3 — aquí se comprueba la función que
+# lo decide, para que la excepción no se pueda ampliar ni encoger en silencio.
+_peligrosas_129 = sorted(n for n, a in _al128.items()
+                         if _acc128.peligro_de_preparacion(a, "cocinado"))
+if _peligrosas_129 != sorted(_HUESO_128):
+    fallos.append(f"BLOQUE128: `peligro_de_preparacion` en cocinado dice {_peligrosas_129} y los "
+                  f"huesos del catálogo son {sorted(_HUESO_128)}. Ampliarla convierte una "
+                  f"incoherencia en una prohibición que nadie pidió; encogerla deja entrar hueso "
+                  f"cocido")
+if any(_acc128.peligro_de_preparacion(a, "crudo") for a in _al128.values()):
+    fallos.append("BLOQUE128: `peligro_de_preparacion` dice que algo es peligroso en CRUDO. Este "
+                  "motor lleva desde el principio dando raciones crudas: lo que sea que quite "
+                  "tiene que decidirse en otro sitio y con su medida")
+
+# ── 11 · EDITAR UN MENÚ NO CUELA COMIDA DEL OTRO MODO ──────────────────────
+# ⚠️ LO PIDIÓ ELENA (18 de septiembre de 2026): «cuando generas un menú en
+# automático o en personalizar y cambias algo y se rehace el menú, solo va a
+# usar ingredientes de ese tipo de menú».
+#
+# Y hay que separar DOS cosas que suenan igual, porque la respuesta es distinta:
+#
+#   · LO QUE EL MOTOR RELLENA SOLO al rehacer el menú. Eso no puede traer nada
+#     del otro modo, nunca. Medido el día que se escribió esto: los cuatro
+#     caminos de edición en los dos modos, CERO intrusos — el modo ya viajaba.
+#     Lo que faltaba no era el motor.
+#   · LO QUE SE PIDE POR SU NOMBRE. Eso se respeta (regla 5), igual que en la
+#     generación: «a lo mejor alguien le da BARF a su perro pero le apetece
+#     meterle huevo». Lo que no puede pasar es que la app lo OFREZCA por
+#     accidente, y por eso `GET /alimentos` dice ahora en qué modos vale cada
+#     ficha y la pantalla de «cambiar a» solo enseña los de este menú.
+#
+# Aquí se vigila la primera, que es la del motor, por los CUATRO caminos.
+_MODOS_SERVIDOS_128 = {}
+for _p128b in (_ALIM128.get("pantallas") or []):
+    for _g128b in (_p128b.get("grupos") or {}).values():
+        for _a128b in _g128b:
+            if _a128b.get("modos"):
+                _MODOS_SERVIDOS_128[_a128b["nombre"]] = _a128b["modos"]
+
+if len(_MODOS_SERVIDOS_128) < len(_al128) * 0.9:
+    fallos.append(f"BLOQUE128: `GET /alimentos` solo dice en qué modos valen "
+                  f"{len(_MODOS_SERVIDOS_128)} de {len(_al128)} alimentos. La app lo necesita para "
+                  f"no ofrecer comida del otro modo al editar, y deducirlo del nombre falla con el "
+                  f"Boniato y con la clara de huevo, que se dan cocidos y no se llaman así")
+for _n128b, _m128b in list(_MODOS_SERVIDOS_128.items())[:400]:
+    if sorted(_m128b) != sorted(_acc128.modos_de(_al128.get(_n128b) or {})):
+        fallos.append(f"BLOQUE128: `GET /alimentos` dice que «{_n128b}» vale en {_m128b} y "
+                      f"`modos_de` dice {list(_acc128.modos_de(_al128[_n128b]))}. Es la misma "
+                      f"función que usa el solver: si discrepan, la app ofrece una cosa y el motor "
+                      f"hace otra")
+        break
+
+def _editar_128(ruta, modo, cuerpo):
+    c = {"der_objetivo": 1000.0, "etapa_requisitos": "Adulto", "peso_perro_kg": 22.0,
+         "especies_excluidas": [], "modo_de_preparacion": modo}
+    c.update(cuerpo)
+    r = _c.post(ruta, json=c)
+    if r.status_code != 200:
+        return None
+    d = r.json()
+    return d.get("menu") or d.get("gramos") or {}
+
+for _modo128b in ("cocinado", "crudo"):
+    _d128b = _menu128(_modo128b)
+    _g128b = _d128b.get("menu") or {}
+    if not _g128b:
+        fallos.append(f"BLOQUE128: no sale menú «{_modo128b}» para editar: esta comprobación no "
+                      f"está vigilando nada")
+        continue
+    _nom128b = list(_g128b)
+    _vic128b = sorted(_g128b, key=lambda n: -_g128b[n])[0]
+    _propio128b = next((n for n, a in _al128.items()
+                        if _acc128.vale_en(a, _modo128b) and n not in _g128b
+                        and a.get("categoria") == "Carne muscular"), None)
+    for _etq128b, _ruta128b, _cuerpo128b in (
+        ("cambiar", "/menu/cambiar", {"menu_actual": _nom128b, "alimento_viejo": _vic128b,
+                                      "alimento_nuevo": _propio128b}),
+        ("quitar", "/menu/quitar", {"menu_actual": _nom128b, "alimento": _vic128b}),
+        ("añadir", "/menu/anadir", {"menu_actual": _nom128b, "alimento": _propio128b}),
+        ("revalidar", "/menu/revalidar", {"menu_actual_gramos": _g128b}),
+    ):
+        _res128b = _editar_128(_ruta128b, _modo128b, _cuerpo128b)
+        if _res128b is None:
+            continue
+        _mal128b = sorted(n for n in _res128b if not _acc128.vale_en(_al128.get(n), _modo128b))
+        if _mal128b:
+            fallos.append(f"BLOQUE128: {_etq128b} un menú «{_modo128b}» ha metido comida del otro "
+                          f"modo: {_mal128b}. Nadie la ha pedido por su nombre — la ha puesto el "
+                          f"motor al rehacer el menú, y eso es un plato con las dos cosas")
+
+print(f"  regla 5 contra el modo: {len(_CASOS_129)} casos ejercitados "
+      f"({_CASOS_129}) · peligro_de_preparacion: {len(_peligrosas_129)} fichas, todas hueso")
+print(f"  topes de crudo en cocinado: 0 fichas cocidas con tiaminasa, 0 con mercurio")
+print(f"  cómo darlo cocinado: {len(_COC_CAT_128)} categorías con texto propio · "
+      f"{len(_COCINADAS_128) - len(_sin128)}/{len(_COCINADAS_128)} fichas con instrucción propia")
+print(f"  fichas animales cocinadas: {len(_COCINADAS_128)} · perros con menú cocinado: {_salen128}/4")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
+
+
+
+# ---------------------------------------------------------------------------
+# BLOQUE 129 — LO QUE SE LE CUENTA AL DUEÑO, Y DE DÓNDE SALE
+# ============================================================
+#
+# ⚠️ POR QUÉ EXISTE (18 de septiembre de 2026). Elena: «deberíamos tener una
+# parte en la aplicación que sea información sobre los beneficios del BARF y qué
+# es el BARF, los beneficios de la comida cocinada y qué es la comida cocinada,
+# y luego la información de los alimentos, rollo: esto es la hostia para el
+# pelo, esto es la hostia para el hígado. Esto no es para el veterinario, es
+# solo para el usuario». Y la regla, del mensaje siguiente: «no tienes que poner
+# las citas en ese texto; está bien que busques las citas para ponerlo bien,
+# pero es para el usuario y no tiene que ser técnico».
+#
+# Así que hay DOS cosas que vigilar y son distintas:
+#
+#   1 · QUE EL TEXTO DEL DUEÑO ESTÉ LIMPIO. Sin citas, sin nombres de fuente,
+#       sin capítulos ni tablas. Es la misma regla del BLOQUE 107 con los avisos
+#       de patología, y ahí se aprendió que el registro llano se escapa por la
+#       puerta que nadie mira.
+#
+#   2 · QUE «DE QUÉ ES RICO» SEA VERDAD Y SE DERIVE. Lo que más daño haría aquí
+#       no es una falta de ortografía: es que la app enseñe «el hígado es la
+#       hostia para la sangre» sobre un catálogo en el que eso ya no es cierto
+#       porque la ficha cambió. Por eso no hay ni una frase escrita por alimento
+#       —se calcula contra el catálogo VIVO— y por eso aquí se rehace la cuenta
+#       en vez de creerse la respuesta.
+print("\n=== BLOQUE 129: lo que se le cuenta al dueño ===")
+
+import os as _os129
+_DOC129 = json.load(open(_os129.path.join(_os129.path.dirname(_os129.path.abspath(__file__)),
+                                          "documentacion_para_el_dueno.json"), encoding="utf-8"))
+_al129, _ = _api.cargar_v2()
+_ALI129 = _c.get("/alimentos").json()
+
+# ── 1 · se sirve, y por la puerta que la app ya lee ─────────────────────────
+_docsrv129 = _ALI129.get("documentacion") or {}
+if not _docsrv129:
+    fallos.append("BLOQUE129: `GET /alimentos` no sirve la documentación del dueño, así que la "
+                  "app tendría que escribirla ella — regla 6, y es el fallo de las seis "
+                  "categorías de Personalizar otra vez")
+for _k129 in ("crudo", "cocinado"):
+    _m129 = (_docsrv129.get("modos") or {}).get(_k129) or {}
+    if not (_m129.get("que_es") and _m129.get("por_que") and _m129.get("a_tener_en_cuenta")):
+        fallos.append(f"BLOQUE129: el modo «{_k129}» no cuenta las tres cosas: qué es, por qué, y "
+                      f"qué hay que tener en cuenta. Contar solo las ventajas de una forma de dar "
+                      f"de comer es publicidad, no información")
+
+# ── 2 · EL TEXTO DEL DUEÑO, SIN UNA SOLA CITA ──────────────────────────────
+# ⚠️ Las palabras se buscan en MINÚSCULAS y con `\b` donde haría falta, que es
+# la lección del «epa» dentro de «reparte» del BLOQUE 107.
+_FUERA_129 = ("fediaf", "sacn5", "nrc ", "nrc2006", "aafco", "ettinger", "fascetti",
+              "tabla iii", "tabla 3", "cap.", "capítulo", "et al", "merkblatt", "tvt",
+              "/1000 kcal", "materia seca", "reglamento")
+def _sucio_129(txt):
+    b = str(txt or "").lower()
+    return [w for w in _FUERA_129 if w in b]
+
+_sucios129 = []
+for _k129, _m129 in (_docsrv129.get("modos") or {}).items():
+    _trozos = [_m129.get("que_es") or ""]
+    for _lista in ("por_que", "a_tener_en_cuenta"):
+        for _x in _m129.get(_lista) or []:
+            _trozos += [_x.get("titulo") or "", _x.get("texto") or ""]
+    for _tr in _trozos:
+        _mal = _sucio_129(_tr)
+        if _mal:
+            _sucios129.append((_k129, _mal, _tr[:50]))
+for _cl129, _e129 in (_docsrv129.get("para_que_es_bueno") or {}).items():
+    _mal = _sucio_129(_e129.get("dueno"))
+    if _mal:
+        _sucios129.append((_cl129, _mal, str(_e129.get("dueno"))[:50]))
+if _sucios129:
+    fallos.append(f"BLOQUE129: {len(_sucios129)} textos del DUEÑO nombran una fuente, una tabla o "
+                  f"una unidad del motor: {_sucios129[:3]}. «No tienes que poner las citas en ese "
+                  f"texto» — van en el registro `veterinario`, que es donde se pueden comprobar")
+
+# Y la mitad simétrica, que es la que de verdad protege: limpiar no puede ser
+# PERDER la cita. Si el registro técnico se queda sin fuente, el canal del dueño
+# sale impecable y ya no hay forma de comprobar nada. Es el fallo que el BLOQUE
+# 107 tuvo que rehacer.
+_sin_fuente129 = sorted(k for k, e in (_DOC129.get("para_que_es_bueno") or {}).items()
+                        if not str(e.get("fuente") or "").strip())
+if _sin_fuente129:
+    fallos.append(f"BLOQUE129: {len(_sin_fuente129)} nutrientes dicen para qué son buenos y NO "
+                  f"dicen de dónde sale: {_sin_fuente129[:5]}. Una afirmación sobre la salud de un "
+                  f"perro sin fuente es una opinión con aspecto de dato")
+_sin_tecnico129 = sorted(k for k, e in (_DOC129.get("para_que_es_bueno") or {}).items()
+                         if not str(e.get("veterinario") or "").strip())
+if _sin_tecnico129:
+    fallos.append(f"BLOQUE129: {len(_sin_tecnico129)} nutrientes no tienen registro de "
+                  f"veterinario: {_sin_tecnico129[:5]}. Quitarle la jerga al dueño es mover el "
+                  f"texto técnico, no borrarlo")
+
+# ── 3 · «DE QUÉ ES RICO» SE REHACE, NO SE CREE ─────────────────────────────
+# ⚠️ Se rehace con el criterio ESCRITO en el JSON y contra el catálogo vivo. Una
+# comprobación que llamara a `_calcular_rico_en` estaría comparando la función
+# consigo misma, que es la lección del BLOQUE 109 y del 107: una prueba que no
+# puede fallar es peor que no tenerla.
+import statistics as _st129
+from constructor import valor_nutriente as _vn129
+_COMIDA129 = [a for a in _al129.values()
+              if a.get("categoria") not in _api._NO_ENTRAN_EN_EL_RICO
+              and (a.get("energia") or 0) > 20]
+_esperado129 = {}
+for _cl129 in _DOC129["para_que_es_bueno"]:
+    _v129 = [(a["nombre"], _vn129(a.get("nutrientes") or {}, _cl129) * 1000.0 / a["energia"])
+             for a in _COMIDA129
+             if (a.get("energia") or 0) > 0 and _vn129(a.get("nutrientes") or {}, _cl129)]
+    if len(_v129) < 20:
+        continue
+    _med129 = _st129.median(v for _, v in _v129)
+    _ord129 = sorted(_v129, key=lambda x: -x[1])
+    _corte129 = _ord129[max(0, int(len(_ord129) * 0.15)) - 1][1]
+    for _n129, _val129 in _ord129:
+        if _val129 < _corte129 or (_med129 > 0 and _val129 < _med129 * 2.0):
+            break
+        _esperado129.setdefault(_n129, []).append((_val129 / _med129 if _med129 else 0, _cl129))
+_esperado129 = {n: [c for _, c in sorted(l, reverse=True)][:3] for n, l in _esperado129.items()}
+
+_servido129 = {}
+for _p129 in _ALI129.get("pantallas") or []:
+    for _g129 in (_p129.get("grupos") or {}).values():
+        for _a129 in _g129:
+            if _a129.get("rico_en"):
+                _servido129[_a129["nombre"]] = [x["nutriente"] for x in _a129["rico_en"]]
+_dif129 = [(n, _esperado129.get(n), _servido129.get(n))
+           for n in set(_esperado129) | set(_servido129)
+           if _esperado129.get(n) != _servido129.get(n)]
+if _dif129:
+    fallos.append(f"BLOQUE129: «de qué es rico» servido y rehecho no coinciden en "
+                  f"{len(_dif129)} alimentos: {_dif129[:2]}. O el criterio ha cambiado sin "
+                  f"escribirlo en `como_se_calcula`, o alguien ha escrito una frase a mano")
+
+# Y que el criterio MUERDA: si todos los alimentos fueran «ricos» en todo, esto
+# no informaría de nada. Con el catálogo de hoy salen unos 119 de 232.
+if not (20 <= len(_servido129) <= int(len(_al129) * 0.75)):
+    fallos.append(f"BLOQUE129: {len(_servido129)} de {len(_al129)} alimentos tienen «rico en». Si son "
+                  f"casi todos el criterio no distingue nada, y si son cuatro es que ha dejado de "
+                  f"calcularse")
+
+# Ninguna clave servida puede quedarse sin su frase: sería enseñar «epa_dha».
+_huerfanas129 = sorted({c for l in _servido129.values() for c in l}
+                       - set(_DOC129["para_que_es_bueno"]))
+if _huerfanas129:
+    fallos.append(f"BLOQUE129: se sirven nutrientes sin frase para el dueño: {_huerfanas129}. La "
+                  f"app enseñaría la clave del motor tal cual")
+
+# ── 4 · Y NO SE PROMETE CURAR NADA ─────────────────────────────────────────
+# ⚠️ La diferencia es la que hace que esto se pueda publicar: «rico en cobre» es
+# un hecho medido del alimento y «para qué sirve el cobre» es información; «cura
+# el hígado» es otra cosa, y de las que no se pueden desdecir.
+_CURAR_129 = ("cura", "curar", "trata ", "tratamiento", "previene", "elimina la enfermedad",
+              "sustituye la medicación", "adelgaza")
+_promesas129 = []
+for _cl129, _e129 in (_DOC129.get("para_que_es_bueno") or {}).items():
+    _b129 = str(_e129.get("dueno") or "").lower()
+    _promesas129 += [(_cl129, w) for w in _CURAR_129 if w in _b129]
+if _promesas129:
+    fallos.append(f"BLOQUE129: hay textos del dueño que prometen curar o tratar: {_promesas129}. "
+                  f"Un alimento es rico en algo; no arregla una enfermedad, y decirlo en la app es "
+                  f"exactamente lo que un dueño no puede comprobar")
+
+print(f"  documentación: 2 modos · {len(_DOC129['para_que_es_bueno'])} nutrientes con frase y "
+      f"fuente · {len(_servido129)}/{len(_al129)} alimentos con «de qué es rico», rehecho")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
+
+
+
+# ---------------------------------------------------------------------------
+# BLOQUE 130 — EN LA TIENDA SE COMPRA CRUDO, Y EL PLATO SE MONTA DE ALGUNA FORMA
+# ============================================================
+#
+# ⚠️ POR QUÉ EXISTE, Y ES UN FALLO MEDIDO (18 de septiembre de 2026). Los gramos
+# de un menú COCINADO son de comida YA COCINADA —la ficha lo declara en
+# `se_pesa` y el `aviso_al_comprar` lo repite— pero **en la tienda se compra
+# CRUDO**. Y la diferencia no es un redondeo: medida sobre las 69 fichas que se
+# pesan cocidas, va de **×0,20 a ×1,99**. Del pulpo hay que comprar el DOBLE de
+# lo que dice el menú y de los copos de avena una QUINTA PARTE. Una lista de la
+# compra que no lo convierta manda a la tienda a por la cantidad equivocada, y
+# en el peor caso por menos de la mitad de la comida del perro.
+#
+# ⚠️ Y LA OTRA MITAD, que es la que convierte esto en un fallo distinto:
+# convertir EN SILENCIO sería tan malo como no convertir. Quien mire el menú y
+# la lista vería dos números distintos para el mismo alimento y no sabría cuál
+# creer. Por eso el factor viaja con su PROCEDENCIA y con si es aproximado.
+#
+# ⚠️ SE DERIVA, no se escribe: del agua de la ficha cocida y la de su crudo. Una
+# tabla de factores a mano se quedaría parada con la primera ficha nueva y no
+# daría ningún error — el fallo de las seis categorías de Personalizar otra vez.
+print("\n=== BLOQUE 130: se compra crudo, y el plato se monta ===")
+
+_al130, _ = _api.cargar_v2()
+_COC130 = {n: a for n, a in _al130.items()
+           if str(a.get("se_pesa") or "").strip().lower() == "ya cocido"}
+if len(_COC130) < 20:
+    fallos.append(f"BLOQUE130: solo {len(_COC130)} fichas se pesan cocidas. Con tan pocas este "
+                  f"bloque deja de vigilar nada y no lo diría")
+
+# ── 1 · el factor se REHACE, no se cree ────────────────────────────────────
+# Llamar a `_calcular_crudo_por_cocido` sería comparar la función consigo misma
+# —la lección del BLOQUE 109— así que aquí se rehace la cuenta desde las dos
+# humedades, que es de donde tiene que salir.
+_ALI130 = _c.get("/alimentos").json()
+_servido130 = {}
+for _p130 in _ALI130.get("pantallas") or []:
+    for _g130 in (_p130.get("grupos") or {}).values():
+        for _a130 in _g130:
+            if _a130.get("cuanto_crudo_hace_falta"):
+                _servido130[_a130["nombre"]] = _a130["cuanto_crudo_hace_falta"]
+
+_mal130, _sin130 = [], []
+for _n130, _f130 in _COC130.items():
+    _hc130 = _f130.get("humedad_g_100g")
+    _base130 = _n130.rsplit(" ", 1)[0] if " " in _n130 else None
+    _herm130 = _al130.get(_base130) if _base130 else None
+    _hr130 = ((_herm130 or {}).get("humedad_g_100g")
+              if (_herm130 and _herm130.get("humedad_g_100g") is not None)
+              else _f130.get("humedad_crudo_g_100g"))
+    if _hc130 is None or _hr130 is None or _hr130 >= 100:
+        _sin130.append(_n130)
+        if _n130 in _servido130:
+            fallos.append(f"BLOQUE130: se sirve un factor para «{_n130}» y no hay con qué "
+                          f"calcularlo — o sea que sale de algún sitio que no son las dos "
+                          f"humedades. Una cifra sin fuente en una lista de la compra es lo "
+                          f"único que aquí no puede pasar")
+        continue
+    _esperado130 = round((100.0 - float(_hc130)) / (100.0 - float(_hr130)), 2)
+    _dado130 = (_servido130.get(_n130) or {}).get("factor")
+    if _dado130 is None:
+        _mal130.append((_n130, _esperado130, "no se sirve"))
+    elif abs(_dado130 - _esperado130) > 0.01:
+        _mal130.append((_n130, _esperado130, _dado130))
+if _mal130:
+    fallos.append(f"BLOQUE130: {len(_mal130)} factores servidos no cuadran con las humedades de "
+                  f"los que salen: {_mal130[:3]}. La materia seca es lo que se conserva al "
+                  f"cocer: gramos_crudos = gramos_cocidos × (MS del cocido / MS del crudo)")
+
+# ── 2 · lo que no se puede calcular se queda SIN cifra, y eso es correcto ───
+# ⚠️ Hoy es UNA ficha, «Vaca para guisar cocida», porque la fila cruda que la
+# ancla (ciqual:6231) no publica agua. Inventarle el factor de otro corte de
+# vaca sería poner una cifra sin fuente. Lo que se vigila es que no aparezca de
+# la nada — y que no crezcan: si mañana son quince, es que se ha roto algo.
+if len(_sin130) > 3:
+    fallos.append(f"BLOQUE130: {len(_sin130)} fichas cocidas no tienen con qué calcular cuánto "
+                  f"crudo comprar: {sorted(_sin130)[:5]}. Eran una. Cada una de esas manda a la "
+                  f"tienda con los gramos del plato, que no son los de la báscula del "
+                  f"carnicero")
+
+# ── 3 · la procedencia viaja, y lo aproximado se dice ──────────────────────
+for _n130, _d130 in _servido130.items():
+    if not str(_d130.get("de_donde") or "").strip():
+        fallos.append(f"BLOQUE130: el factor de «{_n130}» no dice de dónde sale. Sin eso no se "
+                      f"puede rehacer, y lo que no se puede rehacer no está comprobado")
+        break
+_aprox130 = sorted(n for n, d in _servido130.items() if d.get("aproximado"))
+for _n130 in _aprox130:
+    if not str(_servido130[_n130].get("por_que_aproximado") or "").strip():
+        fallos.append(f"BLOQUE130: «{_n130}» va marcado como aproximado y no dice POR QUÉ. Un "
+                      f"«aproximado» sin motivo no se puede juzgar")
+
+# ── 4 · el factor MUERDE: si fueran todos 1, esto no serviría de nada ──────
+_fs130 = sorted(d["factor"] for d in _servido130.values())
+if not _fs130 or _fs130[0] > 0.8 or _fs130[-1] < 1.2:
+    fallos.append(f"BLOQUE130: los factores van de {_fs130[:1]} a {_fs130[-1:]} — o sea que "
+                  f"convertir no cambia nada y esta comprobación no está vigilando nada. "
+                  f"Medido el 18 de septiembre: de 0,20 a 1,99")
+
+# ── 5 · CÓMO SE MONTA EL PLATO, que es lo que preguntó Elena ───────────────
+# «¿se tritura todo junto y se da modo puré? ¿se le echa todo entero?». Había
+# texto de cada alimento y de cada categoría, y ninguno del PLATO.
+_PLATO130 = _ALI130.get("como_se_prepara_el_plato") or {}
+for _m130 in ("crudo", "cocinado"):
+    _e130 = _PLATO130.get(_m130) or {}
+    _pasos130 = _e130.get("pasos") or []
+    if len(_pasos130) < 4:
+        fallos.append(f"BLOQUE130: el modo «{_m130}» no dice cómo se monta el plato ({len(_pasos130)} "
+                      f"pasos). Quien va a cocinar tiene delante el plato entero, no una ficha")
+        continue
+    for _x130 in _pasos130:
+        if not (_x130.get("titulo") and _x130.get("texto")):
+            fallos.append(f"BLOQUE130: un paso de «{_m130}» no tiene título o no tiene texto")
+            break
+# Y las dos cosas que SOLO pasan en cocinado y que nadie contaba: que los botes
+# de vitaminas van al final y en frío, y que se pesa DESPUÉS de cocinar. Son las
+# dos que cambian el menú si se hacen al revés.
+_txt130 = " ".join(f"{x.get('titulo','')} {x.get('texto','')}"
+                   for x in ((_PLATO130.get("cocinado") or {}).get("pasos") or [])).lower()
+if not ("fr" in _txt130 and "vitamina" in _txt130):
+    fallos.append("BLOQUE130: el plato cocinado no dice que los botes de vitaminas van al final y "
+                  "con la comida ya fría. Echarlos en caliente se lleva parte de lo que llevan "
+                  "dentro y el menú deja de cuadrar sin que se note")
+if "después de cocinar" not in _txt130 and "despues de cocinar" not in _txt130:
+    fallos.append("BLOQUE130: el plato cocinado no dice que se pesa DESPUÉS de cocinar, que es la "
+                  "única diferencia que se nota en la báscula")
+
+print(f"  cuánto crudo comprar: {len(_servido130)}/{len(_COC130)} fichas · factores de "
+      f"{_fs130[0] if _fs130 else 0} a {_fs130[-1] if _fs130 else 0} · {len(_aprox130)} aproximados "
+      f"y dichos · {len(_sin130)} sin calcular y dichas")
+print(f"  cómo se monta el plato: {len((_PLATO130.get('crudo') or {}).get('pasos') or [])} pasos en "
+      f"crudo · {len((_PLATO130.get('cocinado') or {}).get('pasos') or [])} en cocinado")
+print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
+
+
 _tiempos_por_bloque.sort(reverse=True)
 _gastado = sum(t for t, _ in _tiempos_por_bloque)
 # ⚠️ Y CERRAR EL ÚLTIMO BLOQUE VA PEGADO AL GUARDIA, NO DONDE ESTABA (16 de
@@ -22315,6 +23506,133 @@ _gastado = sum(t for t, _ in _tiempos_por_bloque)
 #    mismo fallo que la vez anterior en su tercera cara: no basta con que el
 #    guardia sea lo último, es que **lo que lee tiene que estar completo cuando
 #    lo lee**. Los dos van juntos y en este orden, siempre.
+# ============================================================
+# BLOQUE 131 — UN SOLO ALIMENTO NO PUEDE SER MEDIO PLATO
+# ============================================================
+#
+# ⚠️ POR QUÉ EXISTE (18 de septiembre de 2026). Es el TERCERO de la misma
+# familia y los dos anteriores se arreglaron por el sitio equivocado:
+#
+#   · 14 de septiembre — «651 g de albahaca fresca en una ración no es comida».
+#     Se penalizó lo difícil de comprar, y la albahaca es de súper.
+#   · 15 de septiembre — «3.676 g de coles de Bruselas, el 42 % del plato».
+#     Se subió el techo de la CATEGORÍA en dos pasos en vez de levantarlo de
+#     golpe. Quedó escrito en `CLAUDE.md` que lo que seguía sin decidir era
+#     «si dentro de un techo de verdura razonable debería poder ir TODA en una
+#     sola hierba».
+#   · 18 de septiembre — el menú precalculado `Grande_Lactante/Conejo` sale con
+#     **2.722 g de coles de Bruselas, el 48,7 % del plato**, verde y cumpliendo
+#     los 43 requisitos. O sea: volvió, y más grande.
+#
+# La causa nunca fue la categoría: el MILP optimiza NUTRICIÓN POR GRAMO y las
+# coles son baratas por gramo, así que dentro de un techo de verdura correcto
+# no había nada que impidiera que toda fuera una sola. Lo decidió Elena el 18 de
+# septiembre eligiendo entre tres salidas: **tope real en el motor**, no una
+# regla de la vista previa.
+#
+# LA CIFRA ESTÁ MEDIDA sobre diez perros de referencia POR LA API, con la
+# escalera y el presupuesto de verdad:
+#
+#   | tope | perros con menú | peor alimento suelto | coste                    |
+#   | sin  | 8/10            | 39,2 % (quinoa)      | --                       |
+#   | 40 % | 8/10            | 39,2 %               | no muerde                |
+#   | 35 % | 8/10            | 34,7 %               | --                       |
+#   | 30 % | 8/10            | 29,7 %               | NINGUNO                  |
+#   | 25 % | 8/10            | 24,7 %               | la pancreatitis baja peldaño |
+#
+# Los siete perros SANOS no se acercan (máximo 9,9 %), así que esto solo toca a
+# quien tiene que diluir con hidratos. Los dos lactantes sin menú lo están
+# también SIN tope, o sea que no es esto.
+print("\n=== BLOQUE 131: un solo alimento no puede ser medio plato ===")
+import json as _json131
+import os as _os131
+_RAIZ131 = _os131.path.dirname(_os131.path.abspath(__file__))
+# ⚠️ SE IMPORTA COMO LO IMPORTA `main`, Y NO ES UN DETALLE (18 de septiembre de
+# 2026). La carpeta `motor/` está en el `sys.path`, así que `motor_completo` y
+# `motor.motor_completo` son DOS OBJETOS DE MÓDULO DISTINTOS con sus propias
+# variables. La primera versión de este bloque importaba el segundo y apagaba
+# ahí el tope para comprobar que muerde -- y el solver seguía leyendo el
+# primero, o sea que la mitad de «con el fallo puesto» no ponía ningún fallo:
+# medía el mismo menú dos veces y se declaraba a sí mismo inútil. Lo cazó él
+# solo, que es justo para lo que está.
+import motor_completo as _mc131
+
+_TOPE131 = _mc131.TOPE_DE_UN_SOLO_ALIMENTO_SECUNDARIO
+if not (0.0 < _TOPE131 < 1.0):
+    fallos.append(f"BLOQUE131: el tope de un solo alimento vale {_TOPE131}, que lo apaga. Es un "
+                  f"criterio NUESTRO y puede discutirse, pero apagarlo devuelve los 2.722 g de "
+                  f"coles de Bruselas, y eso ya se decidió")
+
+_al131 = {a["nombre"]: a for a in _json131.load(
+    open(_os131.path.join(_RAIZ131, "alimentos_v3_final.json"), encoding="utf-8"))}
+_cm131 = _json131.load(
+    open(_os131.path.join(_RAIZ131, "catalogo_menus.json"), encoding="utf-8"))
+
+# --- 1. ningún menú de la vista previa se pasa ---------------------------
+_menus131 = []
+for _c131, _e131 in _cm131["CATALOGO"].items():
+    _menus131.append((_c131, _e131["gramos"]))
+    for _v131 in _cm131["CATALOGO_VARIANTES"].get(_c131, []):
+        _menus131.append((f"{_c131}/{_v131.get('proteina')}", _v131["gramos"]))
+_pasados131 = []
+for _etq131, _g131 in _menus131:
+    _tot131 = sum(_g131.values()) or 1.0
+    for _n131, _x131 in _g131.items():
+        if (_al131.get(_n131, {}).get("categoria") in _mc131.CATEGORIAS_CON_TOPE_POR_ALIMENTO
+                and _x131 / _tot131 > _TOPE131 * 1.02):
+            _pasados131.append(f"{_etq131}: {_n131} {_x131:.0f} g, "
+                               f"el {100 * _x131 / _tot131:.1f} % del plato")
+if _pasados131:
+    fallos.append(f"BLOQUE131: {len(_pasados131)} menús de la vista previa llevan UN alimento "
+                  f"secundario por encima del {_TOPE131 * 100:.0f} % del plato. Medio plato de "
+                  f"una sola verdura cumple los 43 requisitos y no es comida: "
+                  + " · ".join(_pasados131[:4]))
+
+# --- 2. y la fila EXISTE de verdad: con ella quitada, se pasa ------------
+#
+# ⚠️ Sin esto el apartado de arriba saldría verde sin vigilar nada -- bastaría
+# con que el solver no eligiera nunca un alimento dominante por casualidad. Se
+# resuelve el MISMO perro con el tope puesto y sin él, y se exige que sin él
+# alguno se pase. Es el perro de la pancreatitis, que es donde está medido que
+# muerde (39,2 % sin tope).
+_cuerpo131 = {"nombres_alimentos": [], "modo": "automatico", "der_objetivo": 950,
+              "etapa_requisitos": "Adulto", "peso_perro_kg": 20,
+              "patologias": ["pancreatitis"]}
+
+
+def _peor_suelto_131(_menu):
+    _t = sum(_menu.values()) or 1.0
+    return max((v / _t for n, v in _menu.items()
+                if _al131.get(n, {}).get("categoria")
+                in _mc131.CATEGORIAS_CON_TOPE_POR_ALIMENTO), default=0.0)
+
+
+_con131 = (_c.post("/menu/v2", json=_cuerpo131).json() or {}).get("menu") or {}
+_viejo131 = _mc131.TOPE_DE_UN_SOLO_ALIMENTO_SECUNDARIO
+try:
+    _mc131.TOPE_DE_UN_SOLO_ALIMENTO_SECUNDARIO = 0.0
+    _sin131 = (_c.post("/menu/v2", json=_cuerpo131).json() or {}).get("menu") or {}
+finally:
+    _mc131.TOPE_DE_UN_SOLO_ALIMENTO_SECUNDARIO = _viejo131
+_p_con131, _p_sin131 = _peor_suelto_131(_con131), _peor_suelto_131(_sin131)
+if not _con131:
+    fallos.append("BLOQUE131: con el tope puesto, el perro con pancreatitis se queda SIN MENÚ. "
+                  "Es criterio nuestro (regla 3) y no puede dejar a un perro sin comer: el "
+                  "reintento que lo suelta en la última pasada de la escalera no está actuando")
+elif _p_con131 > _TOPE131 * 1.02:
+    fallos.append(f"BLOQUE131: el menú entregado con el tope puesto lleva un alimento al "
+                  f"{_p_con131 * 100:.1f} %, por encima del {_TOPE131 * 100:.0f} %. La fila del "
+                  f"MILP no está apretando")
+elif _sin131 and _p_sin131 <= _TOPE131 * 1.02:
+    fallos.append(f"BLOQUE131: quitando el tope el menú sigue por debajo del "
+                  f"{_TOPE131 * 100:.0f} % ({_p_sin131 * 100:.1f} %), así que este bloque no "
+                  f"está comprobando nada: la fila podría no existir y saldría verde igual. "
+                  f"Hace falta un caso donde el tope MUERDA")
+print(f"  vista previa: {len(_menus131)} menús, {len(_pasados131)} por encima del "
+      f"{_TOPE131 * 100:.0f} %")
+print(f"  el tope muerde: con él {_p_con131 * 100:.1f} % · sin él {_p_sin131 * 100:.1f} %")
+
+
 _cerrar_el_ultimo_bloque()
 
 # ⚠️ Y ESTE GUARDIA TIENE QUE SER LO ÚLTIMO DEL FICHERO, Y EL 16 DE SEPTIEMBRE
@@ -22415,6 +23733,48 @@ if _faltan_fin:
         f"batería no ha pasado por ellos -- casi siempre porque se añadieron DESPUÉS del "
         f"`sys.exit()` del final. Un guardia inerte es peor que no tenerlo: sale verde igual")
 
+
+# ⚠️ Y LA MEDIDA SE GUARDA EN EL REPO, que es lo que convierte el cronómetro en
+# una herramienta en vez de en una curiosidad (18 de septiembre de 2026). De
+# este fichero sale la lista de bloques del MODO RÁPIDO
+# (`probar_bloques.py --rapida`): los baratos se corren en el bucle de escribir
+# y los que resuelven menús se dejan para la batería entera.
+#
+# Es una MEDIDA y no una lista a mano, y eso es justo el punto: el día que un
+# bloque engorde se cae solo del modo rápido, sin que nadie tenga que acordarse
+# de moverlo. Una lista escrita a mano es la que se queda parada -- la Borraja,
+# las categorías de Personalizar, los niveles de actividad.
+#
+# ⚠️ Se escribe SIEMPRE, también cuando hay fallos: si solo se escribiera en
+# verde, una batería roja dejaría la medida vieja y el modo rápido correría con
+# el reparto de antes del cambio.
+import json as _json_rep, os as _os_rep
+_reparto_json = {
+    "_meta": {
+        "que_es": "Cuánto tarda cada bloque de `pruebas_completas.py`, medido en la "
+                  "última pasada entera. De aquí sale la lista del modo rápido de "
+                  "`probar_bloques.py --rapida`.",
+        "cuidado": "Los segundos son DE ESTA MÁQUINA. En otra cambian todos a la vez, "
+                   "así que lo que vale es el ORDEN y el corte entre los que resuelven "
+                   "menús y los que no, no la cifra exacta.",
+        "se_escribe": "sola, al terminar `python3 pruebas_completas.py`",
+    },
+    "total_segundos": round(sum(s for s, _ in _tiempos_por_bloque), 1),
+    "bloques": [],
+}
+for _seg_rep, _nom_rep in sorted(_tiempos_por_bloque, reverse=True):
+    _m_rep = _re_bloque_del_reparto.match(_nom_rep)
+    if not _m_rep:
+        continue
+    _reparto_json["bloques"].append({
+        "bloque": int(_m_rep.group(1)),
+        "titulo": _m_rep.group(2).strip().rstrip("="). strip(),
+        "segundos": round(_seg_rep, 1),
+    })
+_reparto_json["bloques"].sort(key=lambda x: x["bloque"])
+with open(_os_rep.path.join(_os_rep.path.dirname(_os_rep.path.abspath(__file__)),
+                            "reparto_de_la_bateria.json"), "w", encoding="utf-8") as _f_rep:
+    _json_rep.dump(_reparto_json, _f_rep, ensure_ascii=False, indent=1)
 
 print("\nDÓNDE SE VA EL TIEMPO — los diez bloques más caros:")
 for _t, _nombre in _tiempos_por_bloque[:10]:

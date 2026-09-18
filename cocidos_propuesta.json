@@ -1,0 +1,853 @@
+{
+ "_meta": {
+  "que_es": "Qué fila cocida describe cada alimento, y cómo se cocina.",
+  "segunda_vuelta_18_sep": "Seis fichas más, y las tres de pescado son las que el barrido automático NO PODÍA ver: su ancla es la fila CRUDA de una fuente que nuestra ficha no declaraba. El barrido ancla por fuente —y tiene que seguir haciéndolo, porque anclar contra cualquier fuente deja ganar a la más floja— así que un atún cuya única fuente declarada era BEDCA no podía comprobarse contra USDA. La salida no es aflojar la regla: es declarar también el id crudo de esa fuente en la ficha cruda, que es exactamente lo que se hizo con el salmón y su ciqual:26036."
+ },
+ "elegidas": {
+  "Acelga": {
+   "ids": {
+    "usda": "170401"
+   },
+   "fuente": "usda",
+   "id": "170401",
+   "fila": "Chard, swiss, cooked, boiled, drained, without salt",
+   "clase": "humedo",
+   "celdas": 82,
+   "agua": 92.65,
+   "como": "hervido en agua",
+   "categoria": "Verduras y frutas"
+  },
+  "Bacalao": {
+   "ids": {
+    "ciqual": "26025",
+    "bedca": "795",
+    "usda": "171956"
+   },
+   "fuente": "ciqual",
+   "id": "26025",
+   "fila": "Cabillaud, cuit à la vapeur",
+   "clase": "humedo",
+   "celdas": 59,
+   "agua": 73.4,
+   "como": "al vapor",
+   "categoria": "Pescados y mariscos"
+  },
+  "Bazo de cordero": {
+   "ids": {
+    "usda": "174365"
+   },
+   "fuente": "usda",
+   "id": "174365",
+   "fila": "Lamb, variety meats and by-products, spleen, cooked, braised",
+   "clase": "humedo",
+   "celdas": 52,
+   "agua": 66.38,
+   "como": "guisado a fuego lento en agua",
+   "categoria": "Vísceras"
+  },
+  "Bazo de vaca": {
+   "ids": {
+    "usda": "170597"
+   },
+   "fuente": "usda",
+   "id": "170597",
+   "fila": "Beef, variety meats and by-products, spleen, cooked, braised",
+   "clase": "humedo",
+   "celdas": 73,
+   "agua": 69.98,
+   "como": "guisado a fuego lento en agua",
+   "categoria": "Vísceras"
+  },
+  "Brócoli": {
+   "ids": {
+    "ciqual": "20302",
+    "usda": "169967"
+   },
+   "fuente": "ciqual",
+   "id": "20302",
+   "fila": "Brocoli, bouilli/cuit à l'eau, croquant",
+   "clase": "humedo",
+   "celdas": 41,
+   "agua": 92.9,
+   "como": "hervido en agua",
+   "categoria": "Verduras y frutas"
+  },
+  "Caballa": {
+   "ids": {
+    "usda": "175120"
+   },
+   "fuente": "usda",
+   "id": "175120",
+   "fila": "Fish, mackerel, Atlantic, cooked, dry heat",
+   "clase": "seco",
+   "celdas": null,
+   "agua": 53.27,
+   "como": "al horno o a la plancha",
+   "categoria": "Pescados y mariscos"
+  },
+  "Calabacín": {
+   "ids": {
+    "ciqual": "20313"
+   },
+   "fuente": "ciqual",
+   "id": "20313",
+   "fila": "Courgette, pulpe et peau, rôtie/cuite au four",
+   "clase": "seco",
+   "celdas": 33,
+   "agua": 93.1,
+   "como": "al horno",
+   "categoria": "Verduras y frutas"
+  },
+  "Calabaza": {
+   "ids": {
+    "bedca": "1183",
+    "usda": "168449",
+    "ciqual": "20332"
+   },
+   "fuente": "bedca",
+   "id": "1183",
+   "fila": "Calabaza, hervida",
+   "clase": "humedo",
+   "celdas": 30,
+   "agua": 96.5,
+   "como": "hervido en agua",
+   "categoria": "Verduras y frutas"
+  },
+  "Calamar": {
+   "ids": {
+    "ciqual": "10037"
+   },
+   "fuente": "ciqual",
+   "id": "10037",
+   "fila": "Calmar ou calamar ou encornet, bouilli/cuit à l'eau",
+   "clase": "humedo",
+   "celdas": 42,
+   "agua": 61.1,
+   "como": "hervido en agua",
+   "categoria": "Pescados y mariscos"
+  },
+  "Cardo": {
+   "ids": {
+    "usda": "169338"
+   },
+   "fuente": "usda",
+   "id": "169338",
+   "fila": "Cardoon, cooked, boiled, drained, with salt",
+   "clase": "humedo",
+   "celdas": 44,
+   "agua": 93.46,
+   "como": "hervido en agua",
+   "categoria": "Verduras y frutas"
+  },
+  "Cerebro de ternera": {
+   "ids": {
+    "usda": "174352"
+   },
+   "fuente": "usda",
+   "id": "174352",
+   "fila": "Veal, variety meats and by-products, brain, cooked, braised",
+   "clase": "humedo",
+   "celdas": 55,
+   "agua": 76.89,
+   "como": "guisado a fuego lento en agua",
+   "categoria": "Vísceras"
+  },
+  "Champiñón": {
+   "ids": {
+    "usda": "169252"
+   },
+   "fuente": "usda",
+   "id": "169252",
+   "fila": "Mushrooms, white, cooked, boiled, drained, without salt",
+   "clase": "humedo",
+   "celdas": 91,
+   "agua": 91.08,
+   "como": "hervido en agua",
+   "categoria": "Verduras y frutas"
+  },
+  "Col lombarda": {
+   "ids": {
+    "bedca": "1178",
+    "usda": "169978"
+   },
+   "fuente": "bedca",
+   "id": "1178",
+   "fila": "Col lombarda, hervida",
+   "clase": "humedo",
+   "celdas": 29,
+   "agua": 91.4,
+   "como": "hervido en agua",
+   "categoria": "Verduras y frutas"
+  },
+  "Coles de Bruselas": {
+   "ids": {
+    "usda": "169971"
+   },
+   "fuente": "usda",
+   "id": "169971",
+   "fila": "Brussels sprouts, cooked, boiled, drained, without salt",
+   "clase": "humedo",
+   "celdas": 90,
+   "agua": 88.9,
+   "como": "hervido en agua",
+   "categoria": "Verduras y frutas"
+  },
+  "Coliflor": {
+   "ids": {
+    "usda": "170397"
+   },
+   "fuente": "usda",
+   "id": "170397",
+   "fila": "Cauliflower, cooked, boiled, drained, without salt",
+   "clase": "humedo",
+   "celdas": 90,
+   "agua": 93.0,
+   "como": "hervido en agua",
+   "categoria": "Verduras y frutas"
+  },
+  "Conejo": {
+   "ids": {
+    "usda": "174346"
+   },
+   "fuente": "usda",
+   "id": "174346",
+   "fila": "Game meat, rabbit, domesticated, composite of cuts, cooked, stewed",
+   "clase": "humedo",
+   "celdas": 91,
+   "agua": 58.82,
+   "como": "guisado a fuego lento en agua",
+   "categoria": "Carne muscular"
+  },
+  "Corazón de cordero": {
+   "ids": {
+    "usda": "174443"
+   },
+   "fuente": "usda",
+   "id": "174443",
+   "fila": "Lamb, New Zealand, imported, heart, cooked, soaked and simmered",
+   "clase": "humedo",
+   "celdas": 106,
+   "agua": 66.65,
+   "como": "guisado a fuego lento en agua",
+   "categoria": "Carne muscular"
+  },
+  "Corazón de pavo": {
+   "ids": {
+    "usda": "171485"
+   },
+   "fuente": "usda",
+   "id": "171485",
+   "fila": "Turkey, all classes, heart, cooked, simmered",
+   "clase": "humedo",
+   "celdas": 124,
+   "agua": 67.15,
+   "como": "guisado a fuego lento en agua",
+   "categoria": "Carne muscular"
+  },
+  "Corazón de pollo": {
+   "ids": {
+    "usda": "171059"
+   },
+   "fuente": "usda",
+   "id": "171059",
+   "fila": "Chicken, heart, all classes, cooked, simmered",
+   "clase": "humedo",
+   "celdas": 68,
+   "agua": 64.85,
+   "como": "guisado a fuego lento en agua",
+   "categoria": "Carne muscular"
+  },
+  "Corazón de vaca": {
+   "ids": {
+    "bedca": "973",
+    "usda": "173081"
+   },
+   "fuente": "bedca",
+   "id": "973",
+   "fila": "Corazón, de vaca/buey, cocido",
+   "clase": "humedo",
+   "celdas": 34,
+   "agua": 65.0,
+   "como": "cocinado",
+   "categoria": "Carne muscular"
+  },
+  "Espinaca": {
+   "ids": {
+    "usda": "168463"
+   },
+   "fuente": "usda",
+   "id": "168463",
+   "fila": "Spinach, cooked, boiled, drained, without salt",
+   "clase": "humedo",
+   "celdas": 91,
+   "agua": 91.21,
+   "como": "hervido en agua",
+   "categoria": "Verduras y frutas"
+  },
+  "Gallina (carne sin hueso)": {
+   "ids": {
+    "usda": "172401"
+   },
+   "fuente": "usda",
+   "id": "172401",
+   "fila": "Chicken, stewing, meat and skin, cooked, stewed",
+   "clase": "humedo",
+   "celdas": 69,
+   "agua": 53.07,
+   "como": "guisado a fuego lento en agua",
+   "categoria": "Carne muscular"
+  },
+  "Hígado de cordero": {
+   "ids": {
+    "usda": "172532"
+   },
+   "fuente": "usda",
+   "id": "172532",
+   "fila": "Lamb, variety meats and by-products, liver, cooked, braised",
+   "clase": "humedo",
+   "celdas": 73,
+   "agua": 56.67,
+   "como": "guisado a fuego lento en agua",
+   "categoria": "Hígado"
+  },
+  "Hígado de pavo": {
+   "ids": {
+    "usda": "171487"
+   },
+   "fuente": "usda",
+   "id": "171487",
+   "fila": "Turkey, all classes, liver, cooked, simmered",
+   "clase": "humedo",
+   "celdas": 122,
+   "agua": 63.99,
+   "como": "guisado a fuego lento en agua",
+   "categoria": "Hígado"
+  },
+  "Hígado de pollo": {
+   "ids": {
+    "usda": "171061"
+   },
+   "fuente": "usda",
+   "id": "171061",
+   "fila": "Chicken, liver, all classes, cooked, simmered",
+   "clase": "humedo",
+   "celdas": 112,
+   "agua": 66.81,
+   "como": "guisado a fuego lento en agua",
+   "categoria": "Hígado"
+  },
+  "Hígado de vaca": {
+   "ids": {
+    "usda": "168626"
+   },
+   "fuente": "usda",
+   "id": "168626",
+   "fila": "Beef, variety meats and by-products, liver, cooked, braised",
+   "clase": "humedo",
+   "celdas": 112,
+   "agua": 58.81,
+   "como": "guisado a fuego lento en agua",
+   "categoria": "Hígado"
+  },
+  "Judía verde": {
+   "ids": {
+    "usda": "169141"
+   },
+   "fuente": "usda",
+   "id": "169141",
+   "fila": "Beans, snap, green, cooked, boiled, drained, without salt",
+   "clase": "humedo",
+   "celdas": 90,
+   "agua": 89.22,
+   "como": "hervido en agua",
+   "categoria": "Verduras y frutas"
+  },
+  "Lengua de buey": {
+   "ids": {
+    "usda": "174737"
+   },
+   "fuente": "usda",
+   "id": "174737",
+   "fila": "Beef, New Zealand, imported, variety meats and by-products, tongue, cooked, boiled",
+   "clase": "humedo",
+   "celdas": 107,
+   "agua": 56.95,
+   "como": "hervido en agua",
+   "categoria": "Carne muscular"
+  },
+  "Lengua de cordero": {
+   "ids": {
+    "usda": "172620"
+   },
+   "fuente": "usda",
+   "id": "172620",
+   "fila": "Lamb, New Zealand, imported, tongue - swiss cut, cooked, soaked and simmered",
+   "clase": "humedo",
+   "celdas": 106,
+   "agua": 58.74,
+   "como": "guisado a fuego lento en agua",
+   "categoria": "Carne muscular"
+  },
+  "Lengua de ternera": {
+   "ids": {
+    "usda": "174369"
+   },
+   "fuente": "usda",
+   "id": "174369",
+   "fila": "Veal, variety meats and by-products, tongue, cooked, braised",
+   "clase": "humedo",
+   "celdas": 55,
+   "agua": 64.08,
+   "como": "guisado a fuego lento en agua",
+   "categoria": "Carne muscular"
+  },
+  "Lenguado": {
+   "ids": {
+    "ciqual": "26017",
+    "bedca": "820"
+   },
+   "fuente": "ciqual",
+   "id": "26017",
+   "fila": "Limande-sole, cuite à la vapeur",
+   "clase": "humedo",
+   "celdas": 59,
+   "agua": 76.9,
+   "como": "al vapor",
+   "categoria": "Pescados y mariscos"
+  },
+  "Merluza": {
+   "ids": {
+    "ciqual": "26120"
+   },
+   "fuente": "ciqual",
+   "id": "26120",
+   "fila": "Merlu, cuit à l'étouffée",
+   "clase": "humedo",
+   "celdas": 49,
+   "agua": 74.4,
+   "como": "a fuego lento en la olla tapada",
+   "categoria": "Pescados y mariscos"
+  },
+  "Molleja de pavo": {
+   "ids": {
+    "usda": "171483"
+   },
+   "fuente": "usda",
+   "id": "171483",
+   "fila": "Turkey, all classes, gizzard, cooked, simmered",
+   "clase": "humedo",
+   "celdas": 125,
+   "agua": 69.22,
+   "como": "guisado a fuego lento en agua",
+   "categoria": "Carne muscular"
+  },
+  "Molleja de pollo": {
+   "ids": {
+    "usda": "171457"
+   },
+   "fuente": "usda",
+   "id": "171457",
+   "fila": "Chicken, gizzard, all classes, cooked, simmered",
+   "clase": "humedo",
+   "celdas": 90,
+   "agua": 67.93,
+   "como": "guisado a fuego lento en agua",
+   "categoria": "Carne muscular"
+  },
+  "Pato (carne sin hueso)": {
+   "ids": {
+    "usda": "171113"
+   },
+   "fuente": "usda",
+   "id": "171113",
+   "fila": "Duck, young duckling, domesticated, White Pekin, leg, meat only, bone in, cooked without skin, braised",
+   "clase": "humedo",
+   "celdas": 43,
+   "agua": 64.6,
+   "como": "guisado a fuego lento en agua",
+   "categoria": "Carne muscular"
+  },
+  "Pavo muslo con piel": {
+   "ids": {
+    "usda": "171494"
+   },
+   "fuente": "usda",
+   "id": "171494",
+   "fila": "Turkey, all classes, leg, meat and skin, cooked, roasted",
+   "clase": "seco",
+   "celdas": null,
+   "agua": 61.19,
+   "como": "al horno",
+   "categoria": "Carne muscular"
+  },
+  "Pavo pechuga con piel": {
+   "ids": {
+    "usda": "171492"
+   },
+   "fuente": "usda",
+   "id": "171492",
+   "fila": "Turkey, all classes, breast, meat and skin, cooked, roasted",
+   "clase": "seco",
+   "celdas": null,
+   "agua": 63.22,
+   "como": "al horno",
+   "categoria": "Carne muscular"
+  },
+  "Pavo pechuga sin piel": {
+   "ids": {
+    "usda": "171496"
+   },
+   "fuente": "usda",
+   "id": "171496",
+   "fila": "Turkey, whole, breast, meat only, cooked, roasted",
+   "clase": "seco",
+   "celdas": null,
+   "agua": 67.88,
+   "como": "al horno",
+   "categoria": "Carne muscular"
+  },
+  "Perca": {
+   "ids": {
+    "usda": "173679"
+   },
+   "fuente": "usda",
+   "id": "173679",
+   "fila": "Fish, perch, mixed species, cooked, dry heat",
+   "clase": "seco",
+   "celdas": null,
+   "agua": 73.25,
+   "como": "al horno o a la plancha",
+   "categoria": "Pescados y mariscos"
+  },
+  "Pimiento rojo": {
+   "ids": {
+    "usda": "170110"
+   },
+   "fuente": "usda",
+   "id": "170110",
+   "fila": "Peppers, sweet, red, cooked, boiled, drained, without salt",
+   "clase": "humedo",
+   "celdas": 90,
+   "agua": 91.87,
+   "como": "hervido en agua",
+   "categoria": "Verduras y frutas"
+  },
+  "Pollo ala con piel (sin hueso)": {
+   "ids": {
+    "usda": "173631"
+   },
+   "fuente": "usda",
+   "id": "173631",
+   "fila": "Chicken, broilers or fryers, wing, meat and skin, cooked, stewed",
+   "clase": "humedo",
+   "celdas": 91,
+   "agua": 62.18,
+   "como": "guisado a fuego lento en agua",
+   "categoria": "Carne muscular"
+  },
+  "Pollo muslo con piel": {
+   "ids": {
+    "usda": "174498"
+   },
+   "fuente": "usda",
+   "id": "174498",
+   "fila": "Chicken, broilers or fryers, dark meat, thigh, meat and skin, cooked, braised",
+   "clase": "humedo",
+   "celdas": 125,
+   "agua": 61.93,
+   "como": "guisado a fuego lento en agua",
+   "categoria": "Carne muscular"
+  },
+  "Pollo muslo sin piel": {
+   "ids": {
+    "usda": "172853"
+   },
+   "fuente": "usda",
+   "id": "172853",
+   "fila": "Chicken, broilers or fryers, dark meat, thigh, meat only, cooked, braised",
+   "clase": "humedo",
+   "celdas": 125,
+   "agua": 66.87,
+   "como": "guisado a fuego lento en agua",
+   "categoria": "Carne muscular"
+  },
+  "Pollo pechuga con piel": {
+   "ids": {
+    "usda": "171076"
+   },
+   "fuente": "usda",
+   "id": "171076",
+   "fila": "Chicken, broilers or fryers, breast, meat and skin, cooked, stewed",
+   "clase": "humedo",
+   "celdas": 91,
+   "agua": 66.21,
+   "como": "guisado a fuego lento en agua",
+   "categoria": "Carne muscular"
+  },
+  "Pollo pechuga sin piel": {
+   "ids": {
+    "usda": "171140"
+   },
+   "fuente": "usda",
+   "id": "171140",
+   "fila": "Chicken, broiler or fryers, breast, skinless, boneless, meat only, cooked, braised",
+   "clase": "humedo",
+   "celdas": 122,
+   "agua": 65.32,
+   "como": "guisado a fuego lento en agua",
+   "categoria": "Carne muscular"
+  },
+  "Pulmón de cordero": {
+   "ids": {
+    "usda": "174360"
+   },
+   "fuente": "usda",
+   "id": "174360",
+   "fila": "Lamb, variety meats and by-products, lungs, cooked, braised",
+   "clase": "humedo",
+   "celdas": 52,
+   "agua": 75.83,
+   "como": "guisado a fuego lento en agua",
+   "categoria": "Vísceras"
+  },
+  "Pulmón de ternera": {
+   "ids": {
+    "usda": "172536"
+   },
+   "fuente": "usda",
+   "id": "172536",
+   "fila": "Veal, variety meats and by-products, lungs, cooked, braised",
+   "clase": "humedo",
+   "celdas": 44,
+   "agua": 77.59,
+   "como": "guisado a fuego lento en agua",
+   "categoria": "Vísceras"
+  },
+  "Pulmón de vaca": {
+   "ids": {
+    "usda": "168629"
+   },
+   "fuente": "usda",
+   "id": "168629",
+   "fila": "Beef, variety meats and by-products, lungs, cooked, braised",
+   "clase": "humedo",
+   "celdas": 73,
+   "agua": 76.4,
+   "como": "guisado a fuego lento en agua",
+   "categoria": "Vísceras"
+  },
+  "Repollo": {
+   "ids": {
+    "usda": "169976"
+   },
+   "fuente": "usda",
+   "id": "169976",
+   "fila": "Cabbage, cooked, boiled, drained, without salt",
+   "clase": "humedo",
+   "celdas": 110,
+   "agua": 92.57,
+   "como": "hervido en agua",
+   "categoria": "Verduras y frutas"
+  },
+  "Riñón de cordero": {
+   "ids": {
+    "usda": "174355"
+   },
+   "fuente": "usda",
+   "id": "174355",
+   "fila": "Lamb, variety meats and by-products, kidneys, cooked, braised",
+   "clase": "humedo",
+   "celdas": 67,
+   "agua": 70.45,
+   "como": "guisado a fuego lento en agua",
+   "categoria": "Vísceras"
+  },
+  "Salmón": {
+   "ids": {
+    "ciqual": "26038",
+    "bedca": "2628",
+    "usda": "171998"
+   },
+   "fuente": "ciqual",
+   "id": "26038",
+   "fila": "Saumon, cuit à la vapeur",
+   "clase": "humedo",
+   "celdas": 59,
+   "agua": 63.5,
+   "como": "al vapor",
+   "categoria": "Pescados y mariscos"
+  },
+  "Timo de ternera": {
+   "ids": {
+    "usda": "172543"
+   },
+   "fuente": "usda",
+   "id": "172543",
+   "fila": "Veal, variety meats and by-products, thymus, cooked, braised",
+   "clase": "humedo",
+   "celdas": 89,
+   "agua": 73.63,
+   "como": "guisado a fuego lento en agua",
+   "categoria": "Vísceras"
+  },
+  "Timo de vaca": {
+   "ids": {
+    "usda": "170195"
+   },
+   "fuente": "usda",
+   "id": "170195",
+   "fila": "Beef, variety meats and by-products, thymus, cooked, braised",
+   "clase": "humedo",
+   "celdas": 73,
+   "agua": 52.83,
+   "como": "guisado a fuego lento en agua",
+   "categoria": "Vísceras"
+  },
+  "Zanahoria": {
+   "ids": {
+    "usda": "169339"
+   },
+   "fuente": "usda",
+   "id": "169339",
+   "fila": "Carrots, cooked, boiled, drained, with salt",
+   "clase": "humedo",
+   "celdas": 116,
+   "agua": 90.17,
+   "como": "hervido en agua",
+   "categoria": "Verduras y frutas"
+  },
+  "Atún": {
+   "nombre_final": "Atún claro cocido",
+   "ids": {
+    "usda": "172006"
+   },
+   "fuente": "usda",
+   "id": "172006",
+   "fila": "Fish, tuna, yellowfin, fresh, cooked, dry heat",
+   "clase": "seco",
+   "celdas": 109,
+   "agua": 68.98,
+   "como": "al horno o a la plancha, sin aceite",
+   "categoria": "Pescados y mariscos",
+   "ancla": "usda:175159 «Fish, tuna, fresh, yellowfin, raw» — 94,0 % proteína y 1,9 % grasa sobre materia seca en LAS DOS filas, idénticas: USDA calculó la cocida concentrando la cruda, así que el emparejamiento es exacto"
+  },
+  "Pulpo": {
+   "nombre_final": "Pulpo cocido",
+   "ids": {
+    "usda": "174249"
+   },
+   "fuente": "usda",
+   "id": "174249",
+   "fila": "Mollusks, octopus, common, cooked, moist heat",
+   "clase": "humedo",
+   "celdas": 89,
+   "agua": 60.5,
+   "como": "hervido en agua",
+   "categoria": "Pescados y mariscos",
+   "ancla": "usda:174218 «Mollusks, octopus, common, raw» — 75,5 % proteína y 5,3 % grasa sobre materia seca en las dos. ⚠️ La de BEDCA, «Pulpo, hervido» (2374), se RECHAZA: da 102,2 % de proteína sobre su propia materia seca, que es imposible — una parte no puede pasar del total"
+  },
+  "Dorada": {
+   "nombre_final": "Dorada cocida",
+   "ids": {
+    "ciqual": "27031"
+   },
+   "fuente": "ciqual",
+   "id": "27031",
+   "fila": "Dorade (Daurade) royale, cuite au four",
+   "clase": "seco",
+   "celdas": 47,
+   "agua": 68.8,
+   "como": "al horno, sin aceite",
+   "categoria": "Pescados y mariscos",
+   "ancla": "ciqual:26088 «Dorade royale ou daurade ou vraie daurade, crue, élevage» — 76,0/18,5 en crudo contra 75,6/18,9 cocida, proteína y grasa sobre materia seca. ⚠️ La de BEDCA, «Dorada, plancha» (2333), ya la rechazó el barrido por la grasa, y su fila CRUDA (815) declara 94,4 % de proteína MÁS 40,1 % de grasa sobre su materia seca: 134 %, imposible, y es la incoherencia que el repo ya tenía declarada de la dorada"
+  },
+  "Cerdo": {
+   "nombre_final": "Cerdo cocido",
+   "plantilla": "Ternera solomillo sin grasa",
+   "categoria": "Carne muscular",
+   "ids": {
+    "ciqual": "28205"
+   },
+   "fuente": "ciqual",
+   "id": "28205",
+   "fila": "Porc, viande, cuite (aliment moyen)",
+   "clase": "generico",
+   "celdas": 56,
+   "agua": 59.3,
+   "como": "hervido o al horno, hecho del todo por dentro",
+   "ancla": "las filas crudas de CIQUAL del mismo animal: «Porc, longe, crue» (28003) da 64,4 % de proteína y 30,6 % de grasa sobre materia seca y la cocida 71,5/24,0 — el mismo producto. ⚠️ Se RECHAZA «Porc, filet, maigre, en rôti, cuit» (28202): su fila cruda hermana (28201) da 82,8/14,1 y la cocida 70,2/23,3, o sea que el «rôti» trae grasa que el filete magro no tiene"
+  },
+  "Ternera": {
+   "nombre_final": "Ternera cocida",
+   "plantilla": "Ternera solomillo sin grasa",
+   "categoria": "Carne muscular",
+   "ids": {
+    "ciqual": "6564"
+   },
+   "fuente": "ciqual",
+   "id": "6564",
+   "fila": "Veau, viande, cuite (aliment moyen)",
+   "clase": "generico",
+   "celdas": 42,
+   "agua": 63.7,
+   "como": "hervido o guisado sin sal",
+   "ancla": "«Veau, épaule, crue» (6560) da 82,5 % de proteína y 18,4 % de grasa sobre materia seca, y su propia fila cocida (6563) da 82,5/18,5 — clavadas. La media de cortes cocidos, 79,9/15,3, cae dentro"
+  },
+  "Vaca solomillo": {
+   "nombre_final": "Solomillo de vaca cocido",
+   "plantilla": "Ternera solomillo sin grasa",
+   "categoria": "Carne muscular",
+   "ids": {
+    "bedca": "996"
+   },
+   "fuente": "bedca",
+   "id": "996",
+   "fila": "Vaca/buey, solomillo, a la plancha",
+   "clase": "seco",
+   "celdas": 30,
+   "agua": 64.0,
+   "como": "a la plancha sin aceite",
+   "ancla": "bedca:1029 «Ternera, solomillo, sin grasa, crudo», que es la ficha cruda que ya tiene el catálogo: 80,8 % de proteína y 12,3 % de grasa sobre materia seca contra 78,1/16,2 de la cocida. Mismo corte, animal más mayor, y eso va dicho"
+  }
+ },
+ "rechazadas": {
+  "Atún": [
+   "bedca:742 «Atún, al horno» -> grasa",
+   "bedca:2135 «Atún, plancha» -> grasa que aparece · grasa"
+  ],
+  "Coco fresco": [
+   "ciqual:20293 «Haricot coco, bouilli/cuit à l'eau» -> proteína · grasa"
+  ],
+  "Dorada": [
+   "bedca:2333 «Dorada, plancha» -> grasa"
+  ],
+  "Hígado de pato": [
+   "ciqual:8331 «Foie gras, canard, bloc (aliment moyen)» -> grasa que aparece · proteína · grasa"
+  ],
+  "Lubina": [
+   "ciqual:27030 «Bar commun ou loup, rôti/cuit au four» -> grasa que aparece · grasa"
+  ],
+  "Pavo": [
+   "bedca:990 «Pavo, pechuga, sin piel, a la plancha» -> grasa"
+  ],
+  "Pulpo": [
+   "bedca:2374 «Pulpo, hervido» -> partes>total"
+  ],
+  "Páncreas de vaca": [
+   "usda:169453 «Beef, variety meats and by-products, pan» -> proteína"
+  ],
+  "Sardina": [
+   "ciqual:26136 «Sardine, grillée» -> NO PUBLICA EPA NI DHA («-»), y el EPA+DHA es justo lo que hace falta de un pescado azul. Además su fila cruda hermana (26065) declara 2,2 g de cenizas y la asada 1,24: la cruda es el pez ENTERO con espina y la asada un filete, o sea otro alimento — y de ahí sale que la proteína pase de 54,2 a 69,7 % de la materia seca sin perder agua",
+   "bedca:2631 «Sardina, asada» -> 68,0 % de proteína MÁS 86,5 % de grasa sobre su propia materia seca: 154 %, imposible"
+  ],
+  "Boquerón": [
+   "bedca:2318 «Boquerón, frito» -> FRITO. Freír no es un método de cocción más: es añadir aceite, y la grasa de esa fila sube por lo que se le echa. No hay ninguna otra fila de boquerón cocido en las tres fuentes"
+  ],
+  "Lubina (segunda vuelta)": [
+   "ciqual:27030 «Bar commun ou loup, rôti/cuit au four» -> 21,1 % de grasa sobre materia seca contra 15,6 % de la lubina de CRÍA cruda (26206) y 8,4 % de la salvaje (26205), que son las dos filas crudas que publica la fuente. La cocida se pasa de las dos, así que la grasa no viene del pescado"
+  ],
+  "Caballa (segunda vuelta)": [
+   "bedca:804 «Caballa, al horno» -> 42,8 % de proteína y 52,1 % de grasa sobre materia seca contra 61,0/38,9 de su fila cruda (2319). La que se usa, usda:175120, da 51,0/38,1 igual que su cruda (175119): clavadas"
+  ]
+ }
+}

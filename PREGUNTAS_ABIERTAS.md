@@ -3094,6 +3094,263 @@ el mecanismo está puesto y la especie a evitar le llega al solver.
 
 ---
 
+## P-53 · Las kcal que guardamos son las de la fuente, y FEDIAF dice que se calculen
+
+**Dueño: el nutricionista** · **¿Bloquea?** no, pero mueve el denominador de
+todo · **Abierta desde** el 18 de septiembre de 2026
+
+**Lo que pasa.** FEDIAF §7.2.2.2 b) dice que la energía metabolizable de un
+producto en estado natural *«has to be predicted»* con su ecuación: **4 × proteína
++ 9 × grasa + 4 × NFE**. Nosotros no la predecimos: **copiamos la kcal que publica
+la fuente**. Y las fuentes no usan esos factores.
+
+Lo destapó el BLOQUE 71 con 14 rojos al entrar la comida cocinada, y la causa no
+era ningún dato mal: **USDA publica sus kcal con los factores ESPECÍFICOS de
+Atwater**, que para la carne y el pescado son **4,27 y 9,02** en vez de 4 y 9.
+
+**Medido** sobre las 122 fichas de origen animal con energía, agrupando por la
+fuente que declara la celda:
+
+| fuente | n | mediana contra 4/9 | mediana contra 4,27/9,02 |
+|---|---|---|---|
+| **USDA** | 34 | **1,045** | **1,001** |
+| CIQUAL | 6 | 1,000 | 0,953 |
+| BEDCA | 4 | 1,012 | 0,960 |
+
+O sea: no es ruido ni es glucógeno, es **la convención de la fuente**, y solo la
+de USDA. En el catálogo crudo se notaba poco porque la carne cruda es más de la
+mitad agua; en la cocinada, que está concentrada, el mismo 4,5 % relativo se sale
+de la banda y por eso aparecieron 14 de golpe.
+
+**Por qué importa de verdad.** La columna `energia` es el **DENOMINADOR de las 43
+comprobaciones** del semáforo. Si va un 4,5 % alta, todas las concentraciones de
+un menú con esa ficha van un 4,5 % bajas — y **ninguna prueba lo ve**, porque
+todas usan el mismo denominador.
+
+**Lo que se ha hecho:** el BLOQUE 71 compara con los factores de la fuente que
+declara la celda, así que deja de acusar a un número que está bien. Lo que **no**
+se ha hecho es cambiar el número.
+
+**La pregunta.** ¿El catálogo debe guardar la kcal **calculada con la ecuación de
+FEDIAF** en lugar de la publicada por la fuente? A favor: la regla del repo es
+que **gana FEDIAF**, y su texto no dice «puede», dice *«has to be predicted»*. En
+contra: son **34 fichas** cuyo denominador se movería a la vez, y la ecuación pide
+un tercer término —el **NFE**— que el catálogo **no tiene como columna**, así que
+aplicarla hoy dejaría fuera el glucógeno del hígado y del pulpo, que es real y
+está medido (1,11 y 1,12 veces la ecuación sin NFE).
+
+⚠️ **Lo que NO puede pasar es quedarse a medias**: calcular unas fichas y copiar
+otras haría que dos alimentos del mismo plato midieran su energía con dos reglas
+distintas, y eso es peor que cualquiera de las dos opciones enteras.
+
+
+## ~~P-52~~ · Las plantas: CERRADA. No entra ninguna
+
+> ⚠️ **CERRADA EL 18 DE SEPTIEMBRE POR ELENA**, y con esto no se vuelve a abrir:
+>
+> > «te dije que dejaras todo lo de las plantas porque **no hay nada probado que
+> > demuestre que son beneficiosas**»
+>
+> Y el repo le da la razón con la medida delante: de las cuatro que se miraron,
+> la **cúrcuma** se probó en perro con doble ciego y **no ganó al placebo**, el
+> **romero** solo tiene uso documentado como conservante del pienso, y el
+> **perejil** y el **tomillo** no tienen nada (NRC los clasifica como
+> saborizantes). El **cardo mariano** lo cerró ella misma el mismo día.
+>
+> **No se ofrece ninguna planta nueva.** Lo que sigue abajo se queda escrito —no
+> borrado— porque una pregunta borrada se vuelve a hacer, y porque el criterio de
+> las cuatro condiciones es lo que hay que aplicar el día que alguien proponga
+> otra. **Ya no tiene dueño ni espera respuesta.**
+
+## P-52 · Las plantas: cuál pasa el listón, y por qué puerta entra
+
+*(18 de septiembre de 2026. La abrió Elena: «yo sigo viendo un montón de menús
+de tiendas que venden que meten perejil, romero, tomillo», y la ordenó ella
+misma en el mensaje siguiente, que es el que vale:)*
+
+> «no sería un candidato del solver, lo que sería es… imagínate que se ha
+> demostrado que una de esas plantas es buena para, yo qué sé, para la diarrea,
+> para el pelo más brillante, cosas así. **Si algo está demostrado realmente,
+> pues entonces sí lo podemos meter a una dosis muy bajita**, ¿entiendes?»
+
+⚠️ **LA PUERTA YA EXISTE Y YA SE HA USADO: es el PSYLLIUM.** Está en el catálogo
+desde agosto (`NaturGreen Psyllium Bio`, categoría **Fibra**), es una planta, y
+entró exactamente así — como **suplemento con su tope de dosis**, no como comida
+que el MILP optimiza. Con respaldo de verdad: SACN5 lo recomienda para el
+intestino irritable (cap.63) y el estreñimiento (cap.64), y Fascetti le da
+**dosis escrita** para el perro diabético (cap.17, «1–3 tbsp per day»). O sea que
+esto no hay que construirlo: hay que aplicarlo.
+
+**El criterio, escrito para que la próxima candidata se juzgue sin volver a
+discutirlo.** Una planta entra cuando cumple **las cuatro**:
+
+| | |
+|---|---|
+| **1** | una fuente del repo dice **qué hace, EN PERRO** — no en humano, no in vitro, no «tradicionalmente se usa para» |
+| **2** | con una **dosis**, no con una pizca |
+| **3** | su **seguridad** está establecida en perro |
+| **4** | y entra como **suplemento con su tope**, nunca como candidato del MILP |
+
+La cuarta está medida en este motor y no es burocracia: el solver elige por
+nutrición **por gramo**, y la albahaca —que está dentro como verdura— llegó a
+salir a **651 g en una ración**. Una planta metida como comida no se queda en la
+pizca que pone una tienda.
+
+**Hoy no pasa ninguna de las cuatro que preguntó Elena**, y el detalle una a una
+está en `LECTURAS.md`. En corto: la **cúrcuma** se probó en perro con doble
+ciego y **no ganó al placebo**; el **romero** solo tiene uso documentado como
+conservante del pienso, y ni para eso está aprobado; el **perejil** y el
+**tomillo** no tienen nada — NRC los clasifica como saborizantes.
+
+**Lo que SÍ queda que decidir, y por eso esto sigue abierto:**
+
+1. ~~**El cardo mariano (silimarina)**: mecanismo hepatoprotector descrito con
+   detalle, pero SACN5 dice que está «being evaluated» y que los ensayos buenos
+   están por venir.~~ **CERRADA el 18 de septiembre por Elena**: «nada deja lo
+   del cardo me da igual». No se vigila y no entra. Queda escrito, no borrado,
+   porque una pregunta borrada se vuelve a hacer.
+2. **Si se quiere ofrecer alguna aunque no pase el listón**, porque las tiendas
+   las ponen y su ausencia se puede leer como que nuestro menú es más pobre.
+   Eso es una decisión de producto, no de dato, y es de Elena. Si la respuesta
+   es que sí, la forma es la del psyllium y **el texto tiene que decir que no
+   está demostrado**.
+3. ⚠️ **El arándano rojo hay que decidir si se DESACONSEJA activamente**, que es
+   distinto de no ofrecerlo: no es que no sirva, es que está **contraindicado**
+   en el perro con urolito de oxalato cálcico («high in oxalate, as well as
+   vitamin C», Fascetti cap.16 y SACN5 cap.46) — y es justo al que se lo venden,
+   «para las vías urinarias». Hoy el motor no dice nada de un producto que el
+   dueño puede estar comprando por su cuenta.
+4. ⚠️ **Y el AJO**, que no es una hierba y es lo único de todo esto que puede
+   matar: NRC lo nombra como antiparasitario «natural» y FEDIAF lo marca como
+   tóxico (§7.7.3, con la cebolla). Una receta de tienda con hierbas puede
+   llevarlo al lado con el mismo argumento. Si se le cuenta algo al dueño sobre
+   plantas, **eso** es lo que hay que decirle.
+
+**Dueño de la pregunta: Elena.** Los cuatro puntos son de producto.
+
+## P-51 · Cuando el mandato manda a USDA y USDA lo cuece de otra manera
+
+*(18 de septiembre de 2026, de madrugada. No la pregunté yo: la encontró el
+BLOQUE 104 al rebasar el modo cocinado, con NUEVE emparejamientos acusados. Y
+lo primero que hay que decir es que el guardia tenía razón y yo no.)*
+
+**Qué pasa.** Las once fichas cocidas del modo cocinado sacan su composición de
+la cadena de mandato de siempre: BEDCA no tiene ninguna de ellas, CIQUAL es el
+mandato 3 y USDA el 4. Y en tres pescados **la única fila que publica USDA está
+cocinada de otra manera que la nuestra**: `cooked, dry heat` —al horno o a la
+plancha— mientras la ficha se da hervida o al vapor.
+
+Cocinar en seco pierde mucha más agua que hervir o vaporizar, así que esa fila
+describe un alimento **más concentrado** por 100 g. Medido con la proteína como
+proxy (el agua no está en la instantánea):
+
+| ficha | su proteína | la de la fila de USDA | está |
+|---|---|---|---|
+| **Trucha cocida** | 19,0 g | 23,8 g | **25 % más concentrada** |
+| Salmón cocido | 25,0 g | 22,1 g | 12 % menos |
+| Bacalao cocido | 24,5 g | 22,83 g | 7 % menos |
+
+Y comparando celda a celda el bacalao al vapor de CIQUAL contra el de horno de
+USDA: **mediana del 42 % de diferencia**, con la vitamina A al 600 % y el hierro
+al 390 %. No es redondeo: es otro alimento.
+
+**Lo que NO es el problema, y hay que decirlo porque fue mi primera lectura.**
+No es que eligiera mal la fila. Las tres celdas del salmón que parecían venir de
+la fila equivocada —cobre, manganeso, selenio— CIQUAL las da como **`< 0,1`,
+`< 0,1` y `< 5`**, que son **límites de detección y no números** (la tercera de
+las tres marcas que el repo ya tiene escritas), y su vitamina B12 como `-`. O
+sea que bajar al mandato 4 era **lo correcto**. El problema no es la elección:
+es que en el mandato 4 solo hay pescado al horno.
+
+**Dónde muerde, por fichas:**
+
+| ficha | celdas directas de la fila de horno | ¿las publica CIQUAL? |
+|---|---|---|
+| **Trucha cocida** | **15** | **ninguna** |
+| Salmón cocido | 4 | ninguna (tres `< X` y una `-`) |
+| Bacalao cocido | 1 (hierro) | sí, 0,1 mg — y la override a USDA la decidí yo |
+
+⚠️ **Los aminoácidos NO están en esta pregunta, y por eso importa separarlos**:
+los doce se transfieren **por gramo de proteína**, que es la regla que el repo ya
+tiene escrita, y esa transferencia **cancela** la diferencia de agua. Un
+aminoácido es una fracción de la proteína; un mineral no lo es de nada, así que
+para él no hay transferencia legítima y la celda entra tal cual.
+
+**Las tres salidas posibles, y ninguna es obvia:**
+
+1. **Normalizar por materia seca.** Es lo correcto en espíritu y es la misma
+   regla de los aminoácidos y los ácidos grasos generalizada. USDA publica el
+   agua de sus filas; lo que pasa es que nuestra instantánea no la captura para
+   estas celdas. Cambia **cómo se construye el catálogo**, así que no es un
+   arreglo de una noche.
+2. **Aceptar la celda con su medida escrita**, como se hizo con los dos
+   emparejamientos de CONGELADO que ya están declarados. Defendible para el
+   bacalao y el salmón (7 % y 12 %); **no** para la trucha (25 % y quince
+   celdas).
+3. **Dejar hueco.** Es seguro en las dos direcciones —está medido en el repo—
+   pero con quince huecos la trucha deja de ser una ficha.
+
+**Lo que se ha hecho de momento: NADA, y el modo cocinado NO se fusiona.**
+Declarar una excepción para que la batería salga verde sería exactamente lo que
+este repo tiene escrito que no se hace: un fallo tapado con forma de dato bueno.
+
+⚠️ **Y los dos de CARNE son otro caso y puede que se cierren solos**: el jarrete
+de ternera y el hígado de vaca salen acusados por `braised`, y la fila de CIQUAL
+de la que vienen sus números se llama literalmente **«Veau, jarret, braisé ou
+bouilli»** — o sea que **la propia fuente trata estofado y hervido como lo
+mismo**. Estofar es cocer en líquido. Eso tiene cita y se puede declarar; el
+horno no.
+
+**Dueño: Elena**, porque es qué comen sus perros y porque las tres salidas son
+un juicio y no una cuenta — que es lo que este repo dice de las 253
+discrepancias que no se tocan.
+
+---
+
+### ⚠️ ACTUALIZADA LA MISMA NOCHE: se ha hecho la salida 1, y la pregunta se REDUCE
+
+*(18 de septiembre de 2026.)* Arriba pone «lo que se ha hecho de momento: NADA».
+Ya no es verdad, y esto es lo que cambió: **la salida 1 sí era un arreglo de una
+noche**, porque lo único que faltaba era el agua de la fila donante y las dos
+fuentes la publican. Lo que no la tenía era nuestra instantánea.
+
+Con las dos aguas, el factor es una cuenta y la celda se rehace:
+
+| ficha | MS nuestra | MS de la donante | factor |
+|---|---|---|---|
+| **Trucha cocida** | 25,00 | 31,28 | **×0,7992** |
+| Bacalao cocido | 23,70 | 26,60 | ×0,8910 |
+| Lenguado cocido | 18,40 | 23,10 | ×0,7965 |
+| Salmón cocido | 31,20 | 36,50 | ×0,8548 |
+| Calabaza cocida | 3,50 | 9,30 | **×0,3763** |
+
+Es la misma regla que el repo ya aplica a los aminoácidos (por gramo de
+proteína) y a los ácidos grasos (por gramo de grasa), leída para la cocción: un
+mineral vive en la materia seca, así que su cantidad por gramo de MS se conserva
+y lo que cambia por 100 g es cuánta MS hay. El fósforo de la trucha pasa de 270
+a **215,8 mg** y su vitamina D de 19 a **15,2 µg**.
+
+Las 29 celdas quedan declaradas en `celdas_de_otra_coccion` de
+`fuentes_de_composicion.json` con las dos aguas y el factor, y el **BLOQUE 104
+REHACE la cuenta** en vez de leerla — comprobado con el fallo puesto.
+
+**LO QUE SIGUE ABIERTO, y es más estrecho:** el rebase corrige el agua y **no el
+lavado**. Hervir arrastra las vitaminas hidrosolubles y parte de los minerales al
+agua de cocción, y eso no es agua: es pérdida. Así que donde la donante es seca y
+la nuestra húmeda —la trucha y la calabaza— las celdas siguen quedando **altas**,
+solo que mucho menos. Cuantificarlo pide un **factor de retención por
+nutriente**, y **ninguna de las tres fuentes lo publica**. Está en
+`DATOS_QUE_FALTAN.md`.
+
+⚠️ Y una segunda mitad que es de código y no de dato: la regla general —rebasar
+toda celda absoluta que venga de una fila de otra cocción— vive hoy en la
+declaración y **no en `auditar_composicion.py`**, que es donde tendría que estar
+para aplicarse sola a la siguiente ficha cocida que entre. Eso es trabajo, no
+pregunta: va a `PENDIENTE_NUTRICION.md`.
+
+**Dueño: el nutricionista**, para el factor de retención. Lo demás está hecho.
+
+
 ## P-50 · Tres cosas que sé de los hidratos y que NINGUNA fuente del repo dice
 
 *(17 de septiembre de 2026. Las preguntó Elena el día que entraron los cinco

@@ -23,6 +23,26 @@
 
 
 
+## El factor de RETENCIÓN de cada nutriente al cocinar  ·  _las 29 celdas de `celdas_de_otra_coccion`_
+
+**Añadido el 18 de septiembre de 2026, al rebasar por materia seca las celdas que
+vienen de una fila de otra cocción (P-51).** El rebase corrige **el agua** y no
+corrige **el lavado**: hervir arrastra las vitaminas hidrosolubles y parte de los
+minerales al agua de cocción, y eso no es agua, es pérdida. Donde la fila donante
+es de la familia SECA y la nuestra de la húmeda —la **trucha** (16 celdas) y la
+**calabaza** (2)— las cifras siguen quedando **altas**, solo que mucho menos: la
+trucha pasa de un exceso del 25 % a ~0 por agua, y lo que quede es lavado.
+
+**Lo que falta es un factor de retención por nutriente y por método de cocción**
+(del tipo «la tiamina hervida retiene el 60 %»). **Ninguna de las tres bases lo
+publica**: BEDCA, CIQUAL y USDA dan filas crudas y filas cocinadas, no factores.
+USDA tuvo una tabla de retención (SR-Release Nutrient Retention Factors) que ya
+no mantiene, y no está en el repo.
+
+⚠️ **No lo rellena el asistente**: elegir un factor de retención es criterio
+clínico y de fuente, no una cuenta. Va con dueño en `PREGUNTAS_ABIERTAS.md` P-51.
+
+
 ## En qué forma química viene el fósforo de los suplementos  ·  _Multivitamínico, Calcio, Vitamina B, Hierro_
 
 **Añadido el 12 de septiembre de 2026, leyendo enteros Dobenecker 2021 (PLOS

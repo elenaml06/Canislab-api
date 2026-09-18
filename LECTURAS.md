@@ -2095,3 +2095,161 @@ cuatro decisiones, dos documentos y un bloque de batería encima, y **nadie hab�
 abierto el estudio**. Se citaba la tabla de un libro que cita un estudio, y a dos
 saltos de la fuente el 400 parecía un dato y era un redondeo. Es exactamente lo
 que `auditar_transcripcion_fediaf.py` existe para impedir un tramo más arriba.
+
+## Las hierbas aromáticas — perejil, romero, tomillo y cúrcuma · leído el 18-sep-2026
+
+⚠️ **POR QUÉ SE LEE ESTO, Y LA LECCIÓN ESTÁ ANTES QUE EL CONTENIDO.** Elena:
+
+> «yo ya sé que nosotros una vez hablamos de plantas, de perejil, tomillo,
+> cúrcuma, tal, y llegamos a la conclusión de que realmente no aportaban nada,
+> ¿no? Pero es que, joder, yo sigo viendo un montón de menús de tiendas que
+> venden que meten perejil, romero, tomillo. Entonces me gustaría que
+> volviésemos a investigar por ahí.»
+
+Se habló y **no se escribió en ninguna parte**: comprobado, ni «perejil», ni
+«romero», ni «tomillo», ni «cúrcuma» aparecen en una sola línea del repo. O sea
+que la conclusión existía en una conversación y no en el motor, y una conclusión
+que no está escrita **vuelve a preguntarse**, que es exactamente lo que pasó.
+Es la «pregunta zombi» de `PREGUNTAS_ABIERTAS.md` en su otra cara: allí era una
+pregunta cerrada que seguía escrita como abierta; aquí es una respuesta cerrada
+que no se escribió nunca. Las dos cuestan lo mismo.
+
+### Lo que dicen las fuentes
+
+**1 · NRC 2006 las nombra UNA A UNA y dice que no hay datos.** Es lo más
+directo que tiene el repo sobre esto, y nombra el perejil, la cúrcuma y el
+romero con todas las letras:
+
+> «Many herbs and similar flavoring agents that are acceptable for use in animal
+> feeds and petfoods are sometimes added for other intended effects, such as an
+> antiparasitic agents (garlic), antioxidants (rosemary), or agents having
+> effects other than taste (parsley, turmeric, licorice, chamomile). These
+> alternative functions are not recognized as legitimate intended uses under
+> federal regulations, and claims alluding to function beyond provision of
+> flavor may prompt regulatory action.»
+
+y, a renglón seguido:
+
+> «There are few data to suggest that these substances would be of benefit at
+> levels typically added as flavors.»
+
+⚠️ Y hay que leer bien **dónde** está ese párrafo: en el apartado «Other Natural
+Flavors», o sea que el NRC las clasifica como **SABORIZANTES**. No dice que
+hagan daño: dice que lo que se les atribuye no está demostrado a la cantidad a
+la que se ponen, y que afirmarlo puede ser motivo de expediente.
+
+**2 · Fascetti avisa de lo contrario de lo que promete la etiqueta**, y es la
+frase que más pesa para nosotros porque habla de SEGURIDAD y no de eficacia:
+
+> «veterinarians and their clients also must be cautious of products that
+> contain natural additives such as herbs, because the safety of many of these
+> compounds has not been tested.»
+
+**3 · La cúrcuma sí se ha probado en perros, a dosis de suplemento y no de
+pizca, y no ganó al placebo** (Fascetti cap.10, ensayo de Corbee 2022 con
+mejillón de labio verde + curcumina + grosellero negro, doble ciego, cruzado y
+con placebo, 16 semanas en perro):
+
+> «In dogs, the clinical signs improved significantly in the supplement group
+> compared to baseline, but was not different than the placebo group.»
+
+Y el mismo capítulo explica por qué eso importa tanto aquí: el efecto placebo
+**del dueño** en artrosis es enorme, y por eso una mejoría «contra el punto de
+partida» no dice nada.
+
+**4 · Ninguna de las cuatro está en la lista de tóxicos de FEDIAF (§7.7)**, que
+son uva y pasa, chocolate, y cebolla y ajo. Tampoco en la Tabla 40-3 de SACN5,
+la de alto oxalato. O sea que **no son peligrosas**: son irrelevantes.
+
+⚠️ **Y el mismo párrafo del NRC trae un aviso que sí importa y que no es de
+hierbas**: nombra el **ajo** como «antiparasitic agent», y el ajo es una de las
+tres cosas que FEDIAF marca como tóxicas. Una receta de tienda que lleve hierbas
+puede llevarlo al lado, con el mismo argumento de «natural».
+
+### La decisión, y el criterio que la ordena
+
+⚠️ **LA PRIMERA VERSIÓN DE ESTE APARTADO CONTESTABA A OTRA PREGUNTA, y Elena la
+corrigió el mismo día**: yo había escrito «no entran porque no aportan nada», y
+ella puso el listón donde va:
+
+> «no sería un candidato del solver, lo que sería es… imagínate que se ha
+> demostrado que una de esas plantas es buena para, yo qué sé, para la diarrea,
+> para el pelo más brillante, cosas así. **Si algo está demostrado realmente,
+> pues entonces sí lo podemos meter a una dosis muy bajita**, ¿entiendes?»
+
+O sea que el criterio no es «¿aporta nutrientes?» —esa es la pregunta de un
+alimento— sino **«¿está demostrado en PERRO, y a qué dosis?»**, que es la
+pregunta de un suplemento. Son dos preguntas distintas y yo las había mezclado.
+
+⚠️ **Y LO MEJOR ES QUE ESA PUERTA YA EXISTE Y YA SE HA USADO: se llama
+PSYLLIUM.** Está en el catálogo desde agosto (`NaturGreen Psyllium Bio`,
+categoría **Fibra**), es una planta, y entró exactamente por donde Elena
+describe — no como comida que el MILP optimiza, sino como **suplemento con su
+tope de dosis**. Y su respaldo es de verdad: SACN5 lo nombra entre las fibras
+solubles recomendadas para el **intestino irritable** (cap.63) y para el
+**estreñimiento** (cap.64), y Fascetti le da **dosis escrita** para ayudar a
+regular al perro diabético (cap.17: «Fiber can be added as a mixed fiber source
+such as psyllium husk powder, **1–3 tbsp per day**»).
+
+Así que la regla no hay que inventarla: hay que **escribirla**, que es lo que no
+se hizo. **Una planta entra cuando cumple las CUATRO:**
+
+| | |
+|---|---|
+| **1** | una fuente del repo dice **qué hace, EN PERRO** — no en humano, no in vitro, no «tradicionalmente se usa para» |
+| **2** | con una **dosis**, no con una pizca |
+| **3** | su **seguridad** está establecida en perro |
+| **4** | y entra como **suplemento con su tope**, nunca como candidato del MILP |
+
+La cuarta no es burocracia y está medida en este motor: el solver elige por
+nutrición **por gramo**, y la **albahaca** —que está dentro como verdura— llegó a
+salir a **651 g en una ración** porque por gramo es un concentrado de minerales.
+Una planta metida como comida no se queda en la pizca que pone una tienda.
+
+### Qué pasa cada una por ese listón, una a una
+
+**NINGUNA de las cuatro que preguntó Elena**, y cada una falla por un sitio
+distinto — que es lo que hay que saber para no volver a preguntarlo:
+
+| Planta | Dónde falla |
+|---|---|
+| **Cúrcuma** | **Sí se ha probado en perro** y es el caso mejor estudiado de los cuatro: ensayo **doble ciego, cruzado, con placebo, 16 semanas**, en perros con artrosis leve o moderada. *«In dogs, the clinical signs improved significantly in the supplement group compared to baseline, **but was not different than the placebo group**»* (Fascetti cap.10, Corbee 2022). Falla en el punto 1 **habiéndose medido**, que es la forma más fuerte de fallarlo |
+| **Romero** | Su uso documentado **no es del perro: es del pienso**. NRC lo nombra como antioxidante que «recycle the function of the tocopherol compounds» — o sea conservante de la grasa del producto — y añade que *«Rosemary extract is not approved for use as a preservative, however»*. Ni siquiera para eso |
+| **Perejil** | Nada. NRC lo mete entre los **saborizantes**, con la cúrcuma, la regaliz y la manzanilla, y dice que sus funciones «are not recognized as legitimate intended uses» |
+| **Tomillo** | Nada, en ninguna de las fuentes del repo |
+
+**Y dos que no preguntó y que salieron buscando, porque las venden mucho:**
+
+- **Cardo mariano (silimarina)** es **la que más cerca está**, y por eso se
+  escribe: su mecanismo hepatoprotector está descrito con detalle (Fascetti
+  cap.13: antioxidante, quelante de hierro, inhibe la unión de hepatotoxinas).
+  Pero SACN5 cap.68 dice dónde estamos: *«Other cytoprotective agents, such as
+  s-adenosylmethionine (SAMe) and silymarin, **are being evaluated** for use in
+  dogs and cats with liver disease»*, y *«**Hopefully, in the future,
+  well-designed clinical trials** using these and other cytoprotective agents in
+  canine and feline liver disease patients will provide even more evidence
+  regarding their efficacy»*. Mecanismo sí, ensayo clínico en perro **todavía
+  no**. Es la candidata a vigilar.
+- ⚠️ **Arándano rojo: no es que no sirva, es que está CONTRAINDICADO** justo en
+  el perro al que se lo venden. *«Cranberry concentrate tablets are also
+  contraindicated. They provide mild acidification and are **high in oxalate**,
+  as well as vitamin C»* (Fascetti cap.16, y SACN5 cap.46 dice lo mismo). Se
+  vende «para las vías urinarias» y el perro con urolito de **oxalato cálcico**
+  es exactamente al que no se le puede dar.
+
+**Y el aviso general de SACN5, que vale para todas las que vengan**:
+
+> «the safety of other “natural” supplements such as aloe, ginseng root,
+> eucalyptus, ginger and oil of wintergreen has yet to be established for dogs
+> and cats» (cap.11)
+
+⚠️ **Y una cosa del mismo párrafo del NRC que NO es de hierbas y es la que de
+verdad puede hacer daño**: nombra el **ajo** como agente antiparasitario
+«natural», y el ajo es una de las tres cosas que FEDIAF marca como tóxicas
+(§7.7.3, con la cebolla). Una receta de tienda que lleve hierbas puede llevarlo
+al lado, con el mismo argumento de «es natural». Si algún día se le cuenta algo
+al dueño sobre esto, **eso** es lo que hay que decirle, no lo del perejil.
+
+**Lo que queda abierto** es de producto y es de Elena: si alguna planta pasa las
+cuatro algún día, entra por la puerta del psyllium. Va a `PREGUNTAS_ABIERTAS.md`
+como **P-52**.

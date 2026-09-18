@@ -783,6 +783,102 @@ literal** de cada fila y el script lo comprueba antes de comparar.
 
 Lo vigila el **BLOQUE 127**, comprobado con el fallo puesto de seis formas.
 
+### El modo cocinado: un catálogo entero, no una casilla
+
+*(18 de septiembre de 2026.)* Elena, viendo que el modo cocinado tenía once
+fichas contra 105 accesibles: «hay que mirar **TODOS** los alimentos… tienes que
+tener un catálogo de alimentos igual de rico que el que tenemos ahora, pero para
+alimentos cocinados».
+
+**De 8 fichas a 71**, ninguna escrita a mano: `construir_cocidos.py` siembra el
+esqueleto con sus `fuentes_id` y los números los pone `auditar_composicion.py`,
+que es la maquinaria ya auditada.
+
+⚠️ **CADA FICHA SE ANCLA CONTRA LA FILA CRUDA DE SU MISMA FUENTE Y SE MIDE EN
+MATERIA SECA**, que es lo único que delata un emparejamiento malo. El atún claro
+da 94,0 % de proteína y 1,9 % de grasa sobre materia seca y su fila cruda
+hermana da lo mismo, clavado; el pulpo 75,5/5,3 en las dos. Lo que no ancla se
+**rechaza y se escribe** en `cocidos_propuesta.json`: la sardina (su fila
+«grillée» **no publica EPA ni DHA**, que es justo para lo que se quiere un
+pescado azul, y la «asada» de BEDCA suma 154 % sobre su propia materia seca), el
+boquerón (solo hay fila **frita**, y freír no es un método de cocción más: es
+añadir aceite), la lubina y el pulpo de BEDCA (102,2 % de proteína sobre su
+materia seca: imposible).
+
+⚠️ **EL CERDO EXISTE COCIDO Y NO EXISTE CRUDO**, y es el único alimento del
+catálogo que va solo en un modo por una razón que no es de dato: la enfermedad
+de Aujeszky es «poco frecuente pero mortal» y «la mayoría de los casos en perros
+son el resultado de la ingestión de carne de cerdo **cruda** infectada»
+(Ettinger). Cocinarla quita exactamente ese motivo. **El hígado de cerdo no entra
+ni cocido**: su cobre tiene disponibilidad «essentially zero» (SACN5 cap.6), y
+eso no lo cambia el calor.
+
+**La regla del modo es una y vale para los dos lados**: *si un alimento existe en
+las dos formas, cada ficha va a su modo*. Lo pidió Elena al leer que yo solo
+había hecho la mitad — «menú cocinado sin nada crudo animal, has dicho. No del
+todo: **y sin nada crudo vegetal**, ¿no?» —, y tenía razón: el automático podía
+poner zanahoria cruda teniendo «Zanahoria cocida» al lado, o sea el mismo
+alimento dos veces con dos composiciones. Lo que existe en una sola forma
+—lechuga, pepino, fruta, boniato, arroz— sigue valiendo en los dos: nadie cuece
+una lechuga.
+
+⚠️ **PERO LO QUE SE ELIGE A MANO NO LO TIRA EL MODO** (regla 5). Elena: «a lo
+mejor alguien le da BARF a su perro pero le apetece meterle huevo porque le
+encantan las propiedades del huevo, aunque vaya cocido». El modo es una
+restricción del AUTOMÁTICO, no una exclusión. Y cede todo menos **el hueso
+carnoso en cocinado**, que no es incoherencia sino peligro — cocido astilla.
+
+⚠️ **Y SIN MODO, CRUDO — NO «TODO».** `motor_completo` tenía
+`_modo = modo_de_preparacion or None`, y ese `or None` apagaba el filtro
+**entero**: cualquier camino que se olvidara de pasar el modo veía a la vez las
+crudas y las cocidas y montaba un plato con las dos, en silencio y en verde. Es
+la familia de fallo que ese mismo fichero ya tiene escrita para las patologías
+—«si un camino nuevo llama al motor, tiene que pasarle `patologias`»— con la
+diferencia de que aquí el olvido no se ve en ninguna cifra. **Lo destapó el
+BLOQUE 27**, acusando a un menú de cachorro de sacar el 20 % de su proteína de
+alimentos sin aminograma: el culpable era «Lenguado cocido» en un menú que nadie
+había pedido cocinado.
+
+⚠️ **EN LA TIENDA SE COMPRA CRUDO, Y LA LISTA DABA LOS GRAMOS COCIDOS.** Los
+gramos de un menú cocinado son de comida ya cocinada —la ficha lo declara en
+`se_pesa`— pero en el mostrador se pide el peso crudo, y la diferencia **no es un
+redondeo**: medida sobre las 69 fichas que se pesan cocidas, va de **×0,20 a
+×1,99**. Del pulpo hay que comprar el DOBLE de lo que dice el menú y de los copos
+de avena una QUINTA PARTE. Se deriva del agua de las dos filas (la materia seca
+es lo que se conserva), no de una tabla a mano, y **lo que no se puede calcular
+se queda sin cifra y se dice** — hoy una ficha, porque su fila cruda no publica
+agua. Y **convertir en silencio sería tan malo como no convertir**: cada línea
+dice «en crudo — en el plato son X ya cocinado». Lo vigila el BLOQUE 130.
+
+⚠️ **LOS AMINOGRAMAS, QUE NACIERON VACÍOS Y UN HUECO CUENTA COMO CERO.** 17
+fichas cocidas no lo tenían porque la fila de su fuente no lo publica. Se
+transfieren **por gramo de proteína** —nunca se copian— y se escriben **enteros o
+no se escriben**, que es la lección de la zanahoria del 13 de septiembre. Y
+**siete se rehicieron porque su cociente no cuadraba con el de su ficha cruda**:
+el corazón, el hígado y la molleja de pavo cocidos daban los tres exactamente
+2,525 de Leu/Ile, y tres órganos distintos con el mismo aminograma es la huella
+de una fila prestada. El argumento que lo decide sin discutir números: **cocer no
+cambia de qué está hecha la proteína**, así que el cociente entre dos aminoácidos
+es el mismo crudo que cocido.
+
+**Lo que se le cuenta al dueño** vive en `documentacion_para_el_dueno.json`: qué
+es el BARF, qué es la comida cocinada —con ventajas **y** con lo que hay que
+tener en cuenta en los dos, porque contar solo las ventajas de una forma de dar
+de comer es publicidad— y **de qué es rico cada alimento**, que **se DERIVA del
+catálogo vivo** y no se escribe: una lista a mano seguiría diciendo «el hígado es
+de los que más cobre llevan» el día que esa ficha cambie. Sin una sola cita en el
+texto del dueño; las citas van en el registro `veterinario`. Lo vigila el BLOQUE
+129.
+
+Y **cómo se monta el plato entero** —lo preguntó Elena y no se contestaba en
+ningún sitio: había texto de cada alimento y de cada categoría, y ninguno de lo
+que tiene delante quien va a cocinar—. Ni puré ni picadillo: en trozos, y la
+única que conviene triturar es la verdura. Con las dos cosas que cambian el menú
+si se hacen al revés: **los botes de vitaminas al final y en frío**, y **se pesa
+después de cocinar**.
+
+Lo vigilan los BLOQUES 128, 129 y 130.
+
 ### Endpoints: cuáles usa la app y cuáles no
 
 Los que llama el frontend hoy: `/menu/v2`, `/menu/semana`,

@@ -83,7 +83,65 @@ FILA_CRUDA = {
     ("ciqual", "9313"): ("9311", "Flocon d'avoine"),
     ("usda",   "173905"): ("173904", "Cereals, oats, regular and quick, not fortified, dry"),
     ("ciqual", "9341"): ("9340", "Quinoa, cru"),
+    # ── LAS ONCE COCINADAS (17 de septiembre de 2026) ───────────────────────
+    ("ciqual", "36030"): ("36024", "Poulet, cuisse, viande, cru"),
+    ("ciqual", "6581"):  ("6583",  "Veau, jarret, cru"),
+    ("ciqual", "6230"):  ("6231",  "Boeuf, à bourguignon ou pot-au-feu, cru"),
+    ("bedca",  "973"):   ("2265",  "Corazon de vaca, crudo"),
+    ("ciqual", "40057"): ("40055", "Coeur, dinde, cru"),
+    ("ciqual", "26025"): ("26043", "Cabillaud, cru"),
+    ("ciqual", "26217"): ("26036", "Saumon, cru, élevage"),
+    # ⚠️ EMPAREJAMIENTO APROXIMADO Y DECLARADO: la fila cocida es la trucha
+    #    genérica y la cruda es la de cría. CIQUAL no publica una cruda
+    #    genérica, y la de MAR («Truite de mer, crue») es otro pez. Se compara
+    #    contra la de cría, que es lo que se vende, y la diferencia entra en el
+    #    margen que este script ya tolera.
+    ("ciqual", "27007"): ("27008", "Truite d'élevage, crue"),
+    ("ciqual", "40105"): ("40104", "Foie, génisse, cru"),
+    ("ciqual", "40116"): ("40111", "Foie, poulet, cru"),
+    ("ciqual", "40403"): ("40402", "Rognon, boeuf, cru"),
     ("usda",   "168917"): ("168874", "Quinoa, uncooked"),
+    # ── LAS SEIS DEL 18 DE SEPTIEMBRE ───────────────────────────────────────
+    # ⚠️ Estas seis NO LAS PODÍA AUDITAR este script hasta hoy, y no porque les
+    # faltara nada: porque su ancla no estaba escrita AQUÍ. Se comprobó a mano
+    # al construirlas —cada una contra la fila cruda de SU MISMA fuente, medida
+    # en materia seca— y una comprobación a mano no se vuelve a hacer sola. Ese
+    # es el fallo que este repo lleva cazando desde septiembre: lo que no está
+    # escrito para que una máquina lo rehaga, no está comprobado mañana.
+    #
+    # Y sirven para una segunda cosa desde hoy: de aquí sale CUÁNTO CRUDO HAY
+    # QUE COMPRAR para esos gramos cocidos, que es lo que lee la lista de la
+    # compra. Sin fila cruda no hay agua con la que comparar.
+    ("usda",   "172006"): ("175159", "Fish, tuna, fresh, yellowfin, raw"),
+    ("usda",   "174249"): ("174218", "Mollusks, octopus, common, raw"),
+    ("ciqual", "27031"):  ("26088",  "Dorade royale ou daurade ou vraie daurade, crue, élevage"),
+    # ⚠️ LAS TRES DE ABAJO SON EMPAREJAMIENTOS APROXIMADOS Y DECLARADOS, como
+    # ya lo es el de la trucha. Las tres fichas salen de una fila que es una
+    # MEDIA DE CORTES («aliment moyen») o de otro animal, y de eso la fuente no
+    # publica una cruda equivalente: no existe «Porc, viande, crue» ni «Veau,
+    # viande, crue». Se comparan contra un corte crudo de la misma especie, que
+    # es lo único que hay, y la diferencia entra en el margen que este script ya
+    # tolera. Lo que NO se hace es callarlo: sin esta nota, un día alguien lee
+    # «auditada» y cree que es exacta.
+    ("ciqual", "28205"):  ("28003",  "Porc, longe, crue"),
+    ("ciqual", "6564"):   ("6560",   "Veau, épaule, crue"),
+    ("bedca",  "996"):    ("1029",   "Ternera, solomillo, sin grasa, crudo"),
+}
+
+# ⚠️ Y CUÁLES DE ESAS SEIS SON APROXIMADAS, escrito aparte para que se pueda
+# LEER desde fuera: `main.py` calcula con ellas cuánto crudo hay que comprar, y
+# tiene que poder decir cuáles son exactas y cuáles no. Una cifra aproximada
+# presentada como exacta en una lista de la compra es justo lo que no puede
+# pasar.
+ANCLAS_APROXIMADAS = {
+    ("ciqual", "27007"): "la fila cocida es la trucha genérica y la cruda es la de cría; "
+                         "CIQUAL no publica una cruda genérica",
+    ("ciqual", "28205"): "la fila cocida es la media de cortes de cerdo y CIQUAL no publica "
+                         "una cruda equivalente: se compara con el lomo crudo",
+    ("ciqual", "6564"):  "la fila cocida es la media de cortes de ternera y CIQUAL no publica "
+                         "una cruda equivalente: se compara con la espaldilla cruda",
+    ("bedca",  "996"):   "la fila cocida es de vaca o buey y la cruda es de ternera, el mismo "
+                         "corte en un animal más joven",
 }
 AGUA = {"bedca": "agua (humedad)", "ciqual": "Eau (g/100 g)", "usda": "Water"}
 

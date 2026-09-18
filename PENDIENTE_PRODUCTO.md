@@ -449,6 +449,37 @@ menús comparados no tienen sentido sin él.
       con botón de deshacer por cambio y restaurar el menú original.
 
 
+## ⚠️ `motor/` SIN `__init__.py`: EL MISMO FICHERO SE PUEDE CARGAR DOS VECES (18 de septiembre de 2026)
+
+**No hay ningún fichero duplicado.** `motor_completo.py` existe una sola vez. Lo
+que se duplica es **en memoria**: `motor/` es una carpeta sin `__init__.py` y
+`main.py` hace `sys.path.insert(0, "./motor")`, así que `import motor_completo`
+encuentra el fichero directo — y como la raíz del repo también está en el path,
+`import motor.motor_completo` funciona **igual**, por los paquetes de espacio de
+nombres de Python 3. Dos objetos de módulo, cada uno con su copia de todas las
+variables.
+
+**Ya ha mordido una vez**, y en lo peor: escribiendo el BLOQUE 131 se apagó el
+tope de un solo alimento en `motor.motor_completo` para comprobar que muerde, el
+solver seguía leyendo `motor_completo`, y la mitad de «con el fallo puesto» **no
+ponía ningún fallo**. Medía el mismo menú dos veces y salía verde.
+
+**Lo que está hecho** (18 de septiembre): los 16 imports con punto pasaron a la
+forma corta, así que hoy solo se carga una vez, y el apartado 3 del BLOQUE 52
+**prohíbe que vuelva a haber dos** con las dos mitades — la estática (ningún
+`.py` escribe `motor.X`) y la de memoria (`sys.modules`).
+
+**Lo que falta, y por qué no se hizo a la vez.** Eso es un guardia, no un
+arreglo: sigue siendo *posible* escribirlo mal y lo único que lo impide es que
+alguien mire el rojo. Cerrarlo de raíz es poner `motor/__init__.py`, que todo se
+llame `motor.X` y quitar el truco del `sys.path`. **Medido:** son **235 imports
+planos** entre los **15 módulos** de `motor/` y **10 ficheros** que meten
+`./motor` en el path. Es un cambio grande en el único sitio del repo que no
+puede fallar en silencio, así que va **solo**, con la batería entera delante, y
+no mezclado con otra cosa.
+
+---
+
 ## 6. Deuda técnica y detalles
 
 - [x] **Cantidades no medibles.** Hecho el 24 de agosto: suelo de 1 g en

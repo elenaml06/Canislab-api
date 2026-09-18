@@ -26,6 +26,53 @@ menú necesita algo que no se encuentra fácil, no se va a preparar.
 """
 
 CARNE = [
+    # ⚠️ Las 54 fichas COCIDAS del 18 de septiembre de 2026, construidas desde las
+    # fuentes por `construir_cocidos.py`. Van en la MISMA lista que las crudas: quien
+    # decide en qué modo vale cada una es `modos_de`, no esta lista. Y tienen que
+    # estar aquí o el motor NO LAS VE — una ficha que no está en su lista no es
+    # candidata, el menú sale igual y no lo dice nadie. Ya pasó con las once primeras.
+    "Conejo cocido",
+    "Corazón de cordero cocido",
+    "Corazón de pavo cocido",
+    "Corazón de pollo cocido",
+    "Corazón de vaca cocido",
+    "Gallina (carne sin hueso) cocida",
+    "Jarrete de ternera cocido",
+    "Lengua de buey cocida",
+    "Lengua de cordero cocida",
+    "Lengua de ternera cocida",
+    "Molleja de pavo cocida",
+    "Molleja de pollo cocida",
+    "Pato (carne sin hueso) cocido",
+    "Pavo muslo con piel cocido",
+    "Pavo pechuga con piel cocido",
+    "Pavo pechuga sin piel cocido",
+    "Pollo ala con piel (sin hueso) cocido",
+    "Pollo muslo con piel cocido",
+    "Pollo muslo sin piel cocido",
+    "Pollo pechuga con piel cocido",
+    "Pollo pechuga sin piel cocido",
+    "Vaca para guisar cocida",
+    # ⚠️ LAS COCINADAS VAN EN LA MISMA LISTA QUE LAS CRUDAS (17 de septiembre de
+    # 2026), y quien decide en qué modo vale cada una es `modos_de`, no la
+    # pertenencia a esta lista. Meterlas en una lista aparte habría sido una
+    # segunda copia del mismo conjunto, que es el fallo que este fichero lleva
+    # avisado desde el 5 de agosto.
+    #
+    # ⚠️ Y AQUÍ SE CAYÓ AL ESTRENAR EL MODO: las once fichas cocinadas entraron
+    # al catálogo y NO a esta lista, así que en modo cocinado el solver solo
+    # veía verdura y suplementos -- «infactible» en los cuatro perros de prueba,
+    # y la causa no era nutrición ni proporciones: era que la comida no estaba
+    # ofrecida. Es literalmente lo que avisa la cabecera de este fichero.
+    # ⚠️ «Pollo muslo cocido» ESTUVO AQUÍ Y YA NO EXISTE, y va dicho porque el
+    # BLOQUE 12 tuvo que cazarlo (18 de septiembre de 2026). Al construir las
+    # fichas cocidas nuevas lo sustituyeron DOS más precisas —«Pollo muslo con
+    # piel cocido» y «Pollo muslo sin piel cocido», que es como está el
+    # catálogo en crudo— y el nombre viejo se quedó en esta lista: el motor lo
+    # filtraba en silencio, sin error y con el menú saliendo igual. Un nombre
+    # que no existe en una lista curada no da error: deja de haber un alimento.
+    "Jarrete de ternera cocido", "Vaca para guisar cocida",
+    "Corazón de vaca cocido", "Corazón de pavo cocido",
     "Pollo con piel (sin hueso)", "Pollo muslo con piel", "Pollo pechuga con piel",
     "Pollo muslo sin piel", "Pollo pechuga sin piel", "Pollo ala con piel (sin hueso)",
     "Pavo pechuga sin piel", "Pavo pechuga con piel", "Pavo muslo con piel", "Pavo",
@@ -52,6 +99,12 @@ CARNE = [
     # debatido en la comunidad de alimentación cruda -- se deja en
     # Vísceras (abajo) por prudencia, sin consenso claro para moverlo.
     "Lengua de ternera", "Lengua de buey", "Lengua de cordero",
+    # ⚠️ SEGUNDA VUELTA, 18 de septiembre de 2026, y las seis vienen de dos frases
+    # de Elena: «tienes que meter más pescado» y «veo que no hay nada de cerdo ni
+    # de ternera en carne muscular». Cada una entró con su fila CRUDA de la misma
+    # fuente como ancla y medida en materia seca; lo que no anclaba se rechazó y
+    # está escrito en `cocidos_propuesta.json` (sardina, boquerón, lubina).
+    "Cerdo cocido", "Ternera cocida", "Solomillo de vaca cocido",
 ]
 
 # Solo huesos que se piden sin problema en una carnicería normal.
@@ -88,6 +141,20 @@ HUESO = [
 ]
 
 PESCADO = [
+    # ⚠️ Las 54 fichas COCIDAS del 18 de septiembre de 2026, construidas desde las
+    # fuentes por `construir_cocidos.py`. Van en la MISMA lista que las crudas: quien
+    # decide en qué modo vale cada una es `modos_de`, no esta lista. Y tienen que
+    # estar aquí o el motor NO LAS VE — una ficha que no está en su lista no es
+    # candidata, el menú sale igual y no lo dice nadie. Ya pasó con las once primeras.
+    "Bacalao cocido",
+    "Caballa cocida",
+    "Calamar cocido",
+    "Lenguado cocido",
+    "Merluza cocida",
+    "Perca cocida",
+    "Salmón cocido",
+    "Trucha cocida",
+    "Bacalao cocido", "Salmón cocido", "Trucha cocida",
     # ⚠️ CORREGIDO (5 agosto): se quitaron Sepia, Pulpo, Gamba roja,
     # Langostinos y Calamar. La propia app ya avisaba de esto en
     # INSTRUCCIONES_POR_CATEGORIA ("los mariscos, SIEMPRE cocinados"), pero
@@ -98,9 +165,30 @@ PESCADO = [
     "Salmón", "Sardina", "Caballa", "Merluza", "Bacalao", "Lubina", "Dorada",
     "Trucha", "Atún", "Boquerón", "Lenguado", "Pescadilla", "Besugo",
     "Bacaladilla", "Perca",
+    # ⚠️ SEGUNDA VUELTA, 18 de septiembre de 2026, y las seis vienen de dos frases
+    # de Elena: «tienes que meter más pescado» y «veo que no hay nada de cerdo ni
+    # de ternera en carne muscular». Cada una entró con su fila CRUDA de la misma
+    # fuente como ancla y medida en materia seca; lo que no anclaba se rechazó y
+    # está escrito en `cocidos_propuesta.json` (sardina, boquerón, lubina).
+    "Atún claro cocido", "Pulpo cocido", "Dorada cocida",
 ]
 
 VISCERAS = [
+    # ⚠️ Las 54 fichas COCIDAS del 18 de septiembre de 2026, construidas desde las
+    # fuentes por `construir_cocidos.py`. Van en la MISMA lista que las crudas: quien
+    # decide en qué modo vale cada una es `modos_de`, no esta lista. Y tienen que
+    # estar aquí o el motor NO LAS VE — una ficha que no está en su lista no es
+    # candidata, el menú sale igual y no lo dice nadie. Ya pasó con las once primeras.
+    "Bazo de cordero cocido",
+    "Bazo de vaca cocido",
+    "Cerebro de ternera cocido",
+    "Pulmón de cordero cocido",
+    "Pulmón de ternera cocido",
+    "Pulmón de vaca cocido",
+    "Riñón de cordero cocido",
+    "Timo de ternera cocido",
+    "Timo de vaca cocido",
+    "Riñón de vaca cocido",
     "Riñón de vaca", "Riñón de cordero",
     # ⚠️ CORREGIDO (5 agosto, madrugada) — el pulmón vuelve aquí: a
     # diferencia de lengua/molleja/corazón (donde todas las fuentes
@@ -193,7 +281,17 @@ VISCERAS = [
 # auditar_catalogo.py: con 3 alergias solo quedaban 2 hígados disponibles, y
 # el hígado es una categoría con mínimo obligatorio, así que quedarse sin
 # ninguno deja al perro sin menú. Con pavo y pato pasa de 2 a 4.
-HIGADO = ["Hígado de vaca", "Hígado de pollo", "Hígado de pavo", "Hígado de pato",
+HIGADO = [
+    # ⚠️ Las 54 fichas COCIDAS del 18 de septiembre de 2026, construidas desde las
+    # fuentes por `construir_cocidos.py`. Van en la MISMA lista que las crudas: quien
+    # decide en qué modo vale cada una es `modos_de`, no esta lista. Y tienen que
+    # estar aquí o el motor NO LAS VE — una ficha que no está en su lista no es
+    # candidata, el menú sale igual y no lo dice nadie. Ya pasó con las once primeras.
+    "Hígado de cordero cocido",
+    "Hígado de pavo cocido",
+    "Hígado de pollo cocido",
+    "Hígado de vaca cocido",
+    "Hígado de vaca cocido", "Hígado de pollo cocido","Hígado de vaca", "Hígado de pollo", "Hígado de pavo", "Hígado de pato",
           "Hígado de conejo", "Hígado de cordero"]
 
 # Berro se QUITÓ del catálogo (tóxico, clasificación ASPCA). Kiwi se quitó
@@ -206,6 +304,28 @@ HIGADO = ["Hígado de vaca", "Hígado de pollo", "Hígado de pavo", "Hígado de 
 # los pide expresamente, se pueden usar igual. Solo no entran por defecto
 # cuando el motor elige solo.
 VERDURA = [
+    # ⚠️ Las 54 fichas COCIDAS del 18 de septiembre de 2026, construidas desde las
+    # fuentes por `construir_cocidos.py`. Van en la MISMA lista que las crudas: quien
+    # decide en qué modo vale cada una es `modos_de`, no esta lista. Y tienen que
+    # estar aquí o el motor NO LAS VE — una ficha que no está en su lista no es
+    # candidata, el menú sale igual y no lo dice nadie. Ya pasó con las once primeras.
+    "Acelga cocida",
+    "Berenjena",
+    "Boniato",
+    "Brócoli cocido",
+    "Calabacín cocido",
+    "Calabaza cocida",
+    "Cardo cocido",
+    "Champiñón cocido",
+    "Col lombarda cocida",
+    "Coles de Bruselas cocida",
+    "Coliflor cocida",
+    "Espinaca cocida",
+    "Espárrago verde",
+    "Judía verde cocida",
+    "Pimiento rojo cocido",
+    "Repollo cocido",
+    "Zanahoria cocida",
     "Zanahoria", "Calabaza", "Calabacín", "Judía verde", "Brócoli", "Acelga",
     "Espinaca", "Coliflor", "Coles de Bruselas", "Col rizada", "Col lombarda",
     "Repollo", "Pimiento rojo", "Pepino", "Lechuga", "Canónigos",
@@ -242,6 +362,200 @@ ACCESIBLES = {
     "Verduras y frutas": VERDURA,
     "Cereales y tubérculos": CEREALES,
 }
+
+
+# ─── CRUDO O COCINADO ────────────────────────────────────────────────────────
+#
+# ⚠️ POR QUÉ EXISTE (17 de septiembre de 2026). Elena: «serían dos cosas
+# distintas, el usuario tiene que poder elegir, o el veterinario, si quiere
+# hacer menú barf o cocinado, y en función [de eso] que le proponga los
+# ingredientes correctos para cada caso».
+#
+# Y `motor/seguridad.py` llevaba escrito desde agosto que el motor «no tiene
+# concepto de crudo vs cocinado», con la consecuencia puesta: la gamba y el
+# langostino cargan con el tope de la tiaminasa POR SI ACASO, porque no había
+# forma de saber si se cocinan de verdad.
+#
+# ⚠️ QUÉ SIGNIFICA «COCINADO» AQUÍ, Y ES UNA DEFINICIÓN, NO UN DETALLE: que la
+# parte ANIMAL va cocida — hervida o al vapor, sin grasa añadida y sin sal. Es
+# donde vive toda la diferencia de seguridad (bacterias, parásitos, tiaminasa,
+# avidina y el hueso), y es el único grado que Elena eligió: «solo hervido».
+# La verdura sigue pudiendo ir cruda y triturada en los dos modos, que es lo
+# que hace cualquier dieta casera cocinada. ⚠️ ESO ÚLTIMO ESTÁ SIN CONFIRMAR
+# con ella: va escrito aquí y en PREGUNTAS_ABIERTAS.md en vez de decidido en
+# silencio.
+#
+# ⚠️ LA ASIMETRÍA QUE HACE QUE EL HUESO SEA OTRA COSA. Equivocarse en «creo que
+# es cocinado y era crudo» quita unos topes y el perro come pescado con
+# tiaminasa: malo, y a largo plazo. Equivocarse al revés mete HUESO CARNOSO en
+# un menú que se va a cocinar, y el hueso cocido ASTILLA: daño físico
+# inmediato. SACN5 cap.50 lo tiene contado -- 46 de 60 cuerpos extraños
+# esofágicos retirados a perros eran hueso. Por eso el hueso no es «se evita»
+# en cocinado: NO EXISTE, como una alergia (regla 4), y no como una proporción
+# que cede (regla 3).
+MODO_CRUDO = "crudo"
+MODO_COCINADO = "cocinado"
+MODOS = (MODO_CRUDO, MODO_COCINADO)
+
+# Las categorías donde la preparación cambia el ALIMENTO y su seguridad.
+# Fuera de estas, una ficha vale en los dos modos: un aceite, una cáscara de
+# huevo, un bote de vitaminas o una verdura no cambian porque el plato lleve
+# la carne cocida.
+CATEGORIAS_ANIMALES = ("Carne muscular", "Pescados y mariscos", "Vísceras", "Hígado")
+
+
+_CRUDAS_DEL_CATALOGO = None
+
+
+def _tiene_hermana_cruda(ficha):
+    """¿Existe en el catálogo la versión CRUDA de esta ficha cocida?
+
+    Se mira por el nombre —«Espinaca cocida» -> «Espinaca»— porque es como se
+    construyen: `construir_cocidos.py` le pega el participio al nombre de su
+    ficha cruda. Si algún día se nombran de otra forma, esto deja de encontrar
+    la hermana y la ficha vuelve a valer en los dos modos, que es el lado del
+    que no se pierde comida.
+    """
+    _cargar_gemelas()
+    nombre = str((ficha or {}).get("nombre") or "")
+    return " " in nombre and nombre.rsplit(" ", 1)[0] in _CRUDAS_DEL_CATALOGO
+
+
+_COCIDAS_DE_UNA_CRUDA = None
+
+
+def _cargar_gemelas():
+    """Las dos caras del mismo índice: qué crudas hay, y de cuáles hay cocida."""
+    global _CRUDAS_DEL_CATALOGO, _COCIDAS_DE_UNA_CRUDA
+    if _CRUDAS_DEL_CATALOGO is not None:
+        return
+    import json as _json
+    import os as _os
+    ruta = _os.path.join(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))),
+                         "alimentos_v3_final.json")
+    try:
+        with open(ruta, encoding="utf-8") as fh:
+            fichas = _json.load(fh)
+    except Exception:
+        _CRUDAS_DEL_CATALOGO, _COCIDAS_DE_UNA_CRUDA = set(), set()
+        return
+    _CRUDAS_DEL_CATALOGO = {f["nombre"] for f in fichas
+                            if not str(f.get("preparacion") or "").strip()}
+    _COCIDAS_DE_UNA_CRUDA = set()
+    for f in fichas:
+        if not str(f.get("preparacion") or "").strip():
+            continue
+        n = str(f.get("nombre") or "")
+        if " " in n and n.rsplit(" ", 1)[0] in _CRUDAS_DEL_CATALOGO:
+            _COCIDAS_DE_UNA_CRUDA.add(n.rsplit(" ", 1)[0])
+
+
+def _tiene_hermana_cocida(ficha):
+    """¿Existe en el catálogo la versión COCIDA de esta ficha cruda?
+
+    ⚠️ ES LA MITAD QUE FALTABA, y la vio Elena mirando lo que le había contado
+    yo (18 de septiembre de 2026): «menú cocinado sin nada crudo animal, has
+    dicho. No del todo. O sea, menú cocinado sin nada crudo animal y sin nada
+    crudo vegetal, ¿no?».
+
+    Tenía razón. La regla de las categorías animales las hace excluyentes por su
+    `preparacion`, y con lo vegetal no pasaba nada: la ZANAHORIA cruda valía en
+    los dos modos, así que el automático de un menú cocinado podía poner
+    zanahoria cruda teniendo «Zanahoria cocida» al lado. Y eso no es solo feo:
+    son dos composiciones distintas del mismo alimento en el mismo plato, y
+    quien lo lee no sabe cuál de las dos cosas tiene que hacer.
+
+    La regla que lo cierra es UNA y vale para los dos lados: **si un alimento
+    existe en las dos formas, cada ficha va a su modo**. Lo que existe en una
+    sola —la lechuga, el pepino, la fruta, el boniato, el arroz— sigue valiendo
+    en los dos, que es lo correcto: nadie cuece una lechuga, y el boniato no se
+    da crudo ni en BARF.
+    """
+    _cargar_gemelas()
+    return str((ficha or {}).get("nombre") or "") in (_COCIDAS_DE_UNA_CRUDA or set())
+
+
+def peligro_de_preparacion(ficha, modo):
+    """¿Esta ficha en este modo es un PELIGRO, y no solo una incoherencia?
+
+    ⚠️ LA DISTINCIÓN ES LA REGLA 5 (18 de septiembre de 2026), y la pidió Elena
+    con dos casos de verdad: «a lo mejor alguien le da BARF a su perro pero le
+    apetece meterle huevo porque le encantan las propiedades del huevo, aunque
+    vaya cocido» y «a lo mejor alguien que hace comida cocinada le quiere meter
+    fruta o verdura sin cocinar, muy triturada».
+
+    Las dos tienen que poder hacerse. Lo que el usuario elige A MANO se respeta
+    —eso es la regla 5— y el modo es una restricción del AUTOMÁTICO: decide qué
+    propone el motor cuando elige él, no qué se le permite pedir a una persona.
+    Es exactamente el mismo criterio con el que los hidratos entran a mano en un
+    menú BARF aunque el automático no los proponga.
+
+    Y hay UNA excepción, una sola: el **hueso carnoso en modo cocinado**. Eso no
+    es incoherencia, es un peligro — el hueso cocido ASTILLA y puede clavarse o
+    hacer un tapón (SACN5 5ª ed., cap. 50: 46 de 60 cuerpos extraños esofágicos
+    retirados a perros eran hueso). Un peligro no cede ante una elección, igual
+    que no cede una alergia.
+
+    Dar carne cruda dentro de un menú cocinado NO entra aquí: eso es exactamente
+    lo que hace una ración BARF, y quien lo pide sabe lo que pide.
+    """
+    if not modo:
+        return False
+    return ((ficha or {}).get("categoria") == "Hueso carnoso"
+            and modo == MODO_COCINADO)
+
+
+def modos_de(ficha):
+    """En qué modos vale esta ficha. Se DERIVA, no se escribe ficha a ficha.
+
+    Una lista escrita a mano se queda parada el día que entre una ficha nueva,
+    y no daría ningún error -- el alimento simplemente no saldría, o saldría
+    donde no debe. La derivación son tres reglas:
+
+      · «Hueso carnoso» -> SOLO crudo, siempre. El hueso cocido astilla.
+      · categoría animal -> el modo que diga su `preparacion`.
+      · vegetal COCIDO que tiene hermana cruda -> solo cocinado (ver abajo).
+      · vegetal CRUDO que tiene hermana cocida -> solo crudo (la mitad
+        simétrica, del mismo día: si existe en las dos formas, cada ficha va a
+        su modo).
+      · todo lo demás    -> los dos.
+
+    ⚠️ LA TERCERA SE VIO MIRANDO UN PLATO (18 de septiembre de 2026): en un menú
+    CRUDO entraba «Espinaca cocida». Y no todas las fichas cocidas son iguales:
+
+      · Las que se dan SIEMPRE cocidas —el boniato, la berenjena, el espárrago
+        verde, la clara de huevo, el arroz— no tienen versión cruda en el
+        catálogo porque cruda no se da. Ésas valen en los DOS modos, y en BARF
+        llevan meses.
+      · Las que son la ALTERNATIVA cocida de una ficha cruda que existe —la
+        espinaca cocida frente a la espinaca— son del modo cocinado: en un menú
+        crudo ya tienes la cruda, y ofrecer las dos es el mismo alimento dos
+        veces con dos composiciones distintas.
+
+    La diferencia se DERIVA —¿tiene hermana cruda en el catálogo?— y no se
+    escribe: una lista a mano se quedaría parada la próxima vez que entre una
+    ficha cocida, que es lo que este fichero lleva avisado desde agosto.
+    """
+    cat = (ficha or {}).get("categoria")
+    if cat == "Hueso carnoso":
+        return (MODO_CRUDO,)
+    prep = str((ficha or {}).get("preparacion") or "").strip().lower()
+    if cat in CATEGORIAS_ANIMALES:
+        return (MODO_COCINADO,) if prep and prep != "crudo" else (MODO_CRUDO,)
+    if prep and prep != "crudo" and _tiene_hermana_cruda(ficha):
+        return (MODO_COCINADO,)
+    # Y LA MITAD SIMÉTRICA: una verdura CRUDA que tiene su gemela cocida es del
+    # modo crudo. Ver `_tiene_hermana_cocida` — lo pidió Elena el mismo día.
+    if (not prep or prep == "crudo") and _tiene_hermana_cocida(ficha):
+        return (MODO_CRUDO,)
+    return MODOS
+
+
+def vale_en(ficha, modo):
+    """¿Esta ficha se puede usar en este modo? Sin modo, vale todo."""
+    if not modo:
+        return True
+    return modo in modos_de(ficha)
 
 
 def disponibles(alimentos, excluidos=None):
