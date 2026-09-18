@@ -22787,6 +22787,82 @@ if any(_acc128.peligro_de_preparacion(a, "crudo") for a in _al128.values()):
                   "motor lleva desde el principio dando raciones crudas: lo que sea que quite "
                   "tiene que decidirse en otro sitio y con su medida")
 
+# ── 11 · EDITAR UN MENÚ NO CUELA COMIDA DEL OTRO MODO ──────────────────────
+# ⚠️ LO PIDIÓ ELENA (18 de septiembre de 2026): «cuando generas un menú en
+# automático o en personalizar y cambias algo y se rehace el menú, solo va a
+# usar ingredientes de ese tipo de menú».
+#
+# Y hay que separar DOS cosas que suenan igual, porque la respuesta es distinta:
+#
+#   · LO QUE EL MOTOR RELLENA SOLO al rehacer el menú. Eso no puede traer nada
+#     del otro modo, nunca. Medido el día que se escribió esto: los cuatro
+#     caminos de edición en los dos modos, CERO intrusos — el modo ya viajaba.
+#     Lo que faltaba no era el motor.
+#   · LO QUE SE PIDE POR SU NOMBRE. Eso se respeta (regla 5), igual que en la
+#     generación: «a lo mejor alguien le da BARF a su perro pero le apetece
+#     meterle huevo». Lo que no puede pasar es que la app lo OFREZCA por
+#     accidente, y por eso `GET /alimentos` dice ahora en qué modos vale cada
+#     ficha y la pantalla de «cambiar a» solo enseña los de este menú.
+#
+# Aquí se vigila la primera, que es la del motor, por los CUATRO caminos.
+_MODOS_SERVIDOS_128 = {}
+for _p128b in (_ALIM128.get("pantallas") or []):
+    for _g128b in (_p128b.get("grupos") or {}).values():
+        for _a128b in _g128b:
+            if _a128b.get("modos"):
+                _MODOS_SERVIDOS_128[_a128b["nombre"]] = _a128b["modos"]
+
+if len(_MODOS_SERVIDOS_128) < len(_al128) * 0.9:
+    fallos.append(f"BLOQUE128: `GET /alimentos` solo dice en qué modos valen "
+                  f"{len(_MODOS_SERVIDOS_128)} de {len(_al128)} alimentos. La app lo necesita para "
+                  f"no ofrecer comida del otro modo al editar, y deducirlo del nombre falla con el "
+                  f"Boniato y con la clara de huevo, que se dan cocidos y no se llaman así")
+for _n128b, _m128b in list(_MODOS_SERVIDOS_128.items())[:400]:
+    if sorted(_m128b) != sorted(_acc128.modos_de(_al128.get(_n128b) or {})):
+        fallos.append(f"BLOQUE128: `GET /alimentos` dice que «{_n128b}» vale en {_m128b} y "
+                      f"`modos_de` dice {list(_acc128.modos_de(_al128[_n128b]))}. Es la misma "
+                      f"función que usa el solver: si discrepan, la app ofrece una cosa y el motor "
+                      f"hace otra")
+        break
+
+def _editar_128(ruta, modo, cuerpo):
+    c = {"der_objetivo": 1000.0, "etapa_requisitos": "Adulto", "peso_perro_kg": 22.0,
+         "especies_excluidas": [], "modo_de_preparacion": modo}
+    c.update(cuerpo)
+    r = _c.post(ruta, json=c)
+    if r.status_code != 200:
+        return None
+    d = r.json()
+    return d.get("menu") or d.get("gramos") or {}
+
+for _modo128b in ("cocinado", "crudo"):
+    _d128b = _menu128(_modo128b)
+    _g128b = _d128b.get("menu") or {}
+    if not _g128b:
+        fallos.append(f"BLOQUE128: no sale menú «{_modo128b}» para editar: esta comprobación no "
+                      f"está vigilando nada")
+        continue
+    _nom128b = list(_g128b)
+    _vic128b = sorted(_g128b, key=lambda n: -_g128b[n])[0]
+    _propio128b = next((n for n, a in _al128.items()
+                        if _acc128.vale_en(a, _modo128b) and n not in _g128b
+                        and a.get("categoria") == "Carne muscular"), None)
+    for _etq128b, _ruta128b, _cuerpo128b in (
+        ("cambiar", "/menu/cambiar", {"menu_actual": _nom128b, "alimento_viejo": _vic128b,
+                                      "alimento_nuevo": _propio128b}),
+        ("quitar", "/menu/quitar", {"menu_actual": _nom128b, "alimento": _vic128b}),
+        ("añadir", "/menu/anadir", {"menu_actual": _nom128b, "alimento": _propio128b}),
+        ("revalidar", "/menu/revalidar", {"menu_actual_gramos": _g128b}),
+    ):
+        _res128b = _editar_128(_ruta128b, _modo128b, _cuerpo128b)
+        if _res128b is None:
+            continue
+        _mal128b = sorted(n for n in _res128b if not _acc128.vale_en(_al128.get(n), _modo128b))
+        if _mal128b:
+            fallos.append(f"BLOQUE128: {_etq128b} un menú «{_modo128b}» ha metido comida del otro "
+                          f"modo: {_mal128b}. Nadie la ha pedido por su nombre — la ha puesto el "
+                          f"motor al rehacer el menú, y eso es un plato con las dos cosas")
+
 print(f"  regla 5 contra el modo: {len(_CASOS_129)} casos ejercitados "
       f"({_CASOS_129}) · peligro_de_preparacion: {len(_peligrosas_129)} fichas, todas hueso")
 print(f"  topes de crudo en cocinado: 0 fichas cocidas con tiaminasa, 0 con mercurio")

@@ -10685,6 +10685,9 @@ def _calcular_crudo_por_cocido(alimentos):
     return salida
 
 
+# La misma función que usa el solver, importada una vez.
+from accesibles import modos_de as _modos_de
+
 _RICO_EN = None
 # Fuera del cálculo: un bote de vitaminas gana en todo y no es «rico en» nada, y
 # un aceite es grasa pura y desplazaría la mediana de la comida de verdad.
@@ -10814,8 +10817,30 @@ def _arbol_de_alimentos():
             grupo = a["categoria"]
         else:
             grupo = grupos_extra.get(a["nombre"], "Otros")
+        # ⚠️ EN QUÉ MODOS VALE ESTA FICHA, JUNTO A ELLA (18 de septiembre de
+        # 2026, y lo pidió Elena: «cuando generas un menú y cambias algo y se
+        # rehace, solo va a usar ingredientes de ese tipo de menú»).
+        #
+        # Medido antes de tocar nada: el AUTOMÁTICO de la edición ya lo cumplía
+        # —cambiar, quitar, añadir y revalidar, en los dos modos, cero
+        # intrusos—. Lo que faltaba era la otra punta: el selector de «cambiar
+        # a» de la app ofrecía el CATÁLOGO ENTERO, porque solo filtraba por
+        # especies excluidas. Así que en un menú cocinado te ofrecía «Pavo
+        # pechuga con piel» crudo al lado de su versión cocida, y elegirlo
+        # metía comida cruda en un plato que se va a cocer.
+        #
+        # ⚠️ Y SE DERIVA, no se escribe: es `accesibles.modos_de`, la MISMA
+        # función que usa el solver. Si la app se lo dedujera del nombre —«las
+        # que acaban en cocido»— fallaría con el Boniato y con la clara de
+        # huevo, que se dan cocidos y no se llaman así.
+        #
+        # ⚠️ Esto NO prohíbe nada: el motor sigue respetando lo que se pide por
+        # su nombre (regla 5, «a lo mejor alguien le da BARF a su perro pero le
+        # apetece meterle huevo»). Lo que cambia es que ya no se ofrece por
+        # accidente, que es otra cosa.
         fila = {"nombre": a["nombre"], "kcal_100g": a["energia"],
-                "categoria_del_motor": a["categoria"]}
+                "categoria_del_motor": a["categoria"],
+                "modos": list(_modos_de(a))}
         # ⚠️ COMO SE DA, JUNTO AL ALIMENTO Y NO EN OTRA LISTA. Iba aparte en la
         # app, indexado por nombre, y por eso se desincronizaba: 77 entradas
         # para 163 alimentos, 12 de ellas de comida que ya no existe.
