@@ -3186,10 +3186,11 @@ conservante del pienso, y ni para eso está aprobado; el **perejil** y el
 
 **Lo que SÍ queda que decidir, y por eso esto sigue abierto:**
 
-1. **El cardo mariano (silimarina)** es la que más cerca está: mecanismo
-   hepatoprotector descrito con detalle, pero SACN5 dice que está «being
-   evaluated» y que los ensayos buenos están por venir. ¿Se vigila y entra el
-   día que salgan, o se deja?
+1. ~~**El cardo mariano (silimarina)**: mecanismo hepatoprotector descrito con
+   detalle, pero SACN5 dice que está «being evaluated» y que los ensayos buenos
+   están por venir.~~ **CERRADA el 18 de septiembre por Elena**: «nada deja lo
+   del cardo me da igual». No se vigila y no entra. Queda escrito, no borrado,
+   porque una pregunta borrada se vuelve a hacer.
 2. **Si se quiere ofrecer alguna aunque no pase el listón**, porque las tiendas
    las ponen y su ausencia se puede leer como que nuestro menú es más pobre.
    Eso es una decisión de producto, no de dato, y es de Elena. Si la respuesta
