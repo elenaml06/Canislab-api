@@ -243,39 +243,8 @@
               "cita": "SACN5 5a ed., Tabla 17-1, fila «Phosphorus (%)», columna «adult BW >25 kg», extremo ALTO de «0.6 to 1.1 %». Leida literal 9-sep-2026"
             }
           }
-        },
-        "ratios": [
-          {
-            "numerador": "calcio",
-            "denominador": "fosforo",
-            "sentido": "max",
-            "valor": 1.5,
-            "aplicado_por_el_solver": false,
-            "fuente": "SACN5 5a ed., cap.17, Tabla 17-1, fila «Ca:P ratio», columna «Puppies with an adult BW >25 kg»: «1:1-1.5:1». Leido literal 18-sep-2026",
-            "por_que": "ESTE SI APRETARIA: 1,5 contra el 1,6 que el motor aplica hoy desde la nota b de FEDIAF. Es la unica de las tres que cambiaria algo... si algun menu se acercara, que no es el caso. ⚠️ ESCRITO Y NO APLICADO (18 de septiembre de 2026). No es un olvido: es el mismo mecanismo con el que el Ca:P de los dos urolitos de calcio estuvo dos dias escrito antes de poder aplicarse, y existe para que una cifra que hoy no se aplica siga AUDITADA -- su cita se comprueba y el BLOQUE 57 la vigila-- en vez de desaparecer del repo y tener que volver a descubrirla dentro de seis meses. || POR QUE NO SE ENCIENDE, y son dos motivos: (1) EL PROPIO LIBRO SE CONTRADICE. La Tabla 17-1 pide 1:1-1,5:1 al cachorro que pasara de 25 kg, y la Tabla 33-6 --que es la de los cachorros de raza grande y gigante CON RIESGO DE DOD, o sea la poblacion mas estrecha-- pide 1,1:1-2:1. Mas ancha en la tabla mas especifica. Aplicar una de las dos seria elegir, y eso no es una cuenta. (2) HOY NO MOVERIA NI UN MENU: los precalculados van de 1,03 a 1,29, muy por debajo de los tres techos. || Encenderlo es decision de Elena y del nutricionista. Esta en PENDIENTE_DECISIONES.md."
-          }
-        ]
-      },
-      "ratios": [
-        {
-          "numerador": "calcio",
-          "denominador": "fosforo",
-          "sentido": "max",
-          "valor": 1.8,
-          "aplicado_por_el_solver": false,
-          "fuente": "SACN5 5a ed., cap.17, Tabla 17-1 «Key nutritional factors for foods for growing puppies», fila «Ca:P ratio», columna «Puppies with an adult BW <25 kg»: «1:1-1.8:1». Leido literal 18-sep-2026",
-          "por_que": "Techo del cachorro que NO pasara de 25 kg de adulto. No aprieta: FEDIAF ya pone 2,0 en general y 1,6 al cachorro de mas de 15 kg (nota b de la Tabla III-3b), asi que 1,8 queda por encima del que el motor ya aplica a ese perro. Se escribe por simetria con la otra columna y para que la tabla quede entera. ⚠️ ESCRITO Y NO APLICADO (18 de septiembre de 2026). No es un olvido: es el mismo mecanismo con el que el Ca:P de los dos urolitos de calcio estuvo dos dias escrito antes de poder aplicarse, y existe para que una cifra que hoy no se aplica siga AUDITADA -- su cita se comprueba y el BLOQUE 57 la vigila-- en vez de desaparecer del repo y tener que volver a descubrirla dentro de seis meses. || POR QUE NO SE ENCIENDE, y son dos motivos: (1) EL PROPIO LIBRO SE CONTRADICE. La Tabla 17-1 pide 1:1-1,5:1 al cachorro que pasara de 25 kg, y la Tabla 33-6 --que es la de los cachorros de raza grande y gigante CON RIESGO DE DOD, o sea la poblacion mas estrecha-- pide 1,1:1-2:1. Mas ancha en la tabla mas especifica. Aplicar una de las dos seria elegir, y eso no es una cuenta. (2) HOY NO MOVERIA NI UN MENU: los precalculados van de 1,03 a 1,29, muy por debajo de los tres techos. || Encenderlo es decision de Elena y del nutricionista. Esta en PENDIENTE_DECISIONES.md."
-        },
-        {
-          "numerador": "calcio",
-          "denominador": "fosforo",
-          "sentido": "min",
-          "valor": 1.0,
-          "aplicado_por_el_solver": false,
-          "fuente": "SACN5 5a ed., cap.17, Tabla 17-1, fila «Ca:P ratio», extremo bajo «1:1». Leido literal 18-sep-2026",
-          "por_que": "Suelo. Coincide con el 1,0 que FEDIAF ya aplica, asi que no anade nada. ⚠️ ESCRITO Y NO APLICADO (18 de septiembre de 2026). No es un olvido: es el mismo mecanismo con el que el Ca:P de los dos urolitos de calcio estuvo dos dias escrito antes de poder aplicarse, y existe para que una cifra que hoy no se aplica siga AUDITADA -- su cita se comprueba y el BLOQUE 57 la vigila-- en vez de desaparecer del repo y tener que volver a descubrirla dentro de seis meses. || POR QUE NO SE ENCIENDE, y son dos motivos: (1) EL PROPIO LIBRO SE CONTRADICE. La Tabla 17-1 pide 1:1-1,5:1 al cachorro que pasara de 25 kg, y la Tabla 33-6 --que es la de los cachorros de raza grande y gigante CON RIESGO DE DOD, o sea la poblacion mas estrecha-- pide 1,1:1-2:1. Mas ancha en la tabla mas especifica. Aplicar una de las dos seria elegir, y eso no es una cuenta. (2) HOY NO MOVERIA NI UN MENU: los precalculados van de 1,03 a 1,29, muy por debajo de los tres techos. || Encenderlo es decision de Elena y del nutricionista. Esta en PENDIENTE_DECISIONES.md."
         }
-      ]
+      }
     },
     "CachorroCrecimiento": {
       "de_donde": "SACN5 5a ed., cap.17 «Feeding Growing Puppies», Tabla 17-1 «Key nutritional factors for foods for growing puppies», columna «Puppies with an adult BW <25 kg»",
@@ -365,39 +334,8 @@
               "cita": "SACN5 5a ed., Tabla 17-1, fila «Phosphorus (%)», columna «adult BW >25 kg», extremo ALTO de «0.6 to 1.1 %». Leida literal 9-sep-2026"
             }
           }
-        },
-        "ratios": [
-          {
-            "numerador": "calcio",
-            "denominador": "fosforo",
-            "sentido": "max",
-            "valor": 1.5,
-            "aplicado_por_el_solver": false,
-            "fuente": "SACN5 5a ed., cap.17, Tabla 17-1, fila «Ca:P ratio», columna «Puppies with an adult BW >25 kg»: «1:1-1.5:1». Leido literal 18-sep-2026",
-            "por_que": "ESTE SI APRETARIA: 1,5 contra el 1,6 que el motor aplica hoy desde la nota b de FEDIAF. Es la unica de las tres que cambiaria algo... si algun menu se acercara, que no es el caso. ⚠️ ESCRITO Y NO APLICADO (18 de septiembre de 2026). No es un olvido: es el mismo mecanismo con el que el Ca:P de los dos urolitos de calcio estuvo dos dias escrito antes de poder aplicarse, y existe para que una cifra que hoy no se aplica siga AUDITADA -- su cita se comprueba y el BLOQUE 57 la vigila-- en vez de desaparecer del repo y tener que volver a descubrirla dentro de seis meses. || POR QUE NO SE ENCIENDE, y son dos motivos: (1) EL PROPIO LIBRO SE CONTRADICE. La Tabla 17-1 pide 1:1-1,5:1 al cachorro que pasara de 25 kg, y la Tabla 33-6 --que es la de los cachorros de raza grande y gigante CON RIESGO DE DOD, o sea la poblacion mas estrecha-- pide 1,1:1-2:1. Mas ancha en la tabla mas especifica. Aplicar una de las dos seria elegir, y eso no es una cuenta. (2) HOY NO MOVERIA NI UN MENU: los precalculados van de 1,03 a 1,29, muy por debajo de los tres techos. || Encenderlo es decision de Elena y del nutricionista. Esta en PENDIENTE_DECISIONES.md."
-          }
-        ]
-      },
-      "ratios": [
-        {
-          "numerador": "calcio",
-          "denominador": "fosforo",
-          "sentido": "max",
-          "valor": 1.8,
-          "aplicado_por_el_solver": false,
-          "fuente": "SACN5 5a ed., cap.17, Tabla 17-1 «Key nutritional factors for foods for growing puppies», fila «Ca:P ratio», columna «Puppies with an adult BW <25 kg»: «1:1-1.8:1». Leido literal 18-sep-2026",
-          "por_que": "Techo del cachorro que NO pasara de 25 kg de adulto. No aprieta: FEDIAF ya pone 2,0 en general y 1,6 al cachorro de mas de 15 kg (nota b de la Tabla III-3b), asi que 1,8 queda por encima del que el motor ya aplica a ese perro. Se escribe por simetria con la otra columna y para que la tabla quede entera. ⚠️ ESCRITO Y NO APLICADO (18 de septiembre de 2026). No es un olvido: es el mismo mecanismo con el que el Ca:P de los dos urolitos de calcio estuvo dos dias escrito antes de poder aplicarse, y existe para que una cifra que hoy no se aplica siga AUDITADA -- su cita se comprueba y el BLOQUE 57 la vigila-- en vez de desaparecer del repo y tener que volver a descubrirla dentro de seis meses. || POR QUE NO SE ENCIENDE, y son dos motivos: (1) EL PROPIO LIBRO SE CONTRADICE. La Tabla 17-1 pide 1:1-1,5:1 al cachorro que pasara de 25 kg, y la Tabla 33-6 --que es la de los cachorros de raza grande y gigante CON RIESGO DE DOD, o sea la poblacion mas estrecha-- pide 1,1:1-2:1. Mas ancha en la tabla mas especifica. Aplicar una de las dos seria elegir, y eso no es una cuenta. (2) HOY NO MOVERIA NI UN MENU: los precalculados van de 1,03 a 1,29, muy por debajo de los tres techos. || Encenderlo es decision de Elena y del nutricionista. Esta en PENDIENTE_DECISIONES.md."
-        },
-        {
-          "numerador": "calcio",
-          "denominador": "fosforo",
-          "sentido": "min",
-          "valor": 1.0,
-          "aplicado_por_el_solver": false,
-          "fuente": "SACN5 5a ed., cap.17, Tabla 17-1, fila «Ca:P ratio», extremo bajo «1:1». Leido literal 18-sep-2026",
-          "por_que": "Suelo. Coincide con el 1,0 que FEDIAF ya aplica, asi que no anade nada. ⚠️ ESCRITO Y NO APLICADO (18 de septiembre de 2026). No es un olvido: es el mismo mecanismo con el que el Ca:P de los dos urolitos de calcio estuvo dos dias escrito antes de poder aplicarse, y existe para que una cifra que hoy no se aplica siga AUDITADA -- su cita se comprueba y el BLOQUE 57 la vigila-- en vez de desaparecer del repo y tener que volver a descubrirla dentro de seis meses. || POR QUE NO SE ENCIENDE, y son dos motivos: (1) EL PROPIO LIBRO SE CONTRADICE. La Tabla 17-1 pide 1:1-1,5:1 al cachorro que pasara de 25 kg, y la Tabla 33-6 --que es la de los cachorros de raza grande y gigante CON RIESGO DE DOD, o sea la poblacion mas estrecha-- pide 1,1:1-2:1. Mas ancha en la tabla mas especifica. Aplicar una de las dos seria elegir, y eso no es una cuenta. (2) HOY NO MOVERIA NI UN MENU: los precalculados van de 1,03 a 1,29, muy por debajo de los tres techos. || Encenderlo es decision de Elena y del nutricionista. Esta en PENDIENTE_DECISIONES.md."
         }
-      ]
+      }
     }
   }
 }

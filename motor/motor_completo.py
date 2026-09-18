@@ -1612,33 +1612,6 @@ def _resolver_una_vez(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn
             _hueco_pr["max"] = (float(_cotas_pr["max"]) if _a is None
                                 else min(_a, float(_cotas_pr["max"])))
 
-    # ⚠️ Y LOS RATIOS QUE EL LIBRO LE RECOMIENDA AL PERRO SANO (18 de septiembre
-    # de 2026). Entran por el MISMO cajón y con el MISMO `max()`/`min()` que los
-    # de patología y los del profesional, o sea que SOLO PUEDEN APRETAR: un
-    # ratio del libro nunca ensancha el Ca:P de FEDIAF ni el que pida una
-    # patología ya puesta.
-    #
-    # ⚠️ HOY NO HAY NINGUNO ENCENDIDO. Lo que se ha construido es el sitio donde
-    # puede vivir una recomendación del libro que sea un cociente -- que es el
-    # hueco que tuvo `patologias.json` hasta el 10 de septiembre. El caso que lo
-    # pide es el Ca:P del cachorro de raza grande (SACN5 Tabla 17-1 dice 1,5 y
-    # aplicamos el 1,6 de FEDIAF), y no se enciende porque el propio libro se
-    # contradice en su Tabla 33-5 (2,0) y porque hoy no movería ni un menú: los
-    # reales van de 1,03 a 1,29. Encenderlo es decisión de Elena y del
-    # nutricionista, no mía.
-    from recomendaciones import ratios_de_la_etapa as _ratios_del_libro
-    for _par_lb, _cotas_lb in _ratios_del_libro(
-            etapa, peso_adulto_esperado_kg=peso_adulto_esperado_kg).items():
-        _hueco_lb = ratios_patologia.setdefault(tuple(_par_lb), {"min": None, "max": None})
-        if _cotas_lb.get("min") is not None:
-            _a = _hueco_lb["min"]
-            _hueco_lb["min"] = (_cotas_lb["min"] if _a is None
-                                else max(_a, _cotas_lb["min"]))
-        if _cotas_lb.get("max") is not None:
-            _a = _hueco_lb["max"]
-            _hueco_lb["max"] = (_cotas_lb["max"] if _a is None
-                                else min(_a, _cotas_lb["max"]))
-
     # ⚠️ AÑADIDO (8 septiembre) — LOS TECHOS DEL PERRO ADULTO SANO. Ver
     # `motor/recomendaciones.py` y `recomendaciones_libro.json`: son las dos
     # únicas cifras de SACN5 que se aplican a un perro que NO tiene nada
