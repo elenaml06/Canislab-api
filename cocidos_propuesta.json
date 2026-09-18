@@ -1,6 +1,7 @@
 {
  "_meta": {
-  "que_es": "Qué fila cocida describe cada alimento, y cómo se cocina."
+  "que_es": "Qué fila cocida describe cada alimento, y cómo se cocina.",
+  "segunda_vuelta_18_sep": "Seis fichas más, y las tres de pescado son las que el barrido automático NO PODÍA ver: su ancla es la fila CRUDA de una fuente que nuestra ficha no declaraba. El barrido ancla por fuente —y tiene que seguir haciéndolo, porque anclar contra cualquier fuente deja ganar a la más floja— así que un atún cuya única fuente declarada era BEDCA no podía comprobarse contra USDA. La salida no es aflojar la regla: es declarar también el id crudo de esa fuente en la ficha cruda, que es exactamente lo que se hizo con el salmón y su ciqual:26036."
  },
  "elegidas": {
   "Acelga": {
@@ -714,6 +715,99 @@
    "agua": 90.17,
    "como": "hervido en agua",
    "categoria": "Verduras y frutas"
+  },
+  "Atún": {
+   "nombre_final": "Atún claro cocido",
+   "ids": {
+    "usda": "172006"
+   },
+   "fuente": "usda",
+   "id": "172006",
+   "fila": "Fish, tuna, yellowfin, fresh, cooked, dry heat",
+   "clase": "seco",
+   "celdas": 109,
+   "agua": 68.98,
+   "como": "al horno o a la plancha, sin aceite",
+   "categoria": "Pescados y mariscos",
+   "ancla": "usda:175159 «Fish, tuna, fresh, yellowfin, raw» — 94,0 % proteína y 1,9 % grasa sobre materia seca en LAS DOS filas, idénticas: USDA calculó la cocida concentrando la cruda, así que el emparejamiento es exacto"
+  },
+  "Pulpo": {
+   "nombre_final": "Pulpo cocido",
+   "ids": {
+    "usda": "174249"
+   },
+   "fuente": "usda",
+   "id": "174249",
+   "fila": "Mollusks, octopus, common, cooked, moist heat",
+   "clase": "humedo",
+   "celdas": 89,
+   "agua": 60.5,
+   "como": "hervido en agua",
+   "categoria": "Pescados y mariscos",
+   "ancla": "usda:174218 «Mollusks, octopus, common, raw» — 75,5 % proteína y 5,3 % grasa sobre materia seca en las dos. ⚠️ La de BEDCA, «Pulpo, hervido» (2374), se RECHAZA: da 102,2 % de proteína sobre su propia materia seca, que es imposible — una parte no puede pasar del total"
+  },
+  "Dorada": {
+   "nombre_final": "Dorada cocida",
+   "ids": {
+    "ciqual": "27031"
+   },
+   "fuente": "ciqual",
+   "id": "27031",
+   "fila": "Dorade (Daurade) royale, cuite au four",
+   "clase": "seco",
+   "celdas": 47,
+   "agua": 68.8,
+   "como": "al horno, sin aceite",
+   "categoria": "Pescados y mariscos",
+   "ancla": "ciqual:26088 «Dorade royale ou daurade ou vraie daurade, crue, élevage» — 76,0/18,5 en crudo contra 75,6/18,9 cocida, proteína y grasa sobre materia seca. ⚠️ La de BEDCA, «Dorada, plancha» (2333), ya la rechazó el barrido por la grasa, y su fila CRUDA (815) declara 94,4 % de proteína MÁS 40,1 % de grasa sobre su materia seca: 134 %, imposible, y es la incoherencia que el repo ya tenía declarada de la dorada"
+  },
+  "Cerdo": {
+   "nombre_final": "Cerdo cocido",
+   "plantilla": "Ternera solomillo sin grasa",
+   "categoria": "Carne muscular",
+   "ids": {
+    "ciqual": "28205"
+   },
+   "fuente": "ciqual",
+   "id": "28205",
+   "fila": "Porc, viande, cuite (aliment moyen)",
+   "clase": "generico",
+   "celdas": 56,
+   "agua": 59.3,
+   "como": "hervido o al horno, hecho del todo por dentro",
+   "ancla": "las filas crudas de CIQUAL del mismo animal: «Porc, longe, crue» (28003) da 64,4 % de proteína y 30,6 % de grasa sobre materia seca y la cocida 71,5/24,0 — el mismo producto. ⚠️ Se RECHAZA «Porc, filet, maigre, en rôti, cuit» (28202): su fila cruda hermana (28201) da 82,8/14,1 y la cocida 70,2/23,3, o sea que el «rôti» trae grasa que el filete magro no tiene"
+  },
+  "Ternera": {
+   "nombre_final": "Ternera cocida",
+   "plantilla": "Ternera solomillo sin grasa",
+   "categoria": "Carne muscular",
+   "ids": {
+    "ciqual": "6564"
+   },
+   "fuente": "ciqual",
+   "id": "6564",
+   "fila": "Veau, viande, cuite (aliment moyen)",
+   "clase": "generico",
+   "celdas": 42,
+   "agua": 63.7,
+   "como": "hervido o guisado sin sal",
+   "ancla": "«Veau, épaule, crue» (6560) da 82,5 % de proteína y 18,4 % de grasa sobre materia seca, y su propia fila cocida (6563) da 82,5/18,5 — clavadas. La media de cortes cocidos, 79,9/15,3, cae dentro"
+  },
+  "Vaca solomillo": {
+   "nombre_final": "Solomillo de vaca cocido",
+   "plantilla": "Ternera solomillo sin grasa",
+   "categoria": "Carne muscular",
+   "ids": {
+    "bedca": "996"
+   },
+   "fuente": "bedca",
+   "id": "996",
+   "fila": "Vaca/buey, solomillo, a la plancha",
+   "clase": "seco",
+   "celdas": 30,
+   "agua": 64.0,
+   "como": "a la plancha sin aceite",
+   "ancla": "bedca:1029 «Ternera, solomillo, sin grasa, crudo», que es la ficha cruda que ya tiene el catálogo: 80,8 % de proteína y 12,3 % de grasa sobre materia seca contra 78,1/16,2 de la cocida. Mismo corte, animal más mayor, y eso va dicho"
   }
  },
  "rechazadas": {
@@ -741,6 +835,19 @@
   ],
   "Páncreas de vaca": [
    "usda:169453 «Beef, variety meats and by-products, pan» -> proteína"
+  ],
+  "Sardina": [
+   "ciqual:26136 «Sardine, grillée» -> NO PUBLICA EPA NI DHA («-»), y el EPA+DHA es justo lo que hace falta de un pescado azul. Además su fila cruda hermana (26065) declara 2,2 g de cenizas y la asada 1,24: la cruda es el pez ENTERO con espina y la asada un filete, o sea otro alimento — y de ahí sale que la proteína pase de 54,2 a 69,7 % de la materia seca sin perder agua",
+   "bedca:2631 «Sardina, asada» -> 68,0 % de proteína MÁS 86,5 % de grasa sobre su propia materia seca: 154 %, imposible"
+  ],
+  "Boquerón": [
+   "bedca:2318 «Boquerón, frito» -> FRITO. Freír no es un método de cocción más: es añadir aceite, y la grasa de esa fila sube por lo que se le echa. No hay ninguna otra fila de boquerón cocido en las tres fuentes"
+  ],
+  "Lubina (segunda vuelta)": [
+   "ciqual:27030 «Bar commun ou loup, rôti/cuit au four» -> 21,1 % de grasa sobre materia seca contra 15,6 % de la lubina de CRÍA cruda (26206) y 8,4 % de la salvaje (26205), que son las dos filas crudas que publica la fuente. La cocida se pasa de las dos, así que la grasa no viene del pescado"
+  ],
+  "Caballa (segunda vuelta)": [
+   "bedca:804 «Caballa, al horno» -> 42,8 % de proteína y 52,1 % de grasa sobre materia seca contra 61,0/38,9 de su fila cruda (2319). La que se usa, usda:175120, da 51,0/38,1 igual que su cruda (175119): clavadas"
   ]
  }
 }

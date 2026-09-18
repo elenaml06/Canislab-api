@@ -2004,7 +2004,7 @@
    "lcarnitina": 0
   },
   "fuente_epa_dha": "BEDCA",
-  "nota_datos": "Ficha completa de BEDCA, comprobada campo a campo el 26 de agosto contra la tabla oficial: energía, proteína, grasa, EPA, DHA, linoleico, linolénico, araquidónico y los 18 vitaminas y minerales COINCIDEN todos. Los valores llevaban aquí desde antes sin que constara de dónde salían; ahora consta. EPA es el «ácido graso 20:5» de BEDCA y DHA el «ácido graso 22:6 n-3». ⚠️ 13 sep 2026: lcarnitina estaba(n) declarado(s) en `sin_dato` pero LA CLAVE NO EXISTÍA en `nutrientes`. Es la peor de las tres formas de esconder un hueco que describe `UNIDADES.md`: `valor_nutriente()` devuelve 0 igual que en los otros dos casos, pero NO HAY NINGÚN CERO QUE ENCONTRAR, así que ni la auditoría ni `datos_incompletos` podían decir nada. Se añade la clave a 0 —que es lo que el motor ya usaba— sin tocar ningún valor: lo único que cambia es que ahora el hueco se ve. Afectaba a 58 fichas.",
+  "nota_datos": "Ficha completa de BEDCA, comprobada campo a campo el 26 de agosto contra la tabla oficial: energía, proteína, grasa, EPA, DHA, linoleico, linolénico, araquidónico y los 18 vitaminas y minerales COINCIDEN todos. Los valores llevaban aquí desde antes sin que constara de dónde salían; ahora consta. EPA es el «ácido graso 20:5» de BEDCA y DHA el «ácido graso 22:6 n-3». ⚠️ 13 sep 2026: lcarnitina estaba(n) declarado(s) en `sin_dato` pero LA CLAVE NO EXISTÍA en `nutrientes`. Es la peor de las tres formas de esconder un hueco que describe `UNIDADES.md`: `valor_nutriente()` devuelve 0 igual que en los otros dos casos, pero NO HAY NINGÚN CERO QUE ENCONTRAR, así que ni la auditoría ni `datos_incompletos` podían decir nada. Se añade la clave a 0 —que es lo que el motor ya usaba— sin tocar ningún valor: lo único que cambia es que ahora el hueco se ve. Afectaba a 58 fichas. || ⚠️ ID DE USDA AÑADIDO (18 de septiembre de 2026): «Fish, tuna, fresh, yellowfin, raw» (usda:175159). Es la fila cruda hermana de la que da la ficha cocida: las dos declaran 94,0 % de proteína y 1,9 % de grasa sobre materia seca, clavadas. ⚠️ Y hay que saber que NO es la misma pieza que la fila de BEDCA de esta ficha: el rabil es un atún magro (1,9 % de grasa en seco) y el «Atún, crudo» de BEDCA declara 10,1 %. Por eso la ficha cocida se llama «Atún claro» y no «Atún» a secas, y por eso BEDCA sigue mandando en todas las celdas de ESTA ficha. Faltaba, y sin él la ficha COCIDA no tenía contra qué anclar: el barrido de cocidos ancla POR FUENTE —anclar contra cualquiera deja ganar a la más floja— así que una ficha cuya única fuente declarada era otra no podía comprobarse aquí.",
   "aminograma_estimado": {
    "desde": "Atún listado (bonito) fresco, crudo",
    "factor": "1.0",
@@ -2033,7 +2033,8 @@
    "reaccion_adversa_alimento": "Aminas vasoactivas. SACN5 5a ed., cap.31 «Adverse Reactions to Food», Tabla 31-3, columna perros: «Vasoactive amines -- Avoid foods that contain certain fish ingredients (e.g., tuna, mackerel, skipjack, bonito)». No son alergenos: bajan el umbral al que reacciona un perro sensible. Verificado literal 8-sep-2026."
   },
   "fuentes_id": {
-   "bedca": "2134"
+   "bedca": "2134",
+   "usda": "175159"
   },
   "fuentes_id_porque": "BEDCA 2134 «Atún, crudo» — huella exacta: E 118,6/119 · P 22/22 · G 3,3/3,3. ⚠️ El emparejador automático no lo encontró porque se queda con los 4 primeros candidatos POR ORDEN ALFABÉTICO y «Atún, crudo» era el sexto, detrás de cuatro conservas.",
   "cero_verificado": {
@@ -3179,7 +3180,10 @@
    "selenio": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2378 · «Calabaza, cruda» · columna «selenio, total» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía.",
    "vitB12": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2378 · «Calabaza, cruda» · columna «Vitamina B-12» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía.",
    "vitD": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2378 · «Calabaza, cruda» · columna «Vitamina D» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía."
-  }
+  },
+  "se_pesa": "en crudo",
+  "se_pesa_por_que": "Su composición sale de la fila CRUDA de la fuente, así que los gramos del menú son de producto crudo aunque se dé cocido.",
+  "aviso_al_comprar": "Se da COCIDA, nunca cruda, pero los gramos del menú son de producto CRUDO: pésala ANTES de cocerla."
  },
  {
   "nombre": "Calabacín",
@@ -3466,7 +3470,10 @@
    "treonina": "usda:169961 · «Beans, snap, green, raw» · columna «Threonine» = 0.079 G · transferido por gramo de proteina: ×(2.2/1.83) → 0.094973 g · 2026-09-15",
    "triptofano": "usda:169961 · «Beans, snap, green, raw» · columna «Tryptophan» = 0.019 G · transferido por gramo de proteina: ×(2.2/1.83) → 0.022842 g · 2026-09-15",
    "valina": "usda:169961 · «Beans, snap, green, raw» · columna «Valine» = 0.09 G · transferido por gramo de proteina: ×(2.2/1.83) → 0.108197 g · 2026-09-15"
-  }
+  },
+  "se_pesa": "en crudo",
+  "se_pesa_por_que": "Su composición sale de la fila CRUDA de la fuente, así que los gramos del menú son de producto crudo aunque se dé cocido.",
+  "aviso_al_comprar": "Se da COCIDA, nunca cruda, pero los gramos del menú son de producto CRUDO: pésala ANTES de cocerla."
  },
  {
   "nombre": "Brócoli",
@@ -7137,7 +7144,7 @@
    "taurina": 36.7,
    "lcarnitina": 0
   },
-  "nota_datos": "Ficha de BEDCA. Todos los campos son los suyos MENOS la energía, y el motivo está medido:\n\nBEDCA declara 78 kcal (326 kJ), pero su propia ficha NO CUADRA CONSIGO MISMA:\n  · agua 82 g + proteína 17 g + grasa 7,22 g = 106,22 g por cada 100 g de pescado. Sobran más de 6 g de materia, y aún faltarían los minerales. Es imposible.\n  · la energía de un alimento SE CALCULA de sus macros: 17x4 + 7,22x9 = 133 kcal. Solo la proteína ya son 68, casi las 78 declaradas -- lo que dejaría 10 kcal para 7,22 g de grasa, que son 65.\n\nCOMPROBADO que es de esta ficha y no del método: las mismas dos cuentas aplicadas a los 19 pescados de BEDCA cuadran en 18. Atún 119 declaradas / 118 calculadas, salmón 182/182, sardina 140/140. Solo la dorada falla, y falla las dos a la vez.\n\nCAUSA: cada fila viene de un estudio distinto (agua de la fuente 7, proteína de la 32, grasa de la 296, energía de la 236) y en la dorada se cruzaron dos pescados. Los 78 kcal y los 82 g de agua son una dorada salvaje magra; los 7,22 g de grasa, una de piscifactoría. Lo confirma la propia tabla: los demás pescados con 82% de agua tienen 1,3-1,8 g de grasa; los que tienen 7 g de grasa andan por 74-76% de agua.\n\nSE USAN 133 kcal, que es lo coherente con la grasa que también guardamos. Poner 78 manteniendo 7,22 g de grasa haría que la app calculara una ración 83% grasa en calorías, y la energía es el divisor de los 30 requisitos. `auditar_catalogo.py` lo caza solo con el aviso [BASE] -- esa alarma se deja encendida a propósito, no se silencia.\n\nPENDIENTE para la nutricionista: si la dorada del catálogo es salvaje, hay que bajar la grasa a ~1,5 g Y con ella el EPA y el DHA, que salen de esa misma fuente 296. Energía y grasa se deciden juntas o no se decide ninguna. ⚠️ CORREGIDO 6 sep 2026, dos errores graves de la misma errata de BEDCA: agua (82) + proteína (17) + grasa (7,22) sumaban 106 g por 100 g -- imposible. El campo que sobraba era la GRASA: corregida a 1 g (FEN/Moreiras 2013, ficha Dorada). La vitD (14→1,5 µg, misma fuente) arrastraba sola casi toda la vitD de una ración con 14 -- con eso corregido, la energía se recalcula a 78 kcal (BEDCA 78 + FEN 77, coinciden) en vez de los 133 que el catálogo había recalculado para sostener la grasa errónea: había que corregir en el sentido contrario. ⚠️ QUEDA ABIERTO, tal y como avisaba el párrafo de arriba: el DHA (0,527) y el EPA (0,312) siguen sin tocar porque no hay cifra de fuente para la dorada salvaje -- son de la MISMA fuente 296 (piscifactoría) que la grasa ya corregida, así que ahora suman, con el linoleico y el araquidónico ya en mg, 1,97 g de ácidos grasos contra 1 g de grasa total: no cuadra, y `auditar_catalogo.py` lo señala con [GRASOS] a propósito, sin silenciarlo. Falta la cifra de EPA/DHA de una dorada salvaje para cerrarlo del todo. ⚠️ 13 sep 2026: lcarnitina estaba(n) declarado(s) en `sin_dato` pero LA CLAVE NO EXISTÍA en `nutrientes`. Es la peor de las tres formas de esconder un hueco que describe `UNIDADES.md`: `valor_nutriente()` devuelve 0 igual que en los otros dos casos, pero NO HAY NINGÚN CERO QUE ENCONTRAR, así que ni la auditoría ni `datos_incompletos` podían decir nada. Se añade la clave a 0 —que es lo que el motor ya usaba— sin tocar ningún valor: lo único que cambia es que ahora el hueco se ve. Afectaba a 58 fichas.",
+  "nota_datos": "Ficha de BEDCA. Todos los campos son los suyos MENOS la energía, y el motivo está medido:\n\nBEDCA declara 78 kcal (326 kJ), pero su propia ficha NO CUADRA CONSIGO MISMA:\n  · agua 82 g + proteína 17 g + grasa 7,22 g = 106,22 g por cada 100 g de pescado. Sobran más de 6 g de materia, y aún faltarían los minerales. Es imposible.\n  · la energía de un alimento SE CALCULA de sus macros: 17x4 + 7,22x9 = 133 kcal. Solo la proteína ya son 68, casi las 78 declaradas -- lo que dejaría 10 kcal para 7,22 g de grasa, que son 65.\n\nCOMPROBADO que es de esta ficha y no del método: las mismas dos cuentas aplicadas a los 19 pescados de BEDCA cuadran en 18. Atún 119 declaradas / 118 calculadas, salmón 182/182, sardina 140/140. Solo la dorada falla, y falla las dos a la vez.\n\nCAUSA: cada fila viene de un estudio distinto (agua de la fuente 7, proteína de la 32, grasa de la 296, energía de la 236) y en la dorada se cruzaron dos pescados. Los 78 kcal y los 82 g de agua son una dorada salvaje magra; los 7,22 g de grasa, una de piscifactoría. Lo confirma la propia tabla: los demás pescados con 82% de agua tienen 1,3-1,8 g de grasa; los que tienen 7 g de grasa andan por 74-76% de agua.\n\nSE USAN 133 kcal, que es lo coherente con la grasa que también guardamos. Poner 78 manteniendo 7,22 g de grasa haría que la app calculara una ración 83% grasa en calorías, y la energía es el divisor de los 30 requisitos. `auditar_catalogo.py` lo caza solo con el aviso [BASE] -- esa alarma se deja encendida a propósito, no se silencia.\n\nPENDIENTE para la nutricionista: si la dorada del catálogo es salvaje, hay que bajar la grasa a ~1,5 g Y con ella el EPA y el DHA, que salen de esa misma fuente 296. Energía y grasa se deciden juntas o no se decide ninguna. ⚠️ CORREGIDO 6 sep 2026, dos errores graves de la misma errata de BEDCA: agua (82) + proteína (17) + grasa (7,22) sumaban 106 g por 100 g -- imposible. El campo que sobraba era la GRASA: corregida a 1 g (FEN/Moreiras 2013, ficha Dorada). La vitD (14→1,5 µg, misma fuente) arrastraba sola casi toda la vitD de una ración con 14 -- con eso corregido, la energía se recalcula a 78 kcal (BEDCA 78 + FEN 77, coinciden) en vez de los 133 que el catálogo había recalculado para sostener la grasa errónea: había que corregir en el sentido contrario. ⚠️ QUEDA ABIERTO, tal y como avisaba el párrafo de arriba: el DHA (0,527) y el EPA (0,312) siguen sin tocar porque no hay cifra de fuente para la dorada salvaje -- son de la MISMA fuente 296 (piscifactoría) que la grasa ya corregida, así que ahora suman, con el linoleico y el araquidónico ya en mg, 1,97 g de ácidos grasos contra 1 g de grasa total: no cuadra, y `auditar_catalogo.py` lo señala con [GRASOS] a propósito, sin silenciarlo. Falta la cifra de EPA/DHA de una dorada salvaje para cerrarlo del todo. ⚠️ 13 sep 2026: lcarnitina estaba(n) declarado(s) en `sin_dato` pero LA CLAVE NO EXISTÍA en `nutrientes`. Es la peor de las tres formas de esconder un hueco que describe `UNIDADES.md`: `valor_nutriente()` devuelve 0 igual que en los otros dos casos, pero NO HAY NINGÚN CERO QUE ENCONTRAR, así que ni la auditoría ni `datos_incompletos` podían decir nada. Se añade la clave a 0 —que es lo que el motor ya usaba— sin tocar ningún valor: lo único que cambia es que ahora el hueco se ve. Afectaba a 58 fichas. || ⚠️ ID DE CIQUAL AÑADIDO (18 de septiembre de 2026): «Dorade royale ou daurade ou vraie daurade, crue, élevage» (ciqual:26088). 76,0 % de proteína y 18,5 % de grasa sobre materia seca contra 75,6/18,9 de su fila cocida (27031). ⚠️ Esta ficha tiene una incoherencia ya declarada en `fuentes_de_composicion.json` —su fila de BEDCA suma 94,4 % de proteína MÁS 40,1 % de grasa sobre la materia seca, o sea 134 %— así que el ancla tenía que salir de otra fuente. Faltaba, y sin él la ficha COCIDA no tenía contra qué anclar: el barrido de cocidos ancla POR FUENTE —anclar contra cualquiera deja ganar a la más floja— así que una ficha cuya única fuente declarada era otra no podía comprobarse aquí.",
   "fuente_epa_dha": "BEDCA",
   "aminograma_estimado": {
    "desde": "Pargo, crudo",
@@ -7165,7 +7172,8 @@
    "manganeso"
   ],
   "fuentes_id": {
-   "bedca": "815"
+   "bedca": "815",
+   "ciqual": "26088"
   },
   "fuentes_id_porque": "BEDCA 815 «Dorada, cruda». ⚠️ SE APUNTA EL ID PERO LA FILA SE CONTRADICE A SÍ MISMA, y es la ficha que `UNIDADES.md` ya cita como el caso de «dos alimentos en una fila»: BEDCA da P 17 y G 7,22, que por 4 y por 9 son 133 kcal, y la misma fila declara 77,9 kcal. Nuestra ficha (17/1/78) SÍ es coherente consigo misma (17×4+1×9=77). O sea que aquí no se corrige hacia la fuente: la fuente es la que está rota. El id queda para poder volver a ella.",
   "humedad_g_100g": 82.0,
@@ -7774,7 +7782,7 @@
    "lcarnitina": 0
   },
   "fuente_epa_dha": "BEDCA",
-  "nota_datos": "Ficha completa de BEDCA, comprobada campo a campo el 26 de agosto contra la tabla oficial: energía, proteína, grasa, EPA, DHA, linoleico, linolénico, araquidónico y los 18 vitaminas y minerales COINCIDEN todos. Los valores llevaban aquí desde antes sin que constara de dónde salían; ahora consta. EPA es el «ácido graso 20:5» de BEDCA y DHA el «ácido graso 22:6 n-3». ⚠️ CORREGIDO 6 sep 2026: la vitD (0) no es un cero real -- BEDCA distingue 0 de trazas de n.d., y aquí es trazas. Sin cifra publicada, pasa a sin_dato en vez de mantenerse como cero con forma de dato bueno. ⚠️ 13 sep 2026: lcarnitina estaba(n) declarado(s) en `sin_dato` pero LA CLAVE NO EXISTÍA en `nutrientes`. Es la peor de las tres formas de esconder un hueco que describe `UNIDADES.md`: `valor_nutriente()` devuelve 0 igual que en los otros dos casos, pero NO HAY NINGÚN CERO QUE ENCONTRAR, así que ni la auditoría ni `datos_incompletos` podían decir nada. Se añade la clave a 0 —que es lo que el motor ya usaba— sin tocar ningún valor: lo único que cambia es que ahora el hueco se ve. Afectaba a 58 fichas.",
+  "nota_datos": "Ficha completa de BEDCA, comprobada campo a campo el 26 de agosto contra la tabla oficial: energía, proteína, grasa, EPA, DHA, linoleico, linolénico, araquidónico y los 18 vitaminas y minerales COINCIDEN todos. Los valores llevaban aquí desde antes sin que constara de dónde salían; ahora consta. EPA es el «ácido graso 20:5» de BEDCA y DHA el «ácido graso 22:6 n-3». ⚠️ CORREGIDO 6 sep 2026: la vitD (0) no es un cero real -- BEDCA distingue 0 de trazas de n.d., y aquí es trazas. Sin cifra publicada, pasa a sin_dato en vez de mantenerse como cero con forma de dato bueno. ⚠️ 13 sep 2026: lcarnitina estaba(n) declarado(s) en `sin_dato` pero LA CLAVE NO EXISTÍA en `nutrientes`. Es la peor de las tres formas de esconder un hueco que describe `UNIDADES.md`: `valor_nutriente()` devuelve 0 igual que en los otros dos casos, pero NO HAY NINGÚN CERO QUE ENCONTRAR, así que ni la auditoría ni `datos_incompletos` podían decir nada. Se añade la clave a 0 —que es lo que el motor ya usaba— sin tocar ningún valor: lo único que cambia es que ahora el hueco se ve. Afectaba a 58 fichas. || ⚠️ ID DE USDA AÑADIDO (18 de septiembre de 2026): «Mollusks, octopus, common, raw» (usda:174218). 75,5 % de proteína y 5,3 % de grasa sobre materia seca, lo mismo que su fila cocida (174249). ⚠️ La fila cocida de BEDCA, «Pulpo, hervido» (2374), se rechaza: declara 102,2 % de proteína sobre su propia materia seca, y una parte no puede pasar del total. Faltaba, y sin él la ficha COCIDA no tenía contra qué anclar: el barrido de cocidos ancla POR FUENTE —anclar contra cualquiera deja ganar a la más floja— así que una ficha cuya única fuente declarada era otra no podía comprobarse aquí.",
   "purinas_bases": {
    "adenina": 21.6,
    "guanina": 18.1,
@@ -7798,7 +7806,8 @@
   "humedad_fdc": "174218",
   "fuentes_id": {
    "bedca": "2471",
-   "ciqual": "10018"
+   "ciqual": "10018",
+   "usda": "174218"
   },
   "cero_verificado": {
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2471 · «Pulpo» · columna «fibra, dietetica total» = 0.0 g. `value_type` AR, o sea una MEDIDA y no una celda vacía.",
@@ -9098,7 +9107,10 @@
    "fenilalanina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:169205 «Artichokes, (globe or french), raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
    "tirosina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:169205 «Artichokes, (globe or french), raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
    "arginina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:169205 «Artichokes, (globe or french), raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026)."
-  }
+  },
+  "se_pesa": "en crudo",
+  "se_pesa_por_que": "Su composición sale de la fila CRUDA de la fuente, así que los gramos del menú son de producto crudo aunque se dé cocido.",
+  "aviso_al_comprar": "Se da COCIDA, nunca cruda, pero los gramos del menú son de producto CRUDO: pésala ANTES de cocerla."
  },
  {
   "nombre": "Apio",
@@ -9569,7 +9581,10 @@
    "fenilalanina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:169981 «Cardoon, raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
    "tirosina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:169981 «Cardoon, raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026).",
    "arginina": "Mirado el 2026-09-15 en las tres fuentes: BEDCA no publica NINGUN aminoacido (su tabla no tiene esas columnas), CIQUAL tampoco, y USDA -- la unica que los publica, por eso es el mandato para ellos -- tiene la fila usda:169981 «Cardoon, raw» pero NO trae los doce. Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay forma de ver que la suma se pase de la proteina (la leccion de la zanahoria, 13-sep-2026)."
-  }
+  },
+  "se_pesa": "en crudo",
+  "se_pesa_por_que": "Su composición sale de la fila CRUDA de la fuente, así que los gramos del menú son de producto crudo aunque se dé cocido.",
+  "aviso_al_comprar": "Se da COCIDO, nunca crudo, pero los gramos del menú son de producto CRUDO: pésalo ANTES de cocerlo."
  },
  {
   "nombre": "Champiñón",
@@ -9671,7 +9686,10 @@
    "treonina": "usda:169251 · «Mushrooms, white, raw» · columna «Threonine» = 0.107 G · transferido por gramo de proteina: ×(1.8/3.09) → 0.06233 g · 2026-09-15",
    "triptofano": "usda:169251 · «Mushrooms, white, raw» · columna «Tryptophan» = 0.035 G · transferido por gramo de proteina: ×(1.8/3.09) → 0.020388 g · 2026-09-15",
    "valina": "usda:169251 · «Mushrooms, white, raw» · columna «Valine» = 0.232 G · transferido por gramo de proteina: ×(1.8/3.09) → 0.135146 g · 2026-09-15"
-  }
+  },
+  "se_pesa": "en crudo",
+  "se_pesa_por_que": "Su composición sale de la fila CRUDA de la fuente, así que los gramos del menú son de producto crudo aunque se dé cocido.",
+  "aviso_al_comprar": "Se da COCIDO, nunca crudo, pero los gramos del menú son de producto CRUDO: pésalo ANTES de cocerlo."
  },
  {
   "nombre": "Coles de Bruselas",
@@ -9776,7 +9794,10 @@
   },
   "hueco_verificado": {
    "tirosina": "Mirado el 2026-09-15: BEDCA y CIQUAL no publican NINGUN aminoacido, y USDA -- la unica que los publica -- tiene la fila usda:170383 «Brussels sprouts, raw» pero NO trae esta columna. El resto del aminograma de esta ficha SI sale de ahi. Queda incompleto, y un aminograma incompleto cuenta como CERO entero en el BLOQUE 27: eso es lo correcto, porque el motor no puede fiarse de medio aminograma."
-  }
+  },
+  "se_pesa": "en crudo",
+  "se_pesa_por_que": "Su composición sale de la fila CRUDA de la fuente, así que los gramos del menú son de producto crudo aunque se dé cocido.",
+  "aviso_al_comprar": "Se dan COCIDAS, nunca crudas, pero los gramos del menú son de producto CRUDO: pésalas ANTES de cocerlas."
  },
  {
   "nombre": "Col lombarda",
@@ -10054,7 +10075,10 @@
    "treonina": "usda:169986 · «Cauliflower, raw» · columna «Threonine» = 0.076 G · transferido por gramo de proteina: ×(2.0/1.92) → 0.079167 g · 2026-09-15",
    "triptofano": "usda:169986 · «Cauliflower, raw» · columna «Tryptophan» · transferido por gramo de proteina: ×(2.0/1.92) → 0.020833 g · 2026-09-15",
    "valina": "usda:169986 · «Cauliflower, raw» · columna «Valine» = 0.125 G · transferido por gramo de proteina: ×(2.0/1.92) → 0.130208 g · 2026-09-15"
-  }
+  },
+  "se_pesa": "en crudo",
+  "se_pesa_por_que": "Su composición sale de la fila CRUDA de la fuente, así que los gramos del menú son de producto crudo aunque se dé cocido.",
+  "aviso_al_comprar": "Se da COCIDA, nunca cruda, pero los gramos del menú son de producto CRUDO: pésala ANTES de cocerla."
  },
  {
   "nombre": "Endibia",
@@ -10318,7 +10342,10 @@
    "vitD": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2396 · «Grelo» · columna «Vitamina D» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía."
   },
   "humedad_g_100g": 93.1,
-  "humedad_fuente": "bedca:2396 · Grelo"
+  "humedad_fuente": "bedca:2396 · Grelo",
+  "se_pesa": "en crudo",
+  "se_pesa_por_que": "Su composición sale de la fila CRUDA de la fuente, así que los gramos del menú son de producto crudo aunque se dé cocido.",
+  "aviso_al_comprar": "Se da COCIDO, nunca crudo, pero los gramos del menú son de producto CRUDO: pésalo ANTES de cocerlo."
  },
  {
   "nombre": "Lechuga",
@@ -10500,7 +10527,10 @@
    "vitD": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:880 · «Nabo, pelado, crudo» · columna «Vitamina D» = 0.0 ug. `value_type` LZ, o sea una MEDIDA y no una celda vacía."
   },
   "humedad_g_100g": 89.8,
-  "humedad_fuente": "bedca:880 · Nabo, pelado, crudo"
+  "humedad_fuente": "bedca:880 · Nabo, pelado, crudo",
+  "se_pesa": "en crudo",
+  "se_pesa_por_que": "Su composición sale de la fila CRUDA de la fuente, así que los gramos del menú son de producto crudo aunque se dé cocido.",
+  "aviso_al_comprar": "Se da COCIDO, nunca crudo, pero los gramos del menú son de producto CRUDO: pésalo ANTES de cocerlo."
  },
  {
   "nombre": "Pepino",
@@ -16245,6 +16275,7 @@
    "calcio": "usda:170401 · «Chard, swiss, cooked, boiled, drained, without salt» · columna «Calcium, Ca» = 58.0 MG → 58.0 mg · 2026-09-18",
    "cobre": "usda:170401 · «Chard, swiss, cooked, boiled, drained, without salt» · columna «Copper, Cu» = 0.163 MG → 0.163 mg · 2026-09-18",
    "colina": "usda:170401 · «Chard, swiss, cooked, boiled, drained, without salt» · columna «Choline, total» = 28.7 MG → 28.7 mg · 2026-09-18",
+   "energia": "usda:170401 · «Chard, swiss, cooked, boiled, drained, without salt» · columna «Energy» = 20 KCAL · 2026-09-18",
    "fenilalanina": "usda:170401 · «Chard, swiss, cooked, boiled, drained, without salt» · columna «Phenylalanine» = 0.114 G → 0.114 g · 2026-09-18",
    "fibra": "usda:170401 · «Chard, swiss, cooked, boiled, drained, without salt» · columna «Fiber, total dietary» = 2.1 G → 2.1 g · 2026-09-18",
    "folato": "usda:170401 · «Chard, swiss, cooked, boiled, drained, without salt» · columna «Folate, total» = 9.0 UG → 9.0 ug · 2026-09-18",
@@ -16272,8 +16303,7 @@
    "valina": "usda:170401 · «Chard, swiss, cooked, boiled, drained, without salt» · columna «Valine» = 0.114 G → 0.114 g · 2026-09-18",
    "vitB6": "usda:170401 · «Chard, swiss, cooked, boiled, drained, without salt» · columna «Vitamin B-6» = 0.085 MG → 0.085 mg · 2026-09-18",
    "vitE": "usda:170401 · «Chard, swiss, cooked, boiled, drained, without salt» · columna «Vitamin E (alpha-tocopherol)» = 1.89 MG → 1.89 mg · 2026-09-18",
-   "zinc": "usda:170401 · «Chard, swiss, cooked, boiled, drained, without salt» · columna «Zinc, Zn» = 0.33 MG → 0.33 mg · 2026-09-18",
-   "energia": "usda:170401 · «Chard, swiss, cooked, boiled, drained, without salt» · columna «Energy» = 20 KCAL · 2026-09-18"
+   "zinc": "usda:170401 · «Chard, swiss, cooked, boiled, drained, without salt» · columna «Zinc, Zn» = 0.33 MG → 0.33 mg · 2026-09-18"
   },
   "cero_verificado": {
    "araquidonico": "Cero de la fuente que manda, comprobado el 2026-09-18: usda:170401 · «Chard, swiss, cooked, boiled, drained, without salt» · columna «PUFA 20:4» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
@@ -16363,6 +16393,7 @@
    "cobre": "ciqual:26025 · «Cabillaud, cuit à la vapeur» · columna «Cuivre (mg/100 g)» = 0.02 mg → 0.02 mg · 2026-09-18",
    "colina": "usda:171956 · «Fish, cod, Atlantic, cooked, dry heat» · columna «Choline, total» = 83.7 MG → 83.7 mg · 2026-09-18",
    "dha": "ciqual:26025 · «Cabillaud, cuit à la vapeur» · columna «AG 22:6 4c,7c,10c,13c,16c,19c (n-3) DHA (g/100 g)» = 0.16 g · transferido por gramo de grasa: 0.16×1×(1.05714/0.95) → 0.178045 g · 2026-09-18",
+   "energia": "bedca:795 · «Bacalao, fresco, al horno» · columna «energía, total» = 414.814 KJ ÷4,184 -> kcal · 2026-09-18",
    "epa": "ciqual:26025 · «Cabillaud, cuit à la vapeur» · columna «AG 20:5 5c,8c,11c,14c,17c (n-3) EPA (g/100 g)» = 0.11 g · transferido por gramo de grasa: 0.11×1×(1.05714/0.95) → 0.122406 g · 2026-09-18",
    "fenilalanina": "usda:171956 · «Fish, cod, Atlantic, cooked, dry heat» · columna «Phenylalanine» = 0.891 G · transferido por gramo de proteina: 0.891×1×(22.1/22.83) → 0.86251 g · 2026-09-18",
    "folato": "bedca:795 · «Bacalao, fresco, al horno» · columna «folato, total» = 12.0 ug → 12.0 ug · 2026-09-18",
@@ -16393,8 +16424,7 @@
    "vitB6": "bedca:795 · «Bacalao, fresco, al horno» · columna «Vitamina B-6, Total» = 0.33 mg → 0.33 mg · 2026-09-18",
    "vitE": "bedca:795 · «Bacalao, fresco, al horno» · columna «Viamina E equivalentes de alfa tocoferol de actividades de vitámeros E» = 0.6 mg → 0.6 mg · 2026-09-18",
    "yodo": "bedca:795 · «Bacalao, fresco, al horno» · columna «ioduro» = 147.7 ug → 147.7 ug · 2026-09-18",
-   "zinc": "bedca:795 · «Bacalao, fresco, al horno» · columna «zinc (cinc)» = 0.4 mg → 0.4 mg · 2026-09-18",
-   "energia": "bedca:795 · «Bacalao, fresco, al horno» · columna «energía, total» = 414.814 KJ ÷4,184 -> kcal · 2026-09-18"
+   "zinc": "bedca:795 · «Bacalao, fresco, al horno» · columna «zinc (cinc)» = 0.4 mg → 0.4 mg · 2026-09-18"
   },
   "cero_verificado": {
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-18: bedca:795 · «Bacalao, fresco, al horno» · columna «fibra, dietetica total» = 0.0 g. `value_type` LZ, o sea una MEDIDA y no una celda vacía.",
@@ -16484,6 +16514,7 @@
    "calcio": "usda:174365 · «Lamb, variety meats and by-products, spleen, cooked, braised» · columna «Calcium, Ca» = 13.0 MG → 13.0 mg · 2026-09-18",
    "cistina": "usda:174365 · «Lamb, variety meats and by-products, spleen, cooked, braised» · columna «Cystine» = 0.339 G → 0.339 g · 2026-09-18",
    "cobre": "usda:174365 · «Lamb, variety meats and by-products, spleen, cooked, braised» · columna «Copper, Cu» = 0.139 MG → 0.139 mg · 2026-09-18",
+   "energia": "usda:174365 · «Lamb, variety meats and by-products, spleen, cooked, braised» · columna «Energy» = 156 KCAL · 2026-09-18",
    "fenilalanina": "usda:174365 · «Lamb, variety meats and by-products, spleen, cooked, braised» · columna «Phenylalanine» = 1.202 G → 1.202 g · 2026-09-18",
    "folato": "usda:174365 · «Lamb, variety meats and by-products, spleen, cooked, braised» · columna «Folate, total» = 4.0 UG → 4.0 ug · 2026-09-18",
    "fosforo": "usda:174365 · «Lamb, variety meats and by-products, spleen, cooked, braised» · columna «Phosphorus, P» = 341.0 MG → 341.0 mg · 2026-09-18",
@@ -16509,8 +16540,7 @@
    "valina": "usda:174365 · «Lamb, variety meats and by-products, spleen, cooked, braised» · columna «Valine» = 1.727 G → 1.727 g · 2026-09-18",
    "vitB12": "usda:174365 · «Lamb, variety meats and by-products, spleen, cooked, braised» · columna «Vitamin B-12» = 5.29 UG → 5.29 ug · 2026-09-18",
    "vitB6": "usda:174365 · «Lamb, variety meats and by-products, spleen, cooked, braised» · columna «Vitamin B-6» = 0.08 MG → 0.08 mg · 2026-09-18",
-   "zinc": "usda:174365 · «Lamb, variety meats and by-products, spleen, cooked, braised» · columna «Zinc, Zn» = 3.94 MG → 3.94 mg · 2026-09-18",
-   "energia": "usda:174365 · «Lamb, variety meats and by-products, spleen, cooked, braised» · columna «Energy» = 156 KCAL · 2026-09-18"
+   "zinc": "usda:174365 · «Lamb, variety meats and by-products, spleen, cooked, braised» · columna «Zinc, Zn» = 3.94 MG → 3.94 mg · 2026-09-18"
   },
   "cero_verificado": {
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-18: usda:174365 · «Lamb, variety meats and by-products, spleen, cooked, braised» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
@@ -16594,6 +16624,7 @@
    "calcio": "usda:170597 · «Beef, variety meats and by-products, spleen, cooked, braised» · columna «Calcium, Ca» = 12.0 MG → 12.0 mg · 2026-09-18",
    "cistina": "usda:170597 · «Beef, variety meats and by-products, spleen, cooked, braised» · columna «Cystine» = 0.727 G → 0.727 g · 2026-09-18",
    "cobre": "usda:170597 · «Beef, variety meats and by-products, spleen, cooked, braised» · columna «Copper, Cu» = 0.924 MG → 0.924 mg · 2026-09-18",
+   "energia": "usda:170597 · «Beef, variety meats and by-products, spleen, cooked, braised» · columna «Energy» = 145 KCAL · 2026-09-18",
    "fenilalanina": "usda:170597 · «Beef, variety meats and by-products, spleen, cooked, braised» · columna «Phenylalanine» = 1.008 G → 1.008 g · 2026-09-18",
    "folato": "usda:170597 · «Beef, variety meats and by-products, spleen, cooked, braised» · columna «Folate, total» = 4.0 UG → 4.0 ug · 2026-09-18",
    "fosforo": "usda:170597 · «Beef, variety meats and by-products, spleen, cooked, braised» · columna «Phosphorus, P» = 305.0 MG → 305.0 mg · 2026-09-18",
@@ -16620,8 +16651,7 @@
    "valina": "usda:170597 · «Beef, variety meats and by-products, spleen, cooked, braised» · columna «Valine» = 1.51 G → 1.51 g · 2026-09-18",
    "vitB12": "usda:170597 · «Beef, variety meats and by-products, spleen, cooked, braised» · columna «Vitamin B-12» = 5.02 UG → 5.02 ug · 2026-09-18",
    "vitB6": "usda:170597 · «Beef, variety meats and by-products, spleen, cooked, braised» · columna «Vitamin B-6» = 0.04 MG → 0.04 mg · 2026-09-18",
-   "zinc": "usda:170597 · «Beef, variety meats and by-products, spleen, cooked, braised» · columna «Zinc, Zn» = 2.79 MG → 2.79 mg · 2026-09-18",
-   "energia": "usda:170597 · «Beef, variety meats and by-products, spleen, cooked, braised» · columna «Energy» = 145 KCAL · 2026-09-18"
+   "zinc": "usda:170597 · «Beef, variety meats and by-products, spleen, cooked, braised» · columna «Zinc, Zn» = 2.79 MG → 2.79 mg · 2026-09-18"
   },
   "cero_verificado": {
    "araquidonico": "Cero de la fuente que manda, comprobado el 2026-09-18: usda:170597 · «Beef, variety meats and by-products, spleen, cooked, braised» · columna «PUFA 20:4» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
@@ -16708,6 +16738,7 @@
    "cistina": "usda:169967 · «Broccoli, cooked, boiled, drained, without salt» · columna «Cystine» = 0.031 G · transferido por gramo de proteina: 0.031×1×(2.5/2.38) → 0.032563 g · 2026-09-18",
    "cobre": "ciqual:20302 · «Brocoli, bouilli/cuit à l'eau, croquant» · columna «Cuivre (mg/100 g)» = 0.11 mg → 0.11 mg · 2026-09-18",
    "colina": "usda:169967 · «Broccoli, cooked, boiled, drained, without salt» · columna «Choline, total» = 40.1 MG → 40.1 mg · 2026-09-18",
+   "energia": "ciqual:20302 · «Brocoli, bouilli/cuit à l'eau, croquant» · columna «Energie, Règlement UE N° 1169/2011 (kcal/100 g)» = 23,5 kcal · 2026-09-18",
    "fenilalanina": "usda:169967 · «Broccoli, cooked, boiled, drained, without salt» · columna «Phenylalanine» = 0.116 G · transferido por gramo de proteina: 0.116×1×(2.5/2.38) → 0.121849 g · 2026-09-18",
    "fibra": "ciqual:20302 · «Brocoli, bouilli/cuit à l'eau, croquant» · columna «Fibres alimentaires (g/100 g)» = 2.6 g → 2.6 g · 2026-09-18",
    "folato": "ciqual:20302 · «Brocoli, bouilli/cuit à l'eau, croquant» · columna «Vitamine B9 ou Folates totaux (µg/100 g)» = 67.1 ug → 67.1 ug · 2026-09-18",
@@ -16736,8 +16767,7 @@
    "valina": "usda:169967 · «Broccoli, cooked, boiled, drained, without salt» · columna «Valine» = 0.138 G · transferido por gramo de proteina: 0.138×1×(2.5/2.38) → 0.144958 g · 2026-09-18",
    "vitB6": "ciqual:20302 · «Brocoli, bouilli/cuit à l'eau, croquant» · columna «Vitamine B6 (mg/100 g)» = 0.06 mg → 0.06 mg · 2026-09-18",
    "vitE": "ciqual:20302 · «Brocoli, bouilli/cuit à l'eau, croquant» · columna «Vitamine E (mg/100 g)» = 2.42 mg → 2.42 mg · 2026-09-18",
-   "zinc": "ciqual:20302 · «Brocoli, bouilli/cuit à l'eau, croquant» · columna «Zinc (mg/100 g)» = 0.23 mg → 0.23 mg · 2026-09-18",
-   "energia": "ciqual:20302 · «Brocoli, bouilli/cuit à l'eau, croquant» · columna «Energie, Règlement UE N° 1169/2011 (kcal/100 g)» = 23,5 kcal · 2026-09-18"
+   "zinc": "ciqual:20302 · «Brocoli, bouilli/cuit à l'eau, croquant» · columna «Zinc (mg/100 g)» = 0.23 mg → 0.23 mg · 2026-09-18"
   },
   "cero_verificado": {
    "araquidonico": "Cero de la fuente que manda, comprobado el 2026-09-18: usda:169967 · «Broccoli, cooked, boiled, drained, without salt» · columna «PUFA 20:4» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
@@ -16827,6 +16857,7 @@
    "cistina": "usda:175120 · «Fish, mackerel, Atlantic, cooked, dry heat» · columna «Cystine» = 0.256 G → 0.256 g · 2026-09-18",
    "cobre": "usda:175120 · «Fish, mackerel, Atlantic, cooked, dry heat» · columna «Copper, Cu» = 0.094 MG → 0.094 mg · 2026-09-18",
    "dha": "usda:175120 · «Fish, mackerel, Atlantic, cooked, dry heat» · columna «PUFA 22:6 n-3 (DHA)» = 0.699 G → 0.699 g · 2026-09-18",
+   "energia": "usda:175120 · «Fish, mackerel, Atlantic, cooked, dry heat» · columna «Energy» = 262 KCAL · 2026-09-18",
    "epa": "usda:175120 · «Fish, mackerel, Atlantic, cooked, dry heat» · columna «PUFA 20:5 n-3 (EPA)» = 0.504 G → 0.504 g · 2026-09-18",
    "fenilalanina": "usda:175120 · «Fish, mackerel, Atlantic, cooked, dry heat» · columna «Phenylalanine» = 0.931 G → 0.931 g · 2026-09-18",
    "folato": "usda:175120 · «Fish, mackerel, Atlantic, cooked, dry heat» · columna «Folate, total» = 2.0 UG → 2.0 ug · 2026-09-18",
@@ -16855,8 +16886,7 @@
    "valina": "usda:175120 · «Fish, mackerel, Atlantic, cooked, dry heat» · columna «Valine» = 1.228 G → 1.228 g · 2026-09-18",
    "vitB12": "usda:175120 · «Fish, mackerel, Atlantic, cooked, dry heat» · columna «Vitamin B-12» = 19.0 UG → 19.0 ug · 2026-09-18",
    "vitB6": "usda:175120 · «Fish, mackerel, Atlantic, cooked, dry heat» · columna «Vitamin B-6» = 0.46 MG → 0.46 mg · 2026-09-18",
-   "zinc": "usda:175120 · «Fish, mackerel, Atlantic, cooked, dry heat» · columna «Zinc, Zn» = 0.94 MG → 0.94 mg · 2026-09-18",
-   "energia": "usda:175120 · «Fish, mackerel, Atlantic, cooked, dry heat» · columna «Energy» = 262 KCAL · 2026-09-18"
+   "zinc": "usda:175120 · «Fish, mackerel, Atlantic, cooked, dry heat» · columna «Zinc, Zn» = 0.94 MG → 0.94 mg · 2026-09-18"
   },
   "cero_verificado": {
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-18: usda:175120 · «Fish, mackerel, Atlantic, cooked, dry heat» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
@@ -16958,6 +16988,7 @@
    "calcio": "ciqual:20313 · «Courgette, pulpe et peau, rôtie/cuite au four» · columna «Calcium (mg/100 g)» = 24.0 mg → 24.0 mg · 2026-09-18",
    "cloruro": "ciqual:20313 · «Courgette, pulpe et peau, rôtie/cuite au four» · columna «Chlorure (mg/100 g)» = 41.8 mg → 41.8 mg · 2026-09-18",
    "cobre": "ciqual:20313 · «Courgette, pulpe et peau, rôtie/cuite au four» · columna «Cuivre (mg/100 g)» = 0.07 mg → 0.07 mg · 2026-09-18",
+   "energia": "ciqual:20313 · «Courgette, pulpe et peau, rôtie/cuite au four» · columna «Energie, Règlement UE N° 1169/2011 (kcal/100 g)» = 23 kcal · 2026-09-18",
    "fibra": "ciqual:20313 · «Courgette, pulpe et peau, rôtie/cuite au four» · columna «Fibres alimentaires (g/100 g)» = 1.7 g → 1.7 g · 2026-09-18",
    "folato": "ciqual:20313 · «Courgette, pulpe et peau, rôtie/cuite au four» · columna «Vitamine B9 ou Folates totaux (µg/100 g)» = 16.4 ug → 16.4 ug · 2026-09-18",
    "fosforo": "ciqual:20313 · «Courgette, pulpe et peau, rôtie/cuite au four» · columna «Phosphore (mg/100 g)» = 41.0 mg → 41.0 mg · 2026-09-18",
@@ -16971,8 +17002,7 @@
    "tiamina": "ciqual:20313 · «Courgette, pulpe et peau, rôtie/cuite au four» · columna «Vitamine B1 ou Thiamine (mg/100 g)» = 0.02 mg → 0.02 mg · 2026-09-18",
    "vitB6": "ciqual:20313 · «Courgette, pulpe et peau, rôtie/cuite au four» · columna «Vitamine B6 (mg/100 g)» = 0.038 mg → 0.038 mg · 2026-09-18",
    "vitE": "ciqual:20313 · «Courgette, pulpe et peau, rôtie/cuite au four» · columna «Vitamine E (mg/100 g)» = 0.13 mg → 0.13 mg · 2026-09-18",
-   "zinc": "ciqual:20313 · «Courgette, pulpe et peau, rôtie/cuite au four» · columna «Zinc (mg/100 g)» = 0.27 mg → 0.27 mg · 2026-09-18",
-   "energia": "ciqual:20313 · «Courgette, pulpe et peau, rôtie/cuite au four» · columna «Energie, Règlement UE N° 1169/2011 (kcal/100 g)» = 23 kcal · 2026-09-18"
+   "zinc": "ciqual:20313 · «Courgette, pulpe et peau, rôtie/cuite au four» · columna «Zinc (mg/100 g)» = 0.27 mg → 0.27 mg · 2026-09-18"
   },
   "energia": 23.0,
   "humedad_g_100g": 93.1,
@@ -17052,6 +17082,7 @@
    "cloruro": "ciqual:20332 · «Potiron, rôti/cuit au four» · columna «Chlorure (mg/100 g)» = 45.4 mg → 45.4 mg · 2026-09-18",
    "cobre": "bedca:1183 · «Calabaza, hervida» · columna «cobre» = 0.02 mg → 0.02 mg · 2026-09-18",
    "colina": "usda:168449 · «Pumpkin, cooked, boiled, drained, without salt» · columna «Choline, total» = 6.2 MG → 6.2 mg · 2026-09-18",
+   "energia": "bedca:1183 · «Calabaza, hervida» · columna «energía, total» = 51.45 KJ ÷4,184 -> kcal · 2026-09-18",
    "fenilalanina": "usda:168449 · «Pumpkin, cooked, boiled, drained, without salt» · columna «Phenylalanine» = 0.023 G → 0.023 g · 2026-09-18",
    "fibra": "bedca:1183 · «Calabaza, hervida» · columna «fibra, dietetica total» = 0.5 g → 0.5 g · 2026-09-18",
    "folato": "bedca:1183 · «Calabaza, hervida» · columna «folato, total» = 10.0 ug → 10.0 ug · 2026-09-18",
@@ -17080,8 +17111,7 @@
    "vitB6": "bedca:1183 · «Calabaza, hervida» · columna «Vitamina B-6, Total» = 0.03 mg → 0.03 mg · 2026-09-18",
    "vitE": "bedca:1183 · «Calabaza, hervida» · columna «Viamina E equivalentes de alfa tocoferol de actividades de vitámeros E» = 1.06 mg → 1.06 mg · 2026-09-18",
    "yodo": "bedca:1183 · «Calabaza, hervida» · columna «ioduro» = 1.0 ug → 1.0 ug · 2026-09-18",
-   "zinc": "bedca:1183 · «Calabaza, hervida» · columna «zinc (cinc)» = 0.2 mg → 0.2 mg · 2026-09-18",
-   "energia": "bedca:1183 · «Calabaza, hervida» · columna «energía, total» = 51.45 KJ ÷4,184 -> kcal · 2026-09-18"
+   "zinc": "bedca:1183 · «Calabaza, hervida» · columna «zinc (cinc)» = 0.2 mg → 0.2 mg · 2026-09-18"
   },
   "cero_verificado": {
    "araquidonico": "Cero de la fuente que manda, comprobado el 2026-09-18: usda:168449 · «Pumpkin, cooked, boiled, drained, without salt» · columna «PUFA 20:4» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
@@ -17186,6 +17216,7 @@
    "calcio": "ciqual:10037 · «Calmar ou calamar ou encornet, bouilli/cuit à l'eau» · columna «Calcium (mg/100 g)» = 180.0 mg → 180.0 mg · 2026-09-18",
    "cobre": "ciqual:10037 · «Calmar ou calamar ou encornet, bouilli/cuit à l'eau» · columna «Cuivre (mg/100 g)» = 1.0 mg → 1.0 mg · 2026-09-18",
    "dha": "ciqual:10037 · «Calmar ou calamar ou encornet, bouilli/cuit à l'eau» · columna «AG 22:6 4c,7c,10c,13c,16c,19c (n-3) DHA (g/100 g)» = 0.13 g → 0.13 g · 2026-09-18",
+   "energia": "ciqual:10037 · «Calmar ou calamar ou encornet, bouilli/cuit à l'eau» · columna «Energie, Règlement UE N° 1169/2011 (kcal/100 g)» = 149 kcal · 2026-09-18",
    "epa": "ciqual:10037 · «Calmar ou calamar ou encornet, bouilli/cuit à l'eau» · columna «AG 20:5 5c,8c,11c,14c,17c (n-3) EPA (g/100 g)» = 0.078 g → 0.078 g · 2026-09-18",
    "folato": "ciqual:10037 · «Calmar ou calamar ou encornet, bouilli/cuit à l'eau» · columna «Vitamine B9 ou Folates totaux (µg/100 g)» = 24.0 ug → 24.0 ug · 2026-09-18",
    "grasa": "ciqual:10037 · «Calmar ou calamar ou encornet, bouilli/cuit à l'eau» · columna «Lipides (g/100 g)» = 1.4 g → 1.4 g · 2026-09-18",
@@ -17200,8 +17231,7 @@
    "tiamina": "ciqual:10037 · «Calmar ou calamar ou encornet, bouilli/cuit à l'eau» · columna «Vitamine B1 ou Thiamine (mg/100 g)» = 0.017 mg → 0.017 mg · 2026-09-18",
    "vitB12": "ciqual:10037 · «Calmar ou calamar ou encornet, bouilli/cuit à l'eau» · columna «Vitamine B12 (µg/100 g)» = 5.4 ug → 5.4 ug · 2026-09-18",
    "vitB6": "ciqual:10037 · «Calmar ou calamar ou encornet, bouilli/cuit à l'eau» · columna «Vitamine B6 (mg/100 g)» = 0.27 mg → 0.27 mg · 2026-09-18",
-   "zinc": "ciqual:10037 · «Calmar ou calamar ou encornet, bouilli/cuit à l'eau» · columna «Zinc (mg/100 g)» = 3.46 mg → 3.46 mg · 2026-09-18",
-   "energia": "ciqual:10037 · «Calmar ou calamar ou encornet, bouilli/cuit à l'eau» · columna «Energie, Règlement UE N° 1169/2011 (kcal/100 g)» = 149 kcal · 2026-09-18"
+   "zinc": "ciqual:10037 · «Calmar ou calamar ou encornet, bouilli/cuit à l'eau» · columna «Zinc (mg/100 g)» = 3.46 mg → 3.46 mg · 2026-09-18"
   },
   "cero_verificado": {
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-18: ciqual:10037 · «Calmar ou calamar ou encornet, bouilli/cuit à l'eau» · columna «Fibres alimentaires (g/100 g)» = 0.0 g. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
@@ -17298,6 +17328,7 @@
    "acidoPantotenico": "usda:169338 · «Cardoon, cooked, boiled, drained, with salt» · columna «Pantothenic acid» = 0.097 MG → 0.097 mg · 2026-09-18",
    "calcio": "usda:169338 · «Cardoon, cooked, boiled, drained, with salt» · columna «Calcium, Ca» = 72.0 MG → 72.0 mg · 2026-09-18",
    "cobre": "usda:169338 · «Cardoon, cooked, boiled, drained, with salt» · columna «Copper, Cu» = 0.029 MG → 0.029 mg · 2026-09-18",
+   "energia": "usda:169338 · «Cardoon, cooked, boiled, drained, with salt» · columna «Energy» = 20 KCAL · 2026-09-18",
    "fibra": "usda:169338 · «Cardoon, cooked, boiled, drained, with salt» · columna «Fiber, total dietary» = 1.7 G → 1.7 g · 2026-09-18",
    "folato": "usda:169338 · «Cardoon, cooked, boiled, drained, with salt» · columna «Folate, total» = 22.0 UG → 22.0 ug · 2026-09-18",
    "fosforo": "usda:169338 · «Cardoon, cooked, boiled, drained, with salt» · columna «Phosphorus, P» = 23.0 MG → 23.0 mg · 2026-09-18",
@@ -17314,8 +17345,7 @@
    "sodio": "usda:169338 · «Cardoon, cooked, boiled, drained, with salt» · columna «Sodium, Na» = 412.0 MG → 412.0 mg · 2026-09-18",
    "tiamina": "usda:169338 · «Cardoon, cooked, boiled, drained, with salt» · columna «Thiamin» = 0.018 MG → 0.018 mg · 2026-09-18",
    "vitB6": "usda:169338 · «Cardoon, cooked, boiled, drained, with salt» · columna «Vitamin B-6» = 0.042 MG → 0.042 mg · 2026-09-18",
-   "zinc": "usda:169338 · «Cardoon, cooked, boiled, drained, with salt» · columna «Zinc, Zn» = 0.18 MG → 0.18 mg · 2026-09-18",
-   "energia": "usda:169338 · «Cardoon, cooked, boiled, drained, with salt» · columna «Energy» = 20 KCAL · 2026-09-18"
+   "zinc": "usda:169338 · «Cardoon, cooked, boiled, drained, with salt» · columna «Zinc, Zn» = 0.18 MG → 0.18 mg · 2026-09-18"
   },
   "cero_verificado": {
    "vitB12": "Cero de la fuente que manda, comprobado el 2026-09-18: usda:169338 · «Cardoon, cooked, boiled, drained, with salt» · columna «Vitamin B-12» = 0.0 UG. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
@@ -17405,6 +17435,7 @@
    "calcio": "usda:174352 · «Veal, variety meats and by-products, brain, cooked, braised» · columna «Calcium, Ca» = 16.0 MG → 16.0 mg · 2026-09-18",
    "cistina": "usda:174352 · «Veal, variety meats and by-products, brain, cooked, braised» · columna «Cystine» = 0.12 G → 0.12 g · 2026-09-18",
    "cobre": "usda:174352 · «Veal, variety meats and by-products, brain, cooked, braised» · columna «Copper, Cu» = 0.26 MG → 0.26 mg · 2026-09-18",
+   "energia": "usda:174352 · «Veal, variety meats and by-products, brain, cooked, braised» · columna «Energy» = 136 KCAL · 2026-09-18",
    "fenilalanina": "usda:174352 · «Veal, variety meats and by-products, brain, cooked, braised» · columna «Phenylalanine» = 0.604 G → 0.604 g · 2026-09-18",
    "folato": "usda:174352 · «Veal, variety meats and by-products, brain, cooked, braised» · columna «Folate, total» = 3.0 UG → 3.0 ug · 2026-09-18",
    "fosforo": "usda:174352 · «Veal, variety meats and by-products, brain, cooked, braised» · columna «Phosphorus, P» = 385.0 MG → 385.0 mg · 2026-09-18",
@@ -17431,8 +17462,7 @@
    "valina": "usda:174352 · «Veal, variety meats and by-products, brain, cooked, braised» · columna «Valine» = 0.546 G → 0.546 g · 2026-09-18",
    "vitB12": "usda:174352 · «Veal, variety meats and by-products, brain, cooked, braised» · columna «Vitamin B-12» = 9.65 UG → 9.65 ug · 2026-09-18",
    "vitB6": "usda:174352 · «Veal, variety meats and by-products, brain, cooked, braised» · columna «Vitamin B-6» = 0.17 MG → 0.17 mg · 2026-09-18",
-   "zinc": "usda:174352 · «Veal, variety meats and by-products, brain, cooked, braised» · columna «Zinc, Zn» = 1.61 MG → 1.61 mg · 2026-09-18",
-   "energia": "usda:174352 · «Veal, variety meats and by-products, brain, cooked, braised» · columna «Energy» = 136 KCAL · 2026-09-18"
+   "zinc": "usda:174352 · «Veal, variety meats and by-products, brain, cooked, braised» · columna «Zinc, Zn» = 1.61 MG → 1.61 mg · 2026-09-18"
   },
   "cero_verificado": {
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-18: usda:174352 · «Veal, variety meats and by-products, brain, cooked, braised» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
@@ -17514,6 +17544,7 @@
    "cistina": "usda:169252 · «Mushrooms, white, cooked, boiled, drained, without salt» · columna «Cystine» = 0.009 G → 0.009 g · 2026-09-18",
    "cobre": "usda:169252 · «Mushrooms, white, cooked, boiled, drained, without salt» · columna «Copper, Cu» = 0.504 MG → 0.504 mg · 2026-09-18",
    "colina": "usda:169252 · «Mushrooms, white, cooked, boiled, drained, without salt» · columna «Choline, total» = 20.4 MG → 20.4 mg · 2026-09-18",
+   "energia": "usda:169252 · «Mushrooms, white, cooked, boiled, drained, without salt» · columna «Energy» = 28 KCAL · 2026-09-18",
    "fenilalanina": "usda:169252 · «Mushrooms, white, cooked, boiled, drained, without salt» · columna «Phenylalanine» = 0.06 G → 0.06 g · 2026-09-18",
    "fibra": "usda:169252 · «Mushrooms, white, cooked, boiled, drained, without salt» · columna «Fiber, total dietary» = 2.2 G → 2.2 g · 2026-09-18",
    "folato": "usda:169252 · «Mushrooms, white, cooked, boiled, drained, without salt» · columna «Folate, total» = 18.0 UG → 18.0 ug · 2026-09-18",
@@ -17543,8 +17574,7 @@
    "vitB6": "usda:169252 · «Mushrooms, white, cooked, boiled, drained, without salt» · columna «Vitamin B-6» = 0.095 MG → 0.095 mg · 2026-09-18",
    "vitD": "usda:169252 · «Mushrooms, white, cooked, boiled, drained, without salt» · columna «Vitamin D (D2 + D3)» = 0.2 UG → 0.2 ug · 2026-09-18",
    "vitE": "usda:169252 · «Mushrooms, white, cooked, boiled, drained, without salt» · columna «Vitamin E (alpha-tocopherol)» = 0.01 MG → 0.01 mg · 2026-09-18",
-   "zinc": "usda:169252 · «Mushrooms, white, cooked, boiled, drained, without salt» · columna «Zinc, Zn» = 0.87 MG → 0.87 mg · 2026-09-18",
-   "energia": "usda:169252 · «Mushrooms, white, cooked, boiled, drained, without salt» · columna «Energy» = 28 KCAL · 2026-09-18"
+   "zinc": "usda:169252 · «Mushrooms, white, cooked, boiled, drained, without salt» · columna «Zinc, Zn» = 0.87 MG → 0.87 mg · 2026-09-18"
   },
   "cero_verificado": {
    "araquidonico": "Cero de la fuente que manda, comprobado el 2026-09-18: usda:169252 · «Mushrooms, white, cooked, boiled, drained, without salt» · columna «PUFA 20:4» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
@@ -17629,6 +17659,7 @@
    "cistina": "usda:169978 · «Cabbage, red, cooked, boiled, drained, without salt» · columna «Cystine» = 0.013 G · transferido por gramo de proteina: 0.013×1×(1.0/1.51) → 0.008609 g · 2026-09-18",
    "cobre": "usda:169978 · «Cabbage, red, cooked, boiled, drained, without salt» · columna «Copper, Cu» = 0.054 MG → 0.054 mg · 2026-09-18",
    "colina": "usda:169978 · «Cabbage, red, cooked, boiled, drained, without salt» · columna «Choline, total» = 21.4 MG → 21.4 mg · 2026-09-18",
+   "energia": "bedca:1178 · «Col lombarda, hervida» · columna «energía, total» = 74.85 KJ ÷4,184 -> kcal · 2026-09-18",
    "fenilalanina": "usda:169978 · «Cabbage, red, cooked, boiled, drained, without salt» · columna «Phenylalanine» = 0.038 G · transferido por gramo de proteina: 0.038×1×(1.0/1.51) → 0.025166 g · 2026-09-18",
    "fibra": "bedca:1178 · «Col lombarda, hervida» · columna «fibra, dietetica total» = 2.4 g → 2.4 g · 2026-09-18",
    "folato": "bedca:1178 · «Col lombarda, hervida» · columna «folato, total» = 34.0 ug → 34.0 ug · 2026-09-18",
@@ -17658,8 +17689,7 @@
    "vitB6": "bedca:1178 · «Col lombarda, hervida» · columna «Vitamina B-6, Total» = 0.1 mg → 0.1 mg · 2026-09-18",
    "vitE": "bedca:1178 · «Col lombarda, hervida» · columna «Viamina E equivalentes de alfa tocoferol de actividades de vitámeros E» = 0.7 mg → 0.7 mg · 2026-09-18",
    "yodo": "bedca:1178 · «Col lombarda, hervida» · columna «ioduro» = 1.0 ug → 1.0 ug · 2026-09-18",
-   "zinc": "bedca:1178 · «Col lombarda, hervida» · columna «zinc (cinc)» = 0.1 mg → 0.1 mg · 2026-09-18",
-   "energia": "bedca:1178 · «Col lombarda, hervida» · columna «energía, total» = 74.85 KJ ÷4,184 -> kcal · 2026-09-18"
+   "zinc": "bedca:1178 · «Col lombarda, hervida» · columna «zinc (cinc)» = 0.1 mg → 0.1 mg · 2026-09-18"
   },
   "cero_verificado": {
    "araquidonico": "Cero de la fuente que manda, comprobado el 2026-09-18: usda:169978 · «Cabbage, red, cooked, boiled, drained, without salt» · columna «PUFA 20:4» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
@@ -17747,6 +17777,7 @@
    "cistina": "usda:169971 · «Brussels sprouts, cooked, boiled, drained, without salt» · columna «Cystine» = 0.016 G → 0.016 g · 2026-09-18",
    "cobre": "usda:169971 · «Brussels sprouts, cooked, boiled, drained, without salt» · columna «Copper, Cu» = 0.083 MG → 0.083 mg · 2026-09-18",
    "colina": "usda:169971 · «Brussels sprouts, cooked, boiled, drained, without salt» · columna «Choline, total» = 40.6 MG → 40.6 mg · 2026-09-18",
+   "energia": "usda:169971 · «Brussels sprouts, cooked, boiled, drained, without salt» · columna «Energy» = 36 KCAL · 2026-09-18",
    "fenilalanina": "usda:169971 · «Brussels sprouts, cooked, boiled, drained, without salt» · columna «Phenylalanine» = 0.074 G → 0.074 g · 2026-09-18",
    "fibra": "usda:169971 · «Brussels sprouts, cooked, boiled, drained, without salt» · columna «Fiber, total dietary» = 2.6 G → 2.6 g · 2026-09-18",
    "folato": "usda:169971 · «Brussels sprouts, cooked, boiled, drained, without salt» · columna «Folate, total» = 60.0 UG → 60.0 ug · 2026-09-18",
@@ -17774,8 +17805,7 @@
    "valina": "usda:169971 · «Brussels sprouts, cooked, boiled, drained, without salt» · columna «Valine» = 0.117 G → 0.117 g · 2026-09-18",
    "vitB6": "usda:169971 · «Brussels sprouts, cooked, boiled, drained, without salt» · columna «Vitamin B-6» = 0.178 MG → 0.178 mg · 2026-09-18",
    "vitE": "usda:169971 · «Brussels sprouts, cooked, boiled, drained, without salt» · columna «Vitamin E (alpha-tocopherol)» = 0.43 MG → 0.43 mg · 2026-09-18",
-   "zinc": "usda:169971 · «Brussels sprouts, cooked, boiled, drained, without salt» · columna «Zinc, Zn» = 0.33 MG → 0.33 mg · 2026-09-18",
-   "energia": "usda:169971 · «Brussels sprouts, cooked, boiled, drained, without salt» · columna «Energy» = 36 KCAL · 2026-09-18"
+   "zinc": "usda:169971 · «Brussels sprouts, cooked, boiled, drained, without salt» · columna «Zinc, Zn» = 0.33 MG → 0.33 mg · 2026-09-18"
   },
   "cero_verificado": {
    "dha": "Cero de la fuente que manda, comprobado el 2026-09-18: usda:169971 · «Brussels sprouts, cooked, boiled, drained, without salt» · columna «PUFA 22:6 n-3 (DHA)» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
@@ -17860,6 +17890,7 @@
    "cistina": "usda:170397 · «Cauliflower, cooked, boiled, drained, without salt» · columna «Cystine» = 0.021 G → 0.021 g · 2026-09-18",
    "cobre": "usda:170397 · «Cauliflower, cooked, boiled, drained, without salt» · columna «Copper, Cu» = 0.018 MG → 0.018 mg · 2026-09-18",
    "colina": "usda:170397 · «Cauliflower, cooked, boiled, drained, without salt» · columna «Choline, total» = 39.1 MG → 39.1 mg · 2026-09-18",
+   "energia": "usda:170397 · «Cauliflower, cooked, boiled, drained, without salt» · columna «Energy» = 23 KCAL · 2026-09-18",
    "fenilalanina": "usda:170397 · «Cauliflower, cooked, boiled, drained, without salt» · columna «Phenylalanine» = 0.066 G → 0.066 g · 2026-09-18",
    "fibra": "usda:170397 · «Cauliflower, cooked, boiled, drained, without salt» · columna «Fiber, total dietary» = 2.3 G → 2.3 g · 2026-09-18",
    "folato": "usda:170397 · «Cauliflower, cooked, boiled, drained, without salt» · columna «Folate, total» = 44.0 UG → 44.0 ug · 2026-09-18",
@@ -17888,8 +17919,7 @@
    "valina": "usda:170397 · «Cauliflower, cooked, boiled, drained, without salt» · columna «Valine» = 0.092 G → 0.092 g · 2026-09-18",
    "vitB6": "usda:170397 · «Cauliflower, cooked, boiled, drained, without salt» · columna «Vitamin B-6» = 0.173 MG → 0.173 mg · 2026-09-18",
    "vitE": "usda:170397 · «Cauliflower, cooked, boiled, drained, without salt» · columna «Vitamin E (alpha-tocopherol)» = 0.07 MG → 0.07 mg · 2026-09-18",
-   "zinc": "usda:170397 · «Cauliflower, cooked, boiled, drained, without salt» · columna «Zinc, Zn» = 0.17 MG → 0.17 mg · 2026-09-18",
-   "energia": "usda:170397 · «Cauliflower, cooked, boiled, drained, without salt» · columna «Energy» = 23 KCAL · 2026-09-18"
+   "zinc": "usda:170397 · «Cauliflower, cooked, boiled, drained, without salt» · columna «Zinc, Zn» = 0.17 MG → 0.17 mg · 2026-09-18"
   },
   "cero_verificado": {
    "araquidonico": "Cero de la fuente que manda, comprobado el 2026-09-18: usda:170397 · «Cauliflower, cooked, boiled, drained, without salt» · columna «PUFA 20:4» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
@@ -17975,6 +18005,7 @@
    "cistina": "usda:174346 · «Game meat, rabbit, domesticated, composite of cuts, cooked, stewed» · columna «Cystine» = 0.382 G → 0.382 g · 2026-09-18",
    "cobre": "usda:174346 · «Game meat, rabbit, domesticated, composite of cuts, cooked, stewed» · columna «Copper, Cu» = 0.176 MG → 0.176 mg · 2026-09-18",
    "colina": "usda:174346 · «Game meat, rabbit, domesticated, composite of cuts, cooked, stewed» · columna «Choline, total» = 121.2 MG → 121.2 mg · 2026-09-18",
+   "energia": "usda:174346 · «Game meat, rabbit, domesticated, composite of cuts, cooked, stewed» · columna «Energy» = 206 KCAL · 2026-09-18",
    "fenilalanina": "usda:174346 · «Game meat, rabbit, domesticated, composite of cuts, cooked, stewed» · columna «Phenylalanine» = 1.247 G → 1.247 g · 2026-09-18",
    "folato": "usda:174346 · «Game meat, rabbit, domesticated, composite of cuts, cooked, stewed» · columna «Folate, total» = 9.0 UG → 9.0 ug · 2026-09-18",
    "fosforo": "usda:174346 · «Game meat, rabbit, domesticated, composite of cuts, cooked, stewed» · columna «Phosphorus, P» = 226.0 MG → 226.0 mg · 2026-09-18",
@@ -18003,8 +18034,7 @@
    "vitB12": "usda:174346 · «Game meat, rabbit, domesticated, composite of cuts, cooked, stewed» · columna «Vitamin B-12» = 6.51 UG → 6.51 ug · 2026-09-18",
    "vitB6": "usda:174346 · «Game meat, rabbit, domesticated, composite of cuts, cooked, stewed» · columna «Vitamin B-6» = 0.34 MG → 0.34 mg · 2026-09-18",
    "vitE": "usda:174346 · «Game meat, rabbit, domesticated, composite of cuts, cooked, stewed» · columna «Vitamin E (alpha-tocopherol)» = 0.44 MG → 0.44 mg · 2026-09-18",
-   "zinc": "usda:174346 · «Game meat, rabbit, domesticated, composite of cuts, cooked, stewed» · columna «Zinc, Zn» = 2.37 MG → 2.37 mg · 2026-09-18",
-   "energia": "usda:174346 · «Game meat, rabbit, domesticated, composite of cuts, cooked, stewed» · columna «Energy» = 206 KCAL · 2026-09-18"
+   "zinc": "usda:174346 · «Game meat, rabbit, domesticated, composite of cuts, cooked, stewed» · columna «Zinc, Zn» = 2.37 MG → 2.37 mg · 2026-09-18"
   },
   "cero_verificado": {
    "araquidonico": "Cero de la fuente que manda, comprobado el 2026-09-18: usda:174346 · «Game meat, rabbit, domesticated, composite of cuts, cooked, stewed» · columna «PUFA 20:4» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
@@ -18093,6 +18123,7 @@
    "cistina": "usda:174443 · «Lamb, New Zealand, imported, heart, cooked, soaked and simmered» · columna «Cystine» = 0.344 G → 0.344 g · 2026-09-18",
    "cobre": "usda:174443 · «Lamb, New Zealand, imported, heart, cooked, soaked and simmered» · columna «Copper, Cu» = 0.643 MG → 0.643 mg · 2026-09-18",
    "dha": "usda:174443 · «Lamb, New Zealand, imported, heart, cooked, soaked and simmered» · columna «PUFA 22:6 n-3 (DHA)» = 0.027 G → 0.027 g · 2026-09-18",
+   "energia": "usda:174443 · «Lamb, New Zealand, imported, heart, cooked, soaked and simmered» · columna «Energy» = 161 KCAL · 2026-09-18",
    "epa": "usda:174443 · «Lamb, New Zealand, imported, heart, cooked, soaked and simmered» · columna «PUFA 20:5 n-3 (EPA)» = 0.066 G → 0.066 g · 2026-09-18",
    "fenilalanina": "usda:174443 · «Lamb, New Zealand, imported, heart, cooked, soaked and simmered» · columna «Phenylalanine» = 1.034 G → 1.034 g · 2026-09-18",
    "fosforo": "usda:174443 · «Lamb, New Zealand, imported, heart, cooked, soaked and simmered» · columna «Phosphorus, P» = 237.0 MG → 237.0 mg · 2026-09-18",
@@ -18122,8 +18153,7 @@
    "vitB6": "usda:174443 · «Lamb, New Zealand, imported, heart, cooked, soaked and simmered» · columna «Vitamin B-6» = 0.125 MG → 0.125 mg · 2026-09-18",
    "vitD": "usda:174443 · «Lamb, New Zealand, imported, heart, cooked, soaked and simmered» · columna «Vitamin D (D2 + D3)» = 0.1 UG → 0.1 ug · 2026-09-18",
    "vitE": "usda:174443 · «Lamb, New Zealand, imported, heart, cooked, soaked and simmered» · columna «Vitamin E (alpha-tocopherol)» = 0.63 MG → 0.63 mg · 2026-09-18",
-   "zinc": "usda:174443 · «Lamb, New Zealand, imported, heart, cooked, soaked and simmered» · columna «Zinc, Zn» = 2.66 MG → 2.66 mg · 2026-09-18",
-   "energia": "usda:174443 · «Lamb, New Zealand, imported, heart, cooked, soaked and simmered» · columna «Energy» = 161 KCAL · 2026-09-18"
+   "zinc": "usda:174443 · «Lamb, New Zealand, imported, heart, cooked, soaked and simmered» · columna «Zinc, Zn» = 2.66 MG → 2.66 mg · 2026-09-18"
   },
   "cero_verificado": {
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-18: usda:174443 · «Lamb, New Zealand, imported, heart, cooked, soaked and simmered» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
@@ -18207,6 +18237,7 @@
    "cobre": "usda:171485 · «Turkey, all classes, heart, cooked, simmered» · columna «Copper, Cu» = 0.825 MG → 0.825 mg · 2026-09-18",
    "colina": "usda:171485 · «Turkey, all classes, heart, cooked, simmered» · columna «Choline, total» = 172.5 MG → 172.5 mg · 2026-09-18",
    "dha": "usda:171485 · «Turkey, all classes, heart, cooked, simmered» · columna «PUFA 22:6 n-3 (DHA)» = 0.005 G → 0.005 g · 2026-09-18",
+   "energia": "usda:171485 · «Turkey, all classes, heart, cooked, simmered» · columna «Energy» = 174 KCAL · 2026-09-18",
    "epa": "usda:171485 · «Turkey, all classes, heart, cooked, simmered» · columna «PUFA 20:5 n-3 (EPA)» = 0.009 G → 0.009 g · 2026-09-18",
    "fenilalanina": "usda:171485 · «Turkey, all classes, heart, cooked, simmered» · columna «Phenylalanine» = 0.916 G → 0.916 g · 2026-09-18",
    "folato": "usda:171485 · «Turkey, all classes, heart, cooked, simmered» · columna «Folate, total» = 8.0 UG → 8.0 ug · 2026-09-18",
@@ -18236,8 +18267,7 @@
    "vitB12": "usda:171485 · «Turkey, all classes, heart, cooked, simmered» · columna «Vitamin B-12» = 13.9 UG → 13.9 ug · 2026-09-18",
    "vitB6": "usda:171485 · «Turkey, all classes, heart, cooked, simmered» · columna «Vitamin B-6» = 0.608 MG → 0.608 mg · 2026-09-18",
    "vitE": "usda:171485 · «Turkey, all classes, heart, cooked, simmered» · columna «Vitamin E (alpha-tocopherol)» = 0.13 MG → 0.13 mg · 2026-09-18",
-   "zinc": "usda:171485 · «Turkey, all classes, heart, cooked, simmered» · columna «Zinc, Zn» = 4.6 MG → 4.6 mg · 2026-09-18",
-   "energia": "usda:171485 · «Turkey, all classes, heart, cooked, simmered» · columna «Energy» = 174 KCAL · 2026-09-18"
+   "zinc": "usda:171485 · «Turkey, all classes, heart, cooked, simmered» · columna «Zinc, Zn» = 4.6 MG → 4.6 mg · 2026-09-18"
   },
   "cero_verificado": {
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-18: usda:171485 · «Turkey, all classes, heart, cooked, simmered» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
@@ -18323,6 +18353,7 @@
    "calcio": "usda:171059 · «Chicken, heart, all classes, cooked, simmered» · columna «Calcium, Ca» = 19.0 MG → 19.0 mg · 2026-09-18",
    "cistina": "usda:171059 · «Chicken, heart, all classes, cooked, simmered» · columna «Cystine» = 0.359 G → 0.359 g · 2026-09-18",
    "cobre": "usda:171059 · «Chicken, heart, all classes, cooked, simmered» · columna «Copper, Cu» = 0.502 MG → 0.502 mg · 2026-09-18",
+   "energia": "usda:171059 · «Chicken, heart, all classes, cooked, simmered» · columna «Energy» = 185 KCAL · 2026-09-18",
    "fenilalanina": "usda:171059 · «Chicken, heart, all classes, cooked, simmered» · columna «Phenylalanine» = 1.183 G → 1.183 g · 2026-09-18",
    "folato": "usda:171059 · «Chicken, heart, all classes, cooked, simmered» · columna «Folate, total» = 80.0 UG → 80.0 ug · 2026-09-18",
    "fosforo": "usda:171059 · «Chicken, heart, all classes, cooked, simmered» · columna «Phosphorus, P» = 199.0 MG → 199.0 mg · 2026-09-18",
@@ -18350,8 +18381,7 @@
    "valina": "usda:171059 · «Chicken, heart, all classes, cooked, simmered» · columna «Valine» = 1.496 G → 1.496 g · 2026-09-18",
    "vitB12": "usda:171059 · «Chicken, heart, all classes, cooked, simmered» · columna «Vitamin B-12» = 7.29 UG → 7.29 ug · 2026-09-18",
    "vitB6": "usda:171059 · «Chicken, heart, all classes, cooked, simmered» · columna «Vitamin B-6» = 0.32 MG → 0.32 mg · 2026-09-18",
-   "zinc": "usda:171059 · «Chicken, heart, all classes, cooked, simmered» · columna «Zinc, Zn» = 7.3 MG → 7.3 mg · 2026-09-18",
-   "energia": "usda:171059 · «Chicken, heart, all classes, cooked, simmered» · columna «Energy» = 185 KCAL · 2026-09-18"
+   "zinc": "usda:171059 · «Chicken, heart, all classes, cooked, simmered» · columna «Zinc, Zn» = 7.3 MG → 7.3 mg · 2026-09-18"
   },
   "cero_verificado": {
    "dha": "Cero de la fuente que manda, comprobado el 2026-09-18: usda:171059 · «Chicken, heart, all classes, cooked, simmered» · columna «PUFA 22:6 n-3 (DHA)» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
@@ -18437,6 +18467,7 @@
    "calcio": "bedca:973 · «Corazón, de vaca/buey, cocido» · columna «calcio» = 6.0 mg → 6.0 mg · 2026-09-18",
    "cobre": "bedca:973 · «Corazón, de vaca/buey, cocido» · columna «cobre» = 0.6 mg → 0.6 mg · 2026-09-18",
    "dha": "usda:173081 · «Beef, New Zealand, imported, variety meats and by-products, heart, cooked, boiled» · columna «PUFA 22:6 n-3 (DHA)» = 0.006 G · transferido por gramo de grasa: 0.006×1×(5.6654/6.0) → 0.005665 g · 2026-09-18",
+   "energia": "bedca:973 · «Corazón, de vaca/buey, cocido» · columna «energía, total» = 683.92 KJ ÷4,184 -> kcal · 2026-09-18",
    "epa": "usda:173081 · «Beef, New Zealand, imported, variety meats and by-products, heart, cooked, boiled» · columna «PUFA 20:5 n-3 (EPA)» = 0.102 G · transferido por gramo de grasa: 0.102×1×(5.6654/6.0) → 0.096312 g · 2026-09-18",
    "fenilalanina": "usda:173081 · «Beef, New Zealand, imported, variety meats and by-products, heart, cooked, boiled» · columna «Phenylalanine» = 1.217 G · transferido por gramo de proteina: 1.217×1×(27.9/31.29) → 1.085149 g · 2026-09-18",
    "folato": "bedca:973 · «Corazón, de vaca/buey, cocido» · columna «folato, total» = 2.0 ug → 2.0 ug · 2026-09-18",
@@ -18468,8 +18499,7 @@
    "vitD": "bedca:973 · «Corazón, de vaca/buey, cocido» · columna «Vitamina D» = 1.4 ug → 1.4 ug · 2026-09-18",
    "vitE": "bedca:973 · «Corazón, de vaca/buey, cocido» · columna «Viamina E equivalentes de alfa tocoferol de actividades de vitámeros E» = 0.7 mg → 0.7 mg · 2026-09-18",
    "yodo": "bedca:973 · «Corazón, de vaca/buey, cocido» · columna «ioduro» = 7.0 ug → 7.0 ug · 2026-09-18",
-   "zinc": "bedca:973 · «Corazón, de vaca/buey, cocido» · columna «zinc (cinc)» = 3.5 mg → 3.5 mg · 2026-09-18",
-   "energia": "bedca:973 · «Corazón, de vaca/buey, cocido» · columna «energía, total» = 683.92 KJ ÷4,184 -> kcal · 2026-09-18"
+   "zinc": "bedca:973 · «Corazón, de vaca/buey, cocido» · columna «zinc (cinc)» = 3.5 mg → 3.5 mg · 2026-09-18"
   },
   "cero_verificado": {
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-18: bedca:973 · «Corazón, de vaca/buey, cocido» · columna «fibra, dietetica total» = 0.0 g. `value_type` LZ, o sea una MEDIDA y no una celda vacía."
@@ -18551,6 +18581,7 @@
    "cistina": "usda:168463 · «Spinach, cooked, boiled, drained, without salt» · columna «Cystine» = 0.035 G → 0.035 g · 2026-09-18",
    "cobre": "usda:168463 · «Spinach, cooked, boiled, drained, without salt» · columna «Copper, Cu» = 0.174 MG → 0.174 mg · 2026-09-18",
    "colina": "usda:168463 · «Spinach, cooked, boiled, drained, without salt» · columna «Choline, total» = 19.7 MG → 19.7 mg · 2026-09-18",
+   "energia": "usda:168463 · «Spinach, cooked, boiled, drained, without salt» · columna «Energy» = 23 KCAL · 2026-09-18",
    "fenilalanina": "usda:168463 · «Spinach, cooked, boiled, drained, without salt» · columna «Phenylalanine» = 0.134 G → 0.134 g · 2026-09-18",
    "fibra": "usda:168463 · «Spinach, cooked, boiled, drained, without salt» · columna «Fiber, total dietary» = 2.4 G → 2.4 g · 2026-09-18",
    "folato": "usda:168463 · «Spinach, cooked, boiled, drained, without salt» · columna «Folate, total» = 146.0 UG → 146.0 ug · 2026-09-18",
@@ -18579,8 +18610,7 @@
    "valina": "usda:168463 · «Spinach, cooked, boiled, drained, without salt» · columna «Valine» = 0.168 G → 0.168 g · 2026-09-18",
    "vitB6": "usda:168463 · «Spinach, cooked, boiled, drained, without salt» · columna «Vitamin B-6» = 0.242 MG → 0.242 mg · 2026-09-18",
    "vitE": "usda:168463 · «Spinach, cooked, boiled, drained, without salt» · columna «Vitamin E (alpha-tocopherol)» = 2.08 MG → 2.08 mg · 2026-09-18",
-   "zinc": "usda:168463 · «Spinach, cooked, boiled, drained, without salt» · columna «Zinc, Zn» = 0.76 MG → 0.76 mg · 2026-09-18",
-   "energia": "usda:168463 · «Spinach, cooked, boiled, drained, without salt» · columna «Energy» = 23 KCAL · 2026-09-18"
+   "zinc": "usda:168463 · «Spinach, cooked, boiled, drained, without salt» · columna «Zinc, Zn» = 0.76 MG → 0.76 mg · 2026-09-18"
   },
   "cero_verificado": {
    "araquidonico": "Cero de la fuente que manda, comprobado el 2026-09-18: usda:168463 · «Spinach, cooked, boiled, drained, without salt» · columna «PUFA 20:4» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
@@ -18670,6 +18700,7 @@
    "cistina": "usda:172401 · «Chicken, stewing, meat and skin, cooked, stewed» · columna «Cystine» = 0.357 G → 0.357 g · 2026-09-18",
    "cobre": "usda:172401 · «Chicken, stewing, meat and skin, cooked, stewed» · columna «Copper, Cu» = 0.1 MG → 0.1 mg · 2026-09-18",
    "dha": "usda:172401 · «Chicken, stewing, meat and skin, cooked, stewed» · columna «PUFA 22:6 n-3 (DHA)» = 0.08 G → 0.08 g · 2026-09-18",
+   "energia": "usda:172401 · «Chicken, stewing, meat and skin, cooked, stewed» · columna «Energy» = 285 KCAL · 2026-09-18",
    "epa": "usda:172401 · «Chicken, stewing, meat and skin, cooked, stewed» · columna «PUFA 20:5 n-3 (EPA)» = 0.02 G → 0.02 g · 2026-09-18",
    "fenilalanina": "usda:172401 · «Chicken, stewing, meat and skin, cooked, stewed» · columna «Phenylalanine» = 1.046 G → 1.046 g · 2026-09-18",
    "folato": "usda:172401 · «Chicken, stewing, meat and skin, cooked, stewed» · columna «Folate, total» = 5.0 UG → 5.0 ug · 2026-09-18",
@@ -18698,8 +18729,7 @@
    "valina": "usda:172401 · «Chicken, stewing, meat and skin, cooked, stewed» · columna «Valine» = 1.307 G → 1.307 g · 2026-09-18",
    "vitB12": "usda:172401 · «Chicken, stewing, meat and skin, cooked, stewed» · columna «Vitamin B-12» = 0.23 UG → 0.23 ug · 2026-09-18",
    "vitB6": "usda:172401 · «Chicken, stewing, meat and skin, cooked, stewed» · columna «Vitamin B-6» = 0.25 MG → 0.25 mg · 2026-09-18",
-   "zinc": "usda:172401 · «Chicken, stewing, meat and skin, cooked, stewed» · columna «Zinc, Zn» = 1.77 MG → 1.77 mg · 2026-09-18",
-   "energia": "usda:172401 · «Chicken, stewing, meat and skin, cooked, stewed» · columna «Energy» = 285 KCAL · 2026-09-18"
+   "zinc": "usda:172401 · «Chicken, stewing, meat and skin, cooked, stewed» · columna «Zinc, Zn» = 1.77 MG → 1.77 mg · 2026-09-18"
   },
   "cero_verificado": {
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-18: usda:172401 · «Chicken, stewing, meat and skin, cooked, stewed» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
@@ -18784,6 +18814,7 @@
    "calcio": "usda:172532 · «Lamb, variety meats and by-products, liver, cooked, braised» · columna «Calcium, Ca» = 8.0 MG → 8.0 mg · 2026-09-18",
    "cistina": "usda:172532 · «Lamb, variety meats and by-products, liver, cooked, braised» · columna «Cystine» = 0.32 G → 0.32 g · 2026-09-18",
    "cobre": "usda:172532 · «Lamb, variety meats and by-products, liver, cooked, braised» · columna «Copper, Cu» = 7.074 MG → 7.074 mg · 2026-09-18",
+   "energia": "usda:172532 · «Lamb, variety meats and by-products, liver, cooked, braised» · columna «Energy» = 220 KCAL · 2026-09-18",
    "fenilalanina": "usda:172532 · «Lamb, variety meats and by-products, liver, cooked, braised» · columna «Phenylalanine» = 1.365 G → 1.365 g · 2026-09-18",
    "folato": "usda:172532 · «Lamb, variety meats and by-products, liver, cooked, braised» · columna «Folate, total» = 73.0 UG → 73.0 ug · 2026-09-18",
    "fosforo": "usda:172532 · «Lamb, variety meats and by-products, liver, cooked, braised» · columna «Phosphorus, P» = 420.0 MG → 420.0 mg · 2026-09-18",
@@ -18811,8 +18842,7 @@
    "valina": "usda:172532 · «Lamb, variety meats and by-products, liver, cooked, braised» · columna «Valine» = 1.683 G → 1.683 g · 2026-09-18",
    "vitB12": "usda:172532 · «Lamb, variety meats and by-products, liver, cooked, braised» · columna «Vitamin B-12» = 76.5 UG → 76.5 ug · 2026-09-18",
    "vitB6": "usda:172532 · «Lamb, variety meats and by-products, liver, cooked, braised» · columna «Vitamin B-6» = 0.49 MG → 0.49 mg · 2026-09-18",
-   "zinc": "usda:172532 · «Lamb, variety meats and by-products, liver, cooked, braised» · columna «Zinc, Zn» = 7.89 MG → 7.89 mg · 2026-09-18",
-   "energia": "usda:172532 · «Lamb, variety meats and by-products, liver, cooked, braised» · columna «Energy» = 220 KCAL · 2026-09-18"
+   "zinc": "usda:172532 · «Lamb, variety meats and by-products, liver, cooked, braised» · columna «Zinc, Zn» = 7.89 MG → 7.89 mg · 2026-09-18"
   },
   "cero_verificado": {
    "dha": "Cero de la fuente que manda, comprobado el 2026-09-18: usda:172532 · «Lamb, variety meats and by-products, liver, cooked, braised» · columna «PUFA 22:6 n-3 (DHA)» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
@@ -18899,6 +18929,7 @@
    "cobre": "usda:171487 · «Turkey, all classes, liver, cooked, simmered» · columna «Copper, Cu» = 1.046 MG → 1.046 mg · 2026-09-18",
    "colina": "usda:171487 · «Turkey, all classes, liver, cooked, simmered» · columna «Choline, total» = 220.2 MG → 220.2 mg · 2026-09-18",
    "dha": "usda:171487 · «Turkey, all classes, liver, cooked, simmered» · columna «PUFA 22:6 n-3 (DHA)» = 0.053 G → 0.053 g · 2026-09-18",
+   "energia": "usda:171487 · «Turkey, all classes, liver, cooked, simmered» · columna «Energy» = 189 KCAL · 2026-09-18",
    "epa": "usda:171487 · «Turkey, all classes, liver, cooked, simmered» · columna «PUFA 20:5 n-3 (EPA)» = 0.016 G → 0.016 g · 2026-09-18",
    "fenilalanina": "usda:171487 · «Turkey, all classes, liver, cooked, simmered» · columna «Phenylalanine» = 0.994 G → 0.994 g · 2026-09-18",
    "folato": "usda:171487 · «Turkey, all classes, liver, cooked, simmered» · columna «Folate, total» = 691.0 UG → 691.0 ug · 2026-09-18",
@@ -18928,8 +18959,7 @@
    "vitB12": "usda:171487 · «Turkey, all classes, liver, cooked, simmered» · columna «Vitamin B-12» = 28.17 UG → 28.17 ug · 2026-09-18",
    "vitB6": "usda:171487 · «Turkey, all classes, liver, cooked, simmered» · columna «Vitamin B-6» = 0.882 MG → 0.882 mg · 2026-09-18",
    "vitE": "usda:171487 · «Turkey, all classes, liver, cooked, simmered» · columna «Vitamin E (alpha-tocopherol)» = 0.15 MG → 0.15 mg · 2026-09-18",
-   "zinc": "usda:171487 · «Turkey, all classes, liver, cooked, simmered» · columna «Zinc, Zn» = 4.53 MG → 4.53 mg · 2026-09-18",
-   "energia": "usda:171487 · «Turkey, all classes, liver, cooked, simmered» · columna «Energy» = 189 KCAL · 2026-09-18"
+   "zinc": "usda:171487 · «Turkey, all classes, liver, cooked, simmered» · columna «Zinc, Zn» = 4.53 MG → 4.53 mg · 2026-09-18"
   },
   "cero_verificado": {
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-18: usda:171487 · «Turkey, all classes, liver, cooked, simmered» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
@@ -19012,6 +19042,7 @@
    "cistina": "usda:171061 · «Chicken, liver, all classes, cooked, simmered» · columna «Cystine» = 0.383 G → 0.383 g · 2026-09-18",
    "cobre": "usda:171061 · «Chicken, liver, all classes, cooked, simmered» · columna «Copper, Cu» = 0.496 MG → 0.496 mg · 2026-09-18",
    "colina": "usda:171061 · «Chicken, liver, all classes, cooked, simmered» · columna «Choline, total» = 290.0 MG → 290.0 mg · 2026-09-18",
+   "energia": "usda:171061 · «Chicken, liver, all classes, cooked, simmered» · columna «Energy» = 167 KCAL · 2026-09-18",
    "fenilalanina": "usda:171061 · «Chicken, liver, all classes, cooked, simmered» · columna «Phenylalanine» = 1.16 G → 1.16 g · 2026-09-18",
    "folato": "usda:171061 · «Chicken, liver, all classes, cooked, simmered» · columna «Folate, total» = 578.0 UG → 578.0 ug · 2026-09-18",
    "fosforo": "usda:171061 · «Chicken, liver, all classes, cooked, simmered» · columna «Phosphorus, P» = 405.0 MG → 405.0 mg · 2026-09-18",
@@ -19040,8 +19071,7 @@
    "vitB12": "usda:171061 · «Chicken, liver, all classes, cooked, simmered» · columna «Vitamin B-12» = 16.85 UG → 16.85 ug · 2026-09-18",
    "vitB6": "usda:171061 · «Chicken, liver, all classes, cooked, simmered» · columna «Vitamin B-6» = 0.755 MG → 0.755 mg · 2026-09-18",
    "vitE": "usda:171061 · «Chicken, liver, all classes, cooked, simmered» · columna «Vitamin E (alpha-tocopherol)» = 0.82 MG → 0.82 mg · 2026-09-18",
-   "zinc": "usda:171061 · «Chicken, liver, all classes, cooked, simmered» · columna «Zinc, Zn» = 3.98 MG → 3.98 mg · 2026-09-18",
-   "energia": "usda:171061 · «Chicken, liver, all classes, cooked, simmered» · columna «Energy» = 167 KCAL · 2026-09-18"
+   "zinc": "usda:171061 · «Chicken, liver, all classes, cooked, simmered» · columna «Zinc, Zn» = 3.98 MG → 3.98 mg · 2026-09-18"
   },
   "cero_verificado": {
    "dha": "Cero de la fuente que manda, comprobado el 2026-09-18: usda:171061 · «Chicken, liver, all classes, cooked, simmered» · columna «PUFA 22:6 n-3 (DHA)» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
@@ -19127,6 +19157,7 @@
    "cistina": "usda:168626 · «Beef, variety meats and by-products, liver, cooked, braised» · columna «Cystine» = 0.526 G → 0.526 g · 2026-09-18",
    "cobre": "usda:168626 · «Beef, variety meats and by-products, liver, cooked, braised» · columna «Copper, Cu» = 14.283 MG → 14.283 mg · 2026-09-18",
    "colina": "usda:168626 · «Beef, variety meats and by-products, liver, cooked, braised» · columna «Choline, total» = 426.0 MG → 426.0 mg · 2026-09-18",
+   "energia": "usda:168626 · «Beef, variety meats and by-products, liver, cooked, braised» · columna «Energy» = 191 KCAL · 2026-09-18",
    "fenilalanina": "usda:168626 · «Beef, variety meats and by-products, liver, cooked, braised» · columna «Phenylalanine» = 1.515 G → 1.515 g · 2026-09-18",
    "folato": "usda:168626 · «Beef, variety meats and by-products, liver, cooked, braised» · columna «Folate, total» = 253.0 UG → 253.0 ug · 2026-09-18",
    "fosforo": "usda:168626 · «Beef, variety meats and by-products, liver, cooked, braised» · columna «Phosphorus, P» = 497.0 MG → 497.0 mg · 2026-09-18",
@@ -19156,8 +19187,7 @@
    "vitB6": "usda:168626 · «Beef, variety meats and by-products, liver, cooked, braised» · columna «Vitamin B-6» = 1.017 MG → 1.017 mg · 2026-09-18",
    "vitD": "usda:168626 · «Beef, variety meats and by-products, liver, cooked, braised» · columna «Vitamin D (D2 + D3)» = 1.2 UG → 1.2 ug · 2026-09-18",
    "vitE": "usda:168626 · «Beef, variety meats and by-products, liver, cooked, braised» · columna «Vitamin E (alpha-tocopherol)» = 0.51 MG → 0.51 mg · 2026-09-18",
-   "zinc": "usda:168626 · «Beef, variety meats and by-products, liver, cooked, braised» · columna «Zinc, Zn» = 5.3 MG → 5.3 mg · 2026-09-18",
-   "energia": "usda:168626 · «Beef, variety meats and by-products, liver, cooked, braised» · columna «Energy» = 191 KCAL · 2026-09-18"
+   "zinc": "usda:168626 · «Beef, variety meats and by-products, liver, cooked, braised» · columna «Zinc, Zn» = 5.3 MG → 5.3 mg · 2026-09-18"
   },
   "cero_verificado": {
    "dha": "Cero de la fuente que manda, comprobado el 2026-09-18: usda:168626 · «Beef, variety meats and by-products, liver, cooked, braised» · columna «PUFA 22:6 n-3 (DHA)» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
@@ -19241,6 +19271,7 @@
    "cistina": "usda:169141 · «Beans, snap, green, cooked, boiled, drained, without salt» · columna «Cystine» = 0.018 G → 0.018 g · 2026-09-18",
    "cobre": "usda:169141 · «Beans, snap, green, cooked, boiled, drained, without salt» · columna «Copper, Cu» = 0.057 MG → 0.057 mg · 2026-09-18",
    "colina": "usda:169141 · «Beans, snap, green, cooked, boiled, drained, without salt» · columna «Choline, total» = 16.9 MG → 16.9 mg · 2026-09-18",
+   "energia": "usda:169141 · «Beans, snap, green, cooked, boiled, drained, without salt» · columna «Energy» = 35 KCAL · 2026-09-18",
    "fenilalanina": "usda:169141 · «Beans, snap, green, cooked, boiled, drained, without salt» · columna «Phenylalanine» = 0.069 G → 0.069 g · 2026-09-18",
    "fibra": "usda:169141 · «Beans, snap, green, cooked, boiled, drained, without salt» · columna «Fiber, total dietary» = 3.2 G → 3.2 g · 2026-09-18",
    "folato": "usda:169141 · «Beans, snap, green, cooked, boiled, drained, without salt» · columna «Folate, total» = 33.0 UG → 33.0 ug · 2026-09-18",
@@ -19269,8 +19300,7 @@
    "valina": "usda:169141 · «Beans, snap, green, cooked, boiled, drained, without salt» · columna «Valine» = 0.093 G → 0.093 g · 2026-09-18",
    "vitB6": "usda:169141 · «Beans, snap, green, cooked, boiled, drained, without salt» · columna «Vitamin B-6» = 0.056 MG → 0.056 mg · 2026-09-18",
    "vitE": "usda:169141 · «Beans, snap, green, cooked, boiled, drained, without salt» · columna «Vitamin E (alpha-tocopherol)» = 0.46 MG → 0.46 mg · 2026-09-18",
-   "zinc": "usda:169141 · «Beans, snap, green, cooked, boiled, drained, without salt» · columna «Zinc, Zn» = 0.25 MG → 0.25 mg · 2026-09-18",
-   "energia": "usda:169141 · «Beans, snap, green, cooked, boiled, drained, without salt» · columna «Energy» = 35 KCAL · 2026-09-18"
+   "zinc": "usda:169141 · «Beans, snap, green, cooked, boiled, drained, without salt» · columna «Zinc, Zn» = 0.25 MG → 0.25 mg · 2026-09-18"
   },
   "cero_verificado": {
    "araquidonico": "Cero de la fuente que manda, comprobado el 2026-09-18: usda:169141 · «Beans, snap, green, cooked, boiled, drained, without salt» · columna «PUFA 20:4» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
@@ -19359,6 +19389,7 @@
    "calcio": "usda:174737 · «Beef, New Zealand, imported, variety meats and by-products, tongue, cooked, boiled» · columna «Calcium, Ca» = 5.0 MG → 5.0 mg · 2026-09-18",
    "cobre": "usda:174737 · «Beef, New Zealand, imported, variety meats and by-products, tongue, cooked, boiled» · columna «Copper, Cu» = 0.163 MG → 0.163 mg · 2026-09-18",
    "dha": "usda:174737 · «Beef, New Zealand, imported, variety meats and by-products, tongue, cooked, boiled» · columna «PUFA 22:6 n-3 (DHA)» = 0.003 G → 0.003 g · 2026-09-18",
+   "energia": "usda:174737 · «Beef, New Zealand, imported, variety meats and by-products, tongue, cooked, boiled» · columna «Energy» = 271 KCAL · 2026-09-18",
    "epa": "usda:174737 · «Beef, New Zealand, imported, variety meats and by-products, tongue, cooked, boiled» · columna «PUFA 20:5 n-3 (EPA)» = 0.025 G → 0.025 g · 2026-09-18",
    "fenilalanina": "usda:174737 · «Beef, New Zealand, imported, variety meats and by-products, tongue, cooked, boiled» · columna «Phenylalanine» = 0.712 G → 0.712 g · 2026-09-18",
    "fosforo": "usda:174737 · «Beef, New Zealand, imported, variety meats and by-products, tongue, cooked, boiled» · columna «Phosphorus, P» = 157.0 MG → 157.0 mg · 2026-09-18",
@@ -19388,8 +19419,7 @@
    "vitB6": "usda:174737 · «Beef, New Zealand, imported, variety meats and by-products, tongue, cooked, boiled» · columna «Vitamin B-6» = 0.072 MG → 0.072 mg · 2026-09-18",
    "vitD": "usda:174737 · «Beef, New Zealand, imported, variety meats and by-products, tongue, cooked, boiled» · columna «Vitamin D (D2 + D3)» = 0.3 UG → 0.3 ug · 2026-09-18",
    "vitE": "usda:174737 · «Beef, New Zealand, imported, variety meats and by-products, tongue, cooked, boiled» · columna «Vitamin E (alpha-tocopherol)» = 0.95 MG → 0.95 mg · 2026-09-18",
-   "zinc": "usda:174737 · «Beef, New Zealand, imported, variety meats and by-products, tongue, cooked, boiled» · columna «Zinc, Zn» = 4.2 MG → 4.2 mg · 2026-09-18",
-   "energia": "usda:174737 · «Beef, New Zealand, imported, variety meats and by-products, tongue, cooked, boiled» · columna «Energy» = 271 KCAL · 2026-09-18"
+   "zinc": "usda:174737 · «Beef, New Zealand, imported, variety meats and by-products, tongue, cooked, boiled» · columna «Zinc, Zn» = 4.2 MG → 4.2 mg · 2026-09-18"
   },
   "cero_verificado": {
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-18: usda:174737 · «Beef, New Zealand, imported, variety meats and by-products, tongue, cooked, boiled» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
@@ -19474,6 +19504,7 @@
    "cistina": "usda:172620 · «Lamb, New Zealand, imported, tongue - swiss cut, cooked, soaked and simmered» · columna «Cystine» = 0.229 G → 0.229 g · 2026-09-18",
    "cobre": "usda:172620 · «Lamb, New Zealand, imported, tongue - swiss cut, cooked, soaked and simmered» · columna «Copper, Cu» = 0.199 MG → 0.199 mg · 2026-09-18",
    "dha": "usda:172620 · «Lamb, New Zealand, imported, tongue - swiss cut, cooked, soaked and simmered» · columna «PUFA 22:6 n-3 (DHA)» = 0.01 G → 0.01 g · 2026-09-18",
+   "energia": "usda:172620 · «Lamb, New Zealand, imported, tongue - swiss cut, cooked, soaked and simmered» · columna «Energy» = 272 KCAL · 2026-09-18",
    "epa": "usda:172620 · «Lamb, New Zealand, imported, tongue - swiss cut, cooked, soaked and simmered» · columna «PUFA 20:5 n-3 (EPA)» = 0.028 G → 0.028 g · 2026-09-18",
    "fenilalanina": "usda:172620 · «Lamb, New Zealand, imported, tongue - swiss cut, cooked, soaked and simmered» · columna «Phenylalanine» = 0.69 G → 0.69 g · 2026-09-18",
    "fosforo": "usda:172620 · «Lamb, New Zealand, imported, tongue - swiss cut, cooked, soaked and simmered» · columna «Phosphorus, P» = 143.0 MG → 143.0 mg · 2026-09-18",
@@ -19503,8 +19534,7 @@
    "vitB6": "usda:172620 · «Lamb, New Zealand, imported, tongue - swiss cut, cooked, soaked and simmered» · columna «Vitamin B-6» = 0.077 MG → 0.077 mg · 2026-09-18",
    "vitD": "usda:172620 · «Lamb, New Zealand, imported, tongue - swiss cut, cooked, soaked and simmered» · columna «Vitamin D (D2 + D3)» = 0.3 UG → 0.3 ug · 2026-09-18",
    "vitE": "usda:172620 · «Lamb, New Zealand, imported, tongue - swiss cut, cooked, soaked and simmered» · columna «Vitamin E (alpha-tocopherol)» = 0.16 MG → 0.16 mg · 2026-09-18",
-   "zinc": "usda:172620 · «Lamb, New Zealand, imported, tongue - swiss cut, cooked, soaked and simmered» · columna «Zinc, Zn» = 2.07 MG → 2.07 mg · 2026-09-18",
-   "energia": "usda:172620 · «Lamb, New Zealand, imported, tongue - swiss cut, cooked, soaked and simmered» · columna «Energy» = 272 KCAL · 2026-09-18"
+   "zinc": "usda:172620 · «Lamb, New Zealand, imported, tongue - swiss cut, cooked, soaked and simmered» · columna «Zinc, Zn» = 2.07 MG → 2.07 mg · 2026-09-18"
   },
   "cero_verificado": {
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-18: usda:172620 · «Lamb, New Zealand, imported, tongue - swiss cut, cooked, soaked and simmered» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
@@ -19592,6 +19622,7 @@
    "calcio": "usda:174369 · «Veal, variety meats and by-products, tongue, cooked, braised» · columna «Calcium, Ca» = 9.0 MG → 9.0 mg · 2026-09-18",
    "cistina": "usda:174369 · «Veal, variety meats and by-products, tongue, cooked, braised» · columna «Cystine» = 0.257 G → 0.257 g · 2026-09-18",
    "cobre": "usda:174369 · «Veal, variety meats and by-products, tongue, cooked, braised» · columna «Copper, Cu» = 0.21 MG → 0.21 mg · 2026-09-18",
+   "energia": "usda:174369 · «Veal, variety meats and by-products, tongue, cooked, braised» · columna «Energy» = 202 KCAL · 2026-09-18",
    "fenilalanina": "usda:174369 · «Veal, variety meats and by-products, tongue, cooked, braised» · columna «Phenylalanine» = 1.018 G → 1.018 g · 2026-09-18",
    "folato": "usda:174369 · «Veal, variety meats and by-products, tongue, cooked, braised» · columna «Folate, total» = 9.0 UG → 9.0 ug · 2026-09-18",
    "fosforo": "usda:174369 · «Veal, variety meats and by-products, tongue, cooked, braised» · columna «Phosphorus, P» = 166.0 MG → 166.0 mg · 2026-09-18",
@@ -19618,8 +19649,7 @@
    "valina": "usda:174369 · «Veal, variety meats and by-products, tongue, cooked, braised» · columna «Valine» = 1.186 G → 1.186 g · 2026-09-18",
    "vitB12": "usda:174369 · «Veal, variety meats and by-products, tongue, cooked, braised» · columna «Vitamin B-12» = 5.3 UG → 5.3 ug · 2026-09-18",
    "vitB6": "usda:174369 · «Veal, variety meats and by-products, tongue, cooked, braised» · columna «Vitamin B-6» = 0.15 MG → 0.15 mg · 2026-09-18",
-   "zinc": "usda:174369 · «Veal, variety meats and by-products, tongue, cooked, braised» · columna «Zinc, Zn» = 4.51 MG → 4.51 mg · 2026-09-18",
-   "energia": "usda:174369 · «Veal, variety meats and by-products, tongue, cooked, braised» · columna «Energy» = 202 KCAL · 2026-09-18"
+   "zinc": "usda:174369 · «Veal, variety meats and by-products, tongue, cooked, braised» · columna «Zinc, Zn» = 4.51 MG → 4.51 mg · 2026-09-18"
   },
   "cero_verificado": {
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-18: usda:174369 · «Veal, variety meats and by-products, tongue, cooked, braised» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
@@ -19713,6 +19743,7 @@
    "cloruro": "ciqual:26017 · «Limande-sole, cuite à la vapeur» · columna «Chlorure (mg/100 g)» = 120.0 mg → 120.0 mg · 2026-09-18",
    "cobre": "ciqual:26017 · «Limande-sole, cuite à la vapeur» · columna «Cuivre (mg/100 g)» = 0.01 mg → 0.01 mg · 2026-09-18",
    "dha": "ciqual:26017 · «Limande-sole, cuite à la vapeur» · columna «AG 22:6 4c,7c,10c,13c,16c,19c (n-3) DHA (g/100 g)» = 0.077 g · transferido por gramo de grasa: 0.077×1×(0.957143/2.27) → 0.032467 g · 2026-09-18",
+   "energia": "bedca:820 · «Lenguado, al horno» · columna «energía, total» = 307.414 KJ ÷4,184 -> kcal · 2026-09-18",
    "epa": "ciqual:26017 · «Limande-sole, cuite à la vapeur» · columna «AG 20:5 5c,8c,11c,14c,17c (n-3) EPA (g/100 g)» = 0.16 g · transferido por gramo de grasa: 0.16×1×(0.957143/2.27) → 0.067464 g · 2026-09-18",
    "folato": "bedca:820 · «Lenguado, al horno» · columna «folato, total» = 7.0 ug → 7.0 ug · 2026-09-18",
    "fosforo": "bedca:820 · «Lenguado, al horno» · columna «fósforo» = 175.0 mg → 175.0 mg · 2026-09-18",
@@ -19732,8 +19763,7 @@
    "vitB6": "bedca:820 · «Lenguado, al horno» · columna «Vitamina B-6, Total» = 0.2 mg → 0.2 mg · 2026-09-18",
    "vitE": "bedca:820 · «Lenguado, al horno» · columna «Viamina E equivalentes de alfa tocoferol de actividades de vitámeros E» = 0.8 mg → 0.8 mg · 2026-09-18",
    "yodo": "bedca:820 · «Lenguado, al horno» · columna «ioduro» = 16.6 ug → 16.6 ug · 2026-09-18",
-   "zinc": "bedca:820 · «Lenguado, al horno» · columna «zinc (cinc)» = 0.6 mg → 0.6 mg · 2026-09-18",
-   "energia": "bedca:820 · «Lenguado, al horno» · columna «energía, total» = 307.414 KJ ÷4,184 -> kcal · 2026-09-18"
+   "zinc": "bedca:820 · «Lenguado, al horno» · columna «zinc (cinc)» = 0.6 mg → 0.6 mg · 2026-09-18"
   },
   "cero_verificado": {
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-18: bedca:820 · «Lenguado, al horno» · columna «fibra, dietetica total» = 0.0 g. `value_type` AR, o sea una MEDIDA y no una celda vacía.",
@@ -19831,6 +19861,7 @@
    "calcio": "ciqual:26120 · «Merlu, cuit à l'étouffée» · columna «Calcium (mg/100 g)» = 41.8 mg → 41.8 mg · 2026-09-18",
    "cloruro": "ciqual:26120 · «Merlu, cuit à l'étouffée» · columna «Chlorure (mg/100 g)» = 0.2 mg → 0.2 mg · 2026-09-18",
    "dha": "ciqual:26120 · «Merlu, cuit à l'étouffée» · columna «AG 22:6 4c,7c,10c,13c,16c,19c (n-3) DHA (g/100 g)» = 0.28 g → 0.28 g · 2026-09-18",
+   "energia": "ciqual:26120 · «Merlu, cuit à l'étouffée» · columna «Energie, Règlement UE N° 1169/2011 (kcal/100 g)» = 112 kcal · 2026-09-18",
    "epa": "ciqual:26120 · «Merlu, cuit à l'étouffée» · columna «AG 20:5 5c,8c,11c,14c,17c (n-3) EPA (g/100 g)» = 0.11 g → 0.11 g · 2026-09-18",
    "folato": "ciqual:26120 · «Merlu, cuit à l'étouffée» · columna «Vitamine B9 ou Folates totaux (µg/100 g)» = 26.4 ug → 26.4 ug · 2026-09-18",
    "fosforo": "ciqual:26120 · «Merlu, cuit à l'étouffée» · columna «Phosphore (mg/100 g)» = 190.0 mg → 190.0 mg · 2026-09-18",
@@ -19849,8 +19880,7 @@
    "vitD": "ciqual:26120 · «Merlu, cuit à l'étouffée» · columna «Vitamine D (µg/100 g)» = 3.2 ug → 3.2 ug · 2026-09-18",
    "vitE": "ciqual:26120 · «Merlu, cuit à l'étouffée» · columna «Vitamine E (mg/100 g)» = 0.6 mg → 0.6 mg · 2026-09-18",
    "yodo": "ciqual:26120 · «Merlu, cuit à l'étouffée» · columna «Iode (µg/100 g)» = 42.0 ug → 42.0 ug · 2026-09-18",
-   "zinc": "ciqual:26120 · «Merlu, cuit à l'étouffée» · columna «Zinc (mg/100 g)» = 0.55 mg → 0.55 mg · 2026-09-18",
-   "energia": "ciqual:26120 · «Merlu, cuit à l'étouffée» · columna «Energie, Règlement UE N° 1169/2011 (kcal/100 g)» = 112 kcal · 2026-09-18"
+   "zinc": "ciqual:26120 · «Merlu, cuit à l'étouffée» · columna «Zinc (mg/100 g)» = 0.55 mg → 0.55 mg · 2026-09-18"
   },
   "cero_verificado": {
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-18: ciqual:26120 · «Merlu, cuit à l'étouffée» · columna «Fibres alimentaires (g/100 g)» = 0.0 g. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
@@ -19934,6 +19964,7 @@
    "cobre": "usda:171483 · «Turkey, all classes, gizzard, cooked, simmered» · columna «Copper, Cu» = 0.274 MG → 0.274 mg · 2026-09-18",
    "colina": "usda:171483 · «Turkey, all classes, gizzard, cooked, simmered» · columna «Choline, total» = 82.2 MG → 82.2 mg · 2026-09-18",
    "dha": "usda:171483 · «Turkey, all classes, gizzard, cooked, simmered» · columna «PUFA 22:6 n-3 (DHA)» = 0.008 G → 0.008 g · 2026-09-18",
+   "energia": "usda:171483 · «Turkey, all classes, gizzard, cooked, simmered» · columna «Energy» = 155 KCAL · 2026-09-18",
    "epa": "usda:171483 · «Turkey, all classes, gizzard, cooked, simmered» · columna «PUFA 20:5 n-3 (EPA)» = 0.004 G → 0.004 g · 2026-09-18",
    "fenilalanina": "usda:171483 · «Turkey, all classes, gizzard, cooked, simmered» · columna «Phenylalanine» = 0.799 G → 0.799 g · 2026-09-18",
    "folato": "usda:171483 · «Turkey, all classes, gizzard, cooked, simmered» · columna «Folate, total» = 13.0 UG → 13.0 ug · 2026-09-18",
@@ -19963,8 +19994,7 @@
    "vitB12": "usda:171483 · «Turkey, all classes, gizzard, cooked, simmered» · columna «Vitamin B-12» = 3.91 UG → 3.91 ug · 2026-09-18",
    "vitB6": "usda:171483 · «Turkey, all classes, gizzard, cooked, simmered» · columna «Vitamin B-6» = 0.175 MG → 0.175 mg · 2026-09-18",
    "vitE": "usda:171483 · «Turkey, all classes, gizzard, cooked, simmered» · columna «Vitamin E (alpha-tocopherol)» = 0.11 MG → 0.11 mg · 2026-09-18",
-   "zinc": "usda:171483 · «Turkey, all classes, gizzard, cooked, simmered» · columna «Zinc, Zn» = 3.92 MG → 3.92 mg · 2026-09-18",
-   "energia": "usda:171483 · «Turkey, all classes, gizzard, cooked, simmered» · columna «Energy» = 155 KCAL · 2026-09-18"
+   "zinc": "usda:171483 · «Turkey, all classes, gizzard, cooked, simmered» · columna «Zinc, Zn» = 3.92 MG → 3.92 mg · 2026-09-18"
   },
   "cero_verificado": {
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-18: usda:171483 · «Turkey, all classes, gizzard, cooked, simmered» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
@@ -20058,6 +20088,7 @@
    "calcio": "usda:171457 · «Chicken, gizzard, all classes, cooked, simmered» · columna «Calcium, Ca» = 17.0 MG → 17.0 mg · 2026-09-18",
    "cobre": "usda:171457 · «Chicken, gizzard, all classes, cooked, simmered» · columna «Copper, Cu» = 0.161 MG → 0.161 mg · 2026-09-18",
    "colina": "usda:171457 · «Chicken, gizzard, all classes, cooked, simmered» · columna «Choline, total» = 104.4 MG → 104.4 mg · 2026-09-18",
+   "energia": "usda:171457 · «Chicken, gizzard, all classes, cooked, simmered» · columna «Energy» = 154 KCAL · 2026-09-18",
    "folato": "usda:171457 · «Chicken, gizzard, all classes, cooked, simmered» · columna «Folate, total» = 5.0 UG → 5.0 ug · 2026-09-18",
    "fosforo": "usda:171457 · «Chicken, gizzard, all classes, cooked, simmered» · columna «Phosphorus, P» = 189.0 MG → 189.0 mg · 2026-09-18",
    "grasa": "usda:171457 · «Chicken, gizzard, all classes, cooked, simmered» · columna «Total lipid (fat)» = 2.68 G → 2.68 g · 2026-09-18",
@@ -20076,8 +20107,7 @@
    "vitB12": "usda:171457 · «Chicken, gizzard, all classes, cooked, simmered» · columna «Vitamin B-12» = 1.04 UG → 1.04 ug · 2026-09-18",
    "vitB6": "usda:171457 · «Chicken, gizzard, all classes, cooked, simmered» · columna «Vitamin B-6» = 0.071 MG → 0.071 mg · 2026-09-18",
    "vitE": "usda:171457 · «Chicken, gizzard, all classes, cooked, simmered» · columna «Vitamin E (alpha-tocopherol)» = 0.2 MG → 0.2 mg · 2026-09-18",
-   "zinc": "usda:171457 · «Chicken, gizzard, all classes, cooked, simmered» · columna «Zinc, Zn» = 4.42 MG → 4.42 mg · 2026-09-18",
-   "energia": "usda:171457 · «Chicken, gizzard, all classes, cooked, simmered» · columna «Energy» = 154 KCAL · 2026-09-18"
+   "zinc": "usda:171457 · «Chicken, gizzard, all classes, cooked, simmered» · columna «Zinc, Zn» = 4.42 MG → 4.42 mg · 2026-09-18"
   },
   "cero_verificado": {
    "dha": "Cero de la fuente que manda, comprobado el 2026-09-18: usda:171457 · «Chicken, gizzard, all classes, cooked, simmered» · columna «PUFA 22:6 n-3 (DHA)» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
@@ -20178,6 +20208,7 @@
    "arginina": "usda:171113 · «Duck, young duckling, domesticated, White Pekin, leg, meat only, bone in, cooked without skin, braised» · columna «Arginine» = 1.839 G → 1.839 g · 2026-09-18",
    "calcio": "usda:171113 · «Duck, young duckling, domesticated, White Pekin, leg, meat only, bone in, cooked without skin, braised» · columna «Calcium, Ca» = 10.0 MG → 10.0 mg · 2026-09-18",
    "cistina": "usda:171113 · «Duck, young duckling, domesticated, White Pekin, leg, meat only, bone in, cooked without skin, braised» · columna «Cystine» = 0.442 G → 0.442 g · 2026-09-18",
+   "energia": "usda:171113 · «Duck, young duckling, domesticated, White Pekin, leg, meat only, bone in, cooked without skin, braised» · columna «Energy» = 178 KCAL · 2026-09-18",
    "fenilalanina": "usda:171113 · «Duck, young duckling, domesticated, White Pekin, leg, meat only, bone in, cooked without skin, braised» · columna «Phenylalanine» = 1.211 G → 1.211 g · 2026-09-18",
    "grasa": "usda:171113 · «Duck, young duckling, domesticated, White Pekin, leg, meat only, bone in, cooked without skin, braised» · columna «Total lipid (fat)» = 5.96 G → 5.96 g · 2026-09-18",
    "hierro": "usda:171113 · «Duck, young duckling, domesticated, White Pekin, leg, meat only, bone in, cooked without skin, braised» · columna «Iron, Fe» = 2.33 MG → 2.33 mg · 2026-09-18",
@@ -20195,8 +20226,7 @@
    "tirosina": "usda:171113 · «Duck, young duckling, domesticated, White Pekin, leg, meat only, bone in, cooked without skin, braised» · columna «Tyrosine» = 1.099 G → 1.099 g · 2026-09-18",
    "treonina": "usda:171113 · «Duck, young duckling, domesticated, White Pekin, leg, meat only, bone in, cooked without skin, braised» · columna «Threonine» = 1.234 G → 1.234 g · 2026-09-18",
    "triptofano": "usda:171113 · «Duck, young duckling, domesticated, White Pekin, leg, meat only, bone in, cooked without skin, braised» · columna «Tryptophan» = 0.4 G → 0.4 g · 2026-09-18",
-   "valina": "usda:171113 · «Duck, young duckling, domesticated, White Pekin, leg, meat only, bone in, cooked without skin, braised» · columna «Valine» = 1.509 G → 1.509 g · 2026-09-18",
-   "energia": "usda:171113 · «Duck, young duckling, domesticated, White Pekin, leg, meat only, bone in, cooked without skin, braised» · columna «Energy» = 178 KCAL · 2026-09-18"
+   "valina": "usda:171113 · «Duck, young duckling, domesticated, White Pekin, leg, meat only, bone in, cooked without skin, braised» · columna «Valine» = 1.509 G → 1.509 g · 2026-09-18"
   },
   "energia": 178.0,
   "humedad_g_100g": 64.6,
@@ -20277,6 +20307,7 @@
    "cobre": "usda:171494 · «Turkey, all classes, leg, meat and skin, cooked, roasted» · columna «Copper, Cu» = 0.154 MG → 0.154 mg · 2026-09-18",
    "colina": "usda:171494 · «Turkey, all classes, leg, meat and skin, cooked, roasted» · columna «Choline, total» = 70.8 MG → 70.8 mg · 2026-09-18",
    "dha": "usda:171494 · «Turkey, all classes, leg, meat and skin, cooked, roasted» · columna «PUFA 22:6 n-3 (DHA)» = 0.05 G → 0.05 g · 2026-09-18",
+   "energia": "usda:171494 · «Turkey, all classes, leg, meat and skin, cooked, roasted» · columna «Energy» = 208 KCAL · 2026-09-18",
    "fenilalanina": "usda:171494 · «Turkey, all classes, leg, meat and skin, cooked, roasted» · columna «Phenylalanine» = 1.096 G → 1.096 g · 2026-09-18",
    "folato": "usda:171494 · «Turkey, all classes, leg, meat and skin, cooked, roasted» · columna «Folate, total» = 9.0 UG → 9.0 ug · 2026-09-18",
    "fosforo": "usda:171494 · «Turkey, all classes, leg, meat and skin, cooked, roasted» · columna «Phosphorus, P» = 199.0 MG → 199.0 mg · 2026-09-18",
@@ -20306,8 +20337,7 @@
    "vitB6": "usda:171494 · «Turkey, all classes, leg, meat and skin, cooked, roasted» · columna «Vitamin B-6» = 0.33 MG → 0.33 mg · 2026-09-18",
    "vitD": "usda:171494 · «Turkey, all classes, leg, meat and skin, cooked, roasted» · columna «Vitamin D (D2 + D3)» = 0.1 UG → 0.1 ug · 2026-09-18",
    "vitE": "usda:171494 · «Turkey, all classes, leg, meat and skin, cooked, roasted» · columna «Vitamin E (alpha-tocopherol)» = 0.62 MG → 0.62 mg · 2026-09-18",
-   "zinc": "usda:171494 · «Turkey, all classes, leg, meat and skin, cooked, roasted» · columna «Zinc, Zn» = 4.27 MG → 4.27 mg · 2026-09-18",
-   "energia": "usda:171494 · «Turkey, all classes, leg, meat and skin, cooked, roasted» · columna «Energy» = 208 KCAL · 2026-09-18"
+   "zinc": "usda:171494 · «Turkey, all classes, leg, meat and skin, cooked, roasted» · columna «Zinc, Zn» = 4.27 MG → 4.27 mg · 2026-09-18"
   },
   "cero_verificado": {
    "epa": "Cero de la fuente que manda, comprobado el 2026-09-18: usda:171494 · «Turkey, all classes, leg, meat and skin, cooked, roasted» · columna «PUFA 20:5 n-3 (EPA)» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
@@ -20394,6 +20424,7 @@
    "cistina": "usda:171492 · «Turkey, all classes, breast, meat and skin, cooked, roasted» · columna «Cystine» = 0.313 G → 0.313 g · 2026-09-18",
    "cobre": "usda:171492 · «Turkey, all classes, breast, meat and skin, cooked, roasted» · columna «Copper, Cu» = 0.047 MG → 0.047 mg · 2026-09-18",
    "dha": "usda:171492 · «Turkey, all classes, breast, meat and skin, cooked, roasted» · columna «PUFA 22:6 n-3 (DHA)» = 0.03 G → 0.03 g · 2026-09-18",
+   "energia": "usda:171492 · «Turkey, all classes, breast, meat and skin, cooked, roasted» · columna «Energy» = 189 KCAL · 2026-09-18",
    "fenilalanina": "usda:171492 · «Turkey, all classes, breast, meat and skin, cooked, roasted» · columna «Phenylalanine» = 1.126 G → 1.126 g · 2026-09-18",
    "folato": "usda:171492 · «Turkey, all classes, breast, meat and skin, cooked, roasted» · columna «Folate, total» = 6.0 UG → 6.0 ug · 2026-09-18",
    "fosforo": "usda:171492 · «Turkey, all classes, breast, meat and skin, cooked, roasted» · columna «Phosphorus, P» = 210.0 MG → 210.0 mg · 2026-09-18",
@@ -20421,8 +20452,7 @@
    "valina": "usda:171492 · «Turkey, all classes, breast, meat and skin, cooked, roasted» · columna «Valine» = 1.5 G → 1.5 g · 2026-09-18",
    "vitB12": "usda:171492 · «Turkey, all classes, breast, meat and skin, cooked, roasted» · columna «Vitamin B-12» = 0.36 UG → 0.36 ug · 2026-09-18",
    "vitB6": "usda:171492 · «Turkey, all classes, breast, meat and skin, cooked, roasted» · columna «Vitamin B-6» = 0.48 MG → 0.48 mg · 2026-09-18",
-   "zinc": "usda:171492 · «Turkey, all classes, breast, meat and skin, cooked, roasted» · columna «Zinc, Zn» = 2.03 MG → 2.03 mg · 2026-09-18",
-   "energia": "usda:171492 · «Turkey, all classes, breast, meat and skin, cooked, roasted» · columna «Energy» = 189 KCAL · 2026-09-18"
+   "zinc": "usda:171492 · «Turkey, all classes, breast, meat and skin, cooked, roasted» · columna «Zinc, Zn» = 2.03 MG → 2.03 mg · 2026-09-18"
   },
   "cero_verificado": {
    "epa": "Cero de la fuente que manda, comprobado el 2026-09-18: usda:171492 · «Turkey, all classes, breast, meat and skin, cooked, roasted» · columna «PUFA 20:5 n-3 (EPA)» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
@@ -20507,6 +20537,7 @@
    "cobre": "usda:171496 · «Turkey, whole, breast, meat only, cooked, roasted» · columna «Copper, Cu» = 0.063 MG → 0.063 mg · 2026-09-18",
    "colina": "usda:171496 · «Turkey, whole, breast, meat only, cooked, roasted» · columna «Choline, total» = 84.4 MG → 84.4 mg · 2026-09-18",
    "dha": "usda:171496 · «Turkey, whole, breast, meat only, cooked, roasted» · columna «PUFA 22:6 n-3 (DHA)» = 0.004 G → 0.004 g · 2026-09-18",
+   "energia": "usda:171496 · «Turkey, whole, breast, meat only, cooked, roasted» · columna «Energy» = 147 KCAL · 2026-09-18",
    "epa": "usda:171496 · «Turkey, whole, breast, meat only, cooked, roasted» · columna «PUFA 20:5 n-3 (EPA)» = 0.004 G → 0.004 g · 2026-09-18",
    "fenilalanina": "usda:171496 · «Turkey, whole, breast, meat only, cooked, roasted» · columna «Phenylalanine» = 0.869 G → 0.869 g · 2026-09-18",
    "folato": "usda:171496 · «Turkey, whole, breast, meat only, cooked, roasted» · columna «Folate, total» = 9.0 UG → 9.0 ug · 2026-09-18",
@@ -20537,8 +20568,7 @@
    "vitB6": "usda:171496 · «Turkey, whole, breast, meat only, cooked, roasted» · columna «Vitamin B-6» = 0.807 MG → 0.807 mg · 2026-09-18",
    "vitD": "usda:171496 · «Turkey, whole, breast, meat only, cooked, roasted» · columna «Vitamin D (D2 + D3)» = 0.3 UG → 0.3 ug · 2026-09-18",
    "vitE": "usda:171496 · «Turkey, whole, breast, meat only, cooked, roasted» · columna «Vitamin E (alpha-tocopherol)» = 0.06 MG → 0.06 mg · 2026-09-18",
-   "zinc": "usda:171496 · «Turkey, whole, breast, meat only, cooked, roasted» · columna «Zinc, Zn» = 1.72 MG → 1.72 mg · 2026-09-18",
-   "energia": "usda:171496 · «Turkey, whole, breast, meat only, cooked, roasted» · columna «Energy» = 147 KCAL · 2026-09-18"
+   "zinc": "usda:171496 · «Turkey, whole, breast, meat only, cooked, roasted» · columna «Zinc, Zn» = 1.72 MG → 1.72 mg · 2026-09-18"
   },
   "cero_verificado": {
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-18: usda:171496 · «Turkey, whole, breast, meat only, cooked, roasted» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
@@ -20624,6 +20654,7 @@
    "cistina": "usda:173679 · «Fish, perch, mixed species, cooked, dry heat» · columna «Cystine» = 0.266 G → 0.266 g · 2026-09-18",
    "cobre": "usda:173679 · «Fish, perch, mixed species, cooked, dry heat» · columna «Copper, Cu» = 0.192 MG → 0.192 mg · 2026-09-18",
    "dha": "usda:173679 · «Fish, perch, mixed species, cooked, dry heat» · columna «PUFA 22:6 n-3 (DHA)» = 0.223 G → 0.223 g · 2026-09-18",
+   "energia": "usda:173679 · «Fish, perch, mixed species, cooked, dry heat» · columna «Energy» = 117 KCAL · 2026-09-18",
    "epa": "usda:173679 · «Fish, perch, mixed species, cooked, dry heat» · columna «PUFA 20:5 n-3 (EPA)» = 0.101 G → 0.101 g · 2026-09-18",
    "fenilalanina": "usda:173679 · «Fish, perch, mixed species, cooked, dry heat» · columna «Phenylalanine» = 0.97 G → 0.97 g · 2026-09-18",
    "folato": "usda:173679 · «Fish, perch, mixed species, cooked, dry heat» · columna «Folate, total» = 6.0 UG → 6.0 ug · 2026-09-18",
@@ -20652,8 +20683,7 @@
    "valina": "usda:173679 · «Fish, perch, mixed species, cooked, dry heat» · columna «Valine» = 1.281 G → 1.281 g · 2026-09-18",
    "vitB12": "usda:173679 · «Fish, perch, mixed species, cooked, dry heat» · columna «Vitamin B-12» = 2.2 UG → 2.2 ug · 2026-09-18",
    "vitB6": "usda:173679 · «Fish, perch, mixed species, cooked, dry heat» · columna «Vitamin B-6» = 0.14 MG → 0.14 mg · 2026-09-18",
-   "zinc": "usda:173679 · «Fish, perch, mixed species, cooked, dry heat» · columna «Zinc, Zn» = 1.43 MG → 1.43 mg · 2026-09-18",
-   "energia": "usda:173679 · «Fish, perch, mixed species, cooked, dry heat» · columna «Energy» = 117 KCAL · 2026-09-18"
+   "zinc": "usda:173679 · «Fish, perch, mixed species, cooked, dry heat» · columna «Zinc, Zn» = 1.43 MG → 1.43 mg · 2026-09-18"
   },
   "cero_verificado": {
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-18: usda:173679 · «Fish, perch, mixed species, cooked, dry heat» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
@@ -20735,6 +20765,7 @@
    "cistina": "usda:170110 · «Peppers, sweet, red, cooked, boiled, drained, without salt» · columna «Cystine» = 0.018 G → 0.018 g · 2026-09-18",
    "cobre": "usda:170110 · «Peppers, sweet, red, cooked, boiled, drained, without salt» · columna «Copper, Cu» = 0.065 MG → 0.065 mg · 2026-09-18",
    "colina": "usda:170110 · «Peppers, sweet, red, cooked, boiled, drained, without salt» · columna «Choline, total» = 5.8 MG → 5.8 mg · 2026-09-18",
+   "energia": "usda:170110 · «Peppers, sweet, red, cooked, boiled, drained, without salt» · columna «Energy» = 28 KCAL · 2026-09-18",
    "fenilalanina": "usda:170110 · «Peppers, sweet, red, cooked, boiled, drained, without salt» · columna «Phenylalanine» = 0.029 G → 0.029 g · 2026-09-18",
    "fibra": "usda:170110 · «Peppers, sweet, red, cooked, boiled, drained, without salt» · columna «Fiber, total dietary» = 1.2 G → 1.2 g · 2026-09-18",
    "folato": "usda:170110 · «Peppers, sweet, red, cooked, boiled, drained, without salt» · columna «Folate, total» = 16.0 UG → 16.0 ug · 2026-09-18",
@@ -20763,8 +20794,7 @@
    "valina": "usda:170110 · «Peppers, sweet, red, cooked, boiled, drained, without salt» · columna «Valine» = 0.039 G → 0.039 g · 2026-09-18",
    "vitB6": "usda:170110 · «Peppers, sweet, red, cooked, boiled, drained, without salt» · columna «Vitamin B-6» = 0.233 MG → 0.233 mg · 2026-09-18",
    "vitE": "usda:170110 · «Peppers, sweet, red, cooked, boiled, drained, without salt» · columna «Vitamin E (alpha-tocopherol)» = 1.65 MG → 1.65 mg · 2026-09-18",
-   "zinc": "usda:170110 · «Peppers, sweet, red, cooked, boiled, drained, without salt» · columna «Zinc, Zn» = 0.12 MG → 0.12 mg · 2026-09-18",
-   "energia": "usda:170110 · «Peppers, sweet, red, cooked, boiled, drained, without salt» · columna «Energy» = 28 KCAL · 2026-09-18"
+   "zinc": "usda:170110 · «Peppers, sweet, red, cooked, boiled, drained, without salt» · columna «Zinc, Zn» = 0.12 MG → 0.12 mg · 2026-09-18"
   },
   "cero_verificado": {
    "araquidonico": "Cero de la fuente que manda, comprobado el 2026-09-18: usda:170110 · «Peppers, sweet, red, cooked, boiled, drained, without salt» · columna «PUFA 20:4» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
@@ -20852,6 +20882,7 @@
    "cobre": "usda:173631 · «Chicken, broilers or fryers, wing, meat and skin, cooked, stewed» · columna «Copper, Cu» = 0.046 MG → 0.046 mg · 2026-09-18",
    "colina": "usda:173631 · «Chicken, broilers or fryers, wing, meat and skin, cooked, stewed» · columna «Choline, total» = 51.3 MG → 51.3 mg · 2026-09-18",
    "dha": "usda:173631 · «Chicken, broilers or fryers, wing, meat and skin, cooked, stewed» · columna «PUFA 22:6 n-3 (DHA)» = 0.05 G → 0.05 g · 2026-09-18",
+   "energia": "usda:173631 · «Chicken, broilers or fryers, wing, meat and skin, cooked, stewed» · columna «Energy» = 249 KCAL · 2026-09-18",
    "epa": "usda:173631 · «Chicken, broilers or fryers, wing, meat and skin, cooked, stewed» · columna «PUFA 20:5 n-3 (EPA)» = 0.02 G → 0.02 g · 2026-09-18",
    "fenilalanina": "usda:173631 · «Chicken, broilers or fryers, wing, meat and skin, cooked, stewed» · columna «Phenylalanine» = 0.87 G → 0.87 g · 2026-09-18",
    "folato": "usda:173631 · «Chicken, broilers or fryers, wing, meat and skin, cooked, stewed» · columna «Folate, total» = 3.0 UG → 3.0 ug · 2026-09-18",
@@ -20882,8 +20913,7 @@
    "vitB6": "usda:173631 · «Chicken, broilers or fryers, wing, meat and skin, cooked, stewed» · columna «Vitamin B-6» = 0.22 MG → 0.22 mg · 2026-09-18",
    "vitD": "usda:173631 · «Chicken, broilers or fryers, wing, meat and skin, cooked, stewed» · columna «Vitamin D (D2 + D3)» = 0.1 UG → 0.1 ug · 2026-09-18",
    "vitE": "usda:173631 · «Chicken, broilers or fryers, wing, meat and skin, cooked, stewed» · columna «Vitamin E (alpha-tocopherol)» = 0.27 MG → 0.27 mg · 2026-09-18",
-   "zinc": "usda:173631 · «Chicken, broilers or fryers, wing, meat and skin, cooked, stewed» · columna «Zinc, Zn» = 1.63 MG → 1.63 mg · 2026-09-18",
-   "energia": "usda:173631 · «Chicken, broilers or fryers, wing, meat and skin, cooked, stewed» · columna «Energy» = 249 KCAL · 2026-09-18"
+   "zinc": "usda:173631 · «Chicken, broilers or fryers, wing, meat and skin, cooked, stewed» · columna «Zinc, Zn» = 1.63 MG → 1.63 mg · 2026-09-18"
   },
   "cero_verificado": {
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-18: usda:173631 · «Chicken, broilers or fryers, wing, meat and skin, cooked, stewed» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
@@ -20967,6 +20997,7 @@
    "cobre": "usda:174498 · «Chicken, broilers or fryers, dark meat, thigh, meat and skin, cooked, braised» · columna «Copper, Cu» = 0.048 MG → 0.048 mg · 2026-09-18",
    "colina": "usda:174498 · «Chicken, broilers or fryers, dark meat, thigh, meat and skin, cooked, braised» · columna «Choline, total» = 63.3 MG → 63.3 mg · 2026-09-18",
    "dha": "usda:174498 · «Chicken, broilers or fryers, dark meat, thigh, meat and skin, cooked, braised» · columna «PUFA 22:6 n-3 (DHA)» = 0.005 G → 0.005 g · 2026-09-18",
+   "energia": "usda:174498 · «Chicken, broilers or fryers, dark meat, thigh, meat and skin, cooked, braised» · columna «Energy» = 229 KCAL · 2026-09-18",
    "epa": "usda:174498 · «Chicken, broilers or fryers, dark meat, thigh, meat and skin, cooked, braised» · columna «PUFA 20:5 n-3 (EPA)» = 0.008 G → 0.008 g · 2026-09-18",
    "fenilalanina": "usda:174498 · «Chicken, broilers or fryers, dark meat, thigh, meat and skin, cooked, braised» · columna «Phenylalanine» = 0.811 G → 0.811 g · 2026-09-18",
    "folato": "usda:174498 · «Chicken, broilers or fryers, dark meat, thigh, meat and skin, cooked, braised» · columna «Folate, total» = 4.0 UG → 4.0 ug · 2026-09-18",
@@ -20997,8 +21028,7 @@
    "vitB6": "usda:174498 · «Chicken, broilers or fryers, dark meat, thigh, meat and skin, cooked, braised» · columna «Vitamin B-6» = 0.385 MG → 0.385 mg · 2026-09-18",
    "vitD": "usda:174498 · «Chicken, broilers or fryers, dark meat, thigh, meat and skin, cooked, braised» · columna «Vitamin D (D2 + D3)» = 0.3 UG → 0.3 ug · 2026-09-18",
    "vitE": "usda:174498 · «Chicken, broilers or fryers, dark meat, thigh, meat and skin, cooked, braised» · columna «Vitamin E (alpha-tocopherol)» = 0.17 MG → 0.17 mg · 2026-09-18",
-   "zinc": "usda:174498 · «Chicken, broilers or fryers, dark meat, thigh, meat and skin, cooked, braised» · columna «Zinc, Zn» = 1.64 MG → 1.64 mg · 2026-09-18",
-   "energia": "usda:174498 · «Chicken, broilers or fryers, dark meat, thigh, meat and skin, cooked, braised» · columna «Energy» = 229 KCAL · 2026-09-18"
+   "zinc": "usda:174498 · «Chicken, broilers or fryers, dark meat, thigh, meat and skin, cooked, braised» · columna «Zinc, Zn» = 1.64 MG → 1.64 mg · 2026-09-18"
   },
   "cero_verificado": {
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-18: usda:174498 · «Chicken, broilers or fryers, dark meat, thigh, meat and skin, cooked, braised» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
@@ -21082,6 +21112,7 @@
    "cobre": "usda:172853 · «Chicken, broilers or fryers, dark meat, thigh, meat only, cooked, braised» · columna «Copper, Cu» = 0.049 MG → 0.049 mg · 2026-09-18",
    "colina": "usda:172853 · «Chicken, broilers or fryers, dark meat, thigh, meat only, cooked, braised» · columna «Choline, total» = 68.3 MG → 68.3 mg · 2026-09-18",
    "dha": "usda:172853 · «Chicken, broilers or fryers, dark meat, thigh, meat only, cooked, braised» · columna «PUFA 22:6 n-3 (DHA)» = 0.004 G → 0.004 g · 2026-09-18",
+   "energia": "usda:172853 · «Chicken, broilers or fryers, dark meat, thigh, meat only, cooked, braised» · columna «Energy» = 176 KCAL · 2026-09-18",
    "epa": "usda:172853 · «Chicken, broilers or fryers, dark meat, thigh, meat only, cooked, braised» · columna «PUFA 20:5 n-3 (EPA)» = 0.009 G → 0.009 g · 2026-09-18",
    "fenilalanina": "usda:172853 · «Chicken, broilers or fryers, dark meat, thigh, meat only, cooked, braised» · columna «Phenylalanine» = 0.903 G → 0.903 g · 2026-09-18",
    "folato": "usda:172853 · «Chicken, broilers or fryers, dark meat, thigh, meat only, cooked, braised» · columna «Folate, total» = 5.0 UG → 5.0 ug · 2026-09-18",
@@ -21112,8 +21143,7 @@
    "vitB6": "usda:172853 · «Chicken, broilers or fryers, dark meat, thigh, meat only, cooked, braised» · columna «Vitamin B-6» = 0.436 MG → 0.436 mg · 2026-09-18",
    "vitD": "usda:172853 · «Chicken, broilers or fryers, dark meat, thigh, meat only, cooked, braised» · columna «Vitamin D (D2 + D3)» = 0.3 UG → 0.3 ug · 2026-09-18",
    "vitE": "usda:172853 · «Chicken, broilers or fryers, dark meat, thigh, meat only, cooked, braised» · columna «Vitamin E (alpha-tocopherol)» = 0.17 MG → 0.17 mg · 2026-09-18",
-   "zinc": "usda:172853 · «Chicken, broilers or fryers, dark meat, thigh, meat only, cooked, braised» · columna «Zinc, Zn» = 1.87 MG → 1.87 mg · 2026-09-18",
-   "energia": "usda:172853 · «Chicken, broilers or fryers, dark meat, thigh, meat only, cooked, braised» · columna «Energy» = 176 KCAL · 2026-09-18"
+   "zinc": "usda:172853 · «Chicken, broilers or fryers, dark meat, thigh, meat only, cooked, braised» · columna «Zinc, Zn» = 1.87 MG → 1.87 mg · 2026-09-18"
   },
   "cero_verificado": {
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-18: usda:172853 · «Chicken, broilers or fryers, dark meat, thigh, meat only, cooked, braised» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
@@ -21197,6 +21227,7 @@
    "cobre": "usda:171076 · «Chicken, broilers or fryers, breast, meat and skin, cooked, stewed» · columna «Copper, Cu» = 0.044 MG → 0.044 mg · 2026-09-18",
    "colina": "usda:171076 · «Chicken, broilers or fryers, breast, meat and skin, cooked, stewed» · columna «Choline, total» = 64.4 MG → 64.4 mg · 2026-09-18",
    "dha": "usda:171076 · «Chicken, broilers or fryers, breast, meat and skin, cooked, stewed» · columna «PUFA 22:6 n-3 (DHA)» = 0.02 G → 0.02 g · 2026-09-18",
+   "energia": "usda:171076 · «Chicken, broilers or fryers, breast, meat and skin, cooked, stewed» · columna «Energy» = 184 KCAL · 2026-09-18",
    "epa": "usda:171076 · «Chicken, broilers or fryers, breast, meat and skin, cooked, stewed» · columna «PUFA 20:5 n-3 (EPA)» = 0.01 G → 0.01 g · 2026-09-18",
    "fenilalanina": "usda:171076 · «Chicken, broilers or fryers, breast, meat and skin, cooked, stewed» · columna «Phenylalanine» = 1.074 G → 1.074 g · 2026-09-18",
    "folato": "usda:171076 · «Chicken, broilers or fryers, breast, meat and skin, cooked, stewed» · columna «Folate, total» = 3.0 UG → 3.0 ug · 2026-09-18",
@@ -21227,8 +21258,7 @@
    "vitB6": "usda:171076 · «Chicken, broilers or fryers, breast, meat and skin, cooked, stewed» · columna «Vitamin B-6» = 0.29 MG → 0.29 mg · 2026-09-18",
    "vitD": "usda:171076 · «Chicken, broilers or fryers, breast, meat and skin, cooked, stewed» · columna «Vitamin D (D2 + D3)» = 0.1 UG → 0.1 ug · 2026-09-18",
    "vitE": "usda:171076 · «Chicken, broilers or fryers, breast, meat and skin, cooked, stewed» · columna «Vitamin E (alpha-tocopherol)» = 0.27 MG → 0.27 mg · 2026-09-18",
-   "zinc": "usda:171076 · «Chicken, broilers or fryers, breast, meat and skin, cooked, stewed» · columna «Zinc, Zn» = 0.97 MG → 0.97 mg · 2026-09-18",
-   "energia": "usda:171076 · «Chicken, broilers or fryers, breast, meat and skin, cooked, stewed» · columna «Energy» = 184 KCAL · 2026-09-18"
+   "zinc": "usda:171076 · «Chicken, broilers or fryers, breast, meat and skin, cooked, stewed» · columna «Zinc, Zn» = 0.97 MG → 0.97 mg · 2026-09-18"
   },
   "cero_verificado": {
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-18: usda:171076 · «Chicken, broilers or fryers, breast, meat and skin, cooked, stewed» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
@@ -21313,6 +21343,7 @@
    "cobre": "usda:171140 · «Chicken, broiler or fryers, breast, skinless, boneless, meat only, cooked, braised» · columna «Copper, Cu» = 0.044 MG → 0.044 mg · 2026-09-18",
    "colina": "usda:171140 · «Chicken, broiler or fryers, breast, skinless, boneless, meat only, cooked, braised» · columna «Choline, total» = 117.0 MG → 117.0 mg · 2026-09-18",
    "dha": "usda:171140 · «Chicken, broiler or fryers, breast, skinless, boneless, meat only, cooked, braised» · columna «PUFA 22:6 n-3 (DHA)» = 0.007 G → 0.007 g · 2026-09-18",
+   "energia": "usda:171140 · «Chicken, broiler or fryers, breast, skinless, boneless, meat only, cooked, braised» · columna «Energy» = 157 KCAL · 2026-09-18",
    "epa": "usda:171140 · «Chicken, broiler or fryers, breast, skinless, boneless, meat only, cooked, braised» · columna «PUFA 20:5 n-3 (EPA)» = 0.004 G → 0.004 g · 2026-09-18",
    "fenilalanina": "usda:171140 · «Chicken, broiler or fryers, breast, skinless, boneless, meat only, cooked, braised» · columna «Phenylalanine» = 1.294 G → 1.294 g · 2026-09-18",
    "fosforo": "usda:171140 · «Chicken, broiler or fryers, breast, skinless, boneless, meat only, cooked, braised» · columna «Phosphorus, P» = 241.0 MG → 241.0 mg · 2026-09-18",
@@ -21341,8 +21372,7 @@
    "vitB12": "usda:171140 · «Chicken, broiler or fryers, breast, skinless, boneless, meat only, cooked, braised» · columna «Vitamin B-12» = 0.2 UG → 0.2 ug · 2026-09-18",
    "vitB6": "usda:171140 · «Chicken, broiler or fryers, breast, skinless, boneless, meat only, cooked, braised» · columna «Vitamin B-6» = 0.921 MG → 0.921 mg · 2026-09-18",
    "vitE": "usda:171140 · «Chicken, broiler or fryers, breast, skinless, boneless, meat only, cooked, braised» · columna «Vitamin E (alpha-tocopherol)» = 0.33 MG → 0.33 mg · 2026-09-18",
-   "zinc": "usda:171140 · «Chicken, broiler or fryers, breast, skinless, boneless, meat only, cooked, braised» · columna «Zinc, Zn» = 0.96 MG → 0.96 mg · 2026-09-18",
-   "energia": "usda:171140 · «Chicken, broiler or fryers, breast, skinless, boneless, meat only, cooked, braised» · columna «Energy» = 157 KCAL · 2026-09-18"
+   "zinc": "usda:171140 · «Chicken, broiler or fryers, breast, skinless, boneless, meat only, cooked, braised» · columna «Zinc, Zn» = 0.96 MG → 0.96 mg · 2026-09-18"
   },
   "cero_verificado": {
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-18: usda:171140 · «Chicken, broiler or fryers, breast, skinless, boneless, meat only, cooked, braised» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
@@ -21432,6 +21462,7 @@
    "calcio": "usda:174360 · «Lamb, variety meats and by-products, lungs, cooked, braised» · columna «Calcium, Ca» = 12.0 MG → 12.0 mg · 2026-09-18",
    "cistina": "usda:174360 · «Lamb, variety meats and by-products, lungs, cooked, braised» · columna «Cystine» = 0.312 G → 0.312 g · 2026-09-18",
    "cobre": "usda:174360 · «Lamb, variety meats and by-products, lungs, cooked, braised» · columna «Copper, Cu» = 0.234 MG → 0.234 mg · 2026-09-18",
+   "energia": "usda:174360 · «Lamb, variety meats and by-products, lungs, cooked, braised» · columna «Energy» = 113 KCAL · 2026-09-18",
    "fenilalanina": "usda:174360 · «Lamb, variety meats and by-products, lungs, cooked, braised» · columna «Phenylalanine» = 0.819 G → 0.819 g · 2026-09-18",
    "folato": "usda:174360 · «Lamb, variety meats and by-products, lungs, cooked, braised» · columna «Folate, total» = 8.0 UG → 8.0 ug · 2026-09-18",
    "fosforo": "usda:174360 · «Lamb, variety meats and by-products, lungs, cooked, braised» · columna «Phosphorus, P» = 188.0 MG → 188.0 mg · 2026-09-18",
@@ -21457,8 +21488,7 @@
    "valina": "usda:174360 · «Lamb, variety meats and by-products, lungs, cooked, braised» · columna «Valine» = 1.095 G → 1.095 g · 2026-09-18",
    "vitB12": "usda:174360 · «Lamb, variety meats and by-products, lungs, cooked, braised» · columna «Vitamin B-12» = 2.52 UG → 2.52 ug · 2026-09-18",
    "vitB6": "usda:174360 · «Lamb, variety meats and by-products, lungs, cooked, braised» · columna «Vitamin B-6» = 0.06 MG → 0.06 mg · 2026-09-18",
-   "zinc": "usda:174360 · «Lamb, variety meats and by-products, lungs, cooked, braised» · columna «Zinc, Zn» = 1.93 MG → 1.93 mg · 2026-09-18",
-   "energia": "usda:174360 · «Lamb, variety meats and by-products, lungs, cooked, braised» · columna «Energy» = 113 KCAL · 2026-09-18"
+   "zinc": "usda:174360 · «Lamb, variety meats and by-products, lungs, cooked, braised» · columna «Zinc, Zn» = 1.93 MG → 1.93 mg · 2026-09-18"
   },
   "cero_verificado": {
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-18: usda:174360 · «Lamb, variety meats and by-products, lungs, cooked, braised» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
@@ -21548,6 +21578,7 @@
    "calcio": "usda:172536 · «Veal, variety meats and by-products, lungs, cooked, braised» · columna «Calcium, Ca» = 7.0 MG → 7.0 mg · 2026-09-18",
    "cistina": "usda:172536 · «Veal, variety meats and by-products, lungs, cooked, braised» · columna «Cystine» = 0.16 G → 0.16 g · 2026-09-18",
    "cobre": "usda:172536 · «Veal, variety meats and by-products, lungs, cooked, braised» · columna «Copper, Cu» = 0.221 MG → 0.221 mg · 2026-09-18",
+   "energia": "usda:172536 · «Veal, variety meats and by-products, lungs, cooked, braised» · columna «Energy» = 104 KCAL · 2026-09-18",
    "fenilalanina": "usda:172536 · «Veal, variety meats and by-products, lungs, cooked, braised» · columna «Phenylalanine» = 0.665 G → 0.665 g · 2026-09-18",
    "folato": "usda:172536 · «Veal, variety meats and by-products, lungs, cooked, braised» · columna «Folate, total» = 8.0 UG → 8.0 ug · 2026-09-18",
    "fosforo": "usda:172536 · «Veal, variety meats and by-products, lungs, cooked, braised» · columna «Phosphorus, P» = 232.0 MG → 232.0 mg · 2026-09-18",
@@ -21572,8 +21603,7 @@
    "valina": "usda:172536 · «Veal, variety meats and by-products, lungs, cooked, braised» · columna «Valine» = 0.797 G → 0.797 g · 2026-09-18",
    "vitB12": "usda:172536 · «Veal, variety meats and by-products, lungs, cooked, braised» · columna «Vitamin B-12» = 2.38 UG → 2.38 ug · 2026-09-18",
    "vitB6": "usda:172536 · «Veal, variety meats and by-products, lungs, cooked, braised» · columna «Vitamin B-6» = 0.06 MG → 0.06 mg · 2026-09-18",
-   "zinc": "usda:172536 · «Veal, variety meats and by-products, lungs, cooked, braised» · columna «Zinc, Zn» = 1.2 MG → 1.2 mg · 2026-09-18",
-   "energia": "usda:172536 · «Veal, variety meats and by-products, lungs, cooked, braised» · columna «Energy» = 104 KCAL · 2026-09-18"
+   "zinc": "usda:172536 · «Veal, variety meats and by-products, lungs, cooked, braised» · columna «Zinc, Zn» = 1.2 MG → 1.2 mg · 2026-09-18"
   },
   "cero_verificado": {
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-18: usda:172536 · «Veal, variety meats and by-products, lungs, cooked, braised» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
@@ -21658,6 +21688,7 @@
    "calcio": "usda:168629 · «Beef, variety meats and by-products, lungs, cooked, braised» · columna «Calcium, Ca» = 11.0 MG → 11.0 mg · 2026-09-18",
    "cistina": "usda:168629 · «Beef, variety meats and by-products, lungs, cooked, braised» · columna «Cystine» = 0.313 G → 0.313 g · 2026-09-18",
    "cobre": "usda:168629 · «Beef, variety meats and by-products, lungs, cooked, braised» · columna «Copper, Cu» = 0.221 MG → 0.221 mg · 2026-09-18",
+   "energia": "usda:168629 · «Beef, variety meats and by-products, lungs, cooked, braised» · columna «Energy» = 120 KCAL · 2026-09-18",
    "fenilalanina": "usda:168629 · «Beef, variety meats and by-products, lungs, cooked, braised» · columna «Phenylalanine» = 0.829 G → 0.829 g · 2026-09-18",
    "folato": "usda:168629 · «Beef, variety meats and by-products, lungs, cooked, braised» · columna «Folate, total» = 8.0 UG → 8.0 ug · 2026-09-18",
    "fosforo": "usda:168629 · «Beef, variety meats and by-products, lungs, cooked, braised» · columna «Phosphorus, P» = 178.0 MG → 178.0 mg · 2026-09-18",
@@ -21685,8 +21716,7 @@
    "valina": "usda:168629 · «Beef, variety meats and by-products, lungs, cooked, braised» · columna «Valine» = 1.005 G → 1.005 g · 2026-09-18",
    "vitB12": "usda:168629 · «Beef, variety meats and by-products, lungs, cooked, braised» · columna «Vitamin B-12» = 2.59 UG → 2.59 ug · 2026-09-18",
    "vitB6": "usda:168629 · «Beef, variety meats and by-products, lungs, cooked, braised» · columna «Vitamin B-6» = 0.02 MG → 0.02 mg · 2026-09-18",
-   "zinc": "usda:168629 · «Beef, variety meats and by-products, lungs, cooked, braised» · columna «Zinc, Zn» = 1.64 MG → 1.64 mg · 2026-09-18",
-   "energia": "usda:168629 · «Beef, variety meats and by-products, lungs, cooked, braised» · columna «Energy» = 120 KCAL · 2026-09-18"
+   "zinc": "usda:168629 · «Beef, variety meats and by-products, lungs, cooked, braised» · columna «Zinc, Zn» = 1.64 MG → 1.64 mg · 2026-09-18"
   },
   "cero_verificado": {
    "dha": "Cero de la fuente que manda, comprobado el 2026-09-18: usda:168629 · «Beef, variety meats and by-products, lungs, cooked, braised» · columna «PUFA 22:6 n-3 (DHA)» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
@@ -21770,6 +21800,7 @@
    "cistina": "usda:169976 · «Cabbage, cooked, boiled, drained, without salt» · columna «Cystine» = 0.011 G → 0.011 g · 2026-09-18",
    "cobre": "usda:169976 · «Cabbage, cooked, boiled, drained, without salt» · columna «Copper, Cu» = 0.017 MG → 0.017 mg · 2026-09-18",
    "colina": "usda:169976 · «Cabbage, cooked, boiled, drained, without salt» · columna «Choline, total» = 20.3 MG → 20.3 mg · 2026-09-18",
+   "energia": "usda:169976 · «Cabbage, cooked, boiled, drained, without salt» · columna «Energy» = 23 KCAL · 2026-09-18",
    "fenilalanina": "usda:169976 · «Cabbage, cooked, boiled, drained, without salt» · columna «Phenylalanine» = 0.032 G → 0.032 g · 2026-09-18",
    "fibra": "usda:169976 · «Cabbage, cooked, boiled, drained, without salt» · columna «Fiber, total dietary» = 1.9 G → 1.9 g · 2026-09-18",
    "folato": "usda:169976 · «Cabbage, cooked, boiled, drained, without salt» · columna «Folate, total» = 30.0 UG → 30.0 ug · 2026-09-18",
@@ -21798,8 +21829,7 @@
    "valina": "usda:169976 · «Cabbage, cooked, boiled, drained, without salt» · columna «Valine» = 0.042 G → 0.042 g · 2026-09-18",
    "vitB6": "usda:169976 · «Cabbage, cooked, boiled, drained, without salt» · columna «Vitamin B-6» = 0.112 MG → 0.112 mg · 2026-09-18",
    "vitE": "usda:169976 · «Cabbage, cooked, boiled, drained, without salt» · columna «Vitamin E (alpha-tocopherol)» = 0.14 MG → 0.14 mg · 2026-09-18",
-   "zinc": "usda:169976 · «Cabbage, cooked, boiled, drained, without salt» · columna «Zinc, Zn» = 0.2 MG → 0.2 mg · 2026-09-18",
-   "energia": "usda:169976 · «Cabbage, cooked, boiled, drained, without salt» · columna «Energy» = 23 KCAL · 2026-09-18"
+   "zinc": "usda:169976 · «Cabbage, cooked, boiled, drained, without salt» · columna «Zinc, Zn» = 0.2 MG → 0.2 mg · 2026-09-18"
   },
   "cero_verificado": {
    "araquidonico": "Cero de la fuente que manda, comprobado el 2026-09-18: usda:169976 · «Cabbage, cooked, boiled, drained, without salt» · columna «PUFA 20:4» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
@@ -21889,6 +21919,7 @@
    "cistina": "usda:174355 · «Lamb, variety meats and by-products, kidneys, cooked, braised» · columna «Cystine» = 0.27 G → 0.27 g · 2026-09-18",
    "cobre": "usda:174355 · «Lamb, variety meats and by-products, kidneys, cooked, braised» · columna «Copper, Cu» = 0.37 MG → 0.37 mg · 2026-09-18",
    "dha": "usda:174355 · «Lamb, variety meats and by-products, kidneys, cooked, braised» · columna «PUFA 22:6 n-3 (DHA)» = 0.04 G → 0.04 g · 2026-09-18",
+   "energia": "usda:174355 · «Lamb, variety meats and by-products, kidneys, cooked, braised» · columna «Energy» = 137 KCAL · 2026-09-18",
    "epa": "usda:174355 · «Lamb, variety meats and by-products, kidneys, cooked, braised» · columna «PUFA 20:5 n-3 (EPA)» = 0.06 G → 0.06 g · 2026-09-18",
    "fenilalanina": "usda:174355 · «Lamb, variety meats and by-products, kidneys, cooked, braised» · columna «Phenylalanine» = 1.095 G → 1.095 g · 2026-09-18",
    "folato": "usda:174355 · «Lamb, variety meats and by-products, kidneys, cooked, braised» · columna «Folate, total» = 81.0 UG → 81.0 ug · 2026-09-18",
@@ -21917,8 +21948,7 @@
    "valina": "usda:174355 · «Lamb, variety meats and by-products, kidneys, cooked, braised» · columna «Valine» = 1.387 G → 1.387 g · 2026-09-18",
    "vitB12": "usda:174355 · «Lamb, variety meats and by-products, kidneys, cooked, braised» · columna «Vitamin B-12» = 78.9 UG → 78.9 ug · 2026-09-18",
    "vitB6": "usda:174355 · «Lamb, variety meats and by-products, kidneys, cooked, braised» · columna «Vitamin B-6» = 0.12 MG → 0.12 mg · 2026-09-18",
-   "zinc": "usda:174355 · «Lamb, variety meats and by-products, kidneys, cooked, braised» · columna «Zinc, Zn» = 3.8 MG → 3.8 mg · 2026-09-18",
-   "energia": "usda:174355 · «Lamb, variety meats and by-products, kidneys, cooked, braised» · columna «Energy» = 137 KCAL · 2026-09-18"
+   "zinc": "usda:174355 · «Lamb, variety meats and by-products, kidneys, cooked, braised» · columna «Zinc, Zn» = 3.8 MG → 3.8 mg · 2026-09-18"
   },
   "cero_verificado": {
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-18: usda:174355 · «Lamb, variety meats and by-products, kidneys, cooked, braised» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
@@ -22003,6 +22033,7 @@
    "cloruro": "ciqual:26038 · «Saumon, cuit à la vapeur» · columna «Chlorure (mg/100 g)» = 63.0 mg → 63.0 mg · 2026-09-18",
    "cobre": "ciqual:26038 · «Saumon, cuit à la vapeur» · columna «Cuivre (mg/100 g)» = 0.026 mg → 0.026 mg · 2026-09-18",
    "dha": "ciqual:26038 · «Saumon, cuit à la vapeur» · columna «AG 22:6 4c,7c,10c,13c,16c,19c (n-3) DHA (g/100 g)» = 1.11 g · transferido por gramo de grasa: 1.11×1×(11.0/11.5) → 1.061739 g · 2026-09-18",
+   "energia": "bedca:2628 · «Salmón, plancha» · columna «energía, total» = 750.4 KJ ÷4,184 -> kcal · 2026-09-18",
    "epa": "ciqual:26038 · «Saumon, cuit à la vapeur» · columna «AG 20:5 5c,8c,11c,14c,17c (n-3) EPA (g/100 g)» = 0.64 g · transferido por gramo de grasa: 0.64×1×(11.0/11.5) → 0.612174 g · 2026-09-18",
    "fenilalanina": "usda:171998 · «Fish, salmon, Atlantic, wild, cooked, dry heat» · columna «Phenylalanine» = 0.993 G · transferido por gramo de proteina: 0.993×1×(20.2/25.44) → 0.788467 g · 2026-09-18",
    "folato": "bedca:2628 · «Salmón, plancha» · columna «folato, total» = 16.0 ug → 16.0 ug · 2026-09-18",
@@ -22033,8 +22064,7 @@
    "vitD": "bedca:2628 · «Salmón, plancha» · columna «Vitamina D» = 8.0 ug → 8.0 ug · 2026-09-18",
    "vitE": "bedca:2628 · «Salmón, plancha» · columna «Viamina E equivalentes de alfa tocoferol de actividades de vitámeros E» = 1.91 mg → 1.91 mg · 2026-09-18",
    "yodo": "bedca:2628 · «Salmón, plancha» · columna «ioduro» = 37.0 ug → 37.0 ug · 2026-09-18",
-   "zinc": "bedca:2628 · «Salmón, plancha» · columna «zinc (cinc)» = 0.6 mg → 0.6 mg · 2026-09-18",
-   "energia": "bedca:2628 · «Salmón, plancha» · columna «energía, total» = 750.4 KJ ÷4,184 -> kcal · 2026-09-18"
+   "zinc": "bedca:2628 · «Salmón, plancha» · columna «zinc (cinc)» = 0.6 mg → 0.6 mg · 2026-09-18"
   },
   "cero_verificado": {
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-18: bedca:2628 · «Salmón, plancha» · columna «fibra, dietetica total» = 0.0 g. `value_type` AR, o sea una MEDIDA y no una celda vacía.",
@@ -22128,6 +22158,7 @@
    "calcio": "usda:172543 · «Veal, variety meats and by-products, thymus, cooked, braised» · columna «Calcium, Ca» = 4.0 MG → 4.0 mg · 2026-09-18",
    "cobre": "usda:172543 · «Veal, variety meats and by-products, thymus, cooked, braised» · columna «Copper, Cu» = 0.072 MG → 0.072 mg · 2026-09-18",
    "colina": "usda:172543 · «Veal, variety meats and by-products, thymus, cooked, braised» · columna «Choline, total» = 209.3 MG → 209.3 mg · 2026-09-18",
+   "energia": "usda:172543 · «Veal, variety meats and by-products, thymus, cooked, braised» · columna «Energy» = 125 KCAL · 2026-09-18",
    "folato": "usda:172543 · «Veal, variety meats and by-products, thymus, cooked, braised» · columna «Folate, total» = 20.0 UG → 20.0 ug · 2026-09-18",
    "fosforo": "usda:172543 · «Veal, variety meats and by-products, thymus, cooked, braised» · columna «Phosphorus, P» = 627.0 MG → 627.0 mg · 2026-09-18",
    "grasa": "usda:172543 · «Veal, variety meats and by-products, thymus, cooked, braised» · columna «Total lipid (fat)» = 3.11 G → 3.11 g · 2026-09-18",
@@ -22145,8 +22176,7 @@
    "vitB12": "usda:172543 · «Veal, variety meats and by-products, thymus, cooked, braised» · columna «Vitamin B-12» = 2.85 UG → 2.85 ug · 2026-09-18",
    "vitB6": "usda:172543 · «Veal, variety meats and by-products, thymus, cooked, braised» · columna «Vitamin B-6» = 0.027 MG → 0.027 mg · 2026-09-18",
    "vitE": "usda:172543 · «Veal, variety meats and by-products, thymus, cooked, braised» · columna «Vitamin E (alpha-tocopherol)» = 0.09 MG → 0.09 mg · 2026-09-18",
-   "zinc": "usda:172543 · «Veal, variety meats and by-products, thymus, cooked, braised» · columna «Zinc, Zn» = 2.13 MG → 2.13 mg · 2026-09-18",
-   "energia": "usda:172543 · «Veal, variety meats and by-products, thymus, cooked, braised» · columna «Energy» = 125 KCAL · 2026-09-18"
+   "zinc": "usda:172543 · «Veal, variety meats and by-products, thymus, cooked, braised» · columna «Zinc, Zn» = 2.13 MG → 2.13 mg · 2026-09-18"
   },
   "cero_verificado": {
    "dha": "Cero de la fuente que manda, comprobado el 2026-09-18: usda:172543 · «Veal, variety meats and by-products, thymus, cooked, braised» · columna «PUFA 22:6 n-3 (DHA)» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
@@ -22234,6 +22264,7 @@
    "calcio": "usda:170195 · «Beef, variety meats and by-products, thymus, cooked, braised» · columna «Calcium, Ca» = 10.0 MG → 10.0 mg · 2026-09-18",
    "cistina": "usda:170195 · «Beef, variety meats and by-products, thymus, cooked, braised» · columna «Cystine» = 0.28 G → 0.28 g · 2026-09-18",
    "cobre": "usda:170195 · «Beef, variety meats and by-products, thymus, cooked, braised» · columna «Copper, Cu» = 0.043 MG → 0.043 mg · 2026-09-18",
+   "energia": "usda:170195 · «Beef, variety meats and by-products, thymus, cooked, braised» · columna «Energy» = 319 KCAL · 2026-09-18",
    "fenilalanina": "usda:170195 · «Beef, variety meats and by-products, thymus, cooked, braised» · columna «Phenylalanine» = 0.626 G → 0.626 g · 2026-09-18",
    "folato": "usda:170195 · «Beef, variety meats and by-products, thymus, cooked, braised» · columna «Folate, total» = 1.0 UG → 1.0 ug · 2026-09-18",
    "fosforo": "usda:170195 · «Beef, variety meats and by-products, thymus, cooked, braised» · columna «Phosphorus, P» = 364.0 MG → 364.0 mg · 2026-09-18",
@@ -22261,8 +22292,7 @@
    "valina": "usda:170195 · «Beef, variety meats and by-products, thymus, cooked, braised» · columna «Valine» = 0.947 G → 0.947 g · 2026-09-18",
    "vitB12": "usda:170195 · «Beef, variety meats and by-products, thymus, cooked, braised» · columna «Vitamin B-12» = 1.51 UG → 1.51 ug · 2026-09-18",
    "vitB6": "usda:170195 · «Beef, variety meats and by-products, thymus, cooked, braised» · columna «Vitamin B-6» = 0.08 MG → 0.08 mg · 2026-09-18",
-   "zinc": "usda:170195 · «Beef, variety meats and by-products, thymus, cooked, braised» · columna «Zinc, Zn» = 2.2 MG → 2.2 mg · 2026-09-18",
-   "energia": "usda:170195 · «Beef, variety meats and by-products, thymus, cooked, braised» · columna «Energy» = 319 KCAL · 2026-09-18"
+   "zinc": "usda:170195 · «Beef, variety meats and by-products, thymus, cooked, braised» · columna «Zinc, Zn» = 2.2 MG → 2.2 mg · 2026-09-18"
   },
   "cero_verificado": {
    "araquidonico": "Cero de la fuente que manda, comprobado el 2026-09-18: usda:170195 · «Beef, variety meats and by-products, thymus, cooked, braised» · columna «PUFA 20:4» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
@@ -22347,6 +22377,7 @@
    "cistina": "usda:169339 · «Carrots, cooked, boiled, drained, with salt» · columna «Cystine» = 0.068 G → 0.068 g · 2026-09-18",
    "cobre": "usda:169339 · «Carrots, cooked, boiled, drained, with salt» · columna «Copper, Cu» = 0.017 MG → 0.017 mg · 2026-09-18",
    "colina": "usda:169339 · «Carrots, cooked, boiled, drained, with salt» · columna «Choline, total» = 8.8 MG → 8.8 mg · 2026-09-18",
+   "energia": "usda:169339 · «Carrots, cooked, boiled, drained, with salt» · columna «Energy» = 35 KCAL · 2026-09-18",
    "fenilalanina": "usda:169339 · «Carrots, cooked, boiled, drained, with salt» · columna «Phenylalanine» = 0.05 G → 0.05 g · 2026-09-18",
    "fibra": "usda:169339 · «Carrots, cooked, boiled, drained, with salt» · columna «Fiber, total dietary» = 3.0 G → 3.0 g · 2026-09-18",
    "folato": "usda:169339 · «Carrots, cooked, boiled, drained, with salt» · columna «Folate, total» = 2.0 UG → 2.0 ug · 2026-09-18",
@@ -22375,8 +22406,7 @@
    "valina": "usda:169339 · «Carrots, cooked, boiled, drained, with salt» · columna «Valine» = 0.056 G → 0.056 g · 2026-09-18",
    "vitB6": "usda:169339 · «Carrots, cooked, boiled, drained, with salt» · columna «Vitamin B-6» = 0.153 MG → 0.153 mg · 2026-09-18",
    "vitE": "usda:169339 · «Carrots, cooked, boiled, drained, with salt» · columna «Vitamin E (alpha-tocopherol)» = 1.03 MG → 1.03 mg · 2026-09-18",
-   "zinc": "usda:169339 · «Carrots, cooked, boiled, drained, with salt» · columna «Zinc, Zn» = 0.2 MG → 0.2 mg · 2026-09-18",
-   "energia": "usda:169339 · «Carrots, cooked, boiled, drained, with salt» · columna «Energy» = 35 KCAL · 2026-09-18"
+   "zinc": "usda:169339 · «Carrots, cooked, boiled, drained, with salt» · columna «Zinc, Zn» = 0.2 MG → 0.2 mg · 2026-09-18"
   },
   "cero_verificado": {
    "araquidonico": "Cero de la fuente que manda, comprobado el 2026-09-18: usda:169339 · «Carrots, cooked, boiled, drained, with salt» · columna «PUFA 20:4» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
@@ -22388,5 +22418,688 @@
   "energia": 35.0,
   "humedad_g_100g": 90.17,
   "humedad_fuente": "usda:169339 · Carrots, cooked, boiled, drained, with salt"
+ },
+ {
+  "nombre": "Atún claro cocido",
+  "categoria": "Pescados y mariscos",
+  "preparacion": "cocido",
+  "fuentes_id": {
+   "usda": "172006"
+  },
+  "nutrientes": {
+   "proteina": 29.15,
+   "grasa": 0.59,
+   "dha": 0.105,
+   "epa": 0.015,
+   "linoleico": 0.023,
+   "linolenico": 0.002,
+   "araquidonico": 18.0,
+   "vitA": 0,
+   "vitD": 2.0,
+   "vitE": 0.29,
+   "folato": 2.0,
+   "niacina": 22.07,
+   "riboflavina": 0.137,
+   "tiamina": 0.134,
+   "vitB12": 2.35,
+   "vitB6": 1.038,
+   "calcio": 4.0,
+   "hierro": 0.92,
+   "potasio": 527.0,
+   "magnesio": 42.0,
+   "sodio": 54.0,
+   "fosforo": 333.0,
+   "yodo": 0,
+   "selenio": 108.2,
+   "zinc": 0.45,
+   "cobre": 0.043,
+   "manganeso": 0.013,
+   "acidoPantotenico": 0.334,
+   "colina": 77.6,
+   "cloruro": 0,
+   "fibra": 0,
+   "arginina": 1.671,
+   "histidina": 0.822,
+   "isoleucina": 1.287,
+   "leucina": 2.27,
+   "lisina": 2.565,
+   "metionina": 0.827,
+   "cistina": 0.3,
+   "fenilalanina": 1.091,
+   "tirosina": 0.943,
+   "treonina": 1.224,
+   "triptofano": 0.313,
+   "valina": 1.438,
+   "purinas": 0,
+   "taurina": 0,
+   "lcarnitina": 0
+  },
+  "sin_dato": [
+   "cloruro",
+   "lcarnitina",
+   "purinas",
+   "taurina",
+   "vitA",
+   "yodo"
+  ],
+  "se_pesa": "ya cocido",
+  "se_pesa_por_que": "Su composición sale de una fila de alimento YA COCINADO (usda:172006 «Fish, tuna, yellowfin, fresh, cooked, dry heat»), así que los gramos del menú son de producto cocinado.",
+  "aviso_al_comprar": "Se compra CRUDO y se da COCIDO: al horno o a la plancha, sin aceite, sin sal. ⚠️ Los gramos del menú son de producto YA COCIDO — pésalo DESPUÉS de cocinarlo, no antes.",
+  "composicion_fuente": {
+   "acidoPantotenico": "usda:172006 · «Fish, tuna, yellowfin, fresh, cooked, dry heat» · columna «Pantothenic acid» = 0.334 MG → 0.334 mg · 2026-09-18",
+   "araquidonico": "usda:172006 · «Fish, tuna, yellowfin, fresh, cooked, dry heat» · columna «PUFA 20:4» = 0.018 G ×1000 → 18.0 mg · 2026-09-18",
+   "arginina": "usda:172006 · «Fish, tuna, yellowfin, fresh, cooked, dry heat» · columna «Arginine» = 1.671 G → 1.671 g · 2026-09-18",
+   "calcio": "usda:172006 · «Fish, tuna, yellowfin, fresh, cooked, dry heat» · columna «Calcium, Ca» = 4.0 MG → 4.0 mg · 2026-09-18",
+   "cistina": "usda:172006 · «Fish, tuna, yellowfin, fresh, cooked, dry heat» · columna «Cystine» = 0.3 G → 0.3 g · 2026-09-18",
+   "cobre": "usda:172006 · «Fish, tuna, yellowfin, fresh, cooked, dry heat» · columna «Copper, Cu» = 0.043 MG → 0.043 mg · 2026-09-18",
+   "colina": "usda:172006 · «Fish, tuna, yellowfin, fresh, cooked, dry heat» · columna «Choline, total» = 77.6 MG → 77.6 mg · 2026-09-18",
+   "dha": "usda:172006 · «Fish, tuna, yellowfin, fresh, cooked, dry heat» · columna «PUFA 22:6 n-3 (DHA)» = 0.105 G → 0.105 g · 2026-09-18",
+   "epa": "usda:172006 · «Fish, tuna, yellowfin, fresh, cooked, dry heat» · columna «PUFA 20:5 n-3 (EPA)» = 0.015 G → 0.015 g · 2026-09-18",
+   "fenilalanina": "usda:172006 · «Fish, tuna, yellowfin, fresh, cooked, dry heat» · columna «Phenylalanine» = 1.091 G → 1.091 g · 2026-09-18",
+   "folato": "usda:172006 · «Fish, tuna, yellowfin, fresh, cooked, dry heat» · columna «Folate, total» = 2.0 UG → 2.0 ug · 2026-09-18",
+   "fosforo": "usda:172006 · «Fish, tuna, yellowfin, fresh, cooked, dry heat» · columna «Phosphorus, P» = 333.0 MG → 333.0 mg · 2026-09-18",
+   "grasa": "usda:172006 · «Fish, tuna, yellowfin, fresh, cooked, dry heat» · columna «Total lipid (fat)» = 0.59 G → 0.59 g · 2026-09-18",
+   "hierro": "usda:172006 · «Fish, tuna, yellowfin, fresh, cooked, dry heat» · columna «Iron, Fe» = 0.92 MG → 0.92 mg · 2026-09-18",
+   "histidina": "usda:172006 · «Fish, tuna, yellowfin, fresh, cooked, dry heat» · columna «Histidine» = 0.822 G → 0.822 g · 2026-09-18",
+   "isoleucina": "usda:172006 · «Fish, tuna, yellowfin, fresh, cooked, dry heat» · columna «Isoleucine» = 1.287 G → 1.287 g · 2026-09-18",
+   "leucina": "usda:172006 · «Fish, tuna, yellowfin, fresh, cooked, dry heat» · columna «Leucine» = 2.27 G → 2.27 g · 2026-09-18",
+   "linoleico": "usda:172006 · «Fish, tuna, yellowfin, fresh, cooked, dry heat» · columna «PUFA 18:2» = 0.023 G → 0.023 g · 2026-09-18",
+   "linolenico": "usda:172006 · «Fish, tuna, yellowfin, fresh, cooked, dry heat» · columna «PUFA 18:3» = 0.002 G → 0.002 g · 2026-09-18",
+   "lisina": "usda:172006 · «Fish, tuna, yellowfin, fresh, cooked, dry heat» · columna «Lysine» = 2.565 G → 2.565 g · 2026-09-18",
+   "magnesio": "usda:172006 · «Fish, tuna, yellowfin, fresh, cooked, dry heat» · columna «Magnesium, Mg» = 42.0 MG → 42.0 mg · 2026-09-18",
+   "manganeso": "usda:172006 · «Fish, tuna, yellowfin, fresh, cooked, dry heat» · columna «Manganese, Mn» = 0.013 MG → 0.013 mg · 2026-09-18",
+   "metionina": "usda:172006 · «Fish, tuna, yellowfin, fresh, cooked, dry heat» · columna «Methionine» = 0.827 G → 0.827 g · 2026-09-18",
+   "niacina": "usda:172006 · «Fish, tuna, yellowfin, fresh, cooked, dry heat» · columna «Niacin» = 22.07 MG → 22.07 mg · 2026-09-18",
+   "potasio": "usda:172006 · «Fish, tuna, yellowfin, fresh, cooked, dry heat» · columna «Potassium, K» = 527.0 MG → 527.0 mg · 2026-09-18",
+   "proteina": "usda:172006 · «Fish, tuna, yellowfin, fresh, cooked, dry heat» · columna «Protein» = 29.15 G → 29.15 g · 2026-09-18",
+   "riboflavina": "usda:172006 · «Fish, tuna, yellowfin, fresh, cooked, dry heat» · columna «Riboflavin» = 0.137 MG → 0.137 mg · 2026-09-18",
+   "selenio": "usda:172006 · «Fish, tuna, yellowfin, fresh, cooked, dry heat» · columna «Selenium, Se» = 108.2 UG → 108.2 ug · 2026-09-18",
+   "sodio": "usda:172006 · «Fish, tuna, yellowfin, fresh, cooked, dry heat» · columna «Sodium, Na» = 54.0 MG → 54.0 mg · 2026-09-18",
+   "tiamina": "usda:172006 · «Fish, tuna, yellowfin, fresh, cooked, dry heat» · columna «Thiamin» = 0.134 MG → 0.134 mg · 2026-09-18",
+   "tirosina": "usda:172006 · «Fish, tuna, yellowfin, fresh, cooked, dry heat» · columna «Tyrosine» = 0.943 G → 0.943 g · 2026-09-18",
+   "treonina": "usda:172006 · «Fish, tuna, yellowfin, fresh, cooked, dry heat» · columna «Threonine» = 1.224 G → 1.224 g · 2026-09-18",
+   "triptofano": "usda:172006 · «Fish, tuna, yellowfin, fresh, cooked, dry heat» · columna «Tryptophan» = 0.313 G → 0.313 g · 2026-09-18",
+   "valina": "usda:172006 · «Fish, tuna, yellowfin, fresh, cooked, dry heat» · columna «Valine» = 1.438 G → 1.438 g · 2026-09-18",
+   "vitB12": "usda:172006 · «Fish, tuna, yellowfin, fresh, cooked, dry heat» · columna «Vitamin B-12» = 2.35 UG → 2.35 ug · 2026-09-18",
+   "vitB6": "usda:172006 · «Fish, tuna, yellowfin, fresh, cooked, dry heat» · columna «Vitamin B-6» = 1.038 MG → 1.038 mg · 2026-09-18",
+   "vitD": "usda:172006 · «Fish, tuna, yellowfin, fresh, cooked, dry heat» · columna «Vitamin D (D2 + D3)» = 2.0 UG → 2.0 ug · 2026-09-18",
+   "vitE": "usda:172006 · «Fish, tuna, yellowfin, fresh, cooked, dry heat» · columna «Vitamin E (alpha-tocopherol)» = 0.29 MG → 0.29 mg · 2026-09-18",
+   "zinc": "usda:172006 · «Fish, tuna, yellowfin, fresh, cooked, dry heat» · columna «Zinc, Zn» = 0.45 MG → 0.45 mg · 2026-09-18"
+  },
+  "cero_verificado": {
+   "fibra": "Cero de la fuente que manda, comprobado el 2026-09-18: usda:172006 · «Fish, tuna, yellowfin, fresh, cooked, dry heat» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
+  },
+  "energia": 130.0,
+  "humedad_g_100g": 68.98,
+  "humedad_fuente": "usda:172006 · Fish, tuna, yellowfin, fresh, cooked, dry heat"
+ },
+ {
+  "nombre": "Cerdo cocido",
+  "categoria": "Carne muscular",
+  "preparacion": "cocido",
+  "fuentes_id": {
+   "ciqual": "28205"
+  },
+  "nutrientes": {
+   "proteina": 29.1,
+   "grasa": 9.78,
+   "dha": 0.0035,
+   "epa": 0.014,
+   "linoleico": 0.75,
+   "linolenico": 0.11,
+   "araquidonico": 34.0,
+   "vitA": 0,
+   "vitD": 0.51,
+   "vitE": 0.12,
+   "folato": 7.15,
+   "niacina": 6.69,
+   "riboflavina": 0.16,
+   "tiamina": 0.81,
+   "vitB12": 0.59,
+   "vitB6": 0.36,
+   "calcio": 10.1,
+   "hierro": 0.87,
+   "potasio": 378.0,
+   "magnesio": 28.5,
+   "sodio": 47.1,
+   "fosforo": 224.0,
+   "yodo": 5.68,
+   "selenio": 15.8,
+   "zinc": 2.38,
+   "cobre": 0.068,
+   "manganeso": 0.013,
+   "acidoPantotenico": 0.67,
+   "colina": 0,
+   "cloruro": 0,
+   "fibra": 0,
+   "arginina": 0,
+   "histidina": 0,
+   "isoleucina": 0,
+   "leucina": 0,
+   "lisina": 0,
+   "metionina": 0,
+   "cistina": 0,
+   "fenilalanina": 0,
+   "tirosina": 0,
+   "treonina": 0,
+   "triptofano": 0,
+   "valina": 0,
+   "purinas": 0,
+   "taurina": 0,
+   "lcarnitina": 0
+  },
+  "sin_dato": [
+   "arginina",
+   "cistina",
+   "cloruro",
+   "colina",
+   "fenilalanina",
+   "histidina",
+   "isoleucina",
+   "lcarnitina",
+   "leucina",
+   "lisina",
+   "metionina",
+   "purinas",
+   "taurina",
+   "tirosina",
+   "treonina",
+   "triptofano",
+   "valina",
+   "vitA"
+  ],
+  "se_pesa": "ya cocido",
+  "se_pesa_por_que": "Su composición sale de una fila de alimento YA COCINADO (ciqual:28205 «Porc, viande, cuite (aliment moyen)»), así que los gramos del menú son de producto cocinado.",
+  "aviso_al_comprar": "Se compra CRUDO y se da COCIDO: hervido o al horno, hecho del todo por dentro y sin sal. ⚠️ Los gramos del menú son de producto YA COCIDO — pésalo DESPUÉS de cocinarlo, no antes.",
+  "nota_datos": "⚠️ EL CERDO EXISTE COCIDO Y NO EXISTE CRUDO, y es el único alimento del catálogo que va solo en un modo por una razón que no es de dato (18 de septiembre de 2026). La enfermedad de Aujeszky o pseudorrabia es «poco frecuente pero mortal» y «se cree que la mayoría de los casos en perros son el resultado de la ingestión de carne de cerdo cruda infectada» (Ettinger & Feldman, leído en `LECTURA_ETTINGER.md`). Cocinar la carne quita exactamente ese motivo, así que la ficha entra en modo cocinado y `modos_de` la deja fuera del crudo por su `preparacion`. || ⚠️ EL HÍGADO DE CERDO NO ENTRA NI COCIDO: su cobre tiene disponibilidad «essentially zero» (SACN5 cap.6, escrito en `sacn5_fuentes_de_minerales.json` desde el 9 de septiembre esperando a este día), y eso no lo cambia el calor. || Composición de ciqual:28205 «Porc, viande, cuite (aliment moyen)», que es la media de cortes cocidos que publica la fuente: 71,5 % de proteína y 24,0 % de grasa sobre materia seca, contra 64,4/30,6 de «Porc, longe, crue» (28003). Se rechazó «Porc, filet, maigre, en rôti, cuit» (28202) porque su hermana cruda da 82,8/14,1 y ella 70,2/23,3: el «rôti» trae grasa que el filete magro no tiene.",
+  "composicion_fuente": {
+   "acidoPantotenico": "ciqual:28205 · «Porc, viande, cuite (aliment moyen)» · columna «Vitamine B5 ou Acide pantothénique (mg/100 g)» = 0.67 mg → 0.67 mg · 2026-09-18",
+   "araquidonico": "ciqual:28205 · «Porc, viande, cuite (aliment moyen)» · columna «AG 20:4 5c,8c,11c,14c (n-6), arachidonique (g/100 g)» = 0.034 g ×1000 → 34.0 mg · 2026-09-18",
+   "calcio": "ciqual:28205 · «Porc, viande, cuite (aliment moyen)» · columna «Calcium (mg/100 g)» = 10.1 mg → 10.1 mg · 2026-09-18",
+   "cobre": "ciqual:28205 · «Porc, viande, cuite (aliment moyen)» · columna «Cuivre (mg/100 g)» = 0.068 mg → 0.068 mg · 2026-09-18",
+   "dha": "ciqual:28205 · «Porc, viande, cuite (aliment moyen)» · columna «AG 22:6 4c,7c,10c,13c,16c,19c (n-3) DHA (g/100 g)» = 0.0035 g → 0.0035 g · 2026-09-18",
+   "epa": "ciqual:28205 · «Porc, viande, cuite (aliment moyen)» · columna «AG 20:5 5c,8c,11c,14c,17c (n-3) EPA (g/100 g)» = 0.014 g → 0.014 g · 2026-09-18",
+   "folato": "ciqual:28205 · «Porc, viande, cuite (aliment moyen)» · columna «Vitamine B9 ou Folates totaux (µg/100 g)» = 7.15 ug → 7.15 ug · 2026-09-18",
+   "fosforo": "ciqual:28205 · «Porc, viande, cuite (aliment moyen)» · columna «Phosphore (mg/100 g)» = 224.0 mg → 224.0 mg · 2026-09-18",
+   "grasa": "ciqual:28205 · «Porc, viande, cuite (aliment moyen)» · columna «Lipides (g/100 g)» = 9.78 g → 9.78 g · 2026-09-18",
+   "hierro": "ciqual:28205 · «Porc, viande, cuite (aliment moyen)» · columna «Fer (mg/100 g)» = 0.87 mg → 0.87 mg · 2026-09-18",
+   "linoleico": "ciqual:28205 · «Porc, viande, cuite (aliment moyen)» · columna «AG 18:2 9c,12c (n-6), linoléique (g/100 g)» = 0.75 g → 0.75 g · 2026-09-18",
+   "linolenico": "ciqual:28205 · «Porc, viande, cuite (aliment moyen)» · columna «AG 18:3 c9,c12,c15 (n-3), alpha-linolénique (g/100 g)» = 0.11 g → 0.11 g · 2026-09-18",
+   "magnesio": "ciqual:28205 · «Porc, viande, cuite (aliment moyen)» · columna «Magnésium (mg/100 g)» = 28.5 mg → 28.5 mg · 2026-09-18",
+   "manganeso": "ciqual:28205 · «Porc, viande, cuite (aliment moyen)» · columna «Manganèse (mg/100 g)» = 0.013 mg → 0.013 mg · 2026-09-18",
+   "niacina": "ciqual:28205 · «Porc, viande, cuite (aliment moyen)» · columna «Vitamine B3 ou PP ou Niacine (mg/100 g)» = 6.69 mg → 6.69 mg · 2026-09-18",
+   "potasio": "ciqual:28205 · «Porc, viande, cuite (aliment moyen)» · columna «Potassium (mg/100 g)» = 378.0 mg → 378.0 mg · 2026-09-18",
+   "proteina": "ciqual:28205 · «Porc, viande, cuite (aliment moyen)» · columna «Protéines, N x 6.25 (g/100 g)» = 29.1 g → 29.1 g · 2026-09-18",
+   "riboflavina": "ciqual:28205 · «Porc, viande, cuite (aliment moyen)» · columna «Vitamine B2 ou Riboflavine (mg/100 g)» = 0.16 mg → 0.16 mg · 2026-09-18",
+   "selenio": "ciqual:28205 · «Porc, viande, cuite (aliment moyen)» · columna «Sélénium (µg/100 g)» = 15.8 ug → 15.8 ug · 2026-09-18",
+   "sodio": "ciqual:28205 · «Porc, viande, cuite (aliment moyen)» · columna «Sodium (mg/100 g)» = 47.1 mg → 47.1 mg · 2026-09-18",
+   "tiamina": "ciqual:28205 · «Porc, viande, cuite (aliment moyen)» · columna «Vitamine B1 ou Thiamine (mg/100 g)» = 0.81 mg → 0.81 mg · 2026-09-18",
+   "vitB12": "ciqual:28205 · «Porc, viande, cuite (aliment moyen)» · columna «Vitamine B12 (µg/100 g)» = 0.59 ug → 0.59 ug · 2026-09-18",
+   "vitB6": "ciqual:28205 · «Porc, viande, cuite (aliment moyen)» · columna «Vitamine B6 (mg/100 g)» = 0.36 mg → 0.36 mg · 2026-09-18",
+   "vitD": "ciqual:28205 · «Porc, viande, cuite (aliment moyen)» · columna «Vitamine D (µg/100 g)» = 0.51 ug → 0.51 ug · 2026-09-18",
+   "vitE": "ciqual:28205 · «Porc, viande, cuite (aliment moyen)» · columna «Vitamine E (mg/100 g)» = 0.12 mg → 0.12 mg · 2026-09-18",
+   "yodo": "ciqual:28205 · «Porc, viande, cuite (aliment moyen)» · columna «Iode (µg/100 g)» = 5.68 ug → 5.68 ug · 2026-09-18",
+   "zinc": "ciqual:28205 · «Porc, viande, cuite (aliment moyen)» · columna «Zinc (mg/100 g)» = 2.38 mg → 2.38 mg · 2026-09-18"
+  },
+  "cero_verificado": {
+   "fibra": "Cero de la fuente que manda, comprobado el 2026-09-18: ciqual:28205 · «Porc, viande, cuite (aliment moyen)» · columna «Fibres alimentaires (g/100 g)» = 0.0 g. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
+  },
+  "energia": 205.0,
+  "humedad_g_100g": 59.3,
+  "humedad_fuente": "ciqual:28205 · Porc, viande, cuite (aliment moyen)"
+ },
+ {
+  "nombre": "Dorada cocida",
+  "categoria": "Pescados y mariscos",
+  "preparacion": "cocido",
+  "fuentes_id": {
+   "ciqual": "27031"
+  },
+  "nutrientes": {
+   "proteina": 23.6,
+   "grasa": 5.9,
+   "dha": 0.42,
+   "epa": 0.18,
+   "linoleico": 0.74,
+   "linolenico": 0.16,
+   "araquidonico": 30.0,
+   "vitA": 0,
+   "vitD": 5.71,
+   "vitE": 0.65,
+   "folato": 17.2,
+   "niacina": 6.41,
+   "riboflavina": 0,
+   "tiamina": 0,
+   "vitB12": 2.37,
+   "vitB6": 0.26,
+   "calcio": 13.0,
+   "hierro": 0.2,
+   "potasio": 420.0,
+   "magnesio": 29.0,
+   "sodio": 71.0,
+   "fosforo": 230.0,
+   "yodo": 0,
+   "selenio": 0,
+   "zinc": 0.48,
+   "cobre": 0.02,
+   "manganeso": 0,
+   "acidoPantotenico": 0.4,
+   "colina": 0,
+   "cloruro": 132.0,
+   "fibra": 0,
+   "arginina": 0,
+   "histidina": 0,
+   "isoleucina": 0,
+   "leucina": 0,
+   "lisina": 0,
+   "metionina": 0,
+   "cistina": 0,
+   "fenilalanina": 0,
+   "tirosina": 0,
+   "treonina": 0,
+   "triptofano": 0,
+   "valina": 0,
+   "purinas": 0,
+   "taurina": 0,
+   "lcarnitina": 0
+  },
+  "sin_dato": [
+   "arginina",
+   "cistina",
+   "colina",
+   "fenilalanina",
+   "histidina",
+   "isoleucina",
+   "lcarnitina",
+   "leucina",
+   "lisina",
+   "manganeso",
+   "metionina",
+   "purinas",
+   "riboflavina",
+   "selenio",
+   "taurina",
+   "tiamina",
+   "tirosina",
+   "treonina",
+   "triptofano",
+   "valina",
+   "vitA",
+   "yodo"
+  ],
+  "se_pesa": "ya cocido",
+  "se_pesa_por_que": "Su composición sale de una fila de alimento YA COCINADO (ciqual:27031 «Dorade (Daurade) royale, cuite au four»), así que los gramos del menú son de producto cocinado.",
+  "aviso_al_comprar": "Se compra CRUDO y se da COCIDO: al horno, sin aceite, sin sal. ⚠️ Los gramos del menú son de producto YA COCIDO — pésalo DESPUÉS de cocinarlo, no antes.",
+  "composicion_fuente": {
+   "acidoPantotenico": "ciqual:27031 · «Dorade (Daurade) royale, cuite au four» · columna «Vitamine B5 ou Acide pantothénique (mg/100 g)» = 0.4 mg → 0.4 mg · 2026-09-18",
+   "araquidonico": "ciqual:27031 · «Dorade (Daurade) royale, cuite au four» · columna «AG 20:4 5c,8c,11c,14c (n-6), arachidonique (g/100 g)» = 0.03 g ×1000 → 30.0 mg · 2026-09-18",
+   "calcio": "ciqual:27031 · «Dorade (Daurade) royale, cuite au four» · columna «Calcium (mg/100 g)» = 13.0 mg → 13.0 mg · 2026-09-18",
+   "cloruro": "ciqual:27031 · «Dorade (Daurade) royale, cuite au four» · columna «Chlorure (mg/100 g)» = 132.0 mg → 132.0 mg · 2026-09-18",
+   "cobre": "ciqual:27031 · «Dorade (Daurade) royale, cuite au four» · columna «Cuivre (mg/100 g)» = 0.02 mg → 0.02 mg · 2026-09-18",
+   "dha": "ciqual:27031 · «Dorade (Daurade) royale, cuite au four» · columna «AG 22:6 4c,7c,10c,13c,16c,19c (n-3) DHA (g/100 g)» = 0.42 g → 0.42 g · 2026-09-18",
+   "epa": "ciqual:27031 · «Dorade (Daurade) royale, cuite au four» · columna «AG 20:5 5c,8c,11c,14c,17c (n-3) EPA (g/100 g)» = 0.18 g → 0.18 g · 2026-09-18",
+   "folato": "ciqual:27031 · «Dorade (Daurade) royale, cuite au four» · columna «Vitamine B9 ou Folates totaux (µg/100 g)» = 17.2 ug → 17.2 ug · 2026-09-18",
+   "fosforo": "ciqual:27031 · «Dorade (Daurade) royale, cuite au four» · columna «Phosphore (mg/100 g)» = 230.0 mg → 230.0 mg · 2026-09-18",
+   "grasa": "ciqual:27031 · «Dorade (Daurade) royale, cuite au four» · columna «Lipides (g/100 g)» = 5.9 g → 5.9 g · 2026-09-18",
+   "hierro": "ciqual:27031 · «Dorade (Daurade) royale, cuite au four» · columna «Fer (mg/100 g)» = 0.2 mg → 0.2 mg · 2026-09-18",
+   "linoleico": "ciqual:27031 · «Dorade (Daurade) royale, cuite au four» · columna «AG 18:2 9c,12c (n-6), linoléique (g/100 g)» = 0.74 g → 0.74 g · 2026-09-18",
+   "linolenico": "ciqual:27031 · «Dorade (Daurade) royale, cuite au four» · columna «AG 18:3 c9,c12,c15 (n-3), alpha-linolénique (g/100 g)» = 0.16 g → 0.16 g · 2026-09-18",
+   "magnesio": "ciqual:27031 · «Dorade (Daurade) royale, cuite au four» · columna «Magnésium (mg/100 g)» = 29.0 mg → 29.0 mg · 2026-09-18",
+   "niacina": "ciqual:27031 · «Dorade (Daurade) royale, cuite au four» · columna «Vitamine B3 ou PP ou Niacine (mg/100 g)» = 6.41 mg → 6.41 mg · 2026-09-18",
+   "potasio": "ciqual:27031 · «Dorade (Daurade) royale, cuite au four» · columna «Potassium (mg/100 g)» = 420.0 mg → 420.0 mg · 2026-09-18",
+   "proteina": "ciqual:27031 · «Dorade (Daurade) royale, cuite au four» · columna «Protéines, N x 6.25 (g/100 g)» = 23.6 g → 23.6 g · 2026-09-18",
+   "sodio": "ciqual:27031 · «Dorade (Daurade) royale, cuite au four» · columna «Sodium (mg/100 g)» = 71.0 mg → 71.0 mg · 2026-09-18",
+   "vitB12": "ciqual:27031 · «Dorade (Daurade) royale, cuite au four» · columna «Vitamine B12 (µg/100 g)» = 2.37 ug → 2.37 ug · 2026-09-18",
+   "vitB6": "ciqual:27031 · «Dorade (Daurade) royale, cuite au four» · columna «Vitamine B6 (mg/100 g)» = 0.26 mg → 0.26 mg · 2026-09-18",
+   "vitD": "ciqual:27031 · «Dorade (Daurade) royale, cuite au four» · columna «Vitamine D (µg/100 g)» = 5.71 ug → 5.71 ug · 2026-09-18",
+   "vitE": "ciqual:27031 · «Dorade (Daurade) royale, cuite au four» · columna «Vitamine E (mg/100 g)» = 0.65 mg → 0.65 mg · 2026-09-18",
+   "zinc": "ciqual:27031 · «Dorade (Daurade) royale, cuite au four» · columna «Zinc (mg/100 g)» = 0.48 mg → 0.48 mg · 2026-09-18"
+  },
+  "cero_verificado": {
+   "fibra": "Cero de la fuente que manda, comprobado el 2026-09-18: ciqual:27031 · «Dorade (Daurade) royale, cuite au four» · columna «Fibres alimentaires (g/100 g)» = 0.0 g. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
+  },
+  "energia": 148.0,
+  "humedad_g_100g": 68.8,
+  "humedad_fuente": "ciqual:27031 · Dorade (Daurade) royale, cuite au four"
+ },
+ {
+  "nombre": "Pulpo cocido",
+  "categoria": "Pescados y mariscos",
+  "preparacion": "cocido",
+  "fuentes_id": {
+   "usda": "174249"
+  },
+  "nutrientes": {
+   "proteina": 29.82,
+   "grasa": 2.08,
+   "dha": 0.162,
+   "epa": 0.152,
+   "linoleico": 0.018,
+   "linolenico": 0,
+   "araquidonico": 78.0,
+   "vitA": 0,
+   "vitD": 0,
+   "vitE": 1.2,
+   "folato": 24.0,
+   "niacina": 3.78,
+   "riboflavina": 0.076,
+   "tiamina": 0.057,
+   "vitB12": 36.0,
+   "vitB6": 0.648,
+   "calcio": 106.0,
+   "hierro": 9.54,
+   "potasio": 630.0,
+   "magnesio": 60.0,
+   "sodio": 460.0,
+   "fosforo": 279.0,
+   "yodo": 0,
+   "selenio": 89.6,
+   "zinc": 3.36,
+   "cobre": 0.739,
+   "manganeso": 0.047,
+   "acidoPantotenico": 0.9,
+   "colina": 81.0,
+   "cloruro": 0,
+   "fibra": 0,
+   "arginina": 2.176,
+   "histidina": 0.573,
+   "isoleucina": 1.298,
+   "leucina": 2.099,
+   "lisina": 2.228,
+   "metionina": 0.673,
+   "cistina": 0.391,
+   "fenilalanina": 1.069,
+   "tirosina": 0.954,
+   "treonina": 1.283,
+   "triptofano": 0.334,
+   "valina": 1.303,
+   "purinas": 0,
+   "taurina": 0,
+   "lcarnitina": 0
+  },
+  "sin_dato": [
+   "cloruro",
+   "lcarnitina",
+   "purinas",
+   "taurina",
+   "vitA",
+   "yodo"
+  ],
+  "se_pesa": "ya cocido",
+  "se_pesa_por_que": "Su composición sale de una fila de alimento YA COCINADO (usda:174249 «Mollusks, octopus, common, cooked, moist heat»), así que los gramos del menú son de producto cocinado.",
+  "aviso_al_comprar": "Se compra CRUDO y se da COCIDO: hervido en agua, sin sal. ⚠️ Los gramos del menú son de producto YA COCIDO — pésalo DESPUÉS de cocinarlo, no antes.",
+  "composicion_fuente": {
+   "acidoPantotenico": "usda:174249 · «Mollusks, octopus, common, cooked, moist heat» · columna «Pantothenic acid» = 0.9 MG → 0.9 mg · 2026-09-18",
+   "araquidonico": "usda:174249 · «Mollusks, octopus, common, cooked, moist heat» · columna «PUFA 20:4» = 0.078 G ×1000 → 78.0 mg · 2026-09-18",
+   "arginina": "usda:174249 · «Mollusks, octopus, common, cooked, moist heat» · columna «Arginine» = 2.176 G → 2.176 g · 2026-09-18",
+   "calcio": "usda:174249 · «Mollusks, octopus, common, cooked, moist heat» · columna «Calcium, Ca» = 106.0 MG → 106.0 mg · 2026-09-18",
+   "cistina": "usda:174249 · «Mollusks, octopus, common, cooked, moist heat» · columna «Cystine» = 0.391 G → 0.391 g · 2026-09-18",
+   "cobre": "usda:174249 · «Mollusks, octopus, common, cooked, moist heat» · columna «Copper, Cu» = 0.739 MG → 0.739 mg · 2026-09-18",
+   "colina": "usda:174249 · «Mollusks, octopus, common, cooked, moist heat» · columna «Choline, total» = 81.0 MG → 81.0 mg · 2026-09-18",
+   "dha": "usda:174249 · «Mollusks, octopus, common, cooked, moist heat» · columna «PUFA 22:6 n-3 (DHA)» = 0.162 G → 0.162 g · 2026-09-18",
+   "epa": "usda:174249 · «Mollusks, octopus, common, cooked, moist heat» · columna «PUFA 20:5 n-3 (EPA)» = 0.152 G → 0.152 g · 2026-09-18",
+   "fenilalanina": "usda:174249 · «Mollusks, octopus, common, cooked, moist heat» · columna «Phenylalanine» = 1.069 G → 1.069 g · 2026-09-18",
+   "folato": "usda:174249 · «Mollusks, octopus, common, cooked, moist heat» · columna «Folate, total» = 24.0 UG → 24.0 ug · 2026-09-18",
+   "fosforo": "usda:174249 · «Mollusks, octopus, common, cooked, moist heat» · columna «Phosphorus, P» = 279.0 MG → 279.0 mg · 2026-09-18",
+   "grasa": "usda:174249 · «Mollusks, octopus, common, cooked, moist heat» · columna «Total lipid (fat)» = 2.08 G → 2.08 g · 2026-09-18",
+   "hierro": "usda:174249 · «Mollusks, octopus, common, cooked, moist heat» · columna «Iron, Fe» = 9.54 MG → 9.54 mg · 2026-09-18",
+   "histidina": "usda:174249 · «Mollusks, octopus, common, cooked, moist heat» · columna «Histidine» = 0.573 G → 0.573 g · 2026-09-18",
+   "isoleucina": "usda:174249 · «Mollusks, octopus, common, cooked, moist heat» · columna «Isoleucine» = 1.298 G → 1.298 g · 2026-09-18",
+   "leucina": "usda:174249 · «Mollusks, octopus, common, cooked, moist heat» · columna «Leucine» = 2.099 G → 2.099 g · 2026-09-18",
+   "linoleico": "usda:174249 · «Mollusks, octopus, common, cooked, moist heat» · columna «PUFA 18:2» = 0.018 G → 0.018 g · 2026-09-18",
+   "lisina": "usda:174249 · «Mollusks, octopus, common, cooked, moist heat» · columna «Lysine» = 2.228 G → 2.228 g · 2026-09-18",
+   "magnesio": "usda:174249 · «Mollusks, octopus, common, cooked, moist heat» · columna «Magnesium, Mg» = 60.0 MG → 60.0 mg · 2026-09-18",
+   "manganeso": "usda:174249 · «Mollusks, octopus, common, cooked, moist heat» · columna «Manganese, Mn» = 0.047 MG → 0.047 mg · 2026-09-18",
+   "metionina": "usda:174249 · «Mollusks, octopus, common, cooked, moist heat» · columna «Methionine» = 0.673 G → 0.673 g · 2026-09-18",
+   "niacina": "usda:174249 · «Mollusks, octopus, common, cooked, moist heat» · columna «Niacin» = 3.78 MG → 3.78 mg · 2026-09-18",
+   "potasio": "usda:174249 · «Mollusks, octopus, common, cooked, moist heat» · columna «Potassium, K» = 630.0 MG → 630.0 mg · 2026-09-18",
+   "proteina": "usda:174249 · «Mollusks, octopus, common, cooked, moist heat» · columna «Protein» = 29.82 G → 29.82 g · 2026-09-18",
+   "riboflavina": "usda:174249 · «Mollusks, octopus, common, cooked, moist heat» · columna «Riboflavin» = 0.076 MG → 0.076 mg · 2026-09-18",
+   "selenio": "usda:174249 · «Mollusks, octopus, common, cooked, moist heat» · columna «Selenium, Se» = 89.6 UG → 89.6 ug · 2026-09-18",
+   "sodio": "usda:174249 · «Mollusks, octopus, common, cooked, moist heat» · columna «Sodium, Na» = 460.0 MG → 460.0 mg · 2026-09-18",
+   "tiamina": "usda:174249 · «Mollusks, octopus, common, cooked, moist heat» · columna «Thiamin» = 0.057 MG → 0.057 mg · 2026-09-18",
+   "tirosina": "usda:174249 · «Mollusks, octopus, common, cooked, moist heat» · columna «Tyrosine» = 0.954 G → 0.954 g · 2026-09-18",
+   "treonina": "usda:174249 · «Mollusks, octopus, common, cooked, moist heat» · columna «Threonine» = 1.283 G → 1.283 g · 2026-09-18",
+   "triptofano": "usda:174249 · «Mollusks, octopus, common, cooked, moist heat» · columna «Tryptophan» = 0.334 G → 0.334 g · 2026-09-18",
+   "valina": "usda:174249 · «Mollusks, octopus, common, cooked, moist heat» · columna «Valine» = 1.303 G → 1.303 g · 2026-09-18",
+   "vitB12": "usda:174249 · «Mollusks, octopus, common, cooked, moist heat» · columna «Vitamin B-12» = 36.0 UG → 36.0 ug · 2026-09-18",
+   "vitB6": "usda:174249 · «Mollusks, octopus, common, cooked, moist heat» · columna «Vitamin B-6» = 0.648 MG → 0.648 mg · 2026-09-18",
+   "vitE": "usda:174249 · «Mollusks, octopus, common, cooked, moist heat» · columna «Vitamin E (alpha-tocopherol)» = 1.2 MG → 1.2 mg · 2026-09-18",
+   "zinc": "usda:174249 · «Mollusks, octopus, common, cooked, moist heat» · columna «Zinc, Zn» = 3.36 MG → 3.36 mg · 2026-09-18"
+  },
+  "cero_verificado": {
+   "fibra": "Cero de la fuente que manda, comprobado el 2026-09-18: usda:174249 · «Mollusks, octopus, common, cooked, moist heat» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
+   "linolenico": "Cero de la fuente que manda, comprobado el 2026-09-18: usda:174249 · «Mollusks, octopus, common, cooked, moist heat» · columna «PUFA 18:3» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
+   "vitD": "Cero de la fuente que manda, comprobado el 2026-09-18: usda:174249 · «Mollusks, octopus, common, cooked, moist heat» · columna «Vitamin D (D2 + D3)» = 0.0 UG. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
+  },
+  "energia": 164.0,
+  "humedad_g_100g": 60.5,
+  "humedad_fuente": "usda:174249 · Mollusks, octopus, common, cooked, moist heat"
+ },
+ {
+  "nombre": "Ternera cocida",
+  "categoria": "Carne muscular",
+  "preparacion": "cocido",
+  "fuentes_id": {
+   "ciqual": "6564"
+  },
+  "nutrientes": {
+   "proteina": 29.0,
+   "grasa": 5.55,
+   "dha": 0.0015,
+   "epa": 0,
+   "linoleico": 0.35,
+   "linolenico": 0.014,
+   "araquidonico": 71.0,
+   "vitA": 0,
+   "vitD": 0,
+   "vitE": 0.57,
+   "folato": 0,
+   "niacina": 7.38,
+   "riboflavina": 0,
+   "tiamina": 0.14,
+   "vitB12": 1.92,
+   "vitB6": 0.41,
+   "calcio": 14.9,
+   "hierro": 0.95,
+   "potasio": 0,
+   "magnesio": 27.0,
+   "sodio": 101.0,
+   "fosforo": 0,
+   "yodo": 0,
+   "selenio": 8.78,
+   "zinc": 4.46,
+   "cobre": 0.085,
+   "manganeso": 0.035,
+   "acidoPantotenico": 0.61,
+   "colina": 0,
+   "cloruro": 0,
+   "fibra": 0.053,
+   "arginina": 0,
+   "histidina": 0,
+   "isoleucina": 0,
+   "leucina": 0,
+   "lisina": 0,
+   "metionina": 0,
+   "cistina": 0,
+   "fenilalanina": 0,
+   "tirosina": 0,
+   "treonina": 0,
+   "triptofano": 0,
+   "valina": 0,
+   "purinas": 0,
+   "taurina": 0,
+   "lcarnitina": 0
+  },
+  "sin_dato": [
+   "arginina",
+   "cistina",
+   "cloruro",
+   "colina",
+   "epa",
+   "fenilalanina",
+   "folato",
+   "fosforo",
+   "histidina",
+   "isoleucina",
+   "lcarnitina",
+   "leucina",
+   "lisina",
+   "metionina",
+   "potasio",
+   "purinas",
+   "riboflavina",
+   "taurina",
+   "tirosina",
+   "treonina",
+   "triptofano",
+   "valina",
+   "vitA",
+   "vitD",
+   "yodo"
+  ],
+  "se_pesa": "ya cocido",
+  "se_pesa_por_que": "Su composición sale de una fila de alimento YA COCINADO (ciqual:6564 «Veau, viande, cuite (aliment moyen)»), así que los gramos del menú son de producto cocinado.",
+  "aviso_al_comprar": "Se compra CRUDO y se da COCIDO: hervido o guisado sin sal. ⚠️ Los gramos del menú son de producto YA COCIDO — pésalo DESPUÉS de cocinarlo, no antes.",
+  "composicion_fuente": {
+   "acidoPantotenico": "ciqual:6564 · «Veau, viande, cuite (aliment moyen)» · columna «Vitamine B5 ou Acide pantothénique (mg/100 g)» = 0.61 mg → 0.61 mg · 2026-09-18",
+   "araquidonico": "ciqual:6564 · «Veau, viande, cuite (aliment moyen)» · columna «AG 20:4 5c,8c,11c,14c (n-6), arachidonique (g/100 g)» = 0.071 g ×1000 → 71.0 mg · 2026-09-18",
+   "calcio": "ciqual:6564 · «Veau, viande, cuite (aliment moyen)» · columna «Calcium (mg/100 g)» = 14.9 mg → 14.9 mg · 2026-09-18",
+   "cobre": "ciqual:6564 · «Veau, viande, cuite (aliment moyen)» · columna «Cuivre (mg/100 g)» = 0.085 mg → 0.085 mg · 2026-09-18",
+   "dha": "ciqual:6564 · «Veau, viande, cuite (aliment moyen)» · columna «AG 22:6 4c,7c,10c,13c,16c,19c (n-3) DHA (g/100 g)» = 0.0015 g → 0.0015 g · 2026-09-18",
+   "fibra": "ciqual:6564 · «Veau, viande, cuite (aliment moyen)» · columna «Fibres alimentaires (g/100 g)» = 0.053 g → 0.053 g · 2026-09-18",
+   "grasa": "ciqual:6564 · «Veau, viande, cuite (aliment moyen)» · columna «Lipides (g/100 g)» = 5.55 g → 5.55 g · 2026-09-18",
+   "hierro": "ciqual:6564 · «Veau, viande, cuite (aliment moyen)» · columna «Fer (mg/100 g)» = 0.95 mg → 0.95 mg · 2026-09-18",
+   "linoleico": "ciqual:6564 · «Veau, viande, cuite (aliment moyen)» · columna «AG 18:2 9c,12c (n-6), linoléique (g/100 g)» = 0.35 g → 0.35 g · 2026-09-18",
+   "linolenico": "ciqual:6564 · «Veau, viande, cuite (aliment moyen)» · columna «AG 18:3 c9,c12,c15 (n-3), alpha-linolénique (g/100 g)» = 0.014 g → 0.014 g · 2026-09-18",
+   "magnesio": "ciqual:6564 · «Veau, viande, cuite (aliment moyen)» · columna «Magnésium (mg/100 g)» = 27.0 mg → 27.0 mg · 2026-09-18",
+   "manganeso": "ciqual:6564 · «Veau, viande, cuite (aliment moyen)» · columna «Manganèse (mg/100 g)» = 0.035 mg → 0.035 mg · 2026-09-18",
+   "niacina": "ciqual:6564 · «Veau, viande, cuite (aliment moyen)» · columna «Vitamine B3 ou PP ou Niacine (mg/100 g)» = 7.38 mg → 7.38 mg · 2026-09-18",
+   "proteina": "ciqual:6564 · «Veau, viande, cuite (aliment moyen)» · columna «Protéines, N x 6.25 (g/100 g)» = 29.0 g → 29.0 g · 2026-09-18",
+   "selenio": "ciqual:6564 · «Veau, viande, cuite (aliment moyen)» · columna «Sélénium (µg/100 g)» = 8.78 ug → 8.78 ug · 2026-09-18",
+   "sodio": "ciqual:6564 · «Veau, viande, cuite (aliment moyen)» · columna «Sodium (mg/100 g)» = 101.0 mg → 101.0 mg · 2026-09-18",
+   "tiamina": "ciqual:6564 · «Veau, viande, cuite (aliment moyen)» · columna «Vitamine B1 ou Thiamine (mg/100 g)» = 0.14 mg → 0.14 mg · 2026-09-18",
+   "vitB12": "ciqual:6564 · «Veau, viande, cuite (aliment moyen)» · columna «Vitamine B12 (µg/100 g)» = 1.92 ug → 1.92 ug · 2026-09-18",
+   "vitB6": "ciqual:6564 · «Veau, viande, cuite (aliment moyen)» · columna «Vitamine B6 (mg/100 g)» = 0.41 mg → 0.41 mg · 2026-09-18",
+   "vitE": "ciqual:6564 · «Veau, viande, cuite (aliment moyen)» · columna «Vitamine E (mg/100 g)» = 0.57 mg → 0.57 mg · 2026-09-18",
+   "zinc": "ciqual:6564 · «Veau, viande, cuite (aliment moyen)» · columna «Zinc (mg/100 g)» = 4.46 mg → 4.46 mg · 2026-09-18"
+  },
+  "energia": 169.0,
+  "humedad_g_100g": 63.7,
+  "humedad_fuente": "ciqual:6564 · Veau, viande, cuite (aliment moyen)"
+ },
+ {
+  "nombre": "Solomillo de vaca cocido",
+  "categoria": "Carne muscular",
+  "preparacion": "cocido",
+  "fuentes_id": {
+   "bedca": "996"
+  },
+  "nutrientes": {
+   "proteina": 28.1,
+   "grasa": 5.8447,
+   "dha": 0,
+   "epa": 0,
+   "linoleico": 0,
+   "linolenico": 0,
+   "araquidonico": 0,
+   "vitA": 0,
+   "vitD": 0,
+   "vitE": 0.3,
+   "folato": 15.0,
+   "niacina": 4.5,
+   "riboflavina": 0.3,
+   "tiamina": 0.09,
+   "vitB12": 2.0,
+   "vitB6": 0.4,
+   "calcio": 6.0,
+   "hierro": 3.0,
+   "potasio": 400.0,
+   "magnesio": 25.0,
+   "sodio": 60.0,
+   "fosforo": 240.0,
+   "yodo": 6.0,
+   "selenio": 3.0,
+   "zinc": 4.3,
+   "cobre": 0,
+   "manganeso": 0,
+   "acidoPantotenico": 0,
+   "colina": 0,
+   "cloruro": 0,
+   "fibra": 0,
+   "arginina": 0,
+   "histidina": 0,
+   "isoleucina": 0,
+   "leucina": 0,
+   "lisina": 0,
+   "metionina": 0,
+   "cistina": 0,
+   "fenilalanina": 0,
+   "tirosina": 0,
+   "treonina": 0,
+   "triptofano": 0,
+   "valina": 0,
+   "purinas": 0,
+   "taurina": 0,
+   "lcarnitina": 0
+  },
+  "sin_dato": [
+   "acidoPantotenico",
+   "araquidonico",
+   "arginina",
+   "cistina",
+   "cloruro",
+   "cobre",
+   "colina",
+   "dha",
+   "epa",
+   "fenilalanina",
+   "histidina",
+   "isoleucina",
+   "lcarnitina",
+   "leucina",
+   "linoleico",
+   "linolenico",
+   "lisina",
+   "manganeso",
+   "metionina",
+   "purinas",
+   "taurina",
+   "tirosina",
+   "treonina",
+   "triptofano",
+   "valina",
+   "vitA",
+   "vitD"
+  ],
+  "se_pesa": "ya cocido",
+  "se_pesa_por_que": "Su composición sale de una fila de alimento YA COCINADO (bedca:996 «Vaca/buey, solomillo, a la plancha»), así que los gramos del menú son de producto cocinado.",
+  "aviso_al_comprar": "Se compra CRUDO y se da COCIDO: a la plancha sin aceite, sin sal. ⚠️ Los gramos del menú son de producto YA COCIDO — pésalo DESPUÉS de cocinarlo, no antes.",
+  "composicion_fuente": {
+   "calcio": "bedca:996 · «Vaca/buey, solomillo, a la plancha» · columna «calcio» = 6.0 mg → 6.0 mg · 2026-09-18",
+   "folato": "bedca:996 · «Vaca/buey, solomillo, a la plancha» · columna «folato, total» = 15.0 ug → 15.0 ug · 2026-09-18",
+   "fosforo": "bedca:996 · «Vaca/buey, solomillo, a la plancha» · columna «fósforo» = 240.0 mg → 240.0 mg · 2026-09-18",
+   "grasa": "bedca:996 · «Vaca/buey, solomillo, a la plancha» · columna «grasa, total (lipidos totales)» = 5.8447 g → 5.8447 g · 2026-09-18",
+   "hierro": "bedca:996 · «Vaca/buey, solomillo, a la plancha» · columna «hierro, total» = 3.0 mg → 3.0 mg · 2026-09-18",
+   "magnesio": "bedca:996 · «Vaca/buey, solomillo, a la plancha» · columna «magnesio» = 25.0 mg → 25.0 mg · 2026-09-18",
+   "niacina": "bedca:996 · «Vaca/buey, solomillo, a la plancha» · columna «equivalentes de niacina, totales» = 4.5 mg → 4.5 mg · 2026-09-18",
+   "potasio": "bedca:996 · «Vaca/buey, solomillo, a la plancha» · columna «potasio» = 400.0 mg → 400.0 mg · 2026-09-18",
+   "proteina": "bedca:996 · «Vaca/buey, solomillo, a la plancha» · columna «proteina, total» = 28.1 g → 28.1 g · 2026-09-18",
+   "riboflavina": "bedca:996 · «Vaca/buey, solomillo, a la plancha» · columna «riboflavina» = 0.3 mg → 0.3 mg · 2026-09-18",
+   "selenio": "bedca:996 · «Vaca/buey, solomillo, a la plancha» · columna «selenio, total» = 3.0 ug → 3.0 ug · 2026-09-18",
+   "sodio": "bedca:996 · «Vaca/buey, solomillo, a la plancha» · columna «sodio» = 60.0 mg → 60.0 mg · 2026-09-18",
+   "tiamina": "bedca:996 · «Vaca/buey, solomillo, a la plancha» · columna «tiamina» = 0.09 mg → 0.09 mg · 2026-09-18",
+   "vitB12": "bedca:996 · «Vaca/buey, solomillo, a la plancha» · columna «Vitamina B-12» = 2.0 ug → 2.0 ug · 2026-09-18",
+   "vitB6": "bedca:996 · «Vaca/buey, solomillo, a la plancha» · columna «Vitamina B-6, Total» = 0.4 mg → 0.4 mg · 2026-09-18",
+   "vitE": "bedca:996 · «Vaca/buey, solomillo, a la plancha» · columna «Viamina E equivalentes de alfa tocoferol de actividades de vitámeros E» = 0.3 mg → 0.3 mg · 2026-09-18",
+   "yodo": "bedca:996 · «Vaca/buey, solomillo, a la plancha» · columna «ioduro» = 6.0 ug → 6.0 ug · 2026-09-18",
+   "zinc": "bedca:996 · «Vaca/buey, solomillo, a la plancha» · columna «zinc (cinc)» = 4.3 mg → 4.3 mg · 2026-09-18"
+  },
+  "cero_verificado": {
+   "fibra": "Cero de la fuente que manda, comprobado el 2026-09-18: bedca:996 · «Vaca/buey, solomillo, a la plancha» · columna «fibra, dietetica total» = 0.0 g. `value_type` LZ, o sea una MEDIDA y no una celda vacía."
+  },
+  "energia": 165.86,
+  "humedad_g_100g": 64.0,
+  "humedad_fuente": "bedca:996 · Vaca/buey, solomillo, a la plancha"
  }
 ]

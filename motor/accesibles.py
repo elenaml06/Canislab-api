@@ -92,6 +92,12 @@ CARNE = [
     # debatido en la comunidad de alimentación cruda -- se deja en
     # Vísceras (abajo) por prudencia, sin consenso claro para moverlo.
     "Lengua de ternera", "Lengua de buey", "Lengua de cordero",
+    # ⚠️ SEGUNDA VUELTA, 18 de septiembre de 2026, y las seis vienen de dos frases
+    # de Elena: «tienes que meter más pescado» y «veo que no hay nada de cerdo ni
+    # de ternera en carne muscular». Cada una entró con su fila CRUDA de la misma
+    # fuente como ancla y medida en materia seca; lo que no anclaba se rechazó y
+    # está escrito en `cocidos_propuesta.json` (sardina, boquerón, lubina).
+    "Cerdo cocido", "Ternera cocida", "Solomillo de vaca cocido",
 ]
 
 # Solo huesos que se piden sin problema en una carnicería normal.
@@ -152,6 +158,12 @@ PESCADO = [
     "Salmón", "Sardina", "Caballa", "Merluza", "Bacalao", "Lubina", "Dorada",
     "Trucha", "Atún", "Boquerón", "Lenguado", "Pescadilla", "Besugo",
     "Bacaladilla", "Perca",
+    # ⚠️ SEGUNDA VUELTA, 18 de septiembre de 2026, y las seis vienen de dos frases
+    # de Elena: «tienes que meter más pescado» y «veo que no hay nada de cerdo ni
+    # de ternera en carne muscular». Cada una entró con su fila CRUDA de la misma
+    # fuente como ancla y medida en materia seca; lo que no anclaba se rechazó y
+    # está escrito en `cocidos_propuesta.json` (sardina, boquerón, lubina).
+    "Atún claro cocido", "Pulpo cocido", "Dorada cocida",
 ]
 
 VISCERAS = [
@@ -397,20 +409,63 @@ def _tiene_hermana_cruda(ficha):
     la hermana y la ficha vuelve a valer en los dos modos, que es el lado del
     que no se pierde comida.
     """
-    global _CRUDAS_DEL_CATALOGO
-    if _CRUDAS_DEL_CATALOGO is None:
-        import json as _json
-        import os as _os
-        ruta = _os.path.join(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))),
-                             "alimentos_v3_final.json")
-        try:
-            with open(ruta, encoding="utf-8") as fh:
-                _CRUDAS_DEL_CATALOGO = {f["nombre"] for f in _json.load(fh)
-                                        if not str(f.get("preparacion") or "").strip()}
-        except Exception:
-            _CRUDAS_DEL_CATALOGO = set()
+    _cargar_gemelas()
     nombre = str((ficha or {}).get("nombre") or "")
     return " " in nombre and nombre.rsplit(" ", 1)[0] in _CRUDAS_DEL_CATALOGO
+
+
+_COCIDAS_DE_UNA_CRUDA = None
+
+
+def _cargar_gemelas():
+    """Las dos caras del mismo índice: qué crudas hay, y de cuáles hay cocida."""
+    global _CRUDAS_DEL_CATALOGO, _COCIDAS_DE_UNA_CRUDA
+    if _CRUDAS_DEL_CATALOGO is not None:
+        return
+    import json as _json
+    import os as _os
+    ruta = _os.path.join(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))),
+                         "alimentos_v3_final.json")
+    try:
+        with open(ruta, encoding="utf-8") as fh:
+            fichas = _json.load(fh)
+    except Exception:
+        _CRUDAS_DEL_CATALOGO, _COCIDAS_DE_UNA_CRUDA = set(), set()
+        return
+    _CRUDAS_DEL_CATALOGO = {f["nombre"] for f in fichas
+                            if not str(f.get("preparacion") or "").strip()}
+    _COCIDAS_DE_UNA_CRUDA = set()
+    for f in fichas:
+        if not str(f.get("preparacion") or "").strip():
+            continue
+        n = str(f.get("nombre") or "")
+        if " " in n and n.rsplit(" ", 1)[0] in _CRUDAS_DEL_CATALOGO:
+            _COCIDAS_DE_UNA_CRUDA.add(n.rsplit(" ", 1)[0])
+
+
+def _tiene_hermana_cocida(ficha):
+    """¿Existe en el catálogo la versión COCIDA de esta ficha cruda?
+
+    ⚠️ ES LA MITAD QUE FALTABA, y la vio Elena mirando lo que le había contado
+    yo (18 de septiembre de 2026): «menú cocinado sin nada crudo animal, has
+    dicho. No del todo. O sea, menú cocinado sin nada crudo animal y sin nada
+    crudo vegetal, ¿no?».
+
+    Tenía razón. La regla de las categorías animales las hace excluyentes por su
+    `preparacion`, y con lo vegetal no pasaba nada: la ZANAHORIA cruda valía en
+    los dos modos, así que el automático de un menú cocinado podía poner
+    zanahoria cruda teniendo «Zanahoria cocida» al lado. Y eso no es solo feo:
+    son dos composiciones distintas del mismo alimento en el mismo plato, y
+    quien lo lee no sabe cuál de las dos cosas tiene que hacer.
+
+    La regla que lo cierra es UNA y vale para los dos lados: **si un alimento
+    existe en las dos formas, cada ficha va a su modo**. Lo que existe en una
+    sola —la lechuga, el pepino, la fruta, el boniato, el arroz— sigue valiendo
+    en los dos, que es lo correcto: nadie cuece una lechuga, y el boniato no se
+    da crudo ni en BARF.
+    """
+    _cargar_gemelas()
+    return str((ficha or {}).get("nombre") or "") in (_COCIDAS_DE_UNA_CRUDA or set())
 
 
 def peligro_de_preparacion(ficha, modo):
@@ -453,6 +508,9 @@ def modos_de(ficha):
       · «Hueso carnoso» -> SOLO crudo, siempre. El hueso cocido astilla.
       · categoría animal -> el modo que diga su `preparacion`.
       · vegetal COCIDO que tiene hermana cruda -> solo cocinado (ver abajo).
+      · vegetal CRUDO que tiene hermana cocida -> solo crudo (la mitad
+        simétrica, del mismo día: si existe en las dos formas, cada ficha va a
+        su modo).
       · todo lo demás    -> los dos.
 
     ⚠️ LA TERCERA SE VIO MIRANDO UN PLATO (18 de septiembre de 2026): en un menú
@@ -479,6 +537,10 @@ def modos_de(ficha):
         return (MODO_COCINADO,) if prep and prep != "crudo" else (MODO_CRUDO,)
     if prep and prep != "crudo" and _tiene_hermana_cruda(ficha):
         return (MODO_COCINADO,)
+    # Y LA MITAD SIMÉTRICA: una verdura CRUDA que tiene su gemela cocida es del
+    # modo crudo. Ver `_tiene_hermana_cocida` — lo pidió Elena el mismo día.
+    if (not prep or prep == "crudo") and _tiene_hermana_cocida(ficha):
+        return (MODO_CRUDO,)
     return MODOS
 
 

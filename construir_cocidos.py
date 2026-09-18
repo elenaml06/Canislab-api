@@ -92,13 +92,54 @@ def main():
     nuevas, saltadas = [], []
     for nombre, d in sorted(prop.get("elegidas", {}).items()):
         cruda = por_nombre.get(nombre)
+        # ⚠️ HAY COCIDOS QUE NO SON LA VERSIÓN DE NADA (18 de septiembre de
+        # 2026). El CERDO entra aquí y en el catálogo no hay ni una ficha de
+        # cerdo cruda, porque la cruda es justo lo que NO puede entrar: la
+        # enfermedad de Aujeszky es «poco frecuente pero mortal» y «la mayoría
+        # de los casos en perros son el resultado de la ingestión de carne de
+        # cerdo CRUDA infectada» (Ettinger & Feldman, cap. de enfermedades
+        # víricas). Cocinarla quita exactamente ese motivo, así que el cerdo
+        # existe en cocinado y no existe en crudo — el único alimento del
+        # catálogo que va solo en un modo por una razón que no es de dato.
+        # ⚠️ El HÍGADO de cerdo NO entra ni cocinado: su cobre tiene
+        # disponibilidad esencialmente cero (SACN5 cap.6), y eso no lo cambia
+        # el calor. Está escrito desde el 9 de septiembre en
+        # `sacn5_fuentes_de_minerales.json` esperando justo a este día.
+        #
+        # Una ficha así no tiene de quién copiar la FORMA —las 46 claves de
+        # nutrientes—, así que la propuesta declara una `plantilla`: otra ficha
+        # de su misma categoría de la que se copia la lista de claves y NADA
+        # más. Ni una cifra: todas nacen en hueco y las cierra
+        # `auditar_composicion.py --cerrar` contra la fuente, igual que las
+        # demás.
+        if cruda is None and d.get("plantilla"):
+            plantilla = por_nombre.get(d["plantilla"])
+            if plantilla is None:
+                saltadas.append((nombre, f"su plantilla «{d['plantilla']}» no está en el catálogo"))
+                continue
+            # La forma se copia; la identidad es la que diga la propuesta.
+            cruda = collections.OrderedDict(plantilla)
+            cruda["nombre"] = nombre
+            cruda["categoria"] = d.get("categoria") or plantilla.get("categoria")
+            if d.get("especie"):
+                cruda["especie"] = d["especie"]
+            else:
+                cruda.pop("especie", None)
+            # ⚠️ Y NO SE HEREDA LA NOTA DE LA PLANTILLA: es de OTRO alimento.
+            # Heredarla haría que la ficha del cerdo afirmara la procedencia de
+            # la ternera, que es la peor clase de dato — tiene forma de bueno.
+            cruda.pop("nota_datos", None)
+            cruda.pop("aviso_al_comprar", None)
+            por_nombre[nombre] = cruda          # para que `nombre_cocido` no choque
         if cruda is None:
             saltadas.append((nombre, "ya no está en el catálogo"))
             continue
         if nombre in FRUTA:
             saltadas.append((nombre, "es fruta: no se cocina"))
             continue
-        nuevo = nombre_cocido(nombre)
+        # Una ficha sin hermana cruda se llama como diga la propuesta: «Cerdo
+        # cocido» sale bien de la derivación, pero «Vaca para guisar cocida» no.
+        nuevo = d.get("nombre_final") or nombre_cocido(nombre)
         if nuevo in por_nombre:
             saltadas.append((nombre, "ya existe su ficha cocida"))
             continue

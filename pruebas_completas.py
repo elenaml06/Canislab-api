@@ -22365,13 +22365,29 @@ def _menu128(modo=None, forzar=None, peso=22.0, der=1000.0, etapa="Adulto", pat=
     r = _c.post("/menu/v2", json=cuerpo)
     return r.json() if r.status_code == 200 else {"factible": False, "http": r.status_code}
 
-def _mal128(d):
-    """Lo que NUNCA puede estar en un menú cocinado."""
+def _mal128(d, modo="cocinado"):
+    """Lo que NUNCA puede estar en un menú de este modo salido del AUTOMÁTICO.
+
+    ⚠️ LA SEGUNDA LISTA ERA MEDIA LISTA hasta el 18 de septiembre de 2026, y lo
+    vio Elena leyendo lo que yo le había contado: «menú cocinado sin nada crudo
+    animal, has dicho. No del todo. O sea, menú cocinado sin nada crudo animal y
+    **sin nada crudo vegetal**, ¿no?».
+
+    Tenía razón: se miraban las cuatro categorías ANIMALES y nada más, así que
+    un menú cocinado podía traer «Zanahoria» cruda teniendo «Zanahoria cocida»
+    al lado —dos composiciones del mismo alimento en el mismo plato— y este
+    bloque salía verde. Ahora se pregunta por `vale_en`, que es la MISMA función
+    que usa el solver: si el motor no debería haberlo puesto, aquí se ve, sea de
+    la categoría que sea y sin listas que mantener.
+
+    Lo que NO es un intruso: lo que existe en una sola forma. La lechuga, el
+    pepino, la fruta, el boniato y el arroz valen en los dos modos, y eso es
+    correcto — nadie cuece una lechuga.
+    """
     g = d.get("menu") or {}
     hueso = [n for n in g if n in _HUESO_128]
-    crudo = [n for n in g if _al128.get(n, {}).get("categoria") in _ANIMALES_128
-             and str(_al128[n].get("preparacion") or "crudo").lower() == "crudo"]
-    return hueso, crudo
+    fuera = [n for n in g if n not in _HUESO_128 and not _acc128.vale_en(_al128.get(n), modo)]
+    return hueso, fuera
 
 # ── 2 · sale menú, y sale VERDE ────────────────────────────────────────────
 _salen128 = 0
@@ -22388,9 +22404,10 @@ for _etq128, _peso128, _der128, _etapa128 in (("adulto 22 kg", 22.0, 1000.0, "Ad
         fallos.append(f"BLOQUE128: el menú COCINADO de «{_etq128}» lleva hueso: {_h128}. El hueso "
                       f"cocido astilla — esto es daño físico inmediato, no una carencia")
     if _cr128:
-        fallos.append(f"BLOQUE128: el menú COCINADO de «{_etq128}» lleva comida animal CRUDA: "
-                      f"{_cr128}. Sus cifras son de alimento crudo, así que ese plato no es el que "
-                      f"dice la lista")
+        fallos.append(f"BLOQUE128: el menú COCINADO de «{_etq128}» lleva comida que en cocinado no "
+                      f"vale: {_cr128}. O son cifras de alimento crudo en un plato cocinado, o es "
+                      f"la versión cruda de algo que tiene su ficha cocida en el catálogo — y "
+                      f"entonces el mismo alimento sale dos veces con dos composiciones")
     _sem128 = (_d128.get("verificado") or {}).get("semaforo")
     if _sem128 and not _api._es_verde(_sem128):
         fallos.append(f"BLOQUE128: el menú COCINADO de «{_etq128}» sale «{_sem128}». Los 43 "
@@ -22412,10 +22429,11 @@ if _HUESO_128:
 # ── 4 · la simetría: en crudo no entra una ficha cocida de carne ────────────
 _d128c = _menu128("crudo")
 if _d128c.get("factible"):
-    _intrusas = [n for n in (_d128c.get("menu") or {}) if n in _COCINADAS_128]
+    _h128c, _intrusas = _mal128(_d128c, "crudo")
     if _intrusas:
-        fallos.append(f"BLOQUE128: el menú CRUDO lleva fichas cocidas de carne o pescado: "
-                      f"{_intrusas}")
+        fallos.append(f"BLOQUE128: el menú CRUDO lleva fichas que en crudo no valen: {_intrusas}. "
+                      f"La simetría es la misma: si un alimento existe en las dos formas, cada "
+                      f"ficha va a su modo")
 
 # ── 5 · el modo viaja en la respuesta y SE DICE ────────────────────────────
 _d128m = _menu128("cocinado")
@@ -22502,38 +22520,147 @@ if _sin128:
                   f"de la categoría no puede decir que un muslo se deshuesa después de hervirlo")
 
 # ── 8 · LOS TOPES QUE EXISTEN PORQUE LA COMIDA VA CRUDA ────────────────────
-# ⚠️ ESTO ES UN CABLE TRAMPA, NO UNA COMPROBACIÓN DE COMPORTAMIENTO, y va dicho
-# porque la primera versión SÍ intentaba serlo y salía VERDE CON EL FALLO
-# PUESTO: metía un «Atún cocido» a mano, desconectaba el tope de mercurio del
-# solver y del filtro final, y el bloque no se enteraba — porque el MILP no
-# tiene ningún motivo para meter tanto atún como para pasarse del 10 %. Una
-# comprobación que no puede fallar es peor que no tenerla.
+# ⚠️ ESTO ERA UN CABLE TRAMPA HASTA EL 18 DE SEPTIEMBRE DE 2026, y ese día se
+# disparó — que es exactamente para lo que estaba. Entraron «Atún claro cocido»
+# y «Caballa cocida», o sea las dos primeras fichas COCIDAS que están en los
+# conjuntos de tiaminasa y de mercurio, y el cable obligaba a decidir aquí en
+# vez de dar nada por hecho. Decidido, medido y escrito:
 #
-# Lo que sí se puede vigilar es el momento de la DECISIÓN. Hoy, MEDIDO, de los
-# candidatos que quedan en cocinado CERO están en TIAMINASA y cero en
-# MERCURIO_ALTO, porque las fichas cocidas de pescado son bacalao, salmón y
-# trucha. O sea que no hay nada que relajar y no hay nada que comprobar. El día
-# que entre una ficha cocida de cualquiera de los dos conjuntos, esto se pone
-# rojo y obliga a decidir aquí — que es justo donde se decide mal si nadie
-# pregunta, porque «va cocinado, esos topes sobran» suena evidente y es FALSO a
-# medias: la tiaminasa es una ENZIMA y la cocción la destruye, pero el mercurio
-# es un METAL PESADO y cocinar no le hace nada.
+# ⚠️ LOS DOS TOPES NO SON LA MISMA CLASE DE COSA, y confundirlos es la trampa:
+#
+#   · El MERCURIO es un METAL PESADO, está en el músculo del pez y cocinar no le
+#     hace absolutamente nada. Su tope SIGUE APLICÁNDOSE igual que en crudo, y
+#     aquí se comprueba que es verdad en vez de suponerlo.
+#   · La TIAMINASA es una ENZIMA, y la fuente lo dice con todas las letras: «Both
+#     thiaminase I and thiaminase II are inactivated by cooking» (NRC 2006, y es
+#     la misma fuente de la que sale el tope). Sobre una ficha cocida el tope
+#     SOBRA — pero sobrar es el lado seguro, y quitarlo sería aflojar un tope
+#     crónico (regla 2). Se queda, y lo que cuesta está MEDIDO: cero. En los
+#     cuatro perros cocinados el solver no mete ni atún ni caballa NI CON EL TOPE
+#     NI SIN ÉL; lo que elige es lenguado y salmón. O sea que no se está pagando
+#     nada por dejarlo puesto.
+#
+# Lo que se vigila ahora son las dos direcciones, y ninguna resuelve un menú:
+# que los dos topes SIGAN alcanzando a las fichas cocidas —aflojarlos en
+# silencio es lo que el cable existía para impedir— y que el filtro final
+# rechace de verdad un menú cocinado que se pase de mercurio.
 import seguridad as _seg128
 _COC_TODAS_128 = [n for n, a in _al128.items()
                   if str(a.get("preparacion") or "crudo").lower() != "crudo"]
 _merc128 = sorted(n for n in _COC_TODAS_128 if _seg128._es(n, _seg128.MERCURIO_ALTO))
 _tia128 = sorted(n for n in _COC_TODAS_128 if _seg128._es(n, _seg128.TIAMINASA))
-if _merc128:
-    fallos.append(f"BLOQUE128: han entrado fichas COCIDAS con mercurio ({_merc128}) y hay que "
-                  f"decidir aquí, no dar por hecho nada. El mercurio es un METAL: cocinar NO lo "
-                  f"quita, así que su tope tiene que seguir aplicándose igual que en crudo. "
-                  f"Comprueba que se aplica, escríbelo, y quita este cable")
-if _tia128:
-    fallos.append(f"BLOQUE128: han entrado fichas COCIDAS con tiaminasa ({_tia128}) y hay que "
-                  f"decidir aquí. La cocción SÍ destruye la tiaminasa, así que su tope pasa a "
-                  f"sobrar — pero sobrar es el lado seguro y quitarlo es aflojar un tope "
-                  f"crónico (regla 2): se mide antes de tocarlo y se dice")
+if not _merc128:
+    fallos.append("BLOQUE128: ninguna ficha COCIDA está en `MERCURIO_ALTO`. O ha salido del "
+                  "catálogo el atún cocido —y entonces esta comprobación ya no vigila nada y hay "
+                  "que decirlo— o alguien ha aflojado el conjunto por la preparación, que es el "
+                  "error que este apartado existe para impedir: el mercurio es un METAL y cocinar "
+                  "no lo quita")
+if not _tia128:
+    fallos.append("BLOQUE128: ninguna ficha COCIDA está en `TIAMINASA`. Que el tope SOBRE sobre "
+                  "comida cocida es verdad —NRC 2006: «Both thiaminase I and thiaminase II are "
+                  "inactivated by cooking»— pero quitarlo es aflojar un tope crónico (regla 2) y "
+                  "lo que cuesta dejarlo puesto está medido en CERO. Si se ha quitado, tiene que "
+                  "estar escrito aquí con su medida")
 
+# Y que el filtro final lo aplique de verdad: un menú cocinado construido a mano
+# POR ENCIMA del tope de mercurio no se entrega. Es determinista —no resuelve
+# ningún menú— y falla si alguien desconecta la fila.
+_atun128 = next((n for n in _merc128 if _seg128._es(n, _seg128.MERCURIO_ALTO)), None)
+if _atun128:
+    _kcal_atun = (_al128[_atun128].get("energia") or 0) / 100.0
+    if _kcal_atun > 0:
+        _der128 = 1000.0
+        # el 25 % de las kcal del día en atún, contra un tope del 10 %
+        _g128 = round(0.25 * _der128 / _kcal_atun, 1)
+        _problemas128 = _seg128.revisar_seguridad({_atun128: _g128}, _al128, _der128, "Adulto")
+        if not any("mercurio" in str(x).lower() for x in _problemas128):
+            fallos.append(f"BLOQUE128: {_g128} g de «{_atun128}» son el 25 % de las kcal del día, "
+                          f"contra un tope del {_seg128.TOPE_MERCURIO_KCAL * 100:.0f} %, y "
+                          f"`revisar_seguridad` no dice nada. El mercurio no se va con el calor")
+        if not _api._menu_precalculado_es_seguro({_atun128: _g128}, _al128, _der128):
+            pass                                     # bien: el filtro final lo tira
+        else:
+            fallos.append(f"BLOQUE128: el filtro final ACEPTA un menú cocinado con {_g128} g de "
+                          f"«{_atun128}», que es el 25 % de las kcal en un pescado con mercurio. "
+                          f"Un tope crónico es restricción dura (regla 2), no un aviso")
+
+# ── 10 · EL TEXTO DE «CÓMO DARLO» NO PUEDE OFRECER LAS DOS FORMAS ──────────
+# ⚠️ POR QUÉ EXISTE (18 de septiembre de 2026). Lo vio Elena en cuanto quedaron
+# separadas las fichas crudas de las cocidas: «en los textos de las verduras
+# pone cruda, troceada o cocida. Entonces ya no debería poner cocida, en la
+# BARF. Y para la cocinada no debería poner muy troceada, cruda; debería poner
+# solo cocida».
+#
+# Tiene razón y no es de estilo: mientras la ficha valía en los dos modos, «al
+# vapor o muy troceada» era una alternativa honesta. Ahora la MISMA verdura son
+# DOS fichas con DOS composiciones, y un texto con alternativa le dice a quien
+# tiene la báscula delante que haga la otra — o sea, que pese una cosa y
+# cocine otra. Es la familia del Boniato del 17 de septiembre: lo que estaba mal
+# nunca fue la cifra, era no decir la base.
+#
+# Dos reglas, una por lado:
+#   · Ficha SOLO CRUDA que dice «cocido» -> solo vale si además declara
+#     `se_pesa`, que es lo que dice «se da cocida y se pesa CRUDA». Sin eso, el
+#     texto manda cocer un alimento cuya composición es cruda y no lo dice.
+#   · Ficha SOLO COCIDA que dice «crudo» -> solo vale si lo NIEGA. «Cruda no se
+#     le da» es correcto; «cocida o muy troceada cruda» es la alternativa que
+#     sobra. ⚠️ La negación hay que mirarla, y no es puntillismo: el texto del
+#     «Cerdo cocido» dice «NO se puede dar crudo de ninguna manera», que es lo
+#     más importante de esa ficha — es la familia del «purina» dentro de
+#     «purinas» que este repo lleva cazando desde septiembre.
+import re as _re10
+_COMO_10 = json.load(open("como_se_da_cada_alimento.json", encoding="utf-8"))["por_alimento"]
+_NIEGA_10 = ("nunca", "no se le da", "no se le dan", "no se puede", " ni ", "jamás")
+
+def _clausulas_10(txt):
+    return [c for c in _re10.split(r"[.·—|]", txt) if c.strip()]
+
+# ⚠️ Y LA FORMA ES PARTE DEL CONTRATO, encontrado al escribir esto: las CINCO
+# fichas de hidratos guardaban su texto como una CADENA suelta en vez de
+# `{"como": ...}`, y `main.py` lo sirve tal cual. La app hace `...a.como_se_da`,
+# y desplegar una cadena da `{0:"H", 1:"i", ...}`: el texto no se veía y no
+# saltaba nada. Es la regla 6 por el lado que no se ve.
+_forma_mal_10 = sorted(k for k, v in _COMO_10.items() if not isinstance(v, dict))
+if _forma_mal_10:
+    fallos.append(f"BLOQUE128: {len(_forma_mal_10)} entradas de «cómo se da» no son un objeto con "
+                  f"`como`: {_forma_mal_10[:5]}. `main.py` las sirve tal cual y la app las despliega "
+                  f"con `...a.como_se_da`, así que una cadena se convierte en un objeto de letras y "
+                  f"el texto desaparece sin dar ningún error")
+
+_mal_crudo_10, _mal_cocido_10 = [], []
+for _n10, _a10 in _al128.items():
+    _e10 = _COMO_10.get(_n10) or {}
+    _txt10 = str(_e10.get("como") or "")
+    if not _txt10:
+        continue
+    _modos10 = _acc128.modos_de(_a10)
+    _bajo10 = _txt10.lower()
+    if _modos10 == ("crudo",) and _re10.search(r"cocid[oa]s?\b", _bajo10):
+        # vale si la ficha declara que se pesa en crudo (el caso del Boniato)
+        if not _a10.get("se_pesa"):
+            _mal_crudo_10.append(_n10)
+    if _modos10 == ("cocinado",):
+        for _c10 in _clausulas_10(_bajo10):
+            if _re10.search(r"\bcrud[oa]s?\b", _c10) and not any(x in _c10 for x in _NIEGA_10):
+                _mal_cocido_10.append((_n10, _c10.strip()[:60]))
+                break
+if _mal_crudo_10:
+    fallos.append(f"BLOQUE128: {len(_mal_crudo_10)} fichas que SOLO valen en crudo tienen un «cómo "
+                  f"darlo» que manda cocerlas y no declaran `se_pesa`: {sorted(_mal_crudo_10)[:5]}. "
+                  f"O el texto dice la forma cruda, o la ficha declara que se pesa CRUDA aunque se "
+                  f"dé cocida — lo que no puede es dejar a quien tiene la báscula sin saber cuál "
+                  f"de las dos cosas le están pidiendo")
+if _mal_cocido_10:
+    fallos.append(f"BLOQUE128: {len(_mal_cocido_10)} fichas COCIDAS ofrecen la forma cruda como "
+                  f"alternativa: {_mal_cocido_10[:3]}. Su composición es de alimento cocido, así "
+                  f"que darlo crudo con esos gramos es otro plato. Negarlo sí vale («cruda no se "
+                  f"le da»); ofrecerlo, no")
+
+print(f"  textos sin alternativa: {len(_mal_crudo_10)} crudas que mandan cocer sin declararlo · "
+      f"{len(_mal_cocido_10)} cocidas que ofrecen crudo")
+
+print(f"  topes de crudo en cocinado: mercurio sigue alcanzando a {_merc128} · "
+      f"tiaminasa a {_tia128} (sobra, y dejarlo cuesta 0 menús: medido)")
 # ── 9 · LO QUE SE ELIGE A MANO NO LO TIRA EL MODO (regla 5) ────────────────
 # ⚠️ POR QUÉ EXISTE (18 de septiembre de 2026). Lo pidió Elena con dos casos de
 # verdad: «a lo mejor alguien le da BARF a su perro pero le apetece meterle
@@ -22554,13 +22681,13 @@ if _tia128:
 #
 # ⚠️ Y LOS CASOS SE DERIVAN DEL CATÁLOGO, no se escriben a mano, porque una
 # ficha elegida a dedo puede dejar de ser del modo que se creía y entonces el
-# bloque saldría verde sin comprobar nada. Lo que hace falta es una ficha que
-# el modo SÍ quite: hoy son 72 en cocinado y 57 en crudo.
+# bloque saldría verde sin comprobar nada.
 #
 # ⚠️ Ojo con una trampa que costó una vuelta: el huevo y la verdura cruda del
 # ejemplo de Elena **valen en los dos modos**, así que probarlos NO ejercita
 # nada — pasan con el fallo puesto. Lo que de verdad quita el filtro es la
-# ficha COCIDA en un menú crudo y la carne CRUDA en uno cocinado.
+# ficha COCIDA en un menú crudo y la CRUDA que tiene gemela cocida en uno
+# cocinado.
 def _solo_en_128(modo):
     """Fichas que el modo `modo` deja fuera, ordenadas para que no cambie."""
     return sorted(n for n, a in _al128.items()
@@ -22569,7 +22696,6 @@ def _solo_en_128(modo):
 
 _CASOS_129 = []
 for _m128, _otro128 in (("cocinado", "crudo"), ("crudo", "cocinado")):
-    # una ficha del modo contrario, de una categoría que exista en los dos
     for _cat129 in ("Verduras y frutas", "Carne muscular"):
         _cand129 = [n for n in _solo_en_128(_m128)
                     if _al128[n].get("categoria") == _cat129]
@@ -22608,11 +22734,10 @@ if any(_acc128.peligro_de_preparacion(a, "crudo") for a in _al128.values()):
                   "motor lleva desde el principio dando raciones crudas: lo que sea que quite "
                   "tiene que decidirse en otro sitio y con su medida")
 
-
 print(f"  regla 5 contra el modo: {len(_CASOS_129)} casos ejercitados "
       f"({_CASOS_129}) · peligro_de_preparacion: {len(_peligrosas_129)} fichas, todas hueso")
 print(f"  topes de crudo en cocinado: 0 fichas cocidas con tiaminasa, 0 con mercurio")
-print(f"  cómo darlo cocinado: {len(_COC_CAT_128)}/4 categorías · "
+print(f"  cómo darlo cocinado: {len(_COC_CAT_128)} categorías con texto propio · "
       f"{len(_COCINADAS_128) - len(_sin128)}/{len(_COCINADAS_128)} fichas con instrucción propia")
 print(f"  fichas animales cocinadas: {len(_COCINADAS_128)} · perros con menú cocinado: {_salen128}/4")
 print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
