@@ -207,6 +207,15 @@ _al21, _req21 = _api.cargar_v2()
 DER_B8, ETAPA_B8, PESO_B8 = 900.0, "Adulto", 20.0
 
 
+# La tabla de patologías tal cual está escrita, y la función que resuelve sus
+# topes. Las leen el BLOQUE 107 y el 125, y vivían dentro del 107 -- que cuesta
+# 182 s resolviendo menús, así que pedir solo el 125 pagaba los dos.
+import patologias as _pat107
+from motor_completo import topes_de_patologias as _topes107_fn
+
+_crudo107n = _pat107.CRUDO.get("patologias") or {}
+
+
 def _exigir_verde(caso, respuesta, der, etapa):
     """Verifica por su cuenta lo que devuelve un endpoint."""
     if not respuesta.get("factible", respuesta.get("encontrado")):
@@ -19085,9 +19094,8 @@ if "§7.6.2.4" in " ".join(_rot107(_gr107, _al107) or []):
 # ración en 2 o 3 tomas». Una comprobación que acusa a quien no ha hecho nada se
 # deja de mirar.
 sys.path.insert(0, "motor")
-import patologias as _pat107
+# `_pat107` y `_topes107_fn` viven en la cabecera: los leen el 107 y el 125.
 from motor_completo import avisos_de_patologias as _avisos107_fn
-from motor_completo import topes_de_patologias as _topes107_fn
 _NUTRIENTES_QUE_NO_DICEN_NADA_107 = (
     # ⚠️ «omega-3» ENTRA EL 17 DE SEPTIEMBRE, y faltaba: estaba «omega-6» y no
     # su pareja, así que un aviso que dijera «se le sube el omega-3» pasaba. Al
@@ -19102,7 +19110,6 @@ _SUELTAS_107 = (r"\bEPA\b", r"\bDHA\b")
 _RESERVADOS_107M = ("general", "crecimiento", "profesional", "profesional_crecimiento",
                     "dueno", "dueno_crecimiento")
 import re as _re107b
-_crudo107n = _pat107.CRUDO.get("patologias") or {}
 _sucios107n, _largos107n = [], []
 for _k107n, _v107n in sorted(_crudo107n.items()):
     _av107n = _v107n.get("avisos") or {}
@@ -22204,19 +22211,41 @@ _CAT125 = {a["nombre"]: a for a in json.load(open("alimentos_v3_final.json"))}
 # RECORTADO --206 alimentos de 233, fuera lo premium y lo de tienda
 # especializada-- así que no son la ración que recibe un perro de verdad.
 #
-# Así que la referencia se RESUELVE, tres menús de adulto sano. Cuesta unos
-# segundos y es la única forma de que la comparación sea entre lo mismo. La
-# regla del 9 de septiembre sigue valiendo y por eso son TRES y se usa la
-# mediana: de un menú suelto no se puede afirmar nada, de la mediana de tres sí.
+# Así que la referencia se RESUELVE. Cuesta unos segundos y es la única forma de
+# que la comparación sea entre lo mismo.
+#
+# ⚠️ Y SON SEIS PERROS CON RELOJ DE SOBRA, NO TRES CON EL DE LA BATERÍA (19 de
+# septiembre de 2026). Con tres y el presupuesto normal este bloque se puso ROJO
+# dentro de la batería acusando a `cardiopatia_d` --mediana 473, tope 480-- y
+# VERDE en cuanto se corría suelto. O sea, otra vez, `el reloj no es una
+# propiedad del motor`: dentro de la batería el solver compite por la máquina,
+# devuelve un óptimo peor, y el bloque lo lee como si fuera lo que come un perro.
+#
+# MEDIDO, cuatro rondas de ocho perros adultos, cada uno suelto:
+#
+#     por perro .......... 442-702  (la dispersión entre perros ES grande)
+#     mediana de OCHO .... 567 · 566 · 548 · 577   -> estable, 5 % de banda
+#     mediana de TRES .... 562 · 565 · 602 · 589   -> y 473 dentro de la batería
+#
+# Con la mediana de ocho, el tope de la `cardiopatia_d` (480) queda un 14 % por
+# debajo y el de la `artrosis` (1000) casi al doble por encima: la comparación
+# vuelve a decidirse por la cifra y no por lo cargada que vaya la máquina.
+#
+# `presupuesto_segundos` generoso es la otra mitad y es la que ataca la causa:
+# el menú de referencia tiene que ser el que el motor daría, no el que le da
+# tiempo a dar. Es lo mismo que hace `_resolver_con_holgura` un escalón más
+# abajo.
 _SANOS125 = []
-for _der125, _peso125 in ((950, 20), (1600, 35), (700, 12)):
+for _der125, _peso125 in ((950, 20), (1600, 35), (700, 12),
+                          (1200, 26), (2000, 45), (800, 15)):
     _r125 = _c.post("/menu/v2", json={"nombres_alimentos": [], "modo": "automatico",
                                       "der_objetivo": _der125, "etapa_requisitos": "Adulto",
-                                      "peso_perro_kg": _peso125}).json() or {}
+                                      "peso_perro_kg": _peso125,
+                                      "presupuesto_segundos": 240.0}).json() or {}
     if _r125.get("menu"):
         _SANOS125.append(_r125["menu"])
-if len(_SANOS125) < 3:
-    fallos.append(f"BLOQUE125: solo {len(_SANOS125)} menús de adulto sano de los 3 pedidos. Sin "
+if len(_SANOS125) < 5:
+    fallos.append(f"BLOQUE125: solo {len(_SANOS125)} menús de adulto sano de los 6 pedidos. Sin "
                   f"referencia este bloque no vigila nada -- y no se cae a los precalculados a "
                   f"propósito: salen de un catálogo recortado y dan un 17 % menos de sodio")
 
