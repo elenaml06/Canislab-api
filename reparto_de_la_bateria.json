@@ -4,57 +4,57 @@
   "cuidado": "Los segundos son DE ESTA MÁQUINA. En otra cambian todos a la vez, así que lo que vale es el ORDEN y el corte entre los que resuelven menús y los que no, no la cifra exacta.",
   "se_escribe": "sola, al terminar `python3 pruebas_completas.py`"
  },
- "total_segundos": 4515.7,
+ "total_segundos": 3617.6,
  "bloques": [
   {
    "bloque": 0,
    "titulo": "ningun nombre sin definir en este archivo",
-   "segundos": 0.5
+   "segundos": 0.4
   },
   {
    "bloque": 1,
    "titulo": "etapas x pesos (automático)",
-   "segundos": 97.3
+   "segundos": 70.1
   },
   {
    "bloque": 2,
    "titulo": "personalizar (forzar)",
-   "segundos": 12.5
+   "segundos": 14.4
   },
   {
    "bloque": 3,
    "titulo": "aprovechar (preferir)",
-   "segundos": 11.4
+   "segundos": 17.8
   },
   {
    "bloque": 4,
    "titulo": "variedad real (pescado, multivitamínico)",
-   "segundos": 75.2
+   "segundos": 73.0
   },
   {
    "bloque": 5,
    "titulo": "exclusiones + patologías",
-   "segundos": 17.0
+   "segundos": 13.9
   },
   {
    "bloque": 6,
    "titulo": "V-INTEGRA correcta por etapa/patología",
-   "segundos": 22.2
+   "segundos": 19.5
   },
   {
    "bloque": 7,
    "titulo": "tiempos (peor caso razonable)",
-   "segundos": 2.8
+   "segundos": 3.5
   },
   {
    "bloque": 8,
    "titulo": "ningún camino entrega un menú sin verificar",
-   "segundos": 46.6
+   "segundos": 47.1
   },
   {
    "bloque": 9,
    "titulo": "nunca sin menú por una regla de forma",
-   "segundos": 114.5
+   "segundos": 105.6
   },
   {
    "bloque": 10,
@@ -64,42 +64,42 @@
   {
    "bloque": 11,
    "titulo": "varios perros en la misma casa",
-   "segundos": 110.6
+   "segundos": 141.6
   },
   {
    "bloque": 12,
    "titulo": "el catálogo no se degrada en silencio",
-   "segundos": 2.4
+   "segundos": 2.6
   },
   {
    "bloque": 13,
    "titulo": "los topes por patología se cumplen",
-   "segundos": 318.5
+   "segundos": 365.6
   },
   {
    "bloque": 14,
    "titulo": "nada que no se pueda pesar",
-   "segundos": 259.6
+   "segundos": 229.4
   },
   {
    "bloque": 15,
    "titulo": "personalizar respeta las seis categorías",
-   "segundos": 33.8
+   "segundos": 24.0
   },
   {
    "bloque": 16,
    "titulo": "cada regla del motor existe de verdad",
-   "segundos": 4.5
+   "segundos": 4.3
   },
   {
    "bloque": 17,
    "titulo": "regenerar conserva los alimentos de cada menú",
-   "segundos": 28.7
+   "segundos": 26.9
   },
   {
    "bloque": 18,
    "titulo": "el analizador dice lo mismo que el semáforo",
-   "segundos": 28.0
+   "segundos": 29.7
   },
   {
    "bloque": 19,
@@ -109,12 +109,12 @@
   {
    "bloque": 20,
    "titulo": "editar el menú no revienta",
-   "segundos": 39.7
+   "segundos": 68.0
   },
   {
    "bloque": 21,
    "titulo": "EPA+DHA se suma y el techo es semanal",
-   "segundos": 31.7
+   "segundos": 34.7
   },
   {
    "bloque": 22,
@@ -144,12 +144,12 @@
   {
    "bloque": 27,
    "titulo": "los 12 aminoácidos, puestos y sin activar",
-   "segundos": 12.4
+   "segundos": 12.9
   },
   {
    "bloque": 28,
    "titulo": "suplementos — omega-3 de los aceites, dosis y dato_dudoso",
-   "segundos": 43.7
+   "segundos": 44.1
   },
   {
    "bloque": 29,
@@ -169,7 +169,7 @@
   {
    "bloque": 32,
    "titulo": "el calcio de los cachorros de raza grande",
-   "segundos": 5.7
+   "segundos": 4.6
   },
   {
    "bloque": 33,
@@ -179,7 +179,7 @@
   {
    "bloque": 34,
    "titulo": "los mínimos suben cuando se come menos",
-   "segundos": 44.3
+   "segundos": 47.0
   },
   {
    "bloque": 35,
@@ -204,27 +204,27 @@
   {
    "bloque": 39,
    "titulo": "el veterinario formula todas, y nadie más",
-   "segundos": 3.0
+   "segundos": 4.0
   },
   {
    "bloque": 40,
    "titulo": "lo excluido no entra por la puerta de atrás",
-   "segundos": 72.7
+   "segundos": 74.6
   },
   {
    "bloque": 41,
    "titulo": "el formulador del veterinario",
-   "segundos": 10.1
+   "segundos": 11.3
   },
   {
    "bloque": 42,
    "titulo": "la pauta firmada",
-   "segundos": 4.2
+   "segundos": 4.8
   },
   {
    "bloque": 43,
    "titulo": "con el tiempo justo, sigue saliendo menú",
-   "segundos": 347.9
+   "segundos": 108.0
   },
   {
    "bloque": 44,
@@ -234,7 +234,7 @@
   {
    "bloque": 45,
    "titulo": "el peldano de la escalera, elegido",
-   "segundos": 94.6
+   "segundos": 97.2
   },
   {
    "bloque": 46,
@@ -244,22 +244,22 @@
   {
    "bloque": 47,
    "titulo": "los menús guardados se verifican al leerlos",
-   "segundos": 3.5
+   "segundos": 4.2
   },
   {
    "bloque": 48,
    "titulo": "varios perros, los menús que se piden",
-   "segundos": 124.8
+   "segundos": 135.0
   },
   {
    "bloque": 49,
    "titulo": "el suelo aguanta el redondeo en perros pequeños",
-   "segundos": 277.2
+   "segundos": 224.5
   },
   {
    "bloque": 50,
    "titulo": "perros de verdad, patologias mezcladas",
-   "segundos": 489.0
+   "segundos": 292.5
   },
   {
    "bloque": 51,
@@ -269,12 +269,12 @@
   {
    "bloque": 52,
    "titulo": "cuando dos patologías chocan, se dice cuáles",
-   "segundos": 20.6
+   "segundos": 20.3
   },
   {
    "bloque": 53,
    "titulo": "la nota b de FEDIAF, sus dos mitades",
-   "segundos": 71.0
+   "segundos": 70.9
   },
   {
    "bloque": 54,
@@ -294,12 +294,12 @@
   {
    "bloque": 57,
    "titulo": "los limites del libro para el perro sano",
-   "segundos": 5.4
+   "segundos": 3.8
   },
   {
    "bloque": 58,
    "titulo": "la proteina de gestacion y lactancia",
-   "segundos": 3.7
+   "segundos": 6.0
   },
   {
    "bloque": 59,
@@ -309,17 +309,17 @@
   {
    "bloque": 60,
    "titulo": "la arginina segun la proteina, y el ratio linoleico:linolenico",
-   "segundos": 21.3
+   "segundos": 27.6
   },
   {
    "bloque": 61,
    "titulo": "cada patologia formulable formula de verdad",
-   "segundos": 169.1
+   "segundos": 40.8
   },
   {
    "bloque": 62,
    "titulo": "el techo de calcio del cachorro de raza grande",
-   "segundos": 34.1
+   "segundos": 34.6
   },
   {
    "bloque": 63,
@@ -344,7 +344,7 @@
   {
    "bloque": 69,
    "titulo": "las tres condicionales de la §3.3.1, medidas en vivo",
-   "segundos": 41.6
+   "segundos": 49.9
   },
   {
    "bloque": 70,
@@ -364,7 +364,7 @@
   {
    "bloque": 73,
    "titulo": "el suelo de DHA de crecimiento y reproduccion",
-   "segundos": 19.7
+   "segundos": 20.6
   },
   {
    "bloque": 74,
@@ -374,12 +374,12 @@
   {
    "bloque": 75,
    "titulo": "el ratio que pide una patologia",
-   "segundos": 71.2
+   "segundos": 69.4
   },
   {
    "bloque": 76,
    "titulo": "no se reintenta lo que esta demostrado imposible",
-   "segundos": 28.4
+   "segundos": 15.0
   },
   {
    "bloque": 77,
@@ -404,12 +404,12 @@
   {
    "bloque": 85,
    "titulo": "cada cita, contra el texto de su fuente",
-   "segundos": 19.8
+   "segundos": 19.6
   },
   {
    "bloque": 86,
    "titulo": "el perro de trabajo, topes crónicos por peso",
-   "segundos": 39.5
+   "segundos": 36.5
   },
   {
    "bloque": 87,
@@ -429,27 +429,27 @@
   {
    "bloque": 90,
    "titulo": "qué pregunta decide la cifra de cada patología",
-   "segundos": 4.9
+   "segundos": 0.2
   },
   {
    "bloque": 91,
    "titulo": "los objetivos del profesional solo aprietan",
-   "segundos": 32.2
+   "segundos": 39.6
   },
   {
    "bloque": 92,
    "titulo": "la semana del veterinario tiene presupuesto",
-   "segundos": 4.9
+   "segundos": 3.5
   },
   {
    "bloque": 93,
    "titulo": "las puertas -- quién puede pedir qué",
-   "segundos": 2.9
+   "segundos": 3.6
   },
   {
    "bloque": 95,
    "titulo": "los premios diluyen la ración",
-   "segundos": 52.6
+   "segundos": 35.9
   },
   {
    "bloque": 96,
@@ -459,7 +459,7 @@
   {
    "bloque": 97,
    "titulo": "quién puede llamar a la API desde un navegador",
-   "segundos": 0.7
+   "segundos": 0.6
   },
   {
    "bloque": 98,
@@ -474,17 +474,17 @@
   {
    "bloque": 100,
    "titulo": "la vía rápida mira lo mismo que el filtro final",
-   "segundos": 17.3
+   "segundos": 16.3
   },
   {
    "bloque": 101,
    "titulo": "el cachorro de raza grande al que le dan premios",
-   "segundos": 76.9
+   "segundos": 63.4
   },
   {
    "bloque": 102,
    "titulo": "cambiar un alimento no rehace el menú",
-   "segundos": 25.0
+   "segundos": 17.5
   },
   {
    "bloque": 104,
@@ -499,17 +499,17 @@
   {
    "bloque": 106,
    "titulo": "el ratio del profesional y el rango de cada patología",
-   "segundos": 74.1
+   "segundos": 88.0
   },
   {
    "bloque": 107,
    "titulo": "en la pantalla del dueño no se nombra ninguna fuente",
-   "segundos": 197.2
+   "segundos": 39.0
   },
   {
    "bloque": 108,
    "titulo": "un menú entregado no dice que se pasa de un límite",
-   "segundos": 142.1
+   "segundos": 106.9
   },
   {
    "bloque": 109,
@@ -519,7 +519,7 @@
   {
    "bloque": 110,
    "titulo": "la comida del menú se tiene que poder comprar",
-   "segundos": 66.2
+   "segundos": 67.6
   },
   {
    "bloque": 111,
@@ -529,22 +529,22 @@
   {
    "bloque": 112,
    "titulo": "el reloj no se gasta donde no hay menu",
-   "segundos": 30.3
+   "segundos": 33.8
   },
   {
    "bloque": 113,
    "titulo": "los siete maximos legales, sobre materia seca",
-   "segundos": 27.2
+   "segundos": 19.2
   },
   {
    "bloque": 114,
    "titulo": "al quitar un suplemento se dice por que entra otro",
-   "segundos": 3.1
+   "segundos": 3.8
   },
   {
    "bloque": 115,
    "titulo": "el suelo se mide contra las kcal de verdad",
-   "segundos": 181.5
+   "segundos": 60.9
   },
   {
    "bloque": 116,
@@ -554,7 +554,7 @@
   {
    "bloque": 117,
    "titulo": "la lista de categorias de suplemento es UNA",
-   "segundos": 0.8
+   "segundos": 0.9
   },
   {
    "bloque": 118,
@@ -574,12 +574,12 @@
   {
    "bloque": 121,
    "titulo": "el motor calcula el peso adulto, no se lo cree",
-   "segundos": 17.2
+   "segundos": 15.4
   },
   {
    "bloque": 122,
    "titulo": "el premio declarado es comida, y el que no se dice",
-   "segundos": 10.5
+   "segundos": 8.8
   },
   {
    "bloque": 123,
@@ -594,22 +594,22 @@
   {
    "bloque": 125,
    "titulo": "un aviso no promete un ajuste que el menú no hace",
-   "segundos": 26.8
+   "segundos": 27.0
   },
   {
    "bloque": 126,
    "titulo": "la prescripción, lo único que puede bajar de FEDIAF",
-   "segundos": 15.6
+   "segundos": 32.9
   },
   {
    "bloque": 127,
    "titulo": "en BARF no entran hidratos",
-   "segundos": 69.4
+   "segundos": 63.1
   },
   {
    "bloque": 128,
    "titulo": "crudo o cocinado",
-   "segundos": 47.5
+   "segundos": 46.8
   },
   {
    "bloque": 129,
@@ -624,12 +624,22 @@
   {
    "bloque": 131,
    "titulo": "un solo alimento no puede ser medio plato",
-   "segundos": 6.1
+   "segundos": 0.2
   },
   {
    "bloque": 133,
    "titulo": "ningun atajo sirve un menu de otro modo",
-   "segundos": 39.7
+   "segundos": 32.5
+  },
+  {
+   "bloque": 134,
+   "titulo": "la pregunta de que premios, y donde sale",
+   "segundos": 0.7
+  },
+  {
+   "bloque": 135,
+   "titulo": "el arranque por patologia",
+   "segundos": 10.8
   }
  ]
 }

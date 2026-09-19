@@ -879,6 +879,193 @@ después de cocinar**.
 
 Lo vigilan los BLOQUES 128, 129 y 130.
 
+### El arranque: una LISTA de alimentos, no un menú enlatado
+
+*(19 de septiembre de 2026.)* Elena, después de ver que un menú con patología
+podía tardar más de un minuto en la pantalla:
+
+> «no te puedes tirar más de 20 o 30 segundos esperando a ver un menú en la
+> pantalla»
+
+y, sobre la forma:
+
+> «que sean varios menús, o sea, no solo uno, porque entonces todos los perros
+> con esa patología van a comer exactamente lo mismo. Entonces haz unos cuantos
+> menús que se puedan adaptar luego los gramos […] Por si uno elige, oye, lo
+> quiero de conejo, oye, lo quiero de cordero»
+
+**El motor tenía dos vías rápidas y las dos estaban apagadas justo para los
+perros que más cuestan.** La primera reescala un menú del catálogo por las kcal
+del perro; la segunda coge sus alimentos y los fuerza como base, dejando que el
+solver decida los gramos. Las dos comparten un `elif` con `not
+datos.patologias` y `not _hay_algun_premio(datos)` — y ese gate está bien para
+la primera y **sobra en la segunda**: un menú reescalado no puede cumplir un
+tope de fósforo que se mide sobre las kcal reales, pero una base forzada sí,
+porque la vuelve a resolver el MILP.
+
+⚠️ **Lo que se guarda es una LISTA DE ALIMENTOS SIN GRAMOS**, en
+`menus_base_patologias.json`. De ahí no sale ni un gramo: con ella se
+**restringe** el catálogo que ve el solver, y el solver decide todo para ESE
+perro — con sus kcal, sus premios, su peso y sus topes. Lo que se ahorra es
+elegir QUÉ alimentos entre 105, que es la parte cara.
+
+⚠️ **RESTRINGIR NO ES FORZAR, y esa distinción costó una vuelta entera.** La vía
+del catálogo fijo usa `forzar`: todos esos alimentos tienen que salir con gramos
+> 0. Aquí no vale, porque la lista es de OTRO perro. Medido, con `forzar` el
+arranque de la renal cocinada **no llegaba a verde en ningún peldaño** y solo
+costaba tiempo — 22,9 s por la búsqueda libre contra **29,5 s** pasando antes por
+el atajo. Restringiendo sale en 0,1 s.
+
+**La medida**, por la API y con la tabla puesta y quitada:
+
+| | búsqueda libre | con arranque | |
+|---|---|---|---|
+| adulto renal **cocinado** | 23,8 s | **0,1 s** | y en **mejor** peldaño |
+| adulto con artrosis | 6,8 s | **0,1 s** | mismo peldaño |
+| adulto con obesidad | 4,5 s | **0,1 s** | mismo peldaño |
+| toy 1,5 kg con artrosis | 19,1 s | 13,7 s | el atajo **no entra** |
+| Cairo con premios al 10 % | 15,1 s | 11,0 s | el atajo **no entra** |
+
+⚠️ **Las dos últimas filas mandan en el diseño.** Hay perros para los que la
+lista de otro perro no vale, así que el arranque es un **atajo, no una
+respuesta**: si no llega a verde se tira y se resuelve de cero, igual que hace la
+vía del catálogo desde el 5 de agosto — y medido, eso no cuesta tiempo.
+
+**Son ocho por patología y modo** — uno `libre` y siete con la proteína forzada
+(pollo, ternera, conejo, cordero, pavo, salmón, merluza) — y se recorren
+respetando `evitar_especies`, que es lo que da variedad dentro de una semana.
+El `libre` va primero porque forzar una proteína es en sí una restricción:
+medido con la artrosis, sale en un peldaño más alto que cualquiera de los siete.
+
+⚠️ **POR LA ESCALERA, Y SIN BAJAR MÁS DE LO QUE EL ARRANQUE PROMETIÓ.** Se
+empieza por arriba, como la búsqueda libre, y se para en el peldaño con el que se
+guardó. El tope está **porque sin él da peor forma, medido**: la obesidad salía
+por el atajo en `al_triple` teniendo `al_doble` guardado, y la búsqueda libre la
+daba en `al_doble`. Un atajo que entrega una ración peor formada que el camino
+normal no es un atajo. Y **se dice en qué peldaño salió**, que es lo único que la
+regla 3 exige.
+
+⚠️ **Con PREMIOS el tope no vale**, y eso también es la regla 3-bis: el peldaño
+guardado es el de un perro que no los lleva, y los premios suben todos los
+mínimos por 1000 kcal, así que esa ración necesita más sitio por derecho propio.
+
+⚠️ **LAS ALERGIAS NO ENTRAN JAMÁS (regla 4)**: lo excluido se cae de la lista
+antes de restringir con ella. Lo que queda es un arranque más corto — y si se
+queda vacío, no hay atajo.
+
+⚠️ **Y el peldaño estricto se escribe de dos formas**: la escalera lo llama
+`None` y los ficheros `"estricto"`. Comparar sin normalizar dejaba el tope en
+nada, y un arranque del estricto bajaba la escalera entera antes de rendirse.
+
+Se rehace con `python3 generar_menus_base.py` (`--seguir` retoma lo que falta;
+**se guarda en cada celda**, no al terminar). Lo vigila el **BLOQUE 135**, con
+las dos direcciones: que el fichero no pueda mentir, que el atajo **se use de
+verdad** —un atajo que no entra nunca es un guardia inerte que además hace creer
+que el motor va rápido—, que lo que entrega siga verde y dentro de sus topes,
+que las alergias no se fuercen, y que **con la tabla vacía el menú salga igual**.
+
+### Los hidratos: la pregunta estaba antes que la decisión, y no entraban
+
+*(19 de septiembre de 2026.)* Elena, usando la app:
+
+> «cuando el usuario marca, ya sea en BARF o en comida cocinada, que quiere
+> meter hidratos […] ¿debería ir un poco más adelante? O sea, después de
+> preguntar lo de BARF o cocinada, o en la misma pantalla? En ese caso **entran
+> bien en el menú**?»
+
+La segunda mitad de la frase es la que tenía respuesta, y era **no**. Medido
+contra el motor desplegado, adulto sano de 24,5 kg contestando «sí»:
+
+| | |
+|---|---|
+| **cocinada** | entra quinoa, 100 g |
+| **cruda** | **nada, y contesta en 1,9 s** |
+
+**Tres fallos, y los tres se ven en esa medida.**
+
+**1 · El atajo del catálogo no miraba `con_hidratos`.** Esos 1,9 s son
+`via_catalogo: true`: un menú de agosto servido tal cual. Es la misma familia
+que el menú crudo servido en modo cocinado del día anterior — el catálogo se
+generó antes de que la pregunta existiera y los atajos no se volvieron a mirar.
+
+**2 · Contestar «sí» solo los hacía CANDIDATOS.** El MILP optimiza nutrición por
+gramo y en crudo le salen más baratos otros alimentos, así que no los elegía
+nunca. Elena: «**que entren de verdad con un mínimo** y que también puedan
+elegirlo en barf, pero que se diga que van cocinados». Ahora hay suelo
+(`SUELO_DE_HIDRATOS_SI_LOS_PIDE`, 5 %), y es **nuestro**: `resolver` lo suelta
+si con él no hay menú, y **se dice** (`hidratos_pedidos_que_no_caben`), porque un
+plato sin arroz y sin explicación es la respuesta del dueño perdida en silencio.
+⚠️ Medido a 3 %, 5 % y 8 %: **el mismo plato**. En cuanto están obligados a
+entrar, el motor los lleva al techo del 10 % de su categoría, así que la cifra
+exacta casi no decide nada — lo que decide es que haya suelo o no.
+
+**3 · Y uno mío, del arranque por patología, que cazó el BLOQUE 127**: a una
+pancreatitis con «**no** quiero hidratos» le metía **215 g de arroz**. La lista
+de arranque los lleva —se generó sin la pregunta y esa patología los pide— y al
+restringir con ella se me olvidó pasarle `con_hidratos` al solver, que volvía a
+deducirlo de la patología. Regla 4, y es literalmente el fallo que este repo
+tiene escrito desde agosto para `patologias`, con otro campo.
+
+### Y dos números nuestros que se contradecían en el perro pequeño
+
+*(El mismo día.)* Elena: «¿y no se puede a un toy meter hidratos de ninguna
+manera? porque si no se puede igual esa pregunta debería desaparecer para
+ellos», y al ver la cifra: «**¿pero esa proporción mínima está bien? ¿de dónde
+la sacas?**».
+
+No se podía, y **la causa no era nutrición**:
+
+| | |
+|---|---|
+| porción mínima de la categoría, ya escalada con el perro | **9 %** del plato estimado (`0,15 × 0,6 × DER`) |
+| techo de los hidratos | **10 %** del plato REAL |
+
+Son casi el mismo número, así que en un perro pequeño **quién gana lo decidía el
+error de la estimación del plato**. Al toy de 1,8 kg la porción le pedía 18 g de
+arroz contra un techo de 15,3: no cabía **por 2,7 gramos**. Al de 3 kg en
+cocinado le pedía 26,1 contra 27,2 y entraba con 26 g clavados.
+
+⚠️ **La cifra de 30 g no está mal y no tiene fuente**: es nuestra, escrita con su
+motivo —«por debajo de 30 g no es una porción, es una cucharada que nadie va a
+pesar; y como se pesan ya cocidos, 30 g son unos 10 g de grano seco»—. Lo que
+estaba mal es que **un suelo de porción pidiera más de lo que su propio techo
+permite**, que no es un criterio sino una contradicción, y echa al alimento del
+catálogo sin que nadie lo pida. Aquí **no se inventa ninguna cifra**: se topa la
+porción contra el techo de su categoría.
+
+Medido después: **10 de 10** perros de 1,8 a 15 kg, en los dos modos, se llevan
+sus hidratos al pedirlos — el toy, 14-15 g, que para un perro que come 153 g al
+día sí son una porción.
+
+### Y a quien su enfermedad se los exige no se le pregunta
+
+*(El mismo día.)* Elena: «y lo mismo para patologías, si tiene que llevar
+hidratos pues que no se pregunte».
+
+Una pregunta cuya respuesta no cambia nada le hace creer al dueño que decide
+algo. Con una patología que topa la grasa, la energía que queda solo puede venir
+de hidratos: no es opcional, así que **no se ofrece elegir, se cuenta**.
+
+⚠️ **La lista de quién los pide la sirve el motor, DERIVADA** —
+`GET /vocabulario` → `hidratos.patologias_que_los_piden`, sacada de
+`patologias.json` con la **misma** función que usa el solver. Copiarla a la app
+sería la regla 6 rota otra vez: el día que una patología cambie, la app seguiría
+preguntando donde el motor ya ha decidido. Sin vocabulario (Render dormido) **se
+pregunta**, que es el lado que no esconde nada.
+
+⚠️ **Y esto cambia una decisión del 17 de septiembre**, así que va dicho: aquel
+día se escribió que el dueño puede contestar «no» y los hidratos se quitan
+**aunque la patología los pida** (regla 4). Sigue siendo verdad en el motor — un
+`False` los quita igual — pero a ese dueño **ya no se le ofrece la pregunta**.
+Lo decidió Elena con la frase de arriba.
+
+Lo vigila el **BLOQUE 127** (las dos mitades: que el toy los reciba, y que la
+lista servida sea la que aplica el solver, patología a patología) y
+`tests/hidratos-donde-se-deciden.spec.js` en `canislab-web`, que siembra la
+pregunta y la lista **inventadas** y comprueba las dos direcciones — que se
+esconda con la patología que los pide y que **no** se esconda con una que no.
+
+
 ### Endpoints: cuáles usa la app y cuáles no
 
 Los que llama el frontend hoy: `/menu/v2`, `/menu/semana`,

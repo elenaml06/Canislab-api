@@ -22749,13 +22749,36 @@ _si127 = _menu127(con_hidratos=True)
 if not _si127.get("factible"):
     fallos.append("BLOQUE127: con `con_hidratos=True` el perro SANO se queda sin menú. Permitir un "
                   "alimento más no puede quitar soluciones: es un techo que sube, no un suelo")
-# ⚠️ Y AQUÍ NO SE EXIGE QUE EL MENÚ LOS LLEVE, A PROPÓSITO. Un `True` los hace
-#    CANDIDATOS, no obligatorios, así que «este menú lleva quinoa» es una
-#    propiedad INCIDENTAL del menú que devuelve el solver -- y este fichero
-#    tiene escrito cuatro veces lo que pasa al afirmarlas: el bloque se pone
-#    rojo cuando el motor acierta, y una batería de la que se desconfía se mira
-#    por encima. Medido el día que se escribió: con `True` el adulto sano saca
-#    unas veces quinoa y otras ninguno, y las dos cosas son correctas.
+# ⚠️ Y DESDE EL 19 DE SEPTIEMBRE SÍ SE EXIGE QUE EL MENÚ LOS LLEVE. Aquí ponía
+#    justo lo contrario —«un `True` los hace CANDIDATOS, no obligatorios»— y era
+#    verdad del motor y un fallo del producto, medido contra el desplegado: en
+#    una ración CRUDA el adulto sano contestaba «sí» y el plato NO llevaba ni un
+#    gramo, porque el MILP optimiza nutrición por gramo y en crudo le salen más
+#    baratos otros alimentos. Quien contestaba «sí» no veía ninguna diferencia.
+#
+#    Elena: «que entren de verdad con un mínimo y que también puedan elegirlo en
+#    barf, pero que se diga que van cocinados». Así que ahora hay un suelo
+#    (`SUELO_DE_HIDRATOS_SI_LOS_PIDE`), y con él esto ya NO es una propiedad
+#    incidental del menú: es el invariante.
+#
+#    ⚠️ Pero el suelo es un número NUESTRO y no puede dejar a un perro sin comer
+#    (regla 3), así que `resolver` lo suelta si con él no hay menú -- medido, al
+#    toy de 1,8 kg le pasa. Por eso el invariante tiene DOS mitades y hacen
+#    falta las dos: o el menú los lleva, O LA RESPUESTA LO DICE. Un plato sin
+#    arroz y sin explicación es la respuesta del dueño perdida en silencio.
+_conhid127 = _menu127(con_hidratos=True)
+if _conhid127.get("factible") and _conhid127.get("menu"):
+    _lleva127 = [n for n in _conhid127["menu"] if n in set(_CEREALES_127)]
+    _lodice127 = _conhid127.get("hidratos_pedidos_que_no_caben") is True
+    if not _lleva127 and not _lodice127:
+        fallos.append("BLOQUE127: el dueño ha pedido hidratos, el menú no lleva NINGUNO y la "
+                      "respuesta no lo dice. O entran —para eso está el suelo— o se dice que no "
+                      "cabían: las dos cosas juntas no pueden faltar, o la respuesta del dueño se "
+                      "pierde en silencio y el menú sale exactamente igual que si no la hubiera "
+                      "contestado")
+    if _lleva127 and _lodice127:
+        fallos.append(f"BLOQUE127: el menú LLEVA hidratos {_lleva127} y además dice que no "
+                      f"cabían. Una de las dos cosas es mentira")
 #
 #    Lo que SÍ es determinista es la fontanería, y es lo que de verdad se
 #    rompe: que `main` le pase la respuesta al solver y que el solver la LEA.
@@ -22764,13 +22787,83 @@ if not _si127.get("factible"):
 #    docstring.
 _fuente127 = open("main.py", encoding="utf-8").read()
 _pasa127 = _fuente127.count('con_hidratos=getattr(datos, "con_hidratos", None)')
-if _pasa127 < 4:
+# ⚠️ Y EL NÚMERO SUBE CUANDO ENTRA UN CAMINO NUEVO. El 19 de septiembre pasó de
+#    4 a 5 con el arranque por patología, y el olvido lo cazó ESTE bloque: la
+#    lista de arranque de una pancreatitis lleva arroz —se generó sin la
+#    pregunta y esa patología los pide—, así que sin `con_hidratos` el solver lo
+#    deducía de la patología y le metía 215 g de arroz a un dueño que había
+#    dicho que NO. Regla 4.
+if _pasa127 < 5:
     fallos.append(f"BLOQUE127: `main.py` solo le pasa `con_hidratos` al solver en {_pasa127} "
-                  f"llamadas. Eran seis: si se cae de una, ese camino contesta la pregunta del "
+                  f"llamadas y son cinco: si se cae de una, ese camino contesta la pregunta del "
                   f"dueño ignorándola, y el menú sale verde igual")
 if "con_hidratos" not in _mc127._resolver_una_vez.__code__.co_varnames:
     fallos.append("BLOQUE127: `_resolver_una_vez` ya no recibe `con_hidratos`. La pregunta llegaría "
                   "hasta la puerta del solver y se quedaría fuera")
+
+# ── 4-bis · Y EL PERRO PEQUEÑO TAMBIÉN, que es donde no cabían ─────────────
+#
+# ⚠️ POR QUÉ (19 de septiembre de 2026). Elena: «¿y no se puede a un toy meter
+# hidratos de ninguna manera? porque si no se puede igual esa pregunta debería
+# desaparecer para ellos». Medido, la respuesta era que NO se podía -- y la
+# causa no era nutrición: eran DOS NÚMEROS NUESTROS chocando.
+#
+# La porción mínima de la categoría (30 g) ya se escala con el perro desde
+# agosto, al 9 % del plato estimado, y el techo de los hidratos es el 10 % del
+# plato REAL. Son casi el mismo número, así que en un perro pequeño quién gana
+# lo decidía el error de la estimación: al toy de 1,8 kg la porción le pedía 18 g
+# contra un techo de 15,3 y no cabía POR 2,7 GRAMOS.
+#
+# Un suelo de porción que pide más de lo que su propio techo permite no es un
+# criterio: es una contradicción. Ahora la porción se topa contra el techo de su
+# categoría, y el toy se lleva sus ~15 g de arroz -- que para un perro que come
+# 153 g al día SÍ son una porción.
+for _peso4b, _der4b, _tam4b in ((1.8, 200.0, "Toy"), (3.0, 290.0, "Toy")):
+    for _modo4b in ("crudo", "cocinado"):
+        _r4b = _c.post("/menu/v2", json={
+            "nombres_alimentos": [], "modo": "automatico", "der_objetivo": _der4b,
+            "peso_perro_kg": _peso4b, "etapa_requisitos": "Adulto", "tamano": _tam4b,
+            "patologias": [], "con_hidratos": True,
+            "modo_de_preparacion": _modo4b}).json()
+        if not _r4b.get("factible") or not _r4b.get("menu"):
+            fallos.append(f"BLOQUE127: el perro de {_peso4b} kg pide hidratos y se queda SIN MENÚ "
+                          f"({_modo4b}). Permitir un alimento más no puede quitar soluciones")
+            continue
+        if not [n for n in _r4b["menu"] if n in set(_CEREALES_127)] \
+                and _r4b.get("hidratos_pedidos_que_no_caben") is not True:
+            fallos.append(f"BLOQUE127: el perro de {_peso4b} kg ({_modo4b}) pide hidratos, no "
+                          f"lleva ninguno y no se dice. En un plato pequeño la porción mínima "
+                          f"choca con el techo de la categoría, y eso es dos números NUESTROS "
+                          f"contradiciéndose -- no una razón para dejarle sin lo que pidió")
+
+# ── 4-ter · A QUIEN LOS NECESITA NO SE LE PREGUNTA, Y LA LISTA LA DA EL MOTOR ─
+#
+# ⚠️ Elena: «y lo mismo para patologías, si tiene que llevar hidratos pues que no
+# se pregunte». La app esconde la pregunta, y para eso necesita saber de QUIÉN
+# -- y esa lista no puede vivir en la app (regla 6): el día que una patología
+# cambie, la app seguiría preguntando donde el motor ya ha decidido.
+#
+# Aquí se exige que la lista SE DERIVE, no que exista: se compara contra la
+# misma función que usa el solver, patología a patología. Una lista escrita a
+# mano pasaría el «no está vacía» y fallaría esto.
+_voc4t = _c.get("/vocabulario").json().get("hidratos") or {}
+_piden4t = _voc4t.get("patologias_que_los_piden")
+if not isinstance(_piden4t, list) or not _piden4t:
+    fallos.append("BLOQUE127: `/vocabulario` no sirve `hidratos.patologias_que_los_piden`. Sin "
+                  "ella la app no puede saber a quién NO preguntar, y acabaría con su propia "
+                  "copia de la lista -- que es la regla 6 rota")
+else:
+    import json as _j4t
+    _tab4t = _j4t.loads((_raiz_b24 / "patologias.json").read_text(encoding="utf-8"))["patologias"]
+    _debe4t = sorted(k for k in _tab4t if _mc127.la_patologia_pide_hidratos([k], "Adulto"))
+    if sorted(_piden4t) != _debe4t:
+        fallos.append(f"BLOQUE127: la lista servida {sorted(_piden4t)} no es la que aplica el "
+                      f"solver {_debe4t}. Si se separan, la app esconde la pregunta donde el "
+                      f"motor sí la necesita, o la ofrece donde no cambia nada")
+if not ((_voc4t.get("texto_si_los_pide_la_patologia") or {}).get("dueno") or "").strip():
+    fallos.append("BLOQUE127: no se sirve el texto que explica al dueño por qué su menú lleva "
+                  "hidratos. Esconder la pregunta sin decir nada es quitarle una decisión en "
+                  "silencio")
 
 # ── 5 · lo que se elige A MANO entra igual (regla 5) ────────────────────────
 _amano127 = _CEREALES_127[0] if _CEREALES_127 else None
@@ -24008,6 +24101,208 @@ print(f"  techo {_techo134} % · {len(_pasan134)} nivel lo pasa ({_pasan134}) ·
       f"los dos registros, con sus cuatro campos")
 
 
+# ============================================================
+# BLOQUE 135 — EL ARRANQUE POR PATOLOGIA ES UN ATAJO, NO UNA RESPUESTA
+# ============================================================
+#
+# ⚠️ POR QUE EXISTE (19 de septiembre de 2026). Lo pidio Elena viendo que un
+# menu con patologia podia tardar mas de un minuto en la pantalla: «no te puedes
+# tirar mas de 20 o 30 segundos esperando a ver un menu». Las dos vias rapidas
+# que ya habia estan apagadas en cuanto hay una patologia marcada --y con razon:
+# un menu enlatado reescalado por un factor no puede cumplir un tope de fosforo
+# que se mide sobre las kcal REALES--, asi que justo los perros que mas cuestan
+# de resolver eran los unicos sin ningun atajo.
+#
+# `menus_base_patologias.json` guarda una LISTA DE ALIMENTOS SIN GRAMOS, que
+# entra como `forzar` y deja que el solver decida todos los gramos para ese
+# perro. Lo que se ahorra es elegir QUE alimentos entre 105.
+#
+# QUE COMPRUEBA, y son las dos direcciones:
+#
+#   1. Que el fichero no pueda mentir: cada alimento existe en el catalogo, cada
+#      patologia es formulable, cada modo y cada peldano son de los que el motor
+#      conoce, y ningun arranque cruzado de modo (hueso carnoso en cocinado).
+#   2. Que el atajo SE USE de verdad. Un atajo que nunca entra es un guardia
+#      inerte que ademas hace creer que el motor va rapido.
+#   3. Que lo que entrega sigue estando VERDE y dentro de los topes de SU
+#      patologia -- medido con la MISMA funcion que decide de verdad.
+#   4. Que las ALERGIAS no se fuerzan (regla 4). `forzar` se salta las
+#      exclusiones, asi que un alimento alergeno en la lista de arranque
+#      acabaria en el plato de un perro alergico. Esto es lo mas grave que
+#      puede fallar aqui.
+#   5. Que si el arranque NO sirve, el menu sale igual por la busqueda libre.
+#      Medido: al toy de 1,5 kg con premios le pasa de verdad.
+print("\n=== BLOQUE 135: el arranque por patologia ===")
+
+import json as _json135
+from menus_base import MENUS as _MENUS135, SIN_MENU as _SINMENU135, LIBRE as _LIBRE135
+from accesibles import vale_en as _vale_en135
+import generar_menus_base as _gen135
+
+_TABLA135 = _json135.loads((_raiz_b24 / "patologias.json").read_text(encoding="utf-8"))["patologias"]
+_FORMULABLES135 = {k for k, v in _TABLA135.items() if v.get("formulable")}
+_PELDANOS135 = {c or _api.PELDANO_ESTRICTO for _, _, c in _api._escalera_de_relajacion()}
+_PROTEINAS135 = {p or _LIBRE135 for p in _gen135.PROTEINAS}
+
+if not _MENUS135:
+    fallos.append("BLOQUE135: `menus_base_patologias.json` no tiene ni un arranque. Sin el, "
+                  "cada menu con patologia vuelve a resolverse desde cero -- que es lo que "
+                  "tardaba mas de un minuto. Se rehace con `python3 generar_menus_base.py`")
+
+# ─── 1. El fichero no puede mentir ───────────────────────────────────────────
+for _clave135, _ent135 in _MENUS135.items():
+    _pat135, _modo135, _prot135 = _clave135.split("|", 2)
+    if _pat135 not in _FORMULABLES135:
+        fallos.append(f"BLOQUE135: el arranque «{_clave135}» es de una patologia que NO es "
+                      f"formulable. Un arranque para una patologia que el motor no formula no "
+                      f"lo usa nadie, y hace creer que esta cubierta")
+    if _modo135 not in ("crudo", "cocinado"):
+        fallos.append(f"BLOQUE135: el arranque «{_clave135}» va en un modo que no existe")
+    if _prot135 not in _PROTEINAS135:
+        fallos.append(f"BLOQUE135: el arranque «{_clave135}» usa una proteina que "
+                      f"`generar_menus_base.PROTEINAS` no declara. Las dos puntas tienen que "
+                      f"decir lo mismo o el arranque no se elige nunca")
+    if (_ent135.get("peldano") or _api.PELDANO_ESTRICTO) not in _PELDANOS135:
+        fallos.append(f"BLOQUE135: el arranque «{_clave135}» dice que salio en el peldano "
+                      f"«{_ent135.get('peldano')}», que no esta en la escalera del motor")
+    for _n135 in _ent135.get("alimentos") or []:
+        if _n135 not in al:
+            fallos.append(f"BLOQUE135: el arranque «{_clave135}» nombra «{_n135}», que ya no "
+                          f"esta en el catalogo. Forzar un alimento que no existe deja el "
+                          f"arranque a medias y en silencio")
+            continue
+        # ⚠️ Y EL MODO, QUE ES LO QUE SE ESCAPO EL 19 DE SEPTIEMBRE CON EL
+        # CATALOGO: un menu COCINADO con `Carcasa de pollo` dentro. El hueso
+        # cocido ASTILLA, y en ese modo es exclusion DURA, como una alergia.
+        if not _vale_en135(al[_n135], _modo135):
+            fallos.append(f"BLOQUE135: el arranque «{_clave135}» nombra «{_n135}», que NO vale "
+                          f"en modo {_modo135}. Es el fallo del catalogo otra vez: el semaforo "
+                          f"no puede cazarlo, comprueba nutrientes y no de que modo son las "
+                          f"fichas")
+
+for _clave135, _motivo135 in _SINMENU135.items():
+    if _clave135 in _MENUS135:
+        fallos.append(f"BLOQUE135: «{_clave135}» esta a la vez en `menus` y en `sin_menu`. "
+                      f"Una de las dos cosas es mentira")
+    # ⚠️ «NO SALE» Y «NO ME HA DADO TIEMPO» NO SON LO MISMO, Y BAJO CARGA LO
+    # SEGUNDO SE DISFRAZA DE LO PRIMERO. Paso generando estas 624: con dos
+    # procesos a la vez, dos arranques de la artrosis salieron «sin menu» a los
+    # 60 s, y solos salen en 9,8 y 7,1 s. O sea que la maquina cargada estaba
+    # BORRANDO arranques buenos del fichero, en silencio y con forma de dato
+    # honesto. El generador lo dice ahora, y esto no deja que se quede escrito.
+    if "SE ACAB" in (_motivo135 or "").upper():
+        fallos.append(f"BLOQUE135: «{_clave135}» esta declarado sin menu porque SE ACABO EL "
+                      f"RELOJ, no porque no exista. Eso no es un dato: hay que repetirlo con "
+                      f"`python3 generar_menus_base.py --seguir` y la maquina descargada, o el "
+                      f"motor se queda sin un arranque que si existe")
+
+# ─── 2. Que el atajo se USE, y 3. que lo que entrega siga cumpliendo ─────────
+#
+# ⚠️ SE PIDE POR LA API, no llamando al solver: lo que se quiere afirmar es lo
+# que sale por la puerta. Y las cuatro patologias estan elegidas porque son las
+# que mas tardaban sin arranque (artrosis 14,9 s, renal cocinado 7,7 s).
+_CASOS135 = [("artrosis", "crudo"), ("artrosis", "cocinado"),
+             ("renal", "cocinado"), ("obesidad", "crudo")]
+_uso135 = 0
+for _pat135, _modo135 in _CASOS135:
+    _r135 = _c.post("/menu/v2", json={
+        "nombres_alimentos": [], "der_objetivo": 950.0,
+        "etapa_requisitos": "Adulto", "peso_perro_kg": 20.0,
+        "modo": "automatico", "patologias": [_pat135],
+        "modo_de_preparacion": _modo135}).json()
+    if not _r135.get("factible") or not _r135.get("menu"):
+        fallos.append(f"BLOQUE135: «{_pat135}» ({_modo135}) no da menu por la API. El BLOQUE 61 "
+                      f"lo dice mejor, pero si se rompe aqui es que el arranque esta tirando "
+                      f"menus que deberia dejar pasar a la busqueda libre")
+        continue
+    if _r135.get("via_arranque_patologia"):
+        _uso135 += 1
+    _g135 = _r135["menu"]
+    _v135 = verificar(_g135, al, req, 950.0, "Adulto")
+    if _v135["semaforo"] != "verde":
+        fallos.append(f"BLOQUE135: «{_pat135}» ({_modo135}) sale {_v135['semaforo']}, no verde. "
+                      f"Regla 1: ningun menu sale sin verificar")
+    _rotos135 = _api._tope_patologia_roto(_g135, al, [_pat135], "Adulto")
+    if _rotos135:
+        fallos.append(f"BLOQUE135: «{_pat135}» ({_modo135}) rompe su propio tope: {_rotos135}. "
+                      f"El semaforo no lo ve: son los requisitos de un perro SANO")
+    # ⚠️ Y EL PELDANO SE DICE SIEMPRE. Esta via baja de peldano --las otras dos
+    # no, sirven un menu ya hecho--, y bajar en silencio es lo unico que la
+    # regla 3 prohibe.
+    if _r135.get("via_arranque_patologia") and not _r135.get("peldano"):
+        fallos.append(f"BLOQUE135: «{_pat135}» ({_modo135}) sale por el arranque y no dice en "
+                      f"que peldano. «No dice nada» y «estricto» se leen igual")
+
+if _uso135 == 0:
+    fallos.append("BLOQUE135: ninguno de los cuatro casos ha salido por el arranque "
+                  "(`via_arranque_patologia`). Un atajo que no se usa nunca es un guardia "
+                  "inerte, y ademas hace creer que el motor va rapido cuando no va")
+
+# ─── 4. LAS ALERGIAS NO SE FUERZAN JAMAS (regla 4) ───────────────────────────
+#
+# ⚠️ ESTO ES LO MAS GRAVE QUE PUEDE FALLAR AQUI: un perro alergico al pollo
+# comiendo pollo, con el menu VERDE y sin un solo aviso.
+#
+# ⚠️ Y HAY DOS PROTECCIONES, ASI QUE ESTA COMPROBACION SOLO SE PONE ROJA
+# QUITANDO LAS DOS -- comprobado, y la primera version de esta nota decia otra
+# cosa. Son: (1) lo excluido se cae de la lista antes de restringir con ella, y
+# (2) al solver se le sigue pasando `excluidos`. Quitando solo una, el bloque
+# sigue verde **y el motor sigue estando bien**: esa es la diferencia entre una
+# comprobacion inerte y una que mira el INVARIANTE. Lo que se afirma no es «la
+# linea X existe», es «este perro no recibe pollo».
+#
+# (Con `forzar` bastaria quitar la primera, porque `forzar` SI se salta las
+# exclusiones -- esta escrito en el propio `motor_completo`. Aqui se RESTRINGE,
+# que es otra cosa: el solver solo ve el catalogo recortado y le aplica sus
+# propias exclusiones encima.)
+_ARRANQUES_CON_POLLO135 = [k for k, v in _MENUS135.items()
+                           if k.startswith("artrosis|crudo|")
+                           and any("pollo" in n.lower() or "gallina" in n.lower()
+                                   for n in v.get("alimentos") or [])]
+if not _ARRANQUES_CON_POLLO135:
+    fallos.append("BLOQUE135: ningun arranque de la artrosis lleva pollo, asi que la "
+                  "comprobacion de alergias no comprueba nada. Hay que elegir otra patologia")
+else:
+    _r135a = _c.post("/menu/v2", json={
+        "nombres_alimentos": [], "der_objetivo": 950.0,
+        "etapa_requisitos": "Adulto", "peso_perro_kg": 20.0,
+        "modo": "automatico", "patologias": ["artrosis"],
+        "especies_excluidas": ["pollo"], "modo_de_preparacion": "crudo"}).json()
+    if _r135a.get("factible") and _r135a.get("menu"):
+        _con_pollo135 = [n for n in _r135a["menu"]
+                         if "pollo" in n.lower() or "gallina" in n.lower()]
+        if _con_pollo135:
+            fallos.append(f"BLOQUE135: un perro con artrosis ALERGICO AL POLLO ha recibido "
+                          f"{_con_pollo135}. O el arranque no filtra su lista por las "
+                          f"exclusiones, o el solver ha dejado de recibir `excluidos` -- hacen "
+                          f"falta las dos. Regla 4: las alergias no se tocan jamas")
+
+# ─── 5. Sin arranque, el menu sale igual ─────────────────────────────────────
+#
+# El atajo no puede ser la unica forma de que salga un menu. Se vacia la tabla a
+# mano y se exige que la busqueda libre siga dando menu verde.
+import menus_base as _mb135
+_guardado135 = dict(_mb135.MENUS)
+try:
+    _mb135.MENUS.clear()
+    _r135b = _c.post("/menu/v2", json={
+        "nombres_alimentos": [], "der_objetivo": 950.0,
+        "etapa_requisitos": "Adulto", "peso_perro_kg": 20.0,
+        "modo": "automatico", "patologias": ["artrosis"],
+        "modo_de_preparacion": "crudo"}).json()
+    if not _r135b.get("factible") or not _r135b.get("menu"):
+        fallos.append("BLOQUE135: con la tabla de arranques VACIA, la artrosis deja de dar "
+                      "menu. El arranque es un atajo, no puede ser la unica forma de llegar")
+    elif _r135b.get("via_arranque_patologia"):
+        fallos.append("BLOQUE135: con la tabla de arranques VACIA, la respuesta sigue diciendo "
+                      "`via_arranque_patologia`. O no se esta leyendo la tabla, o el campo "
+                      "miente -- y con el miente la medida de lo que tarda")
+finally:
+    _mb135.MENUS.update(_guardado135)
+
+print("  hecho, %d arranques, %d sin menu, %d de %d casos por el atajo"
+      % (len(_MENUS135), len(_SINMENU135), _uso135, len(_CASOS135)))
+
 _cerrar_el_ultimo_bloque()
 
 # ⚠️ Y ESTE GUARDIA TIENE QUE SER LO ÚLTIMO DEL FICHERO, Y EL 16 DE SEPTIEMBRE
@@ -24150,6 +24445,8 @@ _reparto_json["bloques"].sort(key=lambda x: x["bloque"])
 with open(_os_rep.path.join(_os_rep.path.dirname(_os_rep.path.abspath(__file__)),
                             "reparto_de_la_bateria.json"), "w", encoding="utf-8") as _f_rep:
     _json_rep.dump(_reparto_json, _f_rep, ensure_ascii=False, indent=1)
+
+
 
 print("\nDÓNDE SE VA EL TIEMPO — los diez bloques más caros:")
 for _t, _nombre in _tiempos_por_bloque[:10]:

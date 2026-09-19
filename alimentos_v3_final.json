@@ -15353,8 +15353,8 @@
     },
     "preparacion": "cocido",
     "se_pesa": "ya cocido",
-    "se_pesa_por_que": "Su composicion sale de la fila COCIDA de la fuente que manda (ciqual:9104 · «Riz blanc, cuit, non salé»), que va por 100 g del alimento tal cual se sirve, o sea ya cocido y escurrido. Por eso los gramos del menu son de producto cocido.",
-    "aviso_al_comprar": "Se da COCIDO: hervido en agua y sin sal. ⚠️ Los gramos del menu son de arroz YA COCIDO y escurrido — pesalo DESPUES de cocinarlo, no antes. Crudo pesa mucho menos y tiene el triple de calorias por gramo, asi que pesarlo crudo le daria de mas.",
+    "se_pesa_por_que": "Su composición sale de la fila COCIDA de la fuente que manda (ciqual:9104 · «Riz blanc, cuit, non salé»), que va por 100 g del alimento tal cual se sirve, o sea ya cocido y escurrido. Por eso los gramos del menú son de producto cocido.",
+    "aviso_al_comprar": "Se da COCIDO: hervido en agua y sin sal. ⚠️ Los gramos del menú son de arroz YA COCIDO y escurrido — pésalo DESPUÉS de cocinarlo, no antes. Crudo pesa mucho menos y tiene el triple de calorías por gramo, así que pesarlo crudo le daría de más.",
     "nota_datos": "⚠️ LA FILA DE BEDCA QUE MANDA ESTA MAL Y NO SE USA. `bedca:2661` se llama «Arroz, hervido» y declara 4,12 % de agua — MENOS que su propia fila de arroz crudo (`bedca:2660`, 5,9 %). Un arroz hervido con menos agua que el crudo no existe: esa fila describe arroz SECO con el nombre del hervido. Sus cifras lo confirman celda a celda (proteina 7,54 contra 3,06 de CIQUAL y 2,69 de USDA; fosforo 100,8 contra 35 y 43; potasio 130 contra 16 y 35). Se baja al mandato 3 (CIQUAL) entera, no celda a celda: la fila no es este alimento. ⚠️ Y la misma base ACIERTA con el integral (`bedca:1009`, 71,8 % de agua), asi que esto es un defecto de UNA fila, no de BEDCA. || ⚠️ CÓMO SE COCINA LA FILA DE LA QUE SALEN ESTAS CIFRAS, que no es un detalle. Las filas cocidas de CIQUAL son de alimento hervido en AGUA ABUNDANTE Y ESCURRIDO, y eso se lee en sus propios números: su arroz blanco cocido declara 0,13 g de cenizas contra 0,41 de la fila de USDA, y en materia seca conserva el 43 % del potasio, el 29 % del hierro y el 41 % del zinc de su fila cruda. USDA cuece por ABSORCIÓN, sin tirar agua, y conserva casi todo. Las dos son honestas y describen dos platos distintos. || El hierro (0,04 mg) y la niacina (0,16 mg) de CIQUAL pierden el 94 % y el 80 % contra su propia fila cruda (`ciqual:9100`, «Riz blanc, cru») medidos en materia seca, y eso es más de lo que explica el escurrido — el hierro no se va en el agua en ese grado. USDA da 0,2 y 0,4 en su fila cocida sin enriquecer. SE QUEDA LA CIFRA DE LA FUENTE QUE MANDA y se dice, porque los dos son MÍNIMOS de FEDIAF y quedarse corto es el lado seguro: el motor va a buscar ese hierro y esa niacina a otro alimento en vez de darlos por puestos.",
     "sin_dato": [
       "purinas",
@@ -15478,8 +15478,8 @@
     },
     "preparacion": "cocido",
     "se_pesa": "ya cocido",
-    "se_pesa_por_que": "Su composicion sale de la fila COCIDA de la fuente que manda (bedca:1009 · «Arroz integral, hervido»), que va por 100 g del alimento tal cual se sirve, o sea ya cocido y escurrido. Por eso los gramos del menu son de producto cocido.",
-    "aviso_al_comprar": "Se da COCIDO: hervido en agua y sin sal. ⚠️ Los gramos del menu son de arroz YA COCIDO y escurrido — pesalo DESPUES de cocinarlo, no antes. Crudo pesa mucho menos y tiene el triple de calorias por gramo, asi que pesarlo crudo le daria de mas.",
+    "se_pesa_por_que": "Su composición sale de la fila COCIDA de la fuente que manda (bedca:1009 · «Arroz integral, hervido»), que va por 100 g del alimento tal cual se sirve, o sea ya cocido y escurrido. Por eso los gramos del menú son de producto cocido.",
+    "aviso_al_comprar": "Se da COCIDO: hervido en agua y sin sal. ⚠️ Los gramos del menú son de arroz YA COCIDO y escurrido — pésalo DESPUÉS de cocinarlo, no antes. Crudo pesa mucho menos y tiene el triple de calorías por gramo, así que pesarlo crudo le daría de más.",
     "sin_dato": [
       "purinas",
       "vitA"
@@ -15603,8 +15603,8 @@
     },
     "preparacion": "cocido",
     "se_pesa": "ya cocido",
-    "se_pesa_por_que": "Su composicion sale de la fila COCIDA de la fuente que manda (bedca:2404 · «Patata, hervida»), que va por 100 g del alimento tal cual se sirve, o sea ya cocido y escurrido. Por eso los gramos del menu son de producto cocido.",
-    "aviso_al_comprar": "Se da COCIDO: hervida con piel en agua y sin sal, y pelada despues. ⚠️ Los gramos del menu son de patata YA COCIDO y escurrido — pesalo DESPUES de cocinarlo, no antes. Crudo pesa mucho menos y tiene el triple de calorias por gramo, asi que pesarlo crudo le daria de mas.",
+    "se_pesa_por_que": "Su composición sale de la fila COCIDA de la fuente que manda (bedca:2404 · «Patata, hervida»), que va por 100 g del alimento tal cual se sirve, o sea ya cocido y escurrido. Por eso los gramos del menú son de producto cocido.",
+    "aviso_al_comprar": "Se da COCIDA: hervida con piel en agua y sin sal, y pelada después. ⚠️ Los gramos del menú son de patata YA COCIDA — pésala DESPUÉS de cocinarla, no antes.",
     "sin_dato": [
       "purinas",
       "vitA"
@@ -15728,8 +15728,8 @@
     },
     "preparacion": "cocido",
     "se_pesa": "ya cocido",
-    "se_pesa_por_que": "Su composicion sale de la fila COCIDA de la fuente que manda (ciqual:9313 · «Flocons d'avoine, bouillis/cuits à l'eau»), que va por 100 g del alimento tal cual se sirve, o sea ya cocido y escurrido. Por eso los gramos del menu son de producto cocido.",
-    "aviso_al_comprar": "Se da COCIDO: hervidos en agua y sin sal, sin leche ni azucar. ⚠️ Los gramos del menu son de copos YA COCIDO y escurrido — pesalo DESPUES de cocinarlo, no antes. Crudo pesa mucho menos y tiene el triple de calorias por gramo, asi que pesarlo crudo le daria de mas.",
+    "se_pesa_por_que": "Su composición sale de la fila COCIDA de la fuente que manda (ciqual:9313 · «Flocons d'avoine, bouillis/cuits à l'eau»), que va por 100 g del alimento tal cual se sirve, o sea ya cocido y escurrido. Por eso los gramos del menú son de producto cocido.",
+    "aviso_al_comprar": "Se dan COCIDOS: hervidos en agua y sin sal, sin leche ni azúcar. ⚠️ Los gramos del menú son de copos YA COCIDOS y escurridos — pésalos DESPUÉS de cocinarlos, no antes. Crudos pesan mucho menos, así que pesarlos crudos le daría de más.",
     "nota_datos": "BEDCA no tiene ninguna fila de COPOS de avena cocidos: la unica cocida que publica es «Harina de avena, cocida en agua» (`bedca:1055`), que es otro alimento — harina, no copos, y con un 88,9 % de agua. Se baja al mandato 3 con el motivo escrito. || ⚠️ CÓMO SE COCINA LA FILA DE LA QUE SALEN ESTAS CIFRAS, que no es un detalle. Las filas cocidas de CIQUAL son de alimento hervido en AGUA ABUNDANTE Y ESCURRIDO, y eso se lee en sus propios números: su arroz blanco cocido declara 0,13 g de cenizas contra 0,41 de la fila de USDA, y en materia seca conserva el 43 % del potasio, el 29 % del hierro y el 41 % del zinc de su fila cruda. USDA cuece por ABSORCIÓN, sin tirar agua, y conserva casi todo. Las dos son honestas y describen dos platos distintos. || ⚠️ Esta ficha es la única de las cinco cuya agua NO la publica la fuente: `ciqual:9313` declara «-» en su columna «Eau». Se DESPEJA de la misma fila (ver `humedad_fuente`) en vez de bajar a USDA, porque la fila de USDA tiene otra materia seca (16,39 contra 18,18) y mezclarlas dejaría la ficha incoherente consigo misma. La materia seca es contra lo que se miden los siete máximos LEGALES de la UE, así que aquí no vale un hueco.",
     "sin_dato": [
       "cloruro",
@@ -15853,8 +15853,8 @@
     },
     "preparacion": "cocido",
     "se_pesa": "ya cocido",
-    "se_pesa_por_que": "Su composicion sale de la fila COCIDA de la fuente que manda (ciqual:9341 · «Quinoa, bouilli/cuit à l'eau, non salé»), que va por 100 g del alimento tal cual se sirve, o sea ya cocido y escurrido. Por eso los gramos del menu son de producto cocido.",
-    "aviso_al_comprar": "Se da COCIDO: hervida en agua y sin sal, despues de enjuagarla. ⚠️ Los gramos del menu son de quinoa YA COCIDO y escurrido — pesalo DESPUES de cocinarlo, no antes. Crudo pesa mucho menos y tiene el triple de calorias por gramo, asi que pesarlo crudo le daria de mas.",
+    "se_pesa_por_que": "Su composición sale de la fila COCIDA de la fuente que manda (ciqual:9341 · «Quinoa, bouilli/cuit à l'eau, non salé»), que va por 100 g del alimento tal cual se sirve, o sea ya cocido y escurrido. Por eso los gramos del menú son de producto cocido.",
+    "aviso_al_comprar": "Se da COCIDA: hervida en agua y sin sal, después de enjuagarla. ⚠️ Los gramos del menú son de quinoa YA COCIDA y escurrida — pésala DESPUÉS de cocinarla, no antes. Cruda pesa mucho menos, así que pesarla cruda le daría de más.",
     "nota_datos": "BEDCA solo publica «Quinoa, cruda» (`bedca:1083`): no tiene fila cocida. Se baja al mandato 3. || ⚠️ CÓMO SE COCINA LA FILA DE LA QUE SALEN ESTAS CIFRAS, que no es un detalle. Las filas cocidas de CIQUAL son de alimento hervido en AGUA ABUNDANTE Y ESCURRIDO, y eso se lee en sus propios números: su arroz blanco cocido declara 0,13 g de cenizas contra 0,41 de la fila de USDA, y en materia seca conserva el 43 % del potasio, el 29 % del hierro y el 41 % del zinc de su fila cruda. USDA cuece por ABSORCIÓN, sin tirar agua, y conserva casi todo. Las dos son honestas y describen dos platos distintos. || La riboflavina (0,014 mg) de CIQUAL conserva el 10 % de su fila cruda en materia seca, y su propia fila de patata cocida declara «< 0,04» en esa misma columna — o sea que su medida de B2 en alimento cocido está en el límite de detección. USDA da 0,11 y es coherente con su cruda. SE QUEDA LA DE LA FUENTE QUE MANDA y se dice: la riboflavina tiene MÍNIMO en FEDIAF y no tiene máximo, así que quedarse corto es el lado seguro.",
     "sin_dato": [
       "purinas",
