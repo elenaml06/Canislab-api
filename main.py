@@ -10104,9 +10104,13 @@ def endpoint_vocabulario():
                 },
                 "veterinario": {
                     "pregunta": "Aporte extraración DECLARADO",
+                    # ⚠️ SIN ESCRIBIR CUÁNTOS REQUISITOS SON. Lo cazó el BLOQUE 107
+                    # nada más escribir esto: un número copiado a mano en un
+                    # texto se separa del código y no da ningún error -- ya pasó
+                    # con «los 30 requisitos» cuando el motor verificaba 43.
                     "detalle": ("Entra en la ración como gramos FIJOS: sus nutrientes cuentan "
-                                "dentro de los 43 requisitos y no se escala ningún mínimo, "
-                                "porque no queda ninguna parte del día a ciegas. Lo no "
+                                "dentro de los requisitos del día y no se escala ningún "
+                                "mínimo, porque no queda ninguna parte del día a ciegas. Lo no "
                                 "declarado sigue tratándose como dilución."),
                     "boton": "Añadir alimento",
                     "unidad": "g/día",
