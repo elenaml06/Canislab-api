@@ -1349,8 +1349,20 @@ colon y arrastra agua.
 
 **Lo que hay en el catálogo:** un lácteo, «Yogur griego», en la categoría Extras.
 
-**Lo medido hoy:** de los 216 menús del catálogo regenerado, **0 lo usan**. Hoy
-no aprieta a nadie.
+**Lo medido el 9 de septiembre:** de los 216 menús, **0 lo usaban**.
+
+⚠️ **REMEDIDO EL 19 DE SEPTIEMBRE DE 2026 Y YA NO ES CERO: son DOS.** El catálogo
+se ha regenerado varias veces desde entonces —las etiquetas de los suplementos,
+los límites legales en materia seca, la comida que se pueda comprar, el modo
+cocinado— y el yogur ha entrado en dos variantes: **`Mediano_Senior` #3 con 4,47
+g** y **`Grande_Adulto` #2 con 5,0 g**.
+
+**No aprieta**: 5 g de yogur son unos 0,2 g de lactosa, y el umbral de un perro
+de 20 kg son 20 g. O sea el **1 %**. Pero la frase «0 lo usan, hoy no aprieta a
+nadie» ya no es verdad, y era la que sostenía que esto pudiera esperar. Lo que
+enseña este punto es otra cosa: **una medida sobre el catálogo caduca cada vez
+que se regenera el catálogo**, y aquí no había nada que avisara — se encontró
+mirando, que no es un mecanismo.
 
 **Por qué sigue siendo un pendiente y no un no-problema:** Extras va **siempre
 libre** (regla 5 del `CLAUDE.md`), así que un menú personalizado o una

@@ -277,19 +277,36 @@ política que lo impida, cualquiera con su propia sesión puede ponerse
 `plan = 'premium'` sin pagar. Hoy el front solo hace `select` sobre
 `profiles`, pero eso es lo que hace el front, no lo que permite la base.
 
-**No se puede comprobar desde el repo, y ese es medio problema**: en
-`canislab-web/supabase/` solo hay dos migraciones de columnas
-(`migracion-menus-perro-id.sql`, `migracion-peso-objetivo.sql`). Las
-políticas RLS viven únicamente en el panel de Supabase, así que **ninguna
-prueba del repo las ve y ningún cambio en ellas pasa por revisión**.
+⚠️ **AUDITADO EL 19 DE SEPTIEMBRE DE 2026, y el párrafo que había aquí estaba
+caducado por los dos lados.** Decía que en `canislab-web/supabase/` «solo hay
+dos migraciones de columnas». Hay **diez**, y dos de ellas son exactamente lo
+que este punto pedía:
 
-Qué hacer, y en este orden:
-1. **La prueba antes que la política**: un usuario con rol `tutor`
-   intentando `update({rol: 'veterinario'})` sobre su propia fila tiene que
-   recibir 403. Y lo mismo con `plan: 'premium'`.
-2. Bajar las políticas a un `.sql` versionado, para que se puedan revisar
-   y volver a aplicar.
-3. Solo entonces, añadir la columna `rol`.
+| fichero | qué impide |
+|---|---|
+| `migracion-arreglar-permisos.sql` | un disparador que **rechaza cualquier cambio de `plan`** que no venga de `service_role`. Y trae medido el caso real: «una cuenta recién creada se puso `plan = 'premium'` ella sola» |
+| `migracion-rol-profesional.sql` | otro que hace lo mismo con **`rol` y `rol_verificado_en`**, que son de donde cuelga poder pautar por debajo de los mínimos de FEDIAF. `num_colegiado` sí lo escribe la persona a propósito: declarar un número no acredita a nadie |
+
+Y traen escrita la decisión de **por qué un disparador y no reescribir las
+políticas**: «las políticas de `profiles` ya existen y funcionan (el login y el
+premium dependen de ellas); reescribirlas para excluir tres columnas es fácil de
+hacer mal y rompe algo que hoy va bien».
+
+**Lo que sigue abierto son dos cosas, y ninguna es la que ponía aquí:**
+
+1. **Que estén EJECUTADAS.** Los `.sql` están en el repo; ejecutarlos es a mano,
+   en el SQL Editor de Supabase, y eso es el punto «EJECUTAR EL SQL DE LA FASE 0»
+   de `PENDIENTE_DECISIONES.md`. Un disparador escrito y no ejecutado no protege
+   nada, y desde aquí no se puede comprobar cuál de las dos cosas es.
+2. **Las políticas RLS en sí**, que siguen viviendo solo en el panel — a
+   propósito, por la decisión de arriba. O sea que lo que no pasa por revisión ya
+   no es el permiso de `plan` ni el de `rol`, sino el resto de la política.
+
+Y la prueba que este punto pedía —un `tutor` intentando `update({rol:
+'profesional'})` y recibiendo un rechazo— **sigue sin existir**, y es la que
+distinguiría «el disparador está puesto» de «el fichero está en el repo». No se
+puede correr contra el Supabase de mentira: hace falta el de verdad, que es la
+mitad declarada como pendiente en `tests/motor-de-verdad.spec.js`.
 
 ### 1.2 El tope de patología no se respeta ✅ Hecho el 24 de agosto
 
@@ -303,10 +320,26 @@ en tres capas y vigilado por el BLOQUE 13. Detalle completo: `HECHO.md`.
 > pendientes de tu decisión; lo de aquí es que el tope, sea el que sea, se
 > cumpla.
 
-### 1.3 Comprobar que la cancelación quita el premium
-Dar de alta está probado de punta a punta. Cancelar **no**. Si no funciona,
-se regala la app a quien se dé de baja. (Relacionado con 1.1: hay que
-probarlo con una sola suscripción activa, si no el resultado engaña.)
+### 1.3 Comprobar que la cancelación quita el premium — CON STRIPE DE VERDAD
+⚠️ **AUDITADO EL 19 DE SEPTIEMBRE DE 2026, y aquí ponía que cancelar «no» está
+probado. Eso es falso contra la batería**: el BLOQUE 10 lo comprueba en las dos
+direcciones, y desde hace semanas.
+
+| | qué exige |
+|---|---|
+| paso 2 | cancelar la **única** suscripción deja `plan: "free"` |
+| el de las varias | cancelar **una de dos** NO toca el perfil de quien sigue pagando otra |
+| paso 3 | si Supabase falla, la respuesta es **5xx** para que Stripe reintente — no un `ok` falso, que es perder el pago |
+
+Lo que sigue sin hacerse es lo que dice el título nuevo: probarlo **de punta a
+punta contra Stripe de verdad**, con una tarjeta y una baja real. La batería usa
+un Stripe y un Supabase de mentira que ella misma se fabrica, así que comprueba
+que el motor hace lo correcto **con los eventos que le llegan** — no que Stripe
+mande esos eventos, ni que el webhook esté bien configurado en la cuenta real.
+Eso último solo se ve cobrando (ver §2), y es tuyo.
+
+(Relacionado con 1.1: hay que probarlo con una sola suscripción activa, si no el
+resultado engaña.)
 
 ---
 

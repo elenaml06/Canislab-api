@@ -163,6 +163,439 @@ def comprobar_menu(nombre_caso, g, der, etapa, peso=None):
 
 
 # ============================================================
+# LO QUE COMPARTEN VARIOS BLOQUES — 19 de septiembre de 2026
+# ============================================================
+#
+# ⚠️ POR QUÉ ESTÁ AQUÍ Y NO DENTRO DE SU BLOQUE, que es donde estaba.
+#
+# `probar_bloques.py --rapida` corre solo los bloques que tardan poco, y para
+# poder correr uno tiene que darle las variables que lee. Si esa variable la
+# define OTRO bloque, se arrastra ese bloque entero -- y eso lo dice en voz
+# alta, pero no lo evita. Medido el 19 de septiembre, el escalón «rápido»
+# arrastraba **541 s** en cinco bloques que nadie había pedido:
+#
+#   · `_CIFRAS_CON_FUENTE` -> BLOQUE 13, **321 s** (el segundo más caro)
+#   · `_c` / `_api`        -> BLOQUE 8,   44 s
+#   · `_seg21`             -> BLOQUE 21,  36 s
+#   · `_sp_b18` / `_os_b18`-> BLOQUE 18,  30 s
+#   · `_api_b5` / `_c_b5`  -> BLOQUE 5,   16 s — y ÉSTE arrastraba además el
+#     BLOQUE 1 (**94 s**), porque el cuerpo del 5 lee el `der` que el bucle del
+#     1 deja suelto como global.
+#
+# O sea que el escalón que existe para tardar un minuto tardaba diez. La regla
+# que queda: **lo que leen varios bloques se define aquí**, no dentro del
+# primero que lo necesitó.
+from fastapi.testclient import TestClient
+import main as _api
+import subprocess as _sp_b18, os as _os_b18
+import seguridad as _seg21
+
+# Dos clientes y no uno, igual que antes: el del BLOQUE 5 era suyo y se queda
+# siendo otro objeto. Comparten la misma `app`, así que no hay estado que cruzar.
+_c = TestClient(_api.app, raise_server_exceptions=False)
+_api_b5 = _api
+_c_b5 = TestClient(_api.app, raise_server_exceptions=False)
+
+import json as _json_b99
+from verificar import MAPA as _MAPA_SEMAFORO_b18
+
+# El catálogo y la tabla de FEDIAF, cargados una vez. Los leen el BLOQUE 21 y
+# el 130, y estaban dentro del 21.
+_al21, _req21 = _api.cargar_v2()
+
+# El perro del BLOQUE 8 y su comprobación, que usan también otros bloques.
+DER_B8, ETAPA_B8, PESO_B8 = 900.0, "Adulto", 20.0
+
+
+def _exigir_verde(caso, respuesta, der, etapa):
+    """Verifica por su cuenta lo que devuelve un endpoint."""
+    if not respuesta.get("factible", respuesta.get("encontrado")):
+        return None  # negarse a dar menú es una respuesta válida, no un fallo
+    g = respuesta.get("menu") or respuesta.get("gramos")
+    if not g:
+        return None
+    f = verificar(g, al, req, der, etapa)
+    if f["semaforo"] != "verde":
+        fallos.append(f"BLOQUE8 {caso}: entregó un menú en {f['semaforo']} "
+                      f"({f['correctos']}/{f['total']}, rojos: "
+                      f"{[x['nutriente'] for x in f['rojos']]})")
+    return g
+
+# ─────────────────────────────────────────────────────────────
+# LA TABLA DE CIFRAS CON FUENTE, que leen los BLOQUES 13, 44, 74 y 80
+# ─────────────────────────────────────────────────────────────
+#
+# ⚠️ El encabezado de abajo es el del BLOQUE 13, que es quien la estrenó, y se
+# queda aquí porque explica POR QUÉ existe la tabla. La marca «# BLOQUE 13» se
+# ha quedado con su bloque, más abajo: si se viniera aquí, todo esto pasaría a
+# contar como BLOQUE 13 y el modo rápido volvería a arrastrarlo.
+#
+# Un perro renal, hepático o pancreático tiene topes MÁS ESTRICTOS que los
+# de FEDIAF. Que existan en el código no basta: hay que medir el menú que
+# se entrega y comprobar que no se pasa.
+#
+# Se mide sobre las KCAL REALES del menú, no sobre las pedidas. Los topes
+# se definen "por 1000 kcal de la dieta", y el menú puede salir hasta un 3%
+# por debajo de lo pedido (tolerancia_kcal): menos kcal con el mismo
+# nutriente = más concentración. Medir contra las kcal pedidas es
+# justamente el fallo que se arregló, así que la prueba no puede repetirlo.
+#
+# LO QUE ENCONTRÓ ESTE BLOQUE (24 de agosto), midiendo:
+#
+#   1. La GRASA se pasaba SIEMPRE. Pancreatitis: tope 25% de las kcal,
+#      salía 26%. Diabetes: tope 35%, salía 36%. En los cuatro pesos
+#      probados. A ese camino no le había llegado el arreglo del 21 de
+#      agosto (que sí arregló los topes por 1000 kcal).
+#
+#   2. EDITAR UN MENÚ SE SALTABA LOS TOPES DEL TODO, que es mucho peor:
+#         renal        fósforo  tope 1400  →  3084   (+120%)
+#         hepatopatía  cobre    tope 3.0   →  4.05
+#         pancreatitis grasa    tope 25%   →  47%
+#      `_recalcular_con_motor` no le pasaba las patologías al motor. El
+#      menú se generaba bien y una sola edición lo tiraba.
+#
+#      Y la verificación no lo paraba: comprueba los 30 requisitos de
+#      FEDIAF, que son los de un perro SANO, y 3084 mg de fósforo entra
+#      dentro del máximo de FEDIAF. Salía en VERDE.
+# ============================================================
+# ══════════════════════════════════════════════════════════════════════
+# LAS CIFRAS DE PATOLOGÍA, CON SU FUENTE, EN UN SOLO SITIO
+# ══════════════════════════════════════════════════════════════════════
+#
+# ⚠️ UNIFICADA (8 septiembre). Esta lista la usan DOS bloques: el 13, que
+# comprueba que el motor devuelve los topes que se esperan y que los menús
+# los cumplen, y el 55, que comprueba las 27 cifras contra su fuente y que
+# el solver las aplica de verdad.
+#
+# Estaban separadas: el 13 tenía su propia tabla `_NUMEROS_REVISADOS_B13`
+# escrita a mano. Al cambiar cuatro cifras el 8 de septiembre, el 13 se cayó
+# -- que es lo que tenía que hacer -- pero dejaba el repo con DOS listas de
+# los mismos números, que es el fallo que este proyecto lleva documentando
+# desde la fibra: dos copias de lo mismo que se separan y nadie se entera.
+# Ahora hay una.
+#
+# Cada fila lleva la CITA LITERAL de la fuente que sostiene el número. No
+# comprueba que el número sea "bueno": comprueba que sigue siendo el que su
+# fuente dice. Cambiarlo con una fuente nueva en la mano es legítimo -- lo
+# que no lo es es cambiarlo sin enterarse.
+#
+# Cada fila: (patologia, tipo, nutriente, valor aplicado, origen, cita)
+#
+# `origen` es lo que permite RECALCULAR el numero desde la fuente en vez de
+# creerselo, y tiene tres formas:
+#     ("pct_ms",   x)   el valor de la fuente en % de materia seca
+#     ("mgkg_ms",  x)   en mg por kg de materia seca
+#     ("directo", None) la fuente ya lo da en la unidad del motor, o el numero
+#                       es una ELECCION nuestra dentro del rango -- y entonces
+#                       la cita dice cual es el rango y por que se eligio ese
+#
+# AVISO PARA QUIEN AnADA UNA FILA: "directo" no es el valor por defecto ni la
+# salida facil. Si la fuente da un porcentaje o un mg/kg, se pone "pct_ms" o
+# "mgkg_ms" aunque la cuenta parezca obvia -- es justamente donde falla.
+#
+# POR QUE EXISTE ESTO (8 septiembre, segunda tanda). La primera version de esta
+# lista llevaba solo el numero y la cita en prosa, y la conversion la hacia yo a
+# mano. Al recalcular las 50 cifras del documento aparecieron DOS errores
+# propios, los dos del mismo tipo: multiplicar un porcentaje pequeno por 25 en
+# vez de por 2,5. Lisina en obesidad, 42,5 en vez de 4,25. Fenilalanina+tirosina
+# en dermatosis, 32,5 en vez de 3,25. Un factor 10 en los dos.
+#
+# Ninguno llego al motor, porque eran cifras aun sin aplicar. Pero eso fue
+# SUERTE, no proteccion: se detectaron porque volvi a mirar, y "volver a mirar"
+# no es un mecanismo. Con `origen`, el test rehace la multiplicacion.
+_CIFRAS_CON_FUENTE = [
+    ("renal", "topes_por_1000kcal", "fosforo", 1200.0, ("directo", None),
+     "SACN5 Tabla 37-9: «Phosphorus 0.2 to 0.5% in foods for dogs» = 500-1250 mg. Se ELIGE 1200 dentro del rango: es lo mas bajo que cabe sin romper el minimo de FEDIAF (1160)"),
+    ("renal", "topes_por_1000kcal", "sodio", 750.0, ("pct_ms", 0.3),
+     "SACN5 Tabla 37-9: «Sodium <=0.3% in foods for dogs»"),
+    ("renal_avanzada", "topes_por_1000kcal", "fosforo", 1200.0, ("directo", None),
+     "igual que renal: elegido dentro del rango 500-1250"),
+    ("pancreatitis", "topes_por_1000kcal", "grasa", 37.5, ("pct_ms", 15),
+     "SACN5 Tabla 67-3: «Fat <=15% for non-obese and non-hypertriglyceridemic dogs»"),
+    ("pancreatitis", "topes_por_1000kcal", "proteina", 75.0, ("pct_ms", 30),
+     "SACN5 Tabla 67-3: «Protein 15 to 30% for dogs», extremo alto"),
+    ("oxalato", "topes_por_1000kcal", "vitD", 8.75, ("directo", None),
+     "Fascetti cap.16: «Diets with vitamin D between 250 and 350 IU/Mcal should suffice» = "
+     "6,25-8,75 ug/1000 kcal (1 ug = 40 UI). Se aplica el extremo alto, que es el techo. "
+     "APRETADO 9-sep-2026: antes era 14,1875, que es el maximo LEGAL de FEDIAF para cualquier "
+     "perro -- o sea que esta patologia no tenia tope propio de vitamina D. Medido: cinco "
+     "perros (3, 8, 20, 30 y 55 kg) dan menu en el peldano estricto, con 4,08-5,72 ug reales"),
+    ("oxalato", "topes_por_1000kcal", "sodio", 750.0, ("pct_ms", 0.3),
+     "SACN5 Tabla 40-5: «Dietary sodium should be <0.3% DM»"),
+    ("oxalato", "topes_por_1000kcal", "fosforo", 1500.0, ("pct_ms", 0.6),
+     "SACN5 Tabla 40-5: «phosphorus should be in the range of 0.3 to 0.6% DM», techo del rango"),
+    ("oxalato", "topes_por_1000kcal", "magnesio", 375.0, ("pct_ms", 0.15),
+     "SACN5 Tabla 40-5: «magnesium should be in the range of 0.04 to 0.15% DM», techo del rango"),
+    ("hepatopatia", "topes_por_1000kcal", "cobre", 2.4, ("directo", None),
+     "Center SA et al., JAVMA 264(2) 2026: tolerable 0,24 mg Cu/100 kcal = 2,40 mg/1000 kcal. Techo legal Reg. UE 2020/354 entrada 28 = 2,50"),
+    ("cardiopatia", "topes_por_1000kcal", "sodio", 738.6, ("directo", None),
+     "Reg. (UE) 2020/354 entrada 24: <=2,6 g/kg al 12 % de humedad, dividido entre 3,52 = 738,64. "
+     "⚠️ BAJADO DE 739 A 738,6 el 10-sep-2026: los 739 redondeaban un techo LEGAL hacia arriba, "
+     "que es la unica direccion en la que redondear no vale. Lo cazo el BLOQUE 80"),
+    ("cardiopatia_b2", "topes_por_1000kcal", "sodio", 738.6, ("directo", None),
+     "igual: el rango de Cavanaugh para B2 (800-990) supera entero el techo legal"),
+    ("cardiopatia_c", "topes_por_1000kcal", "sodio", 625.0, ("pct_ms", 0.25),
+     "SACN5 Tabla 36-4 Class Ia «0.15 to 0.25%», techo; y cae dentro del rango de Cavanaugh para C (500-790)"),
+    ("cardiopatia_d", "topes_por_1000kcal", "sodio", 480.0, ("directo", None),
+     "Cavanaugh estadio D «<50 mg/100 kcal», con margen sobre el minimo de FEDIAF (290)"),
+    ("hiperlipidemia", "topes_por_1000kcal", "grasa", 30.0, ("pct_ms", 12),
+     "SACN5 Tabla 28-2: «Restrict dietary fat (<12% dry matter)»"),
+    ("hiperlipidemia", "suelos_por_1000kcal", "fibra", 25.0, ("pct_ms", 10),
+     "SACN5 Tabla 28-2: «Increase dietary fiber: Dogs: >=10% DM»"),
+    # ⚠️ 12-sep-2026: PASA DE 30 A 22,5, que es lo que dice la fuente. El 30 era
+    # nuestro y el motivo escrito era que 22,5 «no resuelve con el catalogo
+    # real» -- una medida del 6 de septiembre que decia «27 falla 0/5, 28
+    # resuelve 5/5» SIN decir con que perro, con que peso ni con que peldaño.
+    # Remedida con las condiciones por delante (adulto con obesidad, catalogo
+    # entero, 3/10/22/40 kg, cinco techos, 3 intentos, 20 s): en el peldaño
+    # estricto NO sale ninguno de los cinco, tampoco el 30 que se aplicaba, y
+    # con la escalera salen los cinco 3 de 3 en los cuatro pesos. O sea que el
+    # 22,5 no cuesta ni un menu.
+    ("obesidad", "topes_por_1000kcal", "grasa", 22.5, ("pct_ms", 9),
+     "SACN5 Tabla 27-4: «Foods for weight loss should contain <=9%» de grasa"),
+    ("obesidad", "suelos_por_1000kcal", "proteina", 62.5, ("pct_ms", 25),
+     "SACN5 Tabla 27-4: «Foods for weight loss should contain >=25%»"),
+    ("dcm_taurina_respondedora", "suelos_por_1000kcal", "taurina", 250.0, ("pct_ms", 0.1),
+     "SACN5 Tabla 36-4: «Taurine — Dogs: >=0.1%»"),
+    ("dcm_taurina_respondedora", "suelos_por_1000kcal", "lcarnitina", 50.0, ("pct_ms", 0.02),
+     "SACN5 Tabla 36-4: «L-Carnitine — Dogs: >=0.02%»"),
+    ("ple_linfangiectasia", "topes_por_1000kcal", "grasa", 37.5, ("pct_ms", 15),
+     "SACN5 Tabla 58-1: «Fat <15% for dogs and cats»"),
+    ("ple_linfangiectasia", "suelos_por_1000kcal", "proteina", 62.5, ("pct_ms", 25),
+     "SACN5 Tabla 58-1: «Protein >=25% for dogs»"),
+    ("ple_linfangiectasia", "topes_por_1000kcal", "fibra", 12.5, ("pct_ms", 5),
+     "SACN5 Tabla 58-1: «Crude fiber <=5%»"),
+    ("insuficiencia_pancreatica_exocrina", "topes_por_1000kcal", "grasa", 37.5, ("pct_ms", 15),
+     "SACN5 Tabla 66-1: «Fat 10 to 15% for dogs», extremo alto a proposito"),
+    ("insuficiencia_pancreatica_exocrina", "topes_por_1000kcal", "fibra", 12.5, ("pct_ms", 5),
+     "SACN5 Tabla 66-1: «Fiber <=5%**» con la nota «**Lower is better»"),
+    ("enteropatia_cronica", "topes_por_1000kcal", "grasa", 37.5, ("pct_ms", 15),
+     "SACN5 Tabla 57-1: «Fat 12 to 15% for dogs» (muy digestible), extremo alto"),
+    ("enteropatia_cronica", "suelos_por_1000kcal", "proteina", 62.5, ("pct_ms", 25),
+     "SACN5 Tabla 57-1: «Protein >=25% for dogs»"),
+    ("artrosis", "suelos_por_1000kcal", "epa", 1.0, ("pct_ms", 0.4),
+     "SACN5 Tabla 34-2: «Eicosapentaenoic acid 0.4 to 1.1%» — EPA SOLA, extremo bajo"),
+    ("dermatosis_zinc", "suelos_por_1000kcal", "zinc", 25.0, ("mgkg_ms", 100),
+     "SACN5 Tabla 32-1: «Zinc — Dogs: 100 to 200 mg/kg food DM», extremo bajo"),
+    ("diabetes", "suelos_por_1000kcal", "fibra", 17.5, ("pct_ms", 7),
+     "SACN5 Tabla 29-3: «Fiber 7 to 18%», extremo bajo"),
+
+    # ── Anadidas el 8 de septiembre, segunda tanda ──
+    ("renal", "topes_por_1000kcal", "potasio", 2000.0, ("pct_ms", 0.8),
+     "SACN5 Tabla 37-9: «Potassium 0.4 to 0.8% in foods for dogs», techo del rango"),
+    ("renal", "topes_por_1000kcal", "proteina", 62.5, ("directo", None),
+     "Reg. (UE) 2020/354 entrada 10: crude protein <=220 g/kg al 12 % humedad / 3,52 = 62,5"),
+    ("obesidad", "suelos_por_1000kcal", "fibra", 30.0, ("pct_ms", 12),
+     "SACN5 Tabla 27-4: «Fiber 12 to 25%», extremo bajo"),
+    ("obesidad", "suelos_por_1000kcal", "lisina", 4.25, ("pct_ms", 1.7),
+     "SACN5 Tabla 27-4: «Lysine >=1.7%» - la cifra que se escribio mal como 42,5"),
+    ("obesidad", "suelos_por_1000kcal", "lcarnitina", 75.0, ("mgkg_ms", 300),
+     "SACN5 Tabla 27-4: «L-carnitine >=300 ppm»"),
+    ("artrosis", "suelos_por_1000kcal", "lcarnitina", 75.0, ("mgkg_ms", 300),
+     "SACN5 Tabla 34-2: «L-carnitine >=300 mg/kg»"),
+    ("enteropatia_cronica", "topes_por_1000kcal", "potasio", 2750.0, ("pct_ms", 1.1),
+     "SACN5 Tabla 57-1: «Potassium 0.8 to 1.1%», techo del rango"),
+    ("dermatosis_zinc", "suelos_por_1000kcal", "fenilalanina_tirosina", 3.25, ("pct_ms", 1.3),
+     "SACN5 Tabla 32-1: «Phenylalanine + tyrosine >1.3% DM» - la otra cifra que se escribio mal, como 32,5"),
+    ("dermatitis_atopica", "suelos_por_1000kcal", "fenilalanina_tirosina", 3.25, ("pct_ms", 1.3),
+     "SACN5 Tabla 32-1: misma tabla que dermatosis_zinc"),
+    ("cistina", "topes_por_1000kcal", "sodio", 750.0, ("pct_ms", 0.3),
+     "SACN5 Tabla 42-1: «Restrict sodium to less than 0.3% dry matter»"),
+    ("hepatopatia", "suelos_por_1000kcal", "zinc", 50.0, ("mgkg_ms", 200),
+     "SACN5 Tabla 68-8, perros: «Zinc (mg/kg) >200». Maximo LEGAL de FEDIAF 56,75: solo 6,75 de margen"),
+    ("hepatopatia", "suelos_por_1000kcal", "hierro", 20.0, ("mgkg_ms", 80),
+     "SACN5 Tabla 68-8, perros: «Iron (mg/kg) 80 to 140», extremo bajo"),
+    ("enteropatia_cronica", "limites_escritos_que_el_solver_no_aplica", "omega3_total", None, ("directo", None),
+     "SACN5 cap.57, TEXTO y no la Tabla 57-1: «A reasonable starting dose estimated from human and animal "
+     "trials is approximately 175 mg (range 50 to 300 mg) omega-3 fatty acids/kg body weight/day». SIN CIFRA "
+     "A PROPOSITO, y el motivo lo da la propia fuente en el mismo parrafo: «there is no well-established "
+     "effective dose for dogs and cats». Ademas iria por kilo de PERRO y no por 1000 kcal, que es una forma "
+     "que hoy no usa ninguna patologia. ANADIDO 11-sep al releer el cap.57 entero"),
+    # ⚠️ RETIRADA EL MISMO DIA QUE SE ESCRIBIO (11 septiembre), y por eso se
+    # queda anotada. La frase de Fascetti cap.11 es real y su conversion
+    # tambien -- «less than 8% total dietary fiber» son 20 g/1000 kcal --, pero
+    # vive dentro del apartado «Recommendations» del bloque de GASTROENTERITIS
+    # AGUDA, no en el de enteropatia cronica: dos cuadros distintos del mismo
+    # capitulo. Se llego a aplicar aqui y se quito antes de entregarlo, al
+    # abrir el contexto entero en vez de la frase suelta. Se queda escrita SIN
+    # cifra para que nadie la vuelva a «descubrir» dentro de seis meses y la
+    # aplique a la patologia equivocada.
+    ("enteropatia_cronica", "limites_escritos_que_el_solver_no_aplica", "fibra", None, ("directo", None),
+     "Fascetti & Delaney 2a ed., cap.11: «An empirical recommendation is to select diets that "
+     "contain less than 8% total dietary fiber or less than 5% crude fiber». SIN CIFRA A "
+     "PROPOSITO: la frase es del apartado de GASTROENTERITIS AGUDA y el motor no tiene esa "
+     "patologia -- lo que ese apartado describe es realimentar al 25 % del RER, o sea una dieta "
+     "deliberadamente INCOMPLETA, y el motor entrega raciones completas"),
+    ("hepatopatia", "topes_por_1000kcal", "hierro", 35.0, ("mgkg_ms", 140),
+     "SACN5 Tabla 68-8, perros: «Iron (mg/kg) 80 to 140», extremo ALTO. ANADIDO 11-sep: la fila es un rango y "
+     "solo se aplicaba su suelo. El techo tiene mecanismo escrito («Iron is a potent catalyst of oxidative "
+     "processes (Fenton reaction)») y es el mismo criterio que el potasio de la enteropatia, donde ya se toma "
+     "el techo. Medido: solo 3 de los 216 menus del catalogo se pasan de 35, y los tres son de crecimiento o "
+     "gestacion"),
+    ("hepatopatia", "topes_por_1000kcal", "sodio", 625.0, ("pct_ms", 0.25),
+     "SACN5 Tabla 68-8, perros: «Sodium (%) 0.08 to 0.25», techo del rango"),
+    ("hepatopatia", "suelos_por_1000kcal", "taurina", 250.0, ("pct_ms", 0.1),
+     "SACN5 Tabla 68-8, perros: «Taurine (%) >=0.1»"),
+    ("estruvita", "topes_por_1000kcal", "magnesio", 250.0, ("pct_ms", 0.1),
+     "SACN5 Tabla 43-3: «Prevention: restrict dietary magnesium to 0.04 to 0.1% DM», techo"),
+    ("estruvita", "topes_por_1000kcal", "fosforo", 1500.0, ("pct_ms", 0.6),
+     "SACN5 Tabla 43-3: «Prevention: restrict dietary phosphorus to <0.6% DM»"),
+    ("estruvita", "topes_por_1000kcal", "proteina", 62.5, ("pct_ms", 25),
+     "SACN5 Tabla 43-3: «Prevention: restrict dietary protein to <25% DM»"),
+    ("urolitos_fosfato_calcico", "topes_por_1000kcal", "fosforo", 1500.0, ("pct_ms", 0.6),
+     "SACN5 Tabla 41-6: «Phosphorus 0.3 to 0.6%», techo del rango"),
+    ("urolitos_fosfato_calcico", "topes_por_1000kcal", "magnesio", 375.0, ("pct_ms", 0.15),
+     "SACN5 Tabla 41-6: «Magnesium 0.06 to 0.15%», techo del rango"),
+    ("urolitos_fosfato_calcico", "topes_por_1000kcal", "sodio", 750.0, ("pct_ms", 0.3),
+     "SACN5 Tabla 41-6: «Sodium <0.3%»"),
+    ("urolitos_fosfato_calcico", "topes_por_1000kcal", "proteina", 62.5, ("pct_ms", 25),
+     "SACN5 Tabla 41-6: «Protein 10 to 25%», techo (el unico extremo por encima del minimo de FEDIAF)"),
+    ("estrenimiento_cronico", "suelos_por_1000kcal", "fibra", 17.5, ("pct_ms", 7),
+     "SACN5 Tabla 64-2: «Fiber >=7% crude fiber»"),
+    ("flatulencia", "topes_por_1000kcal", "proteina", 75.0, ("pct_ms", 30),
+     "SACN5 Tabla 65-1: «Adult dogs: limit to <=30% or less»"),
+    ("flatulencia", "topes_por_1000kcal", "fibra", 12.5, ("pct_ms", 5),
+     "SACN5 Tabla 65-1: «limit to <=5% fiber (most important aspect regarding fiber)»"),
+    ("sibo", "topes_por_1000kcal", "grasa", 37.5, ("pct_ms", 15),
+     "SACN5 Tabla 60-1: «Fat 12 to 15% for dogs», extremo alto a proposito"),
+    ("intestino_irritable", "suelos_por_1000kcal", "fibra", 20.0, ("pct_ms", 8),
+     "SACN5 Tabla 63-3: «Crude fiber >=8%», la unica fila de las cuatro que el catalogo sabe medir"),
+
+    # ── Tercera pasada, 8 de septiembre: las filas que faltaban ──
+    ("artrosis", "limites_escritos_que_el_solver_no_aplica", "omega3_total", 8.75, ("pct_ms", 3.5),
+     "SACN5 Tabla 34-2: «Total omega-3 fatty acids 3.5 to 4.0%», extremo bajo. El Reg. (UE) 2020/354 entrada 27 pide 8,24 para lo mismo. RETIRADO DEL SOLVER EL 9-sep-2026: no cabe -- este catalogo llega con fiabilidad a ~6,5 y a 8,75 los perros de 25 kg en adelante se quedaban SIN MENU"),
+    ("artrosis", "topes_por_1000kcal", "fosforo", 1750.0, ("pct_ms", 0.7),
+     "SACN5 Tabla 34-2: «Phosphorus** 0.3 to 0.7%», techo. La nota ** dice: los perros con artrosis suelen tener edad de riesgo renal y cardiaco"),
+    ("artrosis", "topes_por_1000kcal", "sodio", 1000.0, ("pct_ms", 0.4),
+     "SACN5 Tabla 34-2: «Sodium** 0.2 to 0.4%», techo"),
+    ("artrosis", "suelos_por_1000kcal", "vitE", 67.1, ("uikg_ms", 400),
+     "SACN5 Tabla 34-2: «Vitamin E >=400 IU/kg». UI, no mg: x0,671 y /4"),
+    ("disfuncion_cognitiva", "limites_escritos_que_el_solver_no_aplica", "vitE", 187.5, ("mgkg_ms", 750),
+     "SACN5 Tabla 35-3: «Vitamin E >=750 mg/kg». Esta SI viene en mg, no lleva el x0,671. RETIRADO DEL SOLVER EL 9-sep-2026: choca con el techo de fosforo del adulto sano (2000) y dejaba la patologia ENTERA sin menu a cualquier peso"),
+    ("disfuncion_cognitiva", "suelos_por_1000kcal", "omega3_total", 2.5, ("pct_ms", 1.0),
+     "SACN5 Tabla 35-3: «Total omegas-3 >1%»"),
+    ("renal", "suelos_por_1000kcal", "vitE", 67.1, ("uikg_ms", 400),
+     "SACN5 Tabla 37-9: «Vitamin E >=400 IU vitamin E/kg of food for dogs»"),
+    ("obesidad", "suelos_por_1000kcal", "vitE", 67.1, ("uikg_ms", 400),
+     "SACN5 Tabla 27-4: «Vitamin E >=400 IU vitamin E/kg»"),
+    ("hepatopatia", "suelos_por_1000kcal", "vitE", 67.1, ("uikg_ms", 400),
+     "SACN5 Tabla 68-8, perros: «Vitamin E (IU/kg) >=400»"),
+    ("urolitos_fosfato_calcico", "topes_por_1000kcal", "vitD", 9.375, ("directo", None),
+     "SACN5 Tabla 41-6: «Vitamin D 500 to 1,500 IU/kg» MS; a 4000 kcal/kg son 125-375 UI/1000 kcal y a 40 UI/ug, 3,125-9,375 ug. Techo. MAS estricto que el maximo legal (14,1875)"),
+
+    # ── Cuarta pasada, 8 de septiembre: las TRES TABLAS QUE SE HABIAN PERDIDO
+    # al cortar la salida del barrido con `sed`. De las 89 tablas «Key
+    # nutritional factors» de SACN5 solo se habian revisado unas 40. Ver
+    # VERIFICACION_FILA_A_FILA.md §cuarta pasada.
+    ("cancer_soporte", "suelos_por_1000kcal", "grasa", 62.5, ("pct_ms", 25),
+     "SACN5 Tabla 30-5: «Fat = 25 to 40% of DM or 50 to 65% of the food's ME», extremo bajo. UNICA patologia del motor que pide MAS grasa"),
+    ("cancer_soporte", "suelos_por_1000kcal", "proteina", 75.0, ("pct_ms", 30),
+     "SACN5 Tabla 30-5: «Dogs: protein = 30 to 45% of DM», extremo bajo. «Provide protein in excess of adult requirements»"),
+    ("cancer_soporte", "suelos_por_1000kcal", "arginina", 5.0, ("pct_ms", 2),
+     "SACN5 Tabla 30-5: «Provide foods with arginine DM levels >2%». Mas de tres veces el minimo de FEDIAF (1,51)"),
+    ("dermatitis_atopica", "suelos_por_1000kcal", "omega3_total", 0.875, ("pct_ms", 0.35),
+     "SACN5 Tabla 32-6 (dermatosis INFLAMATORIAS, distinta de la 32-1 que ya se aplicaba): «Foods should contain between 0.35 to 1.8% dry matter», extremo bajo"),
+    ("reaccion_adversa_alimento", "suelos_por_1000kcal", "omega3_total", 0.875, ("pct_ms", 0.35),
+     "SACN5 Tabla 31-3, perros: «Total omega-3 fatty acids 0.35 to 1.8% DM», extremo bajo. Mismo rango que la 32-6 y la fuente dice por que: sale de ahi"),
+    ("reaccion_adversa_alimento", "topes_por_1000kcal", "fosforo", 2000.0, ("pct_ms", 0.8),
+     "SACN5 Tabla 31-3, perros: «Phosphorus* 0.4 to 0.8% DM», techo. El asterisco dice que no es de la alergia sino de la dieta de eliminacion comida a largo plazo"),
+    ("reaccion_adversa_alimento", "topes_por_1000kcal", "sodio", 1000.0, ("pct_ms", 0.4),
+     "SACN5 Tabla 31-3, perros: «Sodium* 0.2 to 0.4% DM», techo. Mismo asterisco que el fosforo"),
+
+    # ── Cuarta pasada bis, 9 de septiembre: las dos filas que faltaban de la
+    #    Tabla 37-9 del renal. De sus ocho filas el motor aplicaba cuatro.
+    ("renal", "topes_por_1000kcal", "cloruro", 1125.0, ("directo", 1125.0),
+     "SACN5 Tabla 37-9: «Chloride -- 1.5 x sodium levels in foods for dogs». La tabla lo escribe como una RELACION, no como un numero: 750 (nuestro sodio renal, misma tabla) x 1,5 = 1125. Si algun dia cambia el sodio renal, este hay que rehacerlo A MANO"),
+    ("renal", "suelos_por_1000kcal", "omega3_total", 1.0, ("pct_ms", 0.4),
+     "SACN5 Tabla 37-9: «Omega-3 fatty acids -- 0.4 to 2.5 % in foods for dogs and cats», extremo bajo. Solo el suelo: el techo (6,25) chocaria con el presupuesto semanal de EPA+DHA"),
+
+    # ── La Tabla 35-3 entera, 9 de septiembre: las tres filas que faltaban ──
+    ("disfuncion_cognitiva", "suelos_por_1000kcal", "lcarnitina", 62.5, ("mgkg_ms", 250),
+     "SACN5 Tabla 35-3, fila «L-carnitine -- Provide foods with 250 to 750 IU/kg», extremo bajo. ⚠️ CORREGIDO 10-sep: antes ponia 25,0 desde «>=100 mg/kg», que es la fila del ACIDO ALFA-LIPOICO, la de justo debajo. La unidad impresa es IU/kg y se lee como mg/kg -- la carnitina no tiene UI, y la Tabla 35-4 compara ese rango con los 299 mg/kg de un alimento real. FEDIAF no da fila de L-carnitina, asi que no hay techo con el que chocar"),
+    ("disfuncion_cognitiva", "limites_escritos_que_el_solver_no_aplica", "acido_alfa_lipoico", 25.0, ("mgkg_ms", 100),
+     "SACN5 Tabla 35-3, fila «α-lipoic acid -- Provide foods with >=100 mg/kg». NO SE APLICA: no es una columna de ninguna ficha del catalogo ni una fila de FEDIAF. Es el dueño real de los 100 mg/kg que la L-carnitina tenia cogidos por error"),
+    ("disfuncion_cognitiva", "limites_escritos_que_el_solver_no_aplica", "selenio", 125.0, ("pct_ms", 0.05),
+     "SACN5 Tabla 35-3: «Selenium 0.5 to 1.3 mg/kg» MS = 125-325 ug/1000 kcal. NO SE APLICA: el maximo de FEDIAF son 142, o sea que DOS TERCIOS del rango de la fuente estan por encima del techo legal. Con el suelo puesto cabe, pero deja los menus al 88-98 % del maximo de un nutriente con toxicidad cronica"),
+    ("disfuncion_cognitiva", "limites_escritos_que_el_solver_no_aplica", "vitC", 37.5, ("mgkg_ms", 150),
+     "SACN5 Tabla 35-3: «Vitamin C -- Provide foods with >=150 mg/kg». NO SE APLICA: el perro sintetiza su propia vitamina C, FEDIAF no le da fila y el catalogo no tiene esa columna"),
+
+    # ── Las ESCRITAS QUE EL SOLVER NO APLICA (9 de septiembre) ──
+    # ⚠️ ESTAS TRES YA ESTABAN EN patologias.json Y NINGUN BLOQUE LAS MIRABA.
+    # `limites_escritos_que_el_solver_no_aplica` se invento el 8 de septiembre
+    # para las cifras de una fuente que no se pueden aplicar (porque no caben,
+    # o porque dos fuentes se contradicen, o porque quien decide es el
+    # veterinario), y se hizo bien: la cifra queda en el repo, con su cita, y
+    # `GET /patologias` se la sirve al profesional. Lo que se olvido es que una
+    # cifra que nadie vigila se pudre igual este donde este -- que es la leccion
+    # de la fibra y la de la tabla de patologias duplicada. Desde hoy pasan por
+    # la misma lista y por las mismas comprobaciones de conversion.
+    ("cancer_soporte", "limites_escritos_que_el_solver_no_aplica", "omega3_total", 12.5, ("pct_ms", 5.0),
+     "SACN5 Tabla 30-5: «Provide foods with increased levels of omega-3 fatty acids (>5% DM)». NO SE APLICA: el techo real de este catalogo esta entre 11,5 y 12,0 g/1000 kcal"),
+    ("renal", "limites_escritos_que_el_solver_no_aplica", "ratio_omega6_omega3", 7.0, ("directo", 7.0),
+     "SACN5 Tabla 37-9: «Omega-6:omega-3 fatty acid ratio of 1:1 to 7:1». NO SE APLICA: el NRC 2006 cap.5 dice que el ratio n-6:n-3 TOTAL «is not helpful» y recomienda en su lugar el linoleico:linolenico, que el motor si aplica"),
+    ("reaccion_adversa_alimento", "limites_escritos_que_el_solver_no_aplica", "proteina", 55.0, ("pct_ms", 22),
+     "SACN5 Tabla 31-3, perros: «protein should be 16 to 22% DM», techo. NO SE APLICA: la fuente dice «dermatologic cases only» y el motor no sabe si este perro es de piel o de intestino"),
+
+    # --- 9 de septiembre: lo que las fuentes dicen y el motor NO puede aplicar,
+    #     escrito igual. La regla es de Elena y es la buena: que gane hoy el
+    #     limite legal o el minimo de FEDIAF no hace que el numero de la fuente
+    #     deje de existir -- si manana cambia el que gana, este tiene que estar
+    #     aqui y no haber que volver a encontrarlo.
+    ("oxalato", "limites_escritos_que_el_solver_no_aplica", "proteina", 45.0, ("pct_ms", 18),
+     "SACN5 Tabla 40-5: «Restrict dietary protein to 10 to 18% dry matter» = 25-45 g/1000 kcal. "
+     "NO SE APLICA porque el techo ENTERO cae por debajo del minimo de FEDIAF (52,1): no hay "
+     "ningun numero que cumpla las dos cosas. Solo un colegiado puede bajar de FEDIAF (fase 4)"),
+    ("oxalato", "limites_escritos_que_el_solver_no_aplica", "suelo_fosforo_750", 750.0,
+     ("pct_ms", 0.3),
+     "SACN5 Tabla 40-5: «Dietary phosphorus should be in the range of 0.3 to 0.6% DM». El techo "
+     "(1500) si se aplica; este es el SUELO del mismo rango, y no se aplica porque el minimo de "
+     "FEDIAF (1160) ya es mas alto y gana siempre"),
+    ("oxalato", "limites_escritos_que_el_solver_no_aplica", "suelo_magnesio_100", 100.0,
+     ("pct_ms", 0.04),
+     "SACN5 Tabla 40-5: «Dietary magnesium should be in the range of 0.04 to 0.15% DM». El techo "
+     "(375) si se aplica; el suelo no, porque el minimo de FEDIAF (200) ya es mas alto"),
+    ("oxalato", "limites_escritos_que_el_solver_no_aplica", "fosforo_conflicto_de_fuentes", None,
+     ("directo", None),
+     "SIN CIFRA A PROPOSITO: las dos fuentes dicen lo contrario. SACN5 Tabla 40-5 pone el "
+     "fosforo como TECHO (0,3-0,6 % MS) y Fascetti cap.16 dice literalmente «Dietary phosphorus "
+     "should not be restricted with calcium oxalate urolithiasis. Low dietary phosphorus is a "
+     "risk factor». Se queda el techo de SACN5 y el conflicto va como pregunta al nutricionista"),
+    ("oxalato", "limites_escritos_que_el_solver_no_aplica", "sodio_debate_abierto", None,
+     ("directo", None),
+     "SIN CIFRA A PROPOSITO: Fascetti cap.16 dice que el sodio bajo AUMENTA el riesgo y que las "
+     "concentraciones recomendadas «is debated», con dietas comerciales de 0,4 a 3,5 g/Mcal. Un "
+     "rango de casi diez veces no cambia un limite que hoy si tiene cifra (750, SACN5)"),
+    ("oxalato", "limites_escritos_que_el_solver_no_aplica", "acido_ascorbico", None,
+     ("directo", None),
+     "SIN CIFRA PORQUE NO ES UN NUMERO: SACN5 Tabla 40-5 dice «Avoid pet foods, supplements or "
+     "human foods that contain ascorbic acid» (es precursor del oxalato). Es una regla sobre "
+     "ingredientes, y falta la revision de etiquetas de los suplementos del catalogo"),
+    ("dermatosis_zinc", "limites_escritos_que_el_solver_no_aplica", "zinc_100_con_linoleico_15",
+     100.0, ("directo", 100.0),
+     "Fascetti cap.14 citando a NRC 2006: «The combination of zinc (100 mg/1000 kcal) and "
+     "linoleic acid (15 g/1000 kcal) produced statistically significant improvements in coat "
+     "gloss and decreased TEWL». NO CABE, medido: con el zinc en 100 no sale menu a ningun peso, "
+     "ni con 60, 75 o 90; y ademas 100 esta POR ENCIMA del maximo LEGAL de la UE (56,75)"),
+    ("cancer_soporte", "limites_escritos_que_el_solver_no_aplica", "ratio_omega6_omega3", 1.0,
+     ("directo", 1.0),
+     "SACN5 cap.30: «an omega-6:omega-3 fatty acid ratio approximating 1:1». NO SE APLICA por lo "
+     "mismo que el de la renal: el NRC 2006 dice que el ratio de TOTALES «is not helpful» y "
+     "recomienda en su lugar el linoleico:linolenico, que el motor si aplica"),
+    ("artrosis", "limites_escritos_que_el_solver_no_aplica", "ratio_omega6_omega3", 1.0,
+     ("directo", 1.0),
+     "SACN5 cap.34: «The omega-6 to omega-3 fatty acid ratio should be less than 1:1». Mismo "
+     "motivo que el de la renal y el del cancer: el NRC 2006 dice que ese ratio no sirve"),
+    ("hepatopatia", "limites_escritos_que_el_solver_no_aplica", "metionina", None,
+     ("directo", None),
+     "SIN CIFRA PORQUE LA FUENTE DICE QUE NO HACE FALTA UN TECHO DIETETICO. SACN5 cap.68: la via "
+     "de los mercaptanos «do not play an important role in the pathogenesis of HE», y lo que si "
+     "manda es «Do not administer ... methionine-containing products» -- una regla de exclusion "
+     "de suplementos, no un limite por nutriente. Cuando entre la ficha de L-metionina al "
+     "catalogo, hepatopatia tiene que excluirla"),
+]
+
+
+# ============================================================
 # BLOQUE 0 — que este archivo no tenga un nombre que no existe
 # ============================================================
 #
@@ -429,10 +862,11 @@ for _restringiendo in (None, {"Carne muscular": [_ALERGENO_B5]}):
 # ha pasado por ahí mirando `no_se_pudo_forzar`: si algún día deja de
 # pasar por ese camino, esta prueba avisa en vez de aprobar sin probar.
 _verduras_b5 = [n for n, a in al.items() if a.get("categoria") == "Verduras y frutas"][:8]
-_r5 = _c_b5 = None
-from fastapi.testclient import TestClient as _TC_b5
-import main as _api_b5
-_c_b5 = _TC_b5(_api_b5.app, raise_server_exceptions=False)
+_r5 = None
+# `_api_b5` y `_c_b5` viven en la cabecera desde el 19 de septiembre de 2026:
+# los leen bloques de más arriba y de más abajo, y tenerlos aquí obligaba al
+# modo rápido a arrastrar este bloque -- y con él el BLOQUE 1, porque el cuerpo
+# de éste usa el `der` que aquél deja suelto.
 _r5 = _c_b5.post("/menu/v2", json={
     "nombres_alimentos": [], "der_objetivo": 1211.0, "etapa_requisitos": "Adulto",
     "peso_perro_kg": 24.5, "modo": "personalizar",
@@ -561,25 +995,10 @@ def _resolver_con_holgura(*args, **kwargs):
 # añade un camino nuevo que se salte el filtro, esto lo caza aquí.
 # ============================================================
 print("=== BLOQUE 8: ningún camino entrega un menú sin verificar ===")
-from fastapi.testclient import TestClient
-import main as _api
-
-_c = TestClient(_api.app, raise_server_exceptions=False)
-DER_B8, ETAPA_B8, PESO_B8 = 900.0, "Adulto", 20.0
-
-def _exigir_verde(caso, respuesta, der, etapa):
-    """Verifica por su cuenta lo que devuelve un endpoint."""
-    if not respuesta.get("factible", respuesta.get("encontrado")):
-        return None  # negarse a dar menú es una respuesta válida, no un fallo
-    g = respuesta.get("menu") or respuesta.get("gramos")
-    if not g:
-        return None
-    f = verificar(g, al, req, der, etapa)
-    if f["semaforo"] != "verde":
-        fallos.append(f"BLOQUE8 {caso}: entregó un menú en {f['semaforo']} "
-                      f"({f['correctos']}/{f['total']}, rojos: "
-                      f"{[x['nutriente'] for x in f['rojos']]})")
-    return g
+# `_api` y `_c` viven en la cabecera desde el 19 de septiembre de 2026: los usan
+# más de cuarenta bloques, y definirlos aquí obligaba al modo rápido a arrastrar
+# este bloque entero (44 s) para poder llamar a un endpoint.
+# `DER_B8`, `ETAPA_B8`, `PESO_B8` y `_exigir_verde` viven en la cabecera.
 
 _base = _c.post("/menu/v2", json={"nombres_alimentos": [], "der_objetivo": DER_B8,
     "etapa_requisitos": ETAPA_B8, "peso_perro_kg": PESO_B8, "modo": "automatico"}).json()
@@ -1776,372 +2195,12 @@ for _n in ("Hígado de pato", "Corazón de pavo"):
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
-# ============================================================
-# BLOQUE 13 — LOS TOPES POR PATOLOGÍA SE CUMPLEN DE VERDAD
-#
-# Un perro renal, hepático o pancreático tiene topes MÁS ESTRICTOS que los
-# de FEDIAF. Que existan en el código no basta: hay que medir el menú que
-# se entrega y comprobar que no se pasa.
-#
-# Se mide sobre las KCAL REALES del menú, no sobre las pedidas. Los topes
-# se definen "por 1000 kcal de la dieta", y el menú puede salir hasta un 3%
-# por debajo de lo pedido (tolerancia_kcal): menos kcal con el mismo
-# nutriente = más concentración. Medir contra las kcal pedidas es
-# justamente el fallo que se arregló, así que la prueba no puede repetirlo.
-#
-# LO QUE ENCONTRÓ ESTE BLOQUE (24 de agosto), midiendo:
-#
-#   1. La GRASA se pasaba SIEMPRE. Pancreatitis: tope 25% de las kcal,
-#      salía 26%. Diabetes: tope 35%, salía 36%. En los cuatro pesos
-#      probados. A ese camino no le había llegado el arreglo del 21 de
-#      agosto (que sí arregló los topes por 1000 kcal).
-#
-#   2. EDITAR UN MENÚ SE SALTABA LOS TOPES DEL TODO, que es mucho peor:
-#         renal        fósforo  tope 1400  →  3084   (+120%)
-#         hepatopatía  cobre    tope 3.0   →  4.05
-#         pancreatitis grasa    tope 25%   →  47%
-#      `_recalcular_con_motor` no le pasaba las patologías al motor. El
-#      menú se generaba bien y una sola edición lo tiraba.
-#
-#      Y la verificación no lo paraba: comprueba los 30 requisitos de
-#      FEDIAF, que son los de un perro SANO, y 3084 mg de fósforo entra
-#      dentro del máximo de FEDIAF. Salía en VERDE.
-# ============================================================
-# ══════════════════════════════════════════════════════════════════════
-# LAS CIFRAS DE PATOLOGÍA, CON SU FUENTE, EN UN SOLO SITIO
-# ══════════════════════════════════════════════════════════════════════
-#
-# ⚠️ UNIFICADA (8 septiembre). Esta lista la usan DOS bloques: el 13, que
-# comprueba que el motor devuelve los topes que se esperan y que los menús
-# los cumplen, y el 55, que comprueba las 27 cifras contra su fuente y que
-# el solver las aplica de verdad.
-#
-# Estaban separadas: el 13 tenía su propia tabla `_NUMEROS_REVISADOS_B13`
-# escrita a mano. Al cambiar cuatro cifras el 8 de septiembre, el 13 se cayó
-# -- que es lo que tenía que hacer -- pero dejaba el repo con DOS listas de
-# los mismos números, que es el fallo que este proyecto lleva documentando
-# desde la fibra: dos copias de lo mismo que se separan y nadie se entera.
-# Ahora hay una.
-#
-# Cada fila lleva la CITA LITERAL de la fuente que sostiene el número. No
-# comprueba que el número sea "bueno": comprueba que sigue siendo el que su
-# fuente dice. Cambiarlo con una fuente nueva en la mano es legítimo -- lo
-# que no lo es es cambiarlo sin enterarse.
-#
-# Cada fila: (patologia, tipo, nutriente, valor aplicado, origen, cita)
-#
-# `origen` es lo que permite RECALCULAR el numero desde la fuente en vez de
-# creerselo, y tiene tres formas:
-#     ("pct_ms",   x)   el valor de la fuente en % de materia seca
-#     ("mgkg_ms",  x)   en mg por kg de materia seca
-#     ("directo", None) la fuente ya lo da en la unidad del motor, o el numero
-#                       es una ELECCION nuestra dentro del rango -- y entonces
-#                       la cita dice cual es el rango y por que se eligio ese
-#
-# AVISO PARA QUIEN AnADA UNA FILA: "directo" no es el valor por defecto ni la
-# salida facil. Si la fuente da un porcentaje o un mg/kg, se pone "pct_ms" o
-# "mgkg_ms" aunque la cuenta parezca obvia -- es justamente donde falla.
-#
-# POR QUE EXISTE ESTO (8 septiembre, segunda tanda). La primera version de esta
-# lista llevaba solo el numero y la cita en prosa, y la conversion la hacia yo a
-# mano. Al recalcular las 50 cifras del documento aparecieron DOS errores
-# propios, los dos del mismo tipo: multiplicar un porcentaje pequeno por 25 en
-# vez de por 2,5. Lisina en obesidad, 42,5 en vez de 4,25. Fenilalanina+tirosina
-# en dermatosis, 32,5 en vez de 3,25. Un factor 10 en los dos.
-#
-# Ninguno llego al motor, porque eran cifras aun sin aplicar. Pero eso fue
-# SUERTE, no proteccion: se detectaron porque volvi a mirar, y "volver a mirar"
-# no es un mecanismo. Con `origen`, el test rehace la multiplicacion.
-_CIFRAS_CON_FUENTE = [
-    ("renal", "topes_por_1000kcal", "fosforo", 1200.0, ("directo", None),
-     "SACN5 Tabla 37-9: «Phosphorus 0.2 to 0.5% in foods for dogs» = 500-1250 mg. Se ELIGE 1200 dentro del rango: es lo mas bajo que cabe sin romper el minimo de FEDIAF (1160)"),
-    ("renal", "topes_por_1000kcal", "sodio", 750.0, ("pct_ms", 0.3),
-     "SACN5 Tabla 37-9: «Sodium <=0.3% in foods for dogs»"),
-    ("renal_avanzada", "topes_por_1000kcal", "fosforo", 1200.0, ("directo", None),
-     "igual que renal: elegido dentro del rango 500-1250"),
-    ("pancreatitis", "topes_por_1000kcal", "grasa", 37.5, ("pct_ms", 15),
-     "SACN5 Tabla 67-3: «Fat <=15% for non-obese and non-hypertriglyceridemic dogs»"),
-    ("pancreatitis", "topes_por_1000kcal", "proteina", 75.0, ("pct_ms", 30),
-     "SACN5 Tabla 67-3: «Protein 15 to 30% for dogs», extremo alto"),
-    ("oxalato", "topes_por_1000kcal", "vitD", 8.75, ("directo", None),
-     "Fascetti cap.16: «Diets with vitamin D between 250 and 350 IU/Mcal should suffice» = "
-     "6,25-8,75 ug/1000 kcal (1 ug = 40 UI). Se aplica el extremo alto, que es el techo. "
-     "APRETADO 9-sep-2026: antes era 14,1875, que es el maximo LEGAL de FEDIAF para cualquier "
-     "perro -- o sea que esta patologia no tenia tope propio de vitamina D. Medido: cinco "
-     "perros (3, 8, 20, 30 y 55 kg) dan menu en el peldano estricto, con 4,08-5,72 ug reales"),
-    ("oxalato", "topes_por_1000kcal", "sodio", 750.0, ("pct_ms", 0.3),
-     "SACN5 Tabla 40-5: «Dietary sodium should be <0.3% DM»"),
-    ("oxalato", "topes_por_1000kcal", "fosforo", 1500.0, ("pct_ms", 0.6),
-     "SACN5 Tabla 40-5: «phosphorus should be in the range of 0.3 to 0.6% DM», techo del rango"),
-    ("oxalato", "topes_por_1000kcal", "magnesio", 375.0, ("pct_ms", 0.15),
-     "SACN5 Tabla 40-5: «magnesium should be in the range of 0.04 to 0.15% DM», techo del rango"),
-    ("hepatopatia", "topes_por_1000kcal", "cobre", 2.4, ("directo", None),
-     "Center SA et al., JAVMA 264(2) 2026: tolerable 0,24 mg Cu/100 kcal = 2,40 mg/1000 kcal. Techo legal Reg. UE 2020/354 entrada 28 = 2,50"),
-    ("cardiopatia", "topes_por_1000kcal", "sodio", 738.6, ("directo", None),
-     "Reg. (UE) 2020/354 entrada 24: <=2,6 g/kg al 12 % de humedad, dividido entre 3,52 = 738,64. "
-     "⚠️ BAJADO DE 739 A 738,6 el 10-sep-2026: los 739 redondeaban un techo LEGAL hacia arriba, "
-     "que es la unica direccion en la que redondear no vale. Lo cazo el BLOQUE 80"),
-    ("cardiopatia_b2", "topes_por_1000kcal", "sodio", 738.6, ("directo", None),
-     "igual: el rango de Cavanaugh para B2 (800-990) supera entero el techo legal"),
-    ("cardiopatia_c", "topes_por_1000kcal", "sodio", 625.0, ("pct_ms", 0.25),
-     "SACN5 Tabla 36-4 Class Ia «0.15 to 0.25%», techo; y cae dentro del rango de Cavanaugh para C (500-790)"),
-    ("cardiopatia_d", "topes_por_1000kcal", "sodio", 480.0, ("directo", None),
-     "Cavanaugh estadio D «<50 mg/100 kcal», con margen sobre el minimo de FEDIAF (290)"),
-    ("hiperlipidemia", "topes_por_1000kcal", "grasa", 30.0, ("pct_ms", 12),
-     "SACN5 Tabla 28-2: «Restrict dietary fat (<12% dry matter)»"),
-    ("hiperlipidemia", "suelos_por_1000kcal", "fibra", 25.0, ("pct_ms", 10),
-     "SACN5 Tabla 28-2: «Increase dietary fiber: Dogs: >=10% DM»"),
-    # ⚠️ 12-sep-2026: PASA DE 30 A 22,5, que es lo que dice la fuente. El 30 era
-    # nuestro y el motivo escrito era que 22,5 «no resuelve con el catalogo
-    # real» -- una medida del 6 de septiembre que decia «27 falla 0/5, 28
-    # resuelve 5/5» SIN decir con que perro, con que peso ni con que peldaño.
-    # Remedida con las condiciones por delante (adulto con obesidad, catalogo
-    # entero, 3/10/22/40 kg, cinco techos, 3 intentos, 20 s): en el peldaño
-    # estricto NO sale ninguno de los cinco, tampoco el 30 que se aplicaba, y
-    # con la escalera salen los cinco 3 de 3 en los cuatro pesos. O sea que el
-    # 22,5 no cuesta ni un menu.
-    ("obesidad", "topes_por_1000kcal", "grasa", 22.5, ("pct_ms", 9),
-     "SACN5 Tabla 27-4: «Foods for weight loss should contain <=9%» de grasa"),
-    ("obesidad", "suelos_por_1000kcal", "proteina", 62.5, ("pct_ms", 25),
-     "SACN5 Tabla 27-4: «Foods for weight loss should contain >=25%»"),
-    ("dcm_taurina_respondedora", "suelos_por_1000kcal", "taurina", 250.0, ("pct_ms", 0.1),
-     "SACN5 Tabla 36-4: «Taurine — Dogs: >=0.1%»"),
-    ("dcm_taurina_respondedora", "suelos_por_1000kcal", "lcarnitina", 50.0, ("pct_ms", 0.02),
-     "SACN5 Tabla 36-4: «L-Carnitine — Dogs: >=0.02%»"),
-    ("ple_linfangiectasia", "topes_por_1000kcal", "grasa", 37.5, ("pct_ms", 15),
-     "SACN5 Tabla 58-1: «Fat <15% for dogs and cats»"),
-    ("ple_linfangiectasia", "suelos_por_1000kcal", "proteina", 62.5, ("pct_ms", 25),
-     "SACN5 Tabla 58-1: «Protein >=25% for dogs»"),
-    ("ple_linfangiectasia", "topes_por_1000kcal", "fibra", 12.5, ("pct_ms", 5),
-     "SACN5 Tabla 58-1: «Crude fiber <=5%»"),
-    ("insuficiencia_pancreatica_exocrina", "topes_por_1000kcal", "grasa", 37.5, ("pct_ms", 15),
-     "SACN5 Tabla 66-1: «Fat 10 to 15% for dogs», extremo alto a proposito"),
-    ("insuficiencia_pancreatica_exocrina", "topes_por_1000kcal", "fibra", 12.5, ("pct_ms", 5),
-     "SACN5 Tabla 66-1: «Fiber <=5%**» con la nota «**Lower is better»"),
-    ("enteropatia_cronica", "topes_por_1000kcal", "grasa", 37.5, ("pct_ms", 15),
-     "SACN5 Tabla 57-1: «Fat 12 to 15% for dogs» (muy digestible), extremo alto"),
-    ("enteropatia_cronica", "suelos_por_1000kcal", "proteina", 62.5, ("pct_ms", 25),
-     "SACN5 Tabla 57-1: «Protein >=25% for dogs»"),
-    ("artrosis", "suelos_por_1000kcal", "epa", 1.0, ("pct_ms", 0.4),
-     "SACN5 Tabla 34-2: «Eicosapentaenoic acid 0.4 to 1.1%» — EPA SOLA, extremo bajo"),
-    ("dermatosis_zinc", "suelos_por_1000kcal", "zinc", 25.0, ("mgkg_ms", 100),
-     "SACN5 Tabla 32-1: «Zinc — Dogs: 100 to 200 mg/kg food DM», extremo bajo"),
-    ("diabetes", "suelos_por_1000kcal", "fibra", 17.5, ("pct_ms", 7),
-     "SACN5 Tabla 29-3: «Fiber 7 to 18%», extremo bajo"),
-
-    # ── Anadidas el 8 de septiembre, segunda tanda ──
-    ("renal", "topes_por_1000kcal", "potasio", 2000.0, ("pct_ms", 0.8),
-     "SACN5 Tabla 37-9: «Potassium 0.4 to 0.8% in foods for dogs», techo del rango"),
-    ("renal", "topes_por_1000kcal", "proteina", 62.5, ("directo", None),
-     "Reg. (UE) 2020/354 entrada 10: crude protein <=220 g/kg al 12 % humedad / 3,52 = 62,5"),
-    ("obesidad", "suelos_por_1000kcal", "fibra", 30.0, ("pct_ms", 12),
-     "SACN5 Tabla 27-4: «Fiber 12 to 25%», extremo bajo"),
-    ("obesidad", "suelos_por_1000kcal", "lisina", 4.25, ("pct_ms", 1.7),
-     "SACN5 Tabla 27-4: «Lysine >=1.7%» - la cifra que se escribio mal como 42,5"),
-    ("obesidad", "suelos_por_1000kcal", "lcarnitina", 75.0, ("mgkg_ms", 300),
-     "SACN5 Tabla 27-4: «L-carnitine >=300 ppm»"),
-    ("artrosis", "suelos_por_1000kcal", "lcarnitina", 75.0, ("mgkg_ms", 300),
-     "SACN5 Tabla 34-2: «L-carnitine >=300 mg/kg»"),
-    ("enteropatia_cronica", "topes_por_1000kcal", "potasio", 2750.0, ("pct_ms", 1.1),
-     "SACN5 Tabla 57-1: «Potassium 0.8 to 1.1%», techo del rango"),
-    ("dermatosis_zinc", "suelos_por_1000kcal", "fenilalanina_tirosina", 3.25, ("pct_ms", 1.3),
-     "SACN5 Tabla 32-1: «Phenylalanine + tyrosine >1.3% DM» - la otra cifra que se escribio mal, como 32,5"),
-    ("dermatitis_atopica", "suelos_por_1000kcal", "fenilalanina_tirosina", 3.25, ("pct_ms", 1.3),
-     "SACN5 Tabla 32-1: misma tabla que dermatosis_zinc"),
-    ("cistina", "topes_por_1000kcal", "sodio", 750.0, ("pct_ms", 0.3),
-     "SACN5 Tabla 42-1: «Restrict sodium to less than 0.3% dry matter»"),
-    ("hepatopatia", "suelos_por_1000kcal", "zinc", 50.0, ("mgkg_ms", 200),
-     "SACN5 Tabla 68-8, perros: «Zinc (mg/kg) >200». Maximo LEGAL de FEDIAF 56,75: solo 6,75 de margen"),
-    ("hepatopatia", "suelos_por_1000kcal", "hierro", 20.0, ("mgkg_ms", 80),
-     "SACN5 Tabla 68-8, perros: «Iron (mg/kg) 80 to 140», extremo bajo"),
-    ("enteropatia_cronica", "limites_escritos_que_el_solver_no_aplica", "omega3_total", None, ("directo", None),
-     "SACN5 cap.57, TEXTO y no la Tabla 57-1: «A reasonable starting dose estimated from human and animal "
-     "trials is approximately 175 mg (range 50 to 300 mg) omega-3 fatty acids/kg body weight/day». SIN CIFRA "
-     "A PROPOSITO, y el motivo lo da la propia fuente en el mismo parrafo: «there is no well-established "
-     "effective dose for dogs and cats». Ademas iria por kilo de PERRO y no por 1000 kcal, que es una forma "
-     "que hoy no usa ninguna patologia. ANADIDO 11-sep al releer el cap.57 entero"),
-    # ⚠️ RETIRADA EL MISMO DIA QUE SE ESCRIBIO (11 septiembre), y por eso se
-    # queda anotada. La frase de Fascetti cap.11 es real y su conversion
-    # tambien -- «less than 8% total dietary fiber» son 20 g/1000 kcal --, pero
-    # vive dentro del apartado «Recommendations» del bloque de GASTROENTERITIS
-    # AGUDA, no en el de enteropatia cronica: dos cuadros distintos del mismo
-    # capitulo. Se llego a aplicar aqui y se quito antes de entregarlo, al
-    # abrir el contexto entero en vez de la frase suelta. Se queda escrita SIN
-    # cifra para que nadie la vuelva a «descubrir» dentro de seis meses y la
-    # aplique a la patologia equivocada.
-    ("enteropatia_cronica", "limites_escritos_que_el_solver_no_aplica", "fibra", None, ("directo", None),
-     "Fascetti & Delaney 2a ed., cap.11: «An empirical recommendation is to select diets that "
-     "contain less than 8% total dietary fiber or less than 5% crude fiber». SIN CIFRA A "
-     "PROPOSITO: la frase es del apartado de GASTROENTERITIS AGUDA y el motor no tiene esa "
-     "patologia -- lo que ese apartado describe es realimentar al 25 % del RER, o sea una dieta "
-     "deliberadamente INCOMPLETA, y el motor entrega raciones completas"),
-    ("hepatopatia", "topes_por_1000kcal", "hierro", 35.0, ("mgkg_ms", 140),
-     "SACN5 Tabla 68-8, perros: «Iron (mg/kg) 80 to 140», extremo ALTO. ANADIDO 11-sep: la fila es un rango y "
-     "solo se aplicaba su suelo. El techo tiene mecanismo escrito («Iron is a potent catalyst of oxidative "
-     "processes (Fenton reaction)») y es el mismo criterio que el potasio de la enteropatia, donde ya se toma "
-     "el techo. Medido: solo 3 de los 216 menus del catalogo se pasan de 35, y los tres son de crecimiento o "
-     "gestacion"),
-    ("hepatopatia", "topes_por_1000kcal", "sodio", 625.0, ("pct_ms", 0.25),
-     "SACN5 Tabla 68-8, perros: «Sodium (%) 0.08 to 0.25», techo del rango"),
-    ("hepatopatia", "suelos_por_1000kcal", "taurina", 250.0, ("pct_ms", 0.1),
-     "SACN5 Tabla 68-8, perros: «Taurine (%) >=0.1»"),
-    ("estruvita", "topes_por_1000kcal", "magnesio", 250.0, ("pct_ms", 0.1),
-     "SACN5 Tabla 43-3: «Prevention: restrict dietary magnesium to 0.04 to 0.1% DM», techo"),
-    ("estruvita", "topes_por_1000kcal", "fosforo", 1500.0, ("pct_ms", 0.6),
-     "SACN5 Tabla 43-3: «Prevention: restrict dietary phosphorus to <0.6% DM»"),
-    ("estruvita", "topes_por_1000kcal", "proteina", 62.5, ("pct_ms", 25),
-     "SACN5 Tabla 43-3: «Prevention: restrict dietary protein to <25% DM»"),
-    ("urolitos_fosfato_calcico", "topes_por_1000kcal", "fosforo", 1500.0, ("pct_ms", 0.6),
-     "SACN5 Tabla 41-6: «Phosphorus 0.3 to 0.6%», techo del rango"),
-    ("urolitos_fosfato_calcico", "topes_por_1000kcal", "magnesio", 375.0, ("pct_ms", 0.15),
-     "SACN5 Tabla 41-6: «Magnesium 0.06 to 0.15%», techo del rango"),
-    ("urolitos_fosfato_calcico", "topes_por_1000kcal", "sodio", 750.0, ("pct_ms", 0.3),
-     "SACN5 Tabla 41-6: «Sodium <0.3%»"),
-    ("urolitos_fosfato_calcico", "topes_por_1000kcal", "proteina", 62.5, ("pct_ms", 25),
-     "SACN5 Tabla 41-6: «Protein 10 to 25%», techo (el unico extremo por encima del minimo de FEDIAF)"),
-    ("estrenimiento_cronico", "suelos_por_1000kcal", "fibra", 17.5, ("pct_ms", 7),
-     "SACN5 Tabla 64-2: «Fiber >=7% crude fiber»"),
-    ("flatulencia", "topes_por_1000kcal", "proteina", 75.0, ("pct_ms", 30),
-     "SACN5 Tabla 65-1: «Adult dogs: limit to <=30% or less»"),
-    ("flatulencia", "topes_por_1000kcal", "fibra", 12.5, ("pct_ms", 5),
-     "SACN5 Tabla 65-1: «limit to <=5% fiber (most important aspect regarding fiber)»"),
-    ("sibo", "topes_por_1000kcal", "grasa", 37.5, ("pct_ms", 15),
-     "SACN5 Tabla 60-1: «Fat 12 to 15% for dogs», extremo alto a proposito"),
-    ("intestino_irritable", "suelos_por_1000kcal", "fibra", 20.0, ("pct_ms", 8),
-     "SACN5 Tabla 63-3: «Crude fiber >=8%», la unica fila de las cuatro que el catalogo sabe medir"),
-
-    # ── Tercera pasada, 8 de septiembre: las filas que faltaban ──
-    ("artrosis", "limites_escritos_que_el_solver_no_aplica", "omega3_total", 8.75, ("pct_ms", 3.5),
-     "SACN5 Tabla 34-2: «Total omega-3 fatty acids 3.5 to 4.0%», extremo bajo. El Reg. (UE) 2020/354 entrada 27 pide 8,24 para lo mismo. RETIRADO DEL SOLVER EL 9-sep-2026: no cabe -- este catalogo llega con fiabilidad a ~6,5 y a 8,75 los perros de 25 kg en adelante se quedaban SIN MENU"),
-    ("artrosis", "topes_por_1000kcal", "fosforo", 1750.0, ("pct_ms", 0.7),
-     "SACN5 Tabla 34-2: «Phosphorus** 0.3 to 0.7%», techo. La nota ** dice: los perros con artrosis suelen tener edad de riesgo renal y cardiaco"),
-    ("artrosis", "topes_por_1000kcal", "sodio", 1000.0, ("pct_ms", 0.4),
-     "SACN5 Tabla 34-2: «Sodium** 0.2 to 0.4%», techo"),
-    ("artrosis", "suelos_por_1000kcal", "vitE", 67.1, ("uikg_ms", 400),
-     "SACN5 Tabla 34-2: «Vitamin E >=400 IU/kg». UI, no mg: x0,671 y /4"),
-    ("disfuncion_cognitiva", "limites_escritos_que_el_solver_no_aplica", "vitE", 187.5, ("mgkg_ms", 750),
-     "SACN5 Tabla 35-3: «Vitamin E >=750 mg/kg». Esta SI viene en mg, no lleva el x0,671. RETIRADO DEL SOLVER EL 9-sep-2026: choca con el techo de fosforo del adulto sano (2000) y dejaba la patologia ENTERA sin menu a cualquier peso"),
-    ("disfuncion_cognitiva", "suelos_por_1000kcal", "omega3_total", 2.5, ("pct_ms", 1.0),
-     "SACN5 Tabla 35-3: «Total omegas-3 >1%»"),
-    ("renal", "suelos_por_1000kcal", "vitE", 67.1, ("uikg_ms", 400),
-     "SACN5 Tabla 37-9: «Vitamin E >=400 IU vitamin E/kg of food for dogs»"),
-    ("obesidad", "suelos_por_1000kcal", "vitE", 67.1, ("uikg_ms", 400),
-     "SACN5 Tabla 27-4: «Vitamin E >=400 IU vitamin E/kg»"),
-    ("hepatopatia", "suelos_por_1000kcal", "vitE", 67.1, ("uikg_ms", 400),
-     "SACN5 Tabla 68-8, perros: «Vitamin E (IU/kg) >=400»"),
-    ("urolitos_fosfato_calcico", "topes_por_1000kcal", "vitD", 9.375, ("directo", None),
-     "SACN5 Tabla 41-6: «Vitamin D 500 to 1,500 IU/kg» MS; a 4000 kcal/kg son 125-375 UI/1000 kcal y a 40 UI/ug, 3,125-9,375 ug. Techo. MAS estricto que el maximo legal (14,1875)"),
-
-    # ── Cuarta pasada, 8 de septiembre: las TRES TABLAS QUE SE HABIAN PERDIDO
-    # al cortar la salida del barrido con `sed`. De las 89 tablas «Key
-    # nutritional factors» de SACN5 solo se habian revisado unas 40. Ver
-    # VERIFICACION_FILA_A_FILA.md §cuarta pasada.
-    ("cancer_soporte", "suelos_por_1000kcal", "grasa", 62.5, ("pct_ms", 25),
-     "SACN5 Tabla 30-5: «Fat = 25 to 40% of DM or 50 to 65% of the food's ME», extremo bajo. UNICA patologia del motor que pide MAS grasa"),
-    ("cancer_soporte", "suelos_por_1000kcal", "proteina", 75.0, ("pct_ms", 30),
-     "SACN5 Tabla 30-5: «Dogs: protein = 30 to 45% of DM», extremo bajo. «Provide protein in excess of adult requirements»"),
-    ("cancer_soporte", "suelos_por_1000kcal", "arginina", 5.0, ("pct_ms", 2),
-     "SACN5 Tabla 30-5: «Provide foods with arginine DM levels >2%». Mas de tres veces el minimo de FEDIAF (1,51)"),
-    ("dermatitis_atopica", "suelos_por_1000kcal", "omega3_total", 0.875, ("pct_ms", 0.35),
-     "SACN5 Tabla 32-6 (dermatosis INFLAMATORIAS, distinta de la 32-1 que ya se aplicaba): «Foods should contain between 0.35 to 1.8% dry matter», extremo bajo"),
-    ("reaccion_adversa_alimento", "suelos_por_1000kcal", "omega3_total", 0.875, ("pct_ms", 0.35),
-     "SACN5 Tabla 31-3, perros: «Total omega-3 fatty acids 0.35 to 1.8% DM», extremo bajo. Mismo rango que la 32-6 y la fuente dice por que: sale de ahi"),
-    ("reaccion_adversa_alimento", "topes_por_1000kcal", "fosforo", 2000.0, ("pct_ms", 0.8),
-     "SACN5 Tabla 31-3, perros: «Phosphorus* 0.4 to 0.8% DM», techo. El asterisco dice que no es de la alergia sino de la dieta de eliminacion comida a largo plazo"),
-    ("reaccion_adversa_alimento", "topes_por_1000kcal", "sodio", 1000.0, ("pct_ms", 0.4),
-     "SACN5 Tabla 31-3, perros: «Sodium* 0.2 to 0.4% DM», techo. Mismo asterisco que el fosforo"),
-
-    # ── Cuarta pasada bis, 9 de septiembre: las dos filas que faltaban de la
-    #    Tabla 37-9 del renal. De sus ocho filas el motor aplicaba cuatro.
-    ("renal", "topes_por_1000kcal", "cloruro", 1125.0, ("directo", 1125.0),
-     "SACN5 Tabla 37-9: «Chloride -- 1.5 x sodium levels in foods for dogs». La tabla lo escribe como una RELACION, no como un numero: 750 (nuestro sodio renal, misma tabla) x 1,5 = 1125. Si algun dia cambia el sodio renal, este hay que rehacerlo A MANO"),
-    ("renal", "suelos_por_1000kcal", "omega3_total", 1.0, ("pct_ms", 0.4),
-     "SACN5 Tabla 37-9: «Omega-3 fatty acids -- 0.4 to 2.5 % in foods for dogs and cats», extremo bajo. Solo el suelo: el techo (6,25) chocaria con el presupuesto semanal de EPA+DHA"),
-
-    # ── La Tabla 35-3 entera, 9 de septiembre: las tres filas que faltaban ──
-    ("disfuncion_cognitiva", "suelos_por_1000kcal", "lcarnitina", 62.5, ("mgkg_ms", 250),
-     "SACN5 Tabla 35-3, fila «L-carnitine -- Provide foods with 250 to 750 IU/kg», extremo bajo. ⚠️ CORREGIDO 10-sep: antes ponia 25,0 desde «>=100 mg/kg», que es la fila del ACIDO ALFA-LIPOICO, la de justo debajo. La unidad impresa es IU/kg y se lee como mg/kg -- la carnitina no tiene UI, y la Tabla 35-4 compara ese rango con los 299 mg/kg de un alimento real. FEDIAF no da fila de L-carnitina, asi que no hay techo con el que chocar"),
-    ("disfuncion_cognitiva", "limites_escritos_que_el_solver_no_aplica", "acido_alfa_lipoico", 25.0, ("mgkg_ms", 100),
-     "SACN5 Tabla 35-3, fila «α-lipoic acid -- Provide foods with >=100 mg/kg». NO SE APLICA: no es una columna de ninguna ficha del catalogo ni una fila de FEDIAF. Es el dueño real de los 100 mg/kg que la L-carnitina tenia cogidos por error"),
-    ("disfuncion_cognitiva", "limites_escritos_que_el_solver_no_aplica", "selenio", 125.0, ("pct_ms", 0.05),
-     "SACN5 Tabla 35-3: «Selenium 0.5 to 1.3 mg/kg» MS = 125-325 ug/1000 kcal. NO SE APLICA: el maximo de FEDIAF son 142, o sea que DOS TERCIOS del rango de la fuente estan por encima del techo legal. Con el suelo puesto cabe, pero deja los menus al 88-98 % del maximo de un nutriente con toxicidad cronica"),
-    ("disfuncion_cognitiva", "limites_escritos_que_el_solver_no_aplica", "vitC", 37.5, ("mgkg_ms", 150),
-     "SACN5 Tabla 35-3: «Vitamin C -- Provide foods with >=150 mg/kg». NO SE APLICA: el perro sintetiza su propia vitamina C, FEDIAF no le da fila y el catalogo no tiene esa columna"),
-
-    # ── Las ESCRITAS QUE EL SOLVER NO APLICA (9 de septiembre) ──
-    # ⚠️ ESTAS TRES YA ESTABAN EN patologias.json Y NINGUN BLOQUE LAS MIRABA.
-    # `limites_escritos_que_el_solver_no_aplica` se invento el 8 de septiembre
-    # para las cifras de una fuente que no se pueden aplicar (porque no caben,
-    # o porque dos fuentes se contradicen, o porque quien decide es el
-    # veterinario), y se hizo bien: la cifra queda en el repo, con su cita, y
-    # `GET /patologias` se la sirve al profesional. Lo que se olvido es que una
-    # cifra que nadie vigila se pudre igual este donde este -- que es la leccion
-    # de la fibra y la de la tabla de patologias duplicada. Desde hoy pasan por
-    # la misma lista y por las mismas comprobaciones de conversion.
-    ("cancer_soporte", "limites_escritos_que_el_solver_no_aplica", "omega3_total", 12.5, ("pct_ms", 5.0),
-     "SACN5 Tabla 30-5: «Provide foods with increased levels of omega-3 fatty acids (>5% DM)». NO SE APLICA: el techo real de este catalogo esta entre 11,5 y 12,0 g/1000 kcal"),
-    ("renal", "limites_escritos_que_el_solver_no_aplica", "ratio_omega6_omega3", 7.0, ("directo", 7.0),
-     "SACN5 Tabla 37-9: «Omega-6:omega-3 fatty acid ratio of 1:1 to 7:1». NO SE APLICA: el NRC 2006 cap.5 dice que el ratio n-6:n-3 TOTAL «is not helpful» y recomienda en su lugar el linoleico:linolenico, que el motor si aplica"),
-    ("reaccion_adversa_alimento", "limites_escritos_que_el_solver_no_aplica", "proteina", 55.0, ("pct_ms", 22),
-     "SACN5 Tabla 31-3, perros: «protein should be 16 to 22% DM», techo. NO SE APLICA: la fuente dice «dermatologic cases only» y el motor no sabe si este perro es de piel o de intestino"),
-
-    # --- 9 de septiembre: lo que las fuentes dicen y el motor NO puede aplicar,
-    #     escrito igual. La regla es de Elena y es la buena: que gane hoy el
-    #     limite legal o el minimo de FEDIAF no hace que el numero de la fuente
-    #     deje de existir -- si manana cambia el que gana, este tiene que estar
-    #     aqui y no haber que volver a encontrarlo.
-    ("oxalato", "limites_escritos_que_el_solver_no_aplica", "proteina", 45.0, ("pct_ms", 18),
-     "SACN5 Tabla 40-5: «Restrict dietary protein to 10 to 18% dry matter» = 25-45 g/1000 kcal. "
-     "NO SE APLICA porque el techo ENTERO cae por debajo del minimo de FEDIAF (52,1): no hay "
-     "ningun numero que cumpla las dos cosas. Solo un colegiado puede bajar de FEDIAF (fase 4)"),
-    ("oxalato", "limites_escritos_que_el_solver_no_aplica", "suelo_fosforo_750", 750.0,
-     ("pct_ms", 0.3),
-     "SACN5 Tabla 40-5: «Dietary phosphorus should be in the range of 0.3 to 0.6% DM». El techo "
-     "(1500) si se aplica; este es el SUELO del mismo rango, y no se aplica porque el minimo de "
-     "FEDIAF (1160) ya es mas alto y gana siempre"),
-    ("oxalato", "limites_escritos_que_el_solver_no_aplica", "suelo_magnesio_100", 100.0,
-     ("pct_ms", 0.04),
-     "SACN5 Tabla 40-5: «Dietary magnesium should be in the range of 0.04 to 0.15% DM». El techo "
-     "(375) si se aplica; el suelo no, porque el minimo de FEDIAF (200) ya es mas alto"),
-    ("oxalato", "limites_escritos_que_el_solver_no_aplica", "fosforo_conflicto_de_fuentes", None,
-     ("directo", None),
-     "SIN CIFRA A PROPOSITO: las dos fuentes dicen lo contrario. SACN5 Tabla 40-5 pone el "
-     "fosforo como TECHO (0,3-0,6 % MS) y Fascetti cap.16 dice literalmente «Dietary phosphorus "
-     "should not be restricted with calcium oxalate urolithiasis. Low dietary phosphorus is a "
-     "risk factor». Se queda el techo de SACN5 y el conflicto va como pregunta al nutricionista"),
-    ("oxalato", "limites_escritos_que_el_solver_no_aplica", "sodio_debate_abierto", None,
-     ("directo", None),
-     "SIN CIFRA A PROPOSITO: Fascetti cap.16 dice que el sodio bajo AUMENTA el riesgo y que las "
-     "concentraciones recomendadas «is debated», con dietas comerciales de 0,4 a 3,5 g/Mcal. Un "
-     "rango de casi diez veces no cambia un limite que hoy si tiene cifra (750, SACN5)"),
-    ("oxalato", "limites_escritos_que_el_solver_no_aplica", "acido_ascorbico", None,
-     ("directo", None),
-     "SIN CIFRA PORQUE NO ES UN NUMERO: SACN5 Tabla 40-5 dice «Avoid pet foods, supplements or "
-     "human foods that contain ascorbic acid» (es precursor del oxalato). Es una regla sobre "
-     "ingredientes, y falta la revision de etiquetas de los suplementos del catalogo"),
-    ("dermatosis_zinc", "limites_escritos_que_el_solver_no_aplica", "zinc_100_con_linoleico_15",
-     100.0, ("directo", 100.0),
-     "Fascetti cap.14 citando a NRC 2006: «The combination of zinc (100 mg/1000 kcal) and "
-     "linoleic acid (15 g/1000 kcal) produced statistically significant improvements in coat "
-     "gloss and decreased TEWL». NO CABE, medido: con el zinc en 100 no sale menu a ningun peso, "
-     "ni con 60, 75 o 90; y ademas 100 esta POR ENCIMA del maximo LEGAL de la UE (56,75)"),
-    ("cancer_soporte", "limites_escritos_que_el_solver_no_aplica", "ratio_omega6_omega3", 1.0,
-     ("directo", 1.0),
-     "SACN5 cap.30: «an omega-6:omega-3 fatty acid ratio approximating 1:1». NO SE APLICA por lo "
-     "mismo que el de la renal: el NRC 2006 dice que el ratio de TOTALES «is not helpful» y "
-     "recomienda en su lugar el linoleico:linolenico, que el motor si aplica"),
-    ("artrosis", "limites_escritos_que_el_solver_no_aplica", "ratio_omega6_omega3", 1.0,
-     ("directo", 1.0),
-     "SACN5 cap.34: «The omega-6 to omega-3 fatty acid ratio should be less than 1:1». Mismo "
-     "motivo que el de la renal y el del cancer: el NRC 2006 dice que ese ratio no sirve"),
-    ("hepatopatia", "limites_escritos_que_el_solver_no_aplica", "metionina", None,
-     ("directo", None),
-     "SIN CIFRA PORQUE LA FUENTE DICE QUE NO HACE FALTA UN TECHO DIETETICO. SACN5 cap.68: la via "
-     "de los mercaptanos «do not play an important role in the pathogenesis of HE», y lo que si "
-     "manda es «Do not administer ... methionine-containing products» -- una regla de exclusion "
-     "de suplementos, no un limite por nutriente. Cuando entre la ficha de L-metionina al "
-     "catalogo, hepatopatia tiene que excluirla"),
-]
+# ⚠️ `_CIFRAS_CON_FUENTE` VIVÍA AQUÍ Y SE HA MOVIDO A LA CABECERA (19 de
+# septiembre de 2026). No es estilo: la usan los BLOQUES 13, 44, 74 y 80, y
+# mientras vivía dentro del 13 el modo rápido de `probar_bloques.py` tenía que
+# ARRASTRAR el BLOQUE 13 entero para poder leerla -- 321 s, el segundo bloque
+# más caro de la batería, dentro de un escalón que existe para tardar un
+# minuto. Lo que comparten varios bloques va en la cabecera.
 
 # Vista por patología, para que el BLOQUE 13 no reescriba los números.
 _TOPES_ESPERADOS = {}
@@ -2156,6 +2215,11 @@ for _p, _tipo, _nut, _val, _origen, _cita in _CIFRAS_CON_FUENTE:
      ).setdefault(_p, {})[_nut] = _val
 
 
+# ============================================================
+# BLOQUE 13 — LOS TOPES POR PATOLOGÍA SE CUMPLEN DE VERDAD
+# (lo que explica su tabla `_CIFRAS_CON_FUENTE` está en la cabecera,
+#  con la tabla; aquí queda lo que se mide con ella)
+# ============================================================
 print("=== BLOQUE 13: los topes por patología se cumplen ===")
 
 # ⚠️ REHECHO (25 agosto) — LOS TOPES SE LEEN DEL MOTOR, NO SE COPIAN.
@@ -3297,7 +3361,7 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tm
 print("=== BLOQUE 18: el analizador dice lo mismo que el semáforo ===")
 
 from analizador import analizar_dieta as _analizar_b18
-from verificar import MAPA as _MAPA_SEMAFORO_b18
+# `_MAPA_SEMAFORO_b18` vive en la cabecera: lo leen el 18 y el 119.
 import analizador as _an_b18
 
 # 1) Una lista, no dos copias que se parecen.
@@ -3366,7 +3430,6 @@ else:
 #    sentidos: que cada valor de FEDIAF esté bien puesto, y que no sobre
 #    ninguna fila -- lo segundo se añadió el 25 de agosto porque era
 #    justo lo que nadie miraba, y por ahí entró la fibra.
-import subprocess as _sp_b18, os as _os_b18
 _aud = _sp_b18.run([sys.executable, "auditar_fediaf.py"], capture_output=True, text=True,
                    cwd=_os_b18.path.dirname(_os_b18.path.abspath(__file__)))
 if "Discrepancias: 0" not in _aud.stdout:
@@ -3901,9 +3964,8 @@ print("=== BLOQUE 21: EPA+DHA se suma y el techo es semanal ===")
 
 from constructor import valor_nutriente as _valor_b21
 from verificar import MAPA as _MAPA_b21, verificar as _verificar_b21
-import seguridad as _seg21
 
-_al21, _req21 = _api.cargar_v2()
+# `_al21` y `_req21` viven en la cabecera: los lee también el BLOQUE 130.
 
 # 1) El requisito apunta al compuesto, no a una de sus mitades.
 if _MAPA_b21.get("EPA_DHA_total") != "epa_dha":
@@ -16764,17 +16826,34 @@ print("=== BLOQUE 99: nada de lo que pinta la app vive solo en la app ===")
 # sirva de verdad y no venga vacio. La punta de la APP -- que no haya una lista
 # nueva escrita a mano sin declarar -- la vigila `tests/la-ley-del-motor.spec.js`
 # en `canislab-web`, porque el codigo de la app no esta en este repo.
-import json as _json_b99
+# `_json_b99` vive en la cabecera: lo lee también el BLOQUE 119, que en el
+# fichero va ANTES que éste -- o sea que en una tirada suelta no existía.
 import especies as _esp_b99
 import der as _der99
 _LEY99 = _json_b99.load(open(_os_b65.path.join(
     _os_b65.path.dirname(_os_b65.path.abspath(__file__)), "lo_que_la_app_pinta.json"),
     encoding="utf-8"))
 _listas99 = _LEY99["listas"]
-if len(_listas99) != _LEY99["_meta"]["cuantas"]:
-    fallos.append(f"BLOQUE99: el inventario dice {_LEY99['_meta']['cuantas']} listas y trae "
-                  f"{len(_listas99)}. El recuento va clavado a proposito: sin el, una lista puede "
-                  f"desaparecer del inventario y nadie se entera")
+# ⚠️ LAS TRES CASILLAS, NO SOLO UNA (19 de septiembre de 2026). Aqui se
+# comparaba SOLO `cuantas` contra `listas`, y el inventario tiene tres
+# casillas: las que salen del motor, las que son de la app a proposito y las
+# que faltan por traer. Medido al escribir esto: `cuantas_faltan` decia **7** y
+# el array traia **3** -- y la cifra buena es 3 (`ACTIVIDAD_KEY`,
+# `BASE_ACTIVIDAD` y `CURVA_FEDIAF_VII_8A`, la parte del DER que se queda en la
+# app a proposito). O sea que el fichero cuya unica razon de ser es que ninguna
+# lista se pierda de vista llevaba dias diciendo que faltaban cuatro que no
+# existen. Es la misma leccion de `auditar_citas.py`: con un solo recuento
+# clavado, lo que se mueve de casilla no lo ve nadie.
+for _campo99, _casilla99 in (("cuantas", "listas"),
+                             ("cuantas_de_la_app", "de_la_app_a_proposito"),
+                             ("cuantas_faltan", "faltan_por_traer_del_motor")):
+    _dice99 = _LEY99["_meta"].get(_campo99)
+    _hay99 = len(_LEY99.get(_casilla99, []))
+    if _dice99 != _hay99:
+        fallos.append(f"BLOQUE99: el inventario dice {_campo99}={_dice99} y «{_casilla99}» trae "
+                      f"{_hay99}. Los recuentos van clavados a proposito: sin ellos, una lista "
+                      f"puede desaparecer del inventario --o cambiarse de casilla-- y nadie se "
+                      f"entera")
 
 _cache99 = {}
 def _pide99(endpoint):

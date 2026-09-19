@@ -13,11 +13,32 @@
 # minutos.
 #
 # QUÉ CORRE, Y DE DÓNDE SALE LA LISTA. Todos los bloques que cuestan menos de 8
-# segundos, que hoy son 69 de 131 y suman 65 s en local. La lista NO está
-# escrita aquí ni en ningún sitio a mano: sale de `reparto_de_la_bateria.json`,
-# que escribe la propia batería entera al terminar. Es una MEDIDA, así que el
-# día que un bloque engorde se cae solo del modo rápido sin que nadie tenga que
-# acordarse -- que es como se pudren las listas en este repo.
+# segundos, que hoy son 69 de 124. La lista NO está escrita aquí ni en ningún
+# sitio a mano: sale de `reparto_de_la_bateria.json`, que escribe la propia
+# batería entera al terminar. Es una MEDIDA, así que el día que un bloque
+# engorde se cae solo del modo rápido sin que nadie tenga que acordarse -- que
+# es como se pudren las listas en este repo.
+#
+# ⚠️ CUÁNTO TARDA DE VERDAD: **1 min 06 s**, medido el 19 de septiembre de 2026
+# con `time`. Aquí ponía «suman 65 s», y ese número era la SUMA de lo que cuesta
+# cada bloque por su cuenta -- o sea una estimación contada como medida, que es
+# justo lo que este repo tiene escrito que no se hace. Lo que tardaba de verdad
+# ese día eran **~10 minutos**, y la diferencia no era ruido: era que el modo
+# rápido **ARRASTRABA 541 s en cinco bloques** que no había pedido, porque leían
+# variables definidas dentro de ellos (`_CIFRAS_CON_FUENTE` -> BLOQUE 13, 321 s;
+# `_c` -> BLOQUE 8; `_seg21` -> 21; `_sp_b18` -> 18; `_api_b5` -> 5, y éste
+# arrastraba además el BLOQUE 1). Lo dice en voz alta cuando pasa -- pero
+# decirlo no es evitarlo, y nadie leyó la salida entera.
+#
+# Arreglado moviendo a la CABECERA de `pruebas_completas.py` lo que leen varios
+# bloques. Hoy arrastra **cero**.
+#
+# ⚠️ Y de paso salió que `probar_bloques.py` leía como marca de bloque las
+# líneas de comentario que NOMBRAN otro bloque («# BLOQUE 65 ancla 25 cifras
+# de...»). Como se quedaba con la última, **el BLOQUE 65 de verdad dejaba de
+# existir** y en su sitio entraban tres líneas de prosa -- en silencio, y el 66
+# moría con un NameError que no tenía nada que ver. Ahora la marca pide su
+# separador y **dos bloques con el mismo número paran la tirada**.
 #
 # ⚠️ LO QUE ESTO NO ES, Y HAY QUE DECIRLO. No sustituye a nada: los 62 bloques
 # que se quedan fuera son justo los que resuelven menús de verdad con el solver,
