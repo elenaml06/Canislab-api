@@ -1,0 +1,91 @@
+# ─────────────────────────────────────────────────────────────────────────
+# LA BATERÍA ENTERA, REPARTIDA EN CUATRO
+#
+# POR QUÉ (18 de septiembre de 2026). La batería son 71 minutos en un solo
+# proceso y un solo núcleo, y en el PR se espera a que termine. Repartida por
+# TIEMPO MEDIDO --no por número de bloque, que dejaría un trabajo de 30 minutos
+# al lado de uno de cinco-- el más largo baja a 18:
+#
+#     con 2 trabajos: 35,7 min · con 3: 23,8 · con 4: 17,8 · con 6: 11,9
+#
+# Cuatro es el punto donde deja de compensar: cada trabajo repite el arranque
+# (checkout, pip, cargar el catálogo), así que a partir de ahí se gana cada vez
+# menos y se gastan más runners.
+#
+# ⚠️ CORRE **AL LADO** DE LA ENTERA, NO EN SU LUGAR, Y ESO ES A PROPÓSITO.
+# `pruebas_completas.py` es UN proceso de arriba abajo y los bloques comparten
+# variables: `probar_bloques.py` resuelve esas dependencias arrastrando el
+# bloque que las define, pero **no puede resolver el ORDEN** -- si un bloque
+# dependiera de algo que otro dejó hecho antes (un fichero temporal, una
+# variable modificada), repartirlos podría dar un verde que la entera no da.
+# Eso no se supone: se COMPRUEBA, comparando los dos veredictos durante unos
+# cuantos PR. Hasta que coincidan de forma consistente, la puerta sigue siendo
+# la entera.
+#
+# Cuando coincidan, esto sustituye a `bateria.yml` en el PR y la entera se queda
+# en `main` y en una pasada nocturna. Mientras tanto son minutos de runner de
+# más, y eso es barato al lado de un verde que no lo es.
+# ─────────────────────────────────────────────────────────────────────────
+name: La batería repartida
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: repartida-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  trozo:
+    runs-on: ubuntu-latest
+    # 18 min el más largo en local; 60 deja margen para un runner lento sin
+    # esconder el resultado, que es lo que hacía el techo corto de la entera.
+    timeout-minutes: 60
+    strategy:
+      # Que un trozo rojo NO cancele a los otros tres: si dos fallan, se quieren
+      # ver los dos. Un reparto que solo enseña el primer rojo obliga a repetir
+      # la tanda entera para ver el segundo.
+      fail-fast: false
+      matrix:
+        trozo: [1, 2, 3, 4]
+    env:
+      FUENTES_TOKEN: ${{ secrets.FUENTES_TOKEN }}
+    steps:
+      # El repo va en una subcarpeta porque los siete bloques que comprueban el
+      # texto de las fuentes buscan `../canislab-fuentes`, o sea AL LADO.
+      - uses: actions/checkout@v4
+        with:
+          path: Canislab-api
+
+      - name: Traer las fuentes (si hay token)
+        if: ${{ env.FUENTES_TOKEN != '' }}
+        uses: actions/checkout@v4
+        with:
+          repository: elenaml06/canislab-fuentes
+          token: ${{ secrets.FUENTES_TOKEN }}
+          path: canislab-fuentes
+          sparse-checkout: |
+            *.txt
+            **/*.txt
+            **/*.json
+            **/*.xml
+          sparse-checkout-cone-mode: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: Canislab-api/requirements.txt
+
+      - name: Instalar lo que hace falta
+        working-directory: Canislab-api
+        run: pip install -r requirements.txt
+
+      - name: Instalar pyflakes, para el BLOQUE 0
+        working-directory: Canislab-api
+        run: pip install pyflakes
+
+      - name: Ejecutar el trozo ${{ matrix.trozo }} de 4
+        working-directory: Canislab-api
+        run: python3 -u probar_bloques.py --reparto ${{ matrix.trozo }}/4

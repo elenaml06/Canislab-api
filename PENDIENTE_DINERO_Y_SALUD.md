@@ -2,6 +2,31 @@
 
 Parte de `PENDIENTE.md` (secciones 1, 2 y 3), separado el 6 de septiembre.
 
+## ⚠️ EL MURO ESTÁ APAGADO, Y HAY DOS ARREGLOS DEL COBRO ESPERÁNDOLO (18 de septiembre de 2026)
+
+`VITE_PAYWALL="off"`, así que la pantalla de suscripción no se alcanza y sus
+pruebas están **saltadas**, no borradas. El día que se encienda, **estas dos
+tienen que correr ANTES de desplegarlo**, porque lo que vigilan es cobrar dos
+veces:
+
+- `tests/ya-suscrito.spec.js` — a quien ya paga, la app le decía **«No se pudo
+  iniciar el pago. Inténtalo de nuevo.»**. El motor contesta
+  `{ya_suscrito: true, url: null, motivo}` desde el 11 de septiembre y la
+  pantalla solo miraba `data.url`. Arreglado: se enseña el motivo y un botón
+  para gestionarla. **La prueba existe y está saltada.**
+- `tests/secciones-desde-perfil.spec.js` — el muro no puede encerrar (el overlay
+  tapaba la pantalla entera, botón de volver incluido).
+
+Y la gestión va por `/stripe/portal` **con el token de sesión**: un identificador
+no es una credencial, y con el id de cliente de otra persona se abría su
+facturación. `/stripe/checkout` ya no devuelve esa URL.
+
+El servidor de mentira sirve ya las dos rutas con la misma forma que el de
+verdad, incluido el 401 sin token, así que al encender el muro no hay que
+montar nada.
+
+---
+
 ## 1. Urgente — dinero y salud
 
 ### 1.0 `/menu/varios-perros` devolvía 1 menú en vez de 3 — ARREGLADO el 7 de septiembre

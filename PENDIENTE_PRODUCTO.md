@@ -318,19 +318,25 @@ menús comparados no tienen sentido sin él.
       `demo` = se ve y se activa sin pagar) y redesplegar. Sin tocar
       código.
 
-      ⚠️ **Antes de encenderlo hay que reactivar dos pruebas que están
+      ⚠️ **Antes de encenderlo hay que reactivar TRES pruebas que están
       paradas a propósito** (el motivo está escrito dentro de cada una):
-      «el muro de pago nunca encierra» en `secciones-desde-perfil.spec.js`
-      y «con cuenta gratis, pedir más de un menú ofrece Premium» en
-      `varios-perros.spec.js`. Vigilan que el candado no deje a la usuaria
-      encerrada sin poder salir sin pagar, y que la pantalla de varios
-      perros no sea un agujero para saltárselo. Las dos son fallos reales
-      que ya pasaron.
+      «el muro de pago nunca encierra» en `secciones-desde-perfil.spec.js`,
+      «con cuenta gratis, pedir más de un menú ofrece Premium» en
+      `varios-perros.spec.js`, y **`ya-suscrito.spec.js` entera** (18 de
+      septiembre de 2026), que vigila que a quien YA paga no se le diga que
+      el pago ha fallado — el motor contesta `ya_suscrito: true` sin `url`
+      desde el 11 de septiembre y la app lo leía como un error. Las tres son
+      fallos reales que ya pasaron, y las tres se alcanzan solo con el muro
+      encendido.
 
-- [ ] **Los 34 pesos de referencia que faltan** en «cómo preparar». Cada
+- [ ] **Los pesos de referencia que faltan** en «cómo preparar». Cada
       alimento puede llevar una frase del tipo «una zanahoria mediana pesa
-      unos 60 g», para hacerse una idea de cuánto es sin báscula. La tienen
-      43 de los 77; les falta a **todas las verduras y frutas**: acelga,
+      unos 60 g», para hacerse una idea de cuánto es sin báscula.
+      ⚠️ **RECUENTO AL DÍA (18 de septiembre de 2026), medido contra el
+      `/alimentos` desplegado y no leído de aquí**: la tienen **82 de los 233**
+      —eran «43 de 77» cuando se escribió este punto, y el catálogo ha crecido
+      con las 64 fichas cocidas y los cinco hidratos—. Les sigue faltando a
+      **todas las verduras y frutas**: acelga,
       albahaca, alcachofa, apio, arándano, berenjena, boniato, borraja,
       brócoli, calabacín, calabaza, canónigos, cardo, champiñón, col
       lombarda, col rizada, coles de Bruselas, coliflor, endibia, espinaca,
@@ -341,7 +347,16 @@ menús comparados no tienen sentido sin él.
       (campo `pieza`) y la línea aparece sola. Mientras no estén, no se
       pinta nada — antes se pintaba «undefined» (web #13).
 
-- [ ] **Borrar las ramas viejas de los dos repos.** No es programación y
+- [ ] **Borrar las ramas viejas de los dos repos.** ⚠️ **RECONTADO EL 19 DE
+      SEPTIEMBRE DE 2026, y el recuento de abajo está mal por un motivo que
+      vale la pena saber**: se contaba con `git branch -r`, que lista
+      referencias **locales** —muchas de ellas caducadas, de ramas que en
+      GitHub ya no existen—. Contra el remoto de verdad (`git ls-remote
+      --heads`) son **9 en `Canislab-api`** y **18 en `canislab-web`**, o sea
+      **25 que sobran** sin contar las dos `main`; `git branch -r` decía 29
+      solo en la API. Y lo que impide que vuelvan a acumularse no es borrarlas:
+      es **Automatically delete head branches** en Ajustes del repo, que sigue
+      sin estar puesto en ninguno de los dos. No es programación y
       no corre prisa, pero cuanto más se acumulen peor: el 21 de agosto se
       lió justo por esto (ver «Cómo se trabaja con git aquí» en
       `CLAUDE.md`).
@@ -448,6 +463,66 @@ menús comparados no tienen sentido sin él.
 - [ ] **Límite de 2 cambios de alimento por menú en la versión gratis**,
       con botón de deshacer por cambio y restaurar el menú original.
 
+
+## ⚠️ EL TOY DE 1,5 KG SANO SE QUEDA SIN MENÚ EN PRODUCCIÓN, 3 DE CADA 4 VECES (18 de septiembre de 2026, noche)
+
+**Medido contra `canislab-api.onrender.com`, no leído del repo.** Perro sano,
+1,5 kg, DER 175, adulto, automático, sin patologías ni alergias:
+
+| tirada | resultado | tiempo |
+|---|---|---|
+| #1 | menú (9 alimentos, peldaño `proporcion_minima_visceras_higado_verdura`) | 86,4 s |
+| #2 | **sin menú**, `se_agoto_el_tiempo: true` | 120,1 s |
+| #3 | **sin menú** | 90,8 s |
+| #4 | **sin menú** | 89,3 s |
+
+Y los de al lado, para que se vea que no es el motor entero: el mismo toy **con
+artrosis** sí sale (91,2 s), el toy de **3 kg** sale en peldaño estricto (37,4 s)
+y el adulto de **20 kg** sale en estricto (32,4 s).
+
+⚠️ **NO ES NUTRICIÓN, y eso es lo primero que había que descartar.**
+Preguntándole al solver directamente con 60 s por peldaño, el menú **existe**:
+
+```
+peldaño 0  None                                        6,8 s  sin menú
+peldaño 1  hasta_dos_suplementos                       5,2 s  sin menú
+peldaño 2  proporcion_minima_visceras_higado_verdura   5,5 s  MENÚ (8 alimentos, semáforo verde)
+```
+
+O sea **17,5 s de trabajo aquí**, y Render va ~4,5 veces más lento: unos **79 s**
+contra un presupuesto de **90**. Entra por los pelos… salvo que el reparto se lo
+come: cada peldaño recibe el **40 % de lo que queda**, así que el peldaño 2 —el
+único que tiene menú— se lleva unos **13 s** cuando necesita ~25. De ahí que
+salga o no salga según el día.
+
+⚠️ **NO HE TOCADO NI EL PRESUPUESTO NI EL REPARTO, a propósito.** Cambiar ese
+reparto se ha intentado **dos veces** (15 y 17 de septiembre) y las dos rompió al
+otro perro: los dos casos tiran en direcciones OPUESTAS —al toy le ayuda que cada
+peldaño se lleve menos, porque el suyo está abajo; al cachorro de raza grande,
+cuyo menú está en el peldaño 0, lo que le hace falta es que el PRIMER intento
+tenga tiempo—. Las dos tablas están medidas en `CLAUDE.md`, y medirlo otra vez en
+serio son decenas de llamadas de 90 s contra producción.
+
+**Las tres salidas, sin decidir:**
+
+1. **Subir `PRESUPUESTO_SEGUNDOS_MENU_UNICO`** otra vez (90 → 120). Es un TECHO,
+   no un coste: el perro fácil sigue contestando en 32 s. Lo que hay que
+   comprobar antes es el máximo que aguanta Render sin cortar la conexión —el
+   dato de los 100 s está escrito y la última medida real fue de 41,4 s sin
+   corte, así que **el número de hoy tampoco está medido**.
+2. **Saltarse los peldaños que salen infactibles rápido**: aquí los peldaños 0 y
+   1 se demuestran imposibles en 12 s de los 17,5. No hay nada que ganar ahí, y
+   el reparto les da el 64 % del reloj.
+3. **Dejarlo y decirlo**: hoy el mensaje promete algo que no va a pasar
+   —«Inténtalo de nuevo en un momento»— y reintentar falla igual, que es lo
+   mismo que ya pasó el 15 de septiembre con el toy con patología.
+
+⚠️ **Y una cuarta cosa que NO es una salida**: bajar el suelo de nada. La ventana
+del perro de 1,5 kg es estrecha por aritmética (§7.2.5 de FEDIAF sube los mínimos
+cuando el perro come poco y los máximos no se mueven), y eso es lo que hace que
+su menú esté dos peldaños abajo. La escalera funcionando es la regla 3.
+
+---
 
 ## ⚠️ `motor/` SIN `__init__.py`: EL MISMO FICHERO SE PUEDE CARGAR DOS VECES (18 de septiembre de 2026)
 
@@ -782,7 +857,25 @@ Detalle y citas literales: `HALLAZGOS_LECTURA_FUENTES.md`, capítulos 38 y 55.
 
 ---
 
-## ⚠️ Los ocho `avisos_extra` de patología no los pinta nadie (9 de septiembre de 2026)
+## ✅ Los ocho `avisos_extra` de patología no los pintaba nadie — CERRADO el 10 de septiembre
+
+⚠️ **AUDITADO EL 18 DE SEPTIEMBRE DE 2026: esto lleva ocho días arreglado y
+seguía escrito en presente**, y desde aquí lo citaban otros dos puntos de este
+mismo fichero como si siguiera abierto. El motor los manda dentro de
+`avisos_patologia` con **cada** menú desde el 8 de septiembre, la app los
+recoge en `respuestaApiAMenu` (`menu.avisosPatologia`) desde el 10 y los pinta
+en la pantalla del menú. Lo vigila el BLOQUE 64, que exige que lleguen por las
+**dos** puertas —`GET /patologias` y la tabla que lee el solver— y que sigan
+llevando su cifra dentro.
+
+Lo que queda abierto **no es pintarlos**: es que a algunos les falta la
+pregunta que decide a quién se le enseñan (el bromuro de la epilepsia, por
+ejemplo, le sale hoy a cualquier epiléptico). Eso vive en «Las preguntas que
+faltan para elegir bien el tope de una patología», más arriba.
+
+Lo de abajo se queda tal cual como registro de cómo estaba ese día.
+
+### Cómo estaba el 9 de septiembre de 2026
 
 **Medido hoy**, contando el JSON y buscando en el front:
 
@@ -942,11 +1035,36 @@ palpación. Importa sobre todo en la ficha del veterinario: un perro puede estar
 senior, en el oncológico y en la caquexia. Hoy la ficha tiene BCS y no tiene
 esto.
 
-## Las ocho preguntas que faltan para elegir bien el tope de una patología (10 de septiembre de 2026)
+## Las preguntas que faltan para elegir bien el tope de una patología (10 de septiembre de 2026)
 
 Derivadas de la fuente de cada patología, no opinadas — el porqué y el reparto
 completo están en `HECHO.md` y en `quien_formula_cada_patologia.json`. Aquí solo
 queda el trabajo de construirlas en la app.
+
+⚠️ **AUDITADO EL 18 DE SEPTIEMBRE DE 2026, Y ERAN OCHO CUANDO SE ESCRIBIÓ: HOY
+SON CUATRO Y MEDIA.** Este apartado llevaba días dando por no hecho lo que sí
+está: la app pregunta el **estadio ACVIM** (seis respuestas) y el **tipo de
+cálculo** (los cinco), parte el renal en leve-moderada / moderada-grave, y
+`urolitos_fosfato_calcico` tiene su casilla. Las cinco familias que existen hoy
+en `FAMILIAS_PATOLOGIA_RESPALDO` son `cardiopatia`, `renal`, `hepatopatia`,
+`shunt_sin_encefalopatia` y `estruvita` — y la lista de verdad la sirve `GET
+/vocabulario`, no la app (regla 6).
+
+**Lo que de verdad no se pregunta en ninguna pantalla** son las cuatro
+patologías que no tienen familia —pancreatitis, reacción adversa, diabetes y
+epilepsia idiopática— más la media de los cálculos (prevenir o disolver) y el
+estadio IRIS dentro del renal. Las cuatro son `solo_veterinario`, así que a un
+dueño no le salen; quien las marca es quien firma, y tiene el formulador para
+apretar a mano lo que haga falta. Eso baja la urgencia, no la cierra.
+
+⚠️ **Y LA LECCIÓN DEL PROPIO HALLAZGO: ESTO ESTABA ESCRITO DOS VECES Y SOLO UNA
+ESTABA AL DÍA.** `PENDIENTE_DECISIONES.md` tiene el mismo punto, con la tabla de
+los cinco estadios ACVIM y la frase «cuatro de las diez preguntas ya están
+aplicadas», correcta desde el 11 de septiembre. Aquí seguía la versión de antes
+de esa corrección, y quien abriera este fichero —que es el que dice «aquí solo
+queda el trabajo de construirlas en la app»— se ponía a construir algo que ya
+existía. **Lo que decide es `PENDIENTE_DECISIONES.md`**, porque ahí es donde
+vive la decisión; esto es el trabajo de pantalla que sale de ella.
 
 **Las que cambian una cifra del menú:**
 
@@ -954,19 +1072,42 @@ queda el trabajo de construirlas en la app.
       grasa sea 37,5 o 25 (SACN5 Tabla 67-3). La obesidad ya la sabe la app por
       el BCS; la hipertrigliceridemia solo se sabe con analítica. **Hoy el perro
       que necesita 25 recibe 37,5 y sale en verde.**
-- [ ] **Renal: ¿estadio IRIS, o la última creatinina?** Por debajo del estadio 2
-      la fuente no respalda apretar el fósforo, y apretarlo tiene coste.
-- [ ] **Cardiopatía: ¿estadio ACVIM?** El motor tiene los cinco (sodio 739 /
-      625 / 480 y dos sin restricción) y la app manda la clave genérica, o sea
-      el tope del B2 para todos. Es la decisión 1 de `FRONTEND_VS_MOTOR.md`.
+- [~] **Renal: ¿estadio IRIS, o la última creatinina?** ⚠️ **A MEDIAS, y este
+      punto lo daba por entero sin hacer** (auditado el 18 de septiembre de
+      2026). La app **sí** parte la casilla: la familia `renal` de
+      `FAMILIAS_PATOLOGIA_RESPALDO` pregunta «¿Tu veterinario ha dicho si es
+      leve-moderada o moderada-grave?» y la segunda respuesta manda
+      `renal_avanzada`, que no formula y lo dice. **Lo que sigue sin
+      preguntarse es el estadio IRIS como tal** — o sea distinguir el 1 del 2,
+      que es donde la fuente deja de respaldar apretar el fósforo. Hoy un renal
+      en estadio 1 recibe el tope de 1200 igual.
+- [x] ~~**Cardiopatía: ¿estadio ACVIM?**~~ **CERRADO — la app lo pregunta, y
+      este punto decía lo contrario** (auditado el 18 de septiembre de 2026).
+      Decía «la app manda la clave genérica, o sea el tope del B2 para todos»,
+      y es falso desde el 11 de septiembre: la familia `cardiopatia` pregunta
+      «¿Sabes el estadio ACVIM?» con **seis** respuestas —las cinco del motor
+      (`cardiopatia_a` … `cardiopatia_d`) más «No lo sé / sin estadiar»—, la
+      lista la sirve `GET /vocabulario` y la app solo la tiene de respaldo
+      (regla 6). Lo vigila `tests/puerta-veterinario.spec.js` sembrando un
+      estadio **inventado**. **Lo único que queda es quien contesta «no lo
+      sé»**, y eso no es una pregunta que falte: es la respuesta honesta de
+      quien no tiene el informe, y recibe el tope genérico a propósito. Por eso
+      `cardiopatia` sigue —con razón— en `SIN_LA_PREGUNTA_QUE_DECIDE_LA_CIFRA`.
 - [ ] **Reacción adversa: ¿piel o intestino? ¿diagnóstico o confirmada?** Dos
       preguntas y las dos cambian lo que hace el motor: el techo de proteína es
       «dermatologic cases only» —en las digestivas la misma página pide **más**
       proteína— y en fase de diagnóstico subir el omega-3 puede tapar el
       resultado de la dieta de eliminación.
-- [ ] **Cálculos: ¿de qué tipo, y para prevenir o para disolver?** Hoy una sola
-      casilla manda `estruvita` aunque el perro tenga urato o cistina. Es la
-      decisión 3 de `FRONTEND_VS_MOTOR.md`.
+- [~] **Cálculos: ¿para prevenir o para disolver?** ⚠️ **LA MITAD ESTÁ HECHA y
+      aquí seguía escrita como si no** (auditado el 18 de septiembre de 2026).
+      Decía «hoy una sola casilla manda `estruvita` aunque el perro tenga urato
+      o cistina», y eso dejó de ser verdad el 8 de septiembre: la familia
+      `estruvita` pregunta «¿Qué tipo de cálculo, si se sabe?» con los **cinco**
+      que reconoce la literatura —estruvita, urato, cistina, fosfato cálcico y
+      sílice—, y los tres que no formulan lo dicen en vez de dar menú. **Lo que
+      sigue sin preguntarse es la otra mitad**: si es para PREVENIR que vuelvan
+      o para DISOLVER uno que ya está. La fuente separa las dos cosas y el motor
+      solo hace la primera.
 
 **Las que no cambian ninguna cifra pero sí lo que hay que hacer:**
 
@@ -974,12 +1115,19 @@ queda el trabajo de construirlas en la app.
       resuelve marcando también la otra patología—, pero nadie dice que marcarla
       cambia el tope de grasa.
 - [ ] **Epilepsia: ¿toma bromuro potásico?** Cambiar la dieta le cambia el nivel
-      del fármaco en sangre y hay que remedirlo. Hoy eso vive solo en un
-      `aviso_extra`, que además **no lo pinta nadie** (ver el punto de los ocho
-      avisos, más arriba).
-- [ ] **`urolitos_fosfato_calcico`**: no necesita pregunta —sus cinco topes y su
-      Ca:P son fijos—, necesita existir en alguna pantalla. Decisión 2 de
-      `FRONTEND_VS_MOTOR.md`.
+      del fármaco en sangre y hay que remedirlo. ⚠️ **Y la mitad de este punto ya
+      no es verdad** (auditado el 18 de septiembre de 2026): decía que su
+      `aviso_extra` «no lo pinta nadie», y desde el 10 de septiembre el motor lo
+      manda dentro de `avisos_patologia` con cada menú y la app lo pinta
+      (`App.jsx`, `menu.avisosPatologia`). Lo que sigue faltando es la
+      **pregunta**: hoy el aviso le sale a cualquier epiléptico, tome bromuro o
+      no.
+- [x] ~~**`urolitos_fosfato_calcico`**~~ **CERRADO — existe en pantalla desde
+      el 8 de septiembre** (auditado el 18 de septiembre de 2026). Decía
+      «necesita existir en alguna pantalla» y la tiene: es la cuarta respuesta
+      de la pregunta «¿Qué tipo de cálculo, si se sabe?». Sus cinco topes y su
+      Ca:P de 1,1-2,0 los aplica el solver (bloque `ratios` de
+      `patologias.json`, BLOQUE 75).
 
 Mientras no se construyan, las once patologías afectadas están declaradas con su
 pregunta en `SIN_LA_PREGUNTA_QUE_DECIDE_LA_CIFRA`
