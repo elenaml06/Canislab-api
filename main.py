@@ -10049,6 +10049,55 @@ def endpoint_vocabulario():
                          "ed. cap. 7 («not exceed 10 % of the animal's total daily calories»)"),
             "techo_recomendado_pct": round(FRACCION_MAXIMA_DE_PREMIOS * 100),
             "pregunta": PREGUNTA_DE_LOS_PREMIOS,
+            # ── Y CUALES SON, QUE ES OTRA PREGUNTA ──────────────────────────
+            # ⚠️ PEDIDO EXPRESO (Elena, 19 de septiembre de 2026): «ADEMÁS no me
+            # pregunta qué tipo de premios le das. Que dijimos que tenía que
+            # preguntarlo». Y el 16: «tiene que haber una parte en la que elija
+            # lo que le da y se meta en el plato».
+            #
+            # El motor acepta `premios_declarados` desde el 16 de septiembre y
+            # la app no se lo mandaba NUNCA: la regla 6 por la mitad que no se
+            # ve -- la capacidad servida que no usa nadie.
+            #
+            # ⚠️ SOLO SE PREGUNTA POR ENCIMA DEL TECHO, que es lo que se decidió
+            # y lo que hace el solver: por debajo del 10 % los premios se
+            # cuentan como fracción y la ración sale igual, así que preguntarle
+            # cuáles a quien da «alguna galleta» no cambiaría nada y alarga la
+            # ficha. Quién decide dónde sale la pregunta es
+            # `techo_recomendado_pct`, que ya va aquí arriba: la app lo LEE, no
+            # lo escribe.
+            "declarar": {
+                "cuando": ("Solo cuando el aporte extraración pasa del techo recomendado. Por "
+                           "debajo, el motor lo cuenta como fracción y formula igual."),
+                "de_donde": ("El formulador de Sean Delaney, coeditor de Fascetti & Delaney: "
+                             "«Some of these can be selected as \"Treats & Enticers\" when "
+                             "creating a recipe (...) no more than 10% of daily calories IF NOT "
+                             "CALLED FOR AND ACCOUNTED FOR SPECIFICALLY IN THE RECIPE». "
+                             "Declarado = está en la receta."),
+                "como_llega_al_motor": ("`premios_declarados`: {nombre del alimento: gramos al "
+                                        "día}. Solo alimentos del catálogo -- de una ficha "
+                                        "sabemos su composición y la rehace un auditor contra su "
+                                        "fuente. Un nombre que no está se devuelve en "
+                                        "`premios_que_no_conocemos`, no se ignora."),
+                "dueno": {
+                    "pregunta": "¿Nos dices cuáles le das?",
+                    "detalle": ("Lo que nos digas entra en el plato y deja de ser una "
+                                "estimación: contamos sus nutrientes de verdad. Lo que no nos "
+                                "digas sigue contando como calorías de más, que es el lado "
+                                "seguro."),
+                    "boton": "Añadir un premio",
+                    "unidad": "g al día",
+                },
+                "veterinario": {
+                    "pregunta": "Aporte extraración DECLARADO",
+                    "detalle": ("Entra en la ración como gramos FIJOS: sus nutrientes cuentan "
+                                "dentro de los 43 requisitos y no se escala ningún mínimo, "
+                                "porque no queda ninguna parte del día a ciegas. Lo no "
+                                "declarado sigue tratándose como dilución."),
+                    "boton": "Añadir alimento",
+                    "unidad": "g/día",
+                },
+            },
             "como_llega_al_motor": ("`premios_nivel` con una de estas claves, o `kcal_de_premios` "
                                     "con el número exacto si se sabe. Si llegan los dos, manda el "
                                     "número. El motor formula la ración con las kcal QUE QUEDAN y "

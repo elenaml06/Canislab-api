@@ -23870,6 +23870,117 @@ print(f"  {len(_PERROS133)} perros x 2 modos · {_atajos133} peticiones por el c
       f"0 alimentos fuera de su modo")
 
 
+# ============================================================
+# BLOQUE 134 — LA PREGUNTA DE QUÉ PREMIOS, Y DÓNDE SALE
+# ============================================================
+#
+# ⚠️ PEDIDO EXPRESO (Elena, 19 de septiembre de 2026): «ADEMÁS no me pregunta
+# qué tipo de premios le das. Que dijimos que tenía que preguntarlo».
+#
+# `premios_declarados` estaba en el modelo desde el 16 de septiembre y la app
+# no lo mandaba NUNCA: la regla 6 por la mitad que no se ve -- la capacidad
+# servida que no usa nadie. Y el texto de la pregunta no lo puede escribir la
+# app: es del motor, como los niveles.
+#
+# ⚠️ Y LO QUE MÁS IMPORTA AQUÍ ES DÓNDE SALE. Elena: «habíamos dicho que si son
+# más del 10 %, ¿no? Que si son menos del 10 %, los ignoramos». Eso es
+# exactamente lo que hace el solver: solo recorta la escalera y pide la
+# declaración cuando `kcal_premios / DER > FRACCION_MAXIMA_DE_PREMIOS` Y no se
+# ha declarado nada. Por debajo los cuenta como fracción y formula igual.
+#
+# O sea que el número que decide dónde sale la pregunta es
+# `techo_recomendado_pct`, y tiene que ser EL MISMO que aplica el solver: si se
+# separan, la app pregunta donde el motor no lo necesita (o al revés, calla
+# donde el motor va a negarse).
+# ------------------------------------------------------------
+print("\n=== BLOQUE 134: la pregunta de que premios, y donde sale ===")
+
+_voc134 = _c.get("/vocabulario").json() or {}
+_pr134 = _voc134.get("premios") or {}
+_dec134 = _pr134.get("declarar")
+
+if not isinstance(_dec134, dict):
+    fallos.append(
+        "BLOQUE134: `/vocabulario` no sirve `premios.declarar`. Sin eso la app tiene que "
+        "escribir la pregunta ella, y el dia que cambie el criterio la app se queda con su "
+        "copia vieja -- el fallo de las seis categorias de Personalizar otra vez")
+else:
+    for _reg134 in ("dueno", "veterinario"):
+        _r134 = _dec134.get(_reg134) or {}
+        for _campo134 in ("pregunta", "detalle", "boton", "unidad"):
+            if not str(_r134.get(_campo134) or "").strip():
+                fallos.append(f"BLOQUE134: falta `{_campo134}` del registro `{_reg134}` en "
+                              f"`premios.declarar`. La app no puede montar la pantalla sin el")
+    # ⚠️ Y LOS DOS REGISTROS TIENEN QUE SER DISTINTOS. Si el del dueno fuera el
+    #    tecnico, se le estaria hablando de «gramos fijos dentro de los 43
+    #    requisitos» a quien solo quiere dar de comer a su perro.
+    if (_dec134.get("dueno") or {}).get("detalle") == (_dec134.get("veterinario") or {}).get("detalle"):
+        fallos.append("BLOQUE134: los dos registros de `premios.declarar` dicen lo MISMO. O el "
+                      "dueno esta leyendo la jerga del veterinario, o el veterinario ha perdido "
+                      "la palabra de la fuente")
+
+# ⚠️ EL TECHO QUE SE SIRVE ES EL QUE APLICA EL SOLVER. Es lo que decide donde
+#    sale la pregunta: si se separan, la app pregunta donde no hace falta.
+_techo134 = _pr134.get("techo_recomendado_pct")
+_vivo134 = round(_api.FRACCION_MAXIMA_DE_PREMIOS * 100)
+if _techo134 != _vivo134:
+    fallos.append(
+        f"BLOQUE134: `/vocabulario` sirve techo_recomendado_pct={_techo134} y el solver aplica "
+        f"FRACCION_MAXIMA_DE_PREMIOS={_api.FRACCION_MAXIMA_DE_PREMIOS} ({_vivo134} %). La app "
+        f"decide con ese numero cuando preguntar QUE premios")
+
+# ⚠️ Y QUE SOLO UN NIVEL PASE DEL TECHO, que es de donde sale que la pregunta
+#    tenga sentido. Si ninguno lo pasara, la pregunta no saldria nunca; si lo
+#    pasaran todos, saldria siempre y volveriamos a alargar la ficha.
+_pasan134 = [n.get("clave") for n in (_pr134.get("niveles") or [])
+             if isinstance(n.get("pct_del_dia"), (int, float))
+             and n["pct_del_dia"] > (_techo134 or 0)]
+if len(_pasan134) != 1:
+    fallos.append(
+        f"BLOQUE134: {len(_pasan134)} niveles de premios pasan del techo ({_pasan134}). Con "
+        f"cero, la pregunta de QUE premios no sale nunca; con mas de uno, sale donde el motor "
+        f"formula igual sin ella")
+
+# ⚠️ Y QUE EL MOTOR LO USE DE VERDAD: declarar un premio tiene que cambiar el
+#    menu. Sin esto, todo lo de arriba seria texto servido sobre una capacidad
+#    que no hace nada -- que es justo lo que pasaba en la app.
+_BASE134 = {"nombres_alimentos": [], "forzar_presencia": [], "modo": "automatico",
+            "der_objetivo": 950.0, "etapa_requisitos": "Adulto", "peso_perro_kg": 20.0,
+            "tamano": "Mediano", "actividad": "normal", "patologias": [],
+            "especies_excluidas": [], "nombres_excluidos": [], "categorias_excluidas": [],
+            "modo_de_preparacion": "crudo", "presupuesto_segundos": 90.0,
+            "premios_nivel": "mas_del_maximo"}
+_DECL134 = {"Corazón de pollo": 80.0}
+_r134a = _c.post("/menu/v2", json={**_BASE134, "premios_declarados": _DECL134}).json()
+if not _r134a.get("factible"):
+    fallos.append(f"BLOQUE134: declarando un premio no sale menu: {str(_r134a.get('motivo'))[:150]}. "
+                  f"La salida que se le ofrece al dueno tiene que existir")
+else:
+    _g134 = (_r134a.get("menu") or {}).get("Corazón de pollo")
+    if _g134 != 80.0:
+        fallos.append(
+            f"BLOQUE134: el premio declarado son 80 g y en el menu hay {_g134}. Un premio "
+            f"declarado son gramos FIJOS: si el motor los mueve, lo que se le ensena al dueno "
+            f"no es lo que come")
+    if (_r134a.get("premios_dentro_del_menu") or {}).get("Corazón de pollo") != 80.0:
+        fallos.append(
+            "BLOQUE134: el premio esta dentro del menu y no se marca como tal, asi que el dueno "
+            "lee esos gramos en la lista de la compra y entiende que se los tiene que dar ADEMAS")
+
+# ⚠️ Y UN NOMBRE QUE NO EXISTE SE DICE, no se ignora. Un premio que el dueno
+#    cree declarado y que el motor no cuenta es peor que no preguntarlo.
+_r134b = _c.post("/menu/v2", json={**_BASE134,
+                                   "premios_declarados": {**_DECL134,
+                                                          "Galleta Zzyrax": 20.0}}).json()
+if "Galleta Zzyrax" not in (_r134b.get("premios_que_no_conocemos") or []):
+    fallos.append(
+        "BLOQUE134: se declara un premio que NO esta en el catalogo y el motor no lo dice en "
+        "`premios_que_no_conocemos`. El dueno cree que lo ha declarado y no se cuenta")
+
+print(f"  techo {_techo134} % · {len(_pasan134)} nivel lo pasa ({_pasan134}) · "
+      f"los dos registros, con sus cuatro campos")
+
+
 _cerrar_el_ultimo_bloque()
 
 # ⚠️ Y ESTE GUARDIA TIENE QUE SER LO ÚLTIMO DEL FICHERO, Y EL 16 DE SEPTIEMBRE
