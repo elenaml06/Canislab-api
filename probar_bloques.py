@@ -68,7 +68,24 @@ RAIZ = os.path.dirname(os.path.abspath(__file__))
 FICHERO = os.path.join(RAIZ, "pruebas_completas.py")
 # El marcador es el mismo que usa el cronometro de la bateria: si alguien cambia
 # la forma de los titulos, los dos se enteran a la vez.
-_MARCA = re.compile(r"^# BLOQUE (\d+)\b", re.M)
+#
+# ⚠️ Y PIDE EL SEPARADOR, QUE NO ES UN DETALLE (19 de septiembre de 2026). La
+# regla era `^# BLOQUE (\d+)\b`, y `pruebas_completas.py` NOMBRA a otros bloques
+# dentro de sus comentarios: «# BLOQUE 65 ancla 25 cifras de ...», «# BLOQUE 43,
+# no de aqui.», «# BLOQUE 25 -- y por el mismo motivo...». Cuatro lineas de
+# prosa que se leian como si fueran el principio de un bloque.
+#
+# Lo que hacia no era dar error: `trozos[n]` se quedaba con la ULTIMA aparicion,
+# asi que el BLOQUE 65 de verdad --el que comprueba el documento que va a
+# revision-- dejaba de existir y en su sitio entraban tres lineas de comentario.
+# Pedirlo solo era pedir un bloque que no se ejecutaba, en silencio; y el BLOQUE
+# 66, que lee una variable suya, moria con un NameError que no tenia nada que
+# ver. Medido: con la regla vieja salian 128 marcas para 124 bloques.
+#
+# El separador es «—» o «:» porque las dos formas estan en el fichero (los
+# BLOQUES 35, 36 y 80 usan «:»); lo que no vale es «,», «.», «--» ni una palabra
+# pegada, que es como se escribe una REFERENCIA a otro bloque.
+_MARCA = re.compile(r"^# BLOQUE (\d+) ?[—:] ", re.M)
 
 
 def _trozos():
@@ -86,6 +103,20 @@ def _trozos():
         inicios.append((n, linea))
     if not inicios:
         raise SystemExit("no se ha encontrado ningun «# BLOQUE N» en pruebas_completas.py")
+    # ⚠️ Y DOS BLOQUES CON EL MISMO NUMERO SE DICEN EN VOZ ALTA, no se pisan. Ya
+    # ha pasado tres veces en el repo (los dos BLOQUE 98 del 13 de septiembre, y
+    # el 100 -> 101 -> 104), y aqui el efecto es peor que una referencia rota: el
+    # segundo se come al primero y el primero deja de ejecutarse SIN QUE NADIE LO
+    # DIGA.
+    _vistos = {}
+    for n, linea in inicios:
+        if n in _vistos:
+            raise SystemExit(
+                f"hay DOS bloques con el numero {n} en pruebas_completas.py "
+                f"(lineas {_vistos[n] + 1} y {linea + 1}). Un numero de bloque es la "
+                f"unica forma que tiene el repo de decir quien vigila que: "
+                f"renumera uno de los dos antes de seguir.")
+        _vistos[n] = linea
     cabecera = "".join(lineas[:inicios[0][1]])
     # ⚠️ EL FINAL DEL FICHERO NO ES PARTE DEL ULTIMO BLOQUE. Detras del ultimo
     # vienen el resumen de tiempos, el aviso de los bloques que necesitan

@@ -7315,7 +7315,18 @@ def _actualizar_perfil(user_id, campos, evento):
             RuntimeError(f"Supabase rechazó la actualización del plan: HTTP {r.status_code} "
                          f"(la clave configurada es: {tipo})"),
             endpoint="/stripe/webhook", evento=evento,
-            tipo_de_clave_supabase=tipo,
+            # ⚠️ SE LLAMABA `tipo_de_clave_supabase` Y SENTRY LO TACHABA SOLO
+            # (arreglado el 19 de septiembre de 2026). `_es_clave_sensible`
+            # compara por TROZO desde el 11 de septiembre --y eso está bien, es
+            # lo que cerró el agujero del `token_usuario`--, así que cualquier
+            # campo con "clave" dentro sale como `[Filtered]`. O sea que el dato
+            # que existe para no tener que adivinar el 403 llegaba tachado.
+            #
+            # No se toca el filtro: se le quita la palabra al campo. Lo que va
+            # aquí NUNCA es la credencial -- `_tipo_de_clave_supabase` devuelve
+            # siempre una etiqueta ("service_role — correcta", "PÚBLICA...",
+            # "sin configurar"), y leer el rol de un JWT no expone la firma.
+            credencial_supabase_de_que_tipo=tipo,
             respuesta_supabase=r.text[:300], campos=list(campos))
         return False
     # 200 con lista vacía = no existe ninguna fila con ese id. Alguien ha
@@ -7379,9 +7390,17 @@ async def stripe_webhook(request: Request):
             if not se_pudo:
                 # Sin poder comprobarlo, quitar el premium puede dejar sin
                 # servicio a quien paga. 5xx para que Stripe reintente.
-                raise HTTPException(
+                #
+                # ⚠️ SE DEVUELVE, NO SE LANZA (19 de septiembre de 2026). Una
+                # HTTPException que sube hasta FastAPI la recoge Sentry, y aquí
+                # eso es ruido que TAPA: `_suscripciones_vivas` ya ha mandado el
+                # error de verdad --el que dice por qué no se pudo consultar-- y
+                # encima llega este, genérico, que agrupa con todos los demás
+                # 5xx del webhook. Stripe ve el mismo 503 y reintenta igual.
+                return JSONResponse(
                     status_code=503,
-                    detail="No se pudo comprobar si quedan otras suscripciones")
+                    content={"ok": False,
+                             "motivo": "No se pudo comprobar si quedan otras suscripciones"})
             campos = {"plan": "free"}
         else:
             campos = {"plan": "premium",
@@ -7401,8 +7420,15 @@ async def stripe_webhook(request: Request):
         if not _actualizar_perfil(user_id, campos, tipo):
             # 500 a propósito: Stripe reintenta con espera creciente
             # durante días, así que un fallo pasajero se recupera solo.
-            raise HTTPException(status_code=500,
-                                detail="No se pudo actualizar el plan; reintentadlo")
+            #
+            # ⚠️ Y SE DEVUELVE EN VEZ DE LANZARSE, por lo mismo que el 503 de
+            # arriba: `_actualizar_perfil` ya ha mandado a Sentry el error con
+            # el código HTTP de Supabase, la respuesta y qué credencial hay
+            # puesta. Éste no añade nada y agrupa por encima.
+            return JSONResponse(
+                status_code=500,
+                content={"ok": False,
+                         "motivo": "No se pudo actualizar el plan; reintentadlo"})
 
     return {"ok": True}
 

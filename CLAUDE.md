@@ -332,7 +332,7 @@ jubilado — que desde fuera se parecen mucho.
 | `especies.py`, `accesibles.py` | Qué especie es cada alimento |
 | `transicion.py` | Plan de cambio gradual de dieta |
 | `persistencia.py`, `observabilidad.py` | Supabase y Sentry |
-| `pruebas_completas.py` | **La batería.** Los 112 bloques, ~45 min. Es lo que se ejecuta entero antes de entregar cualquier cambio (ver «Cómo se prueba») |
+| `pruebas_completas.py` | **La batería.** Los 124 bloques, ~73 min. Es lo que se ejecuta entero antes de entregar cualquier cambio — y desde el 18 de septiembre tiene dos escalones por debajo, la rápida (1 min) y la repartida en cuatro (18 min): ver «Cómo se prueba» |
 | `datos_de_la_ficha.json` | **Los 21 campos que la ficha pregunta, y CÓMO llega cada uno al motor** (11 de septiembre). Nació de una frase de Elena: «TODOS LOS DATOS QUE RECOJA LA APP TIENEN QUE LLEGAR DE ALGUNA MANERA AL MOTOR, SI NO SON DATOS INUTILES Y CUANDO SE PIDEN ES SIEMPRE POR ALGO». Y tiene un caso que lo justifica solo, del mismo día: la ficha pregunta la **actividad** desde siempre, la app la usaba para calcular las kcal y mandaba solo el número — el motor veía 1955 kcal y no sabía si era un galgo de sofá o un perro de trineo, que es justo lo que decide si se le aprietan los topes crónicos por peso metabólico. Hay tres formas de llegar: `campo` (viaja suelto), `dentro_de` (va cocinado dentro de un número que sí viaja, y entonces **hay que escribir qué se pierde por ir así**) y `no_hace_falta` (con su motivo, que tiene que ser un motivo y no una excusa). Lo vigila el BLOQUE 87. ⚠️ Eran 20 y faltaba `raza`: la lista se copió a mano de `tests/ficha-ida-y-vuelta.spec.js`… donde `raza` tampoco estaba, porque su perro de ejemplo era un mestizo y `null` vuelve como `null` aunque se pierda. Dos inventarios copiados a mano, el mismo hueco en los dos |
 | `niveles_de_actividad.json` | **La Tabla VII-7 de FEDIAF fila por fila**, con lo que hace el motor y lo que ofrece la app (11 de septiembre). Cinco filas emparejadas, una **partida por nosotros** (el rango «High activity 150-175» es UNA fila de la fuente y el motor la parte en dos niveles), una fuera a propósito (los perros de trineo, 860-1240) y un **HUECO** declarado: «Obese prone adults ≤ 90» no está ni en el motor ni en la app. Lo vigila el BLOQUE 88 |
 | `preguntas_por_patologia.json` | **Qué pregunta decide la cifra de cada patología, qué respuestas tiene, y a qué clave del motor lleva cada una** (11 de septiembre). Nació de una frase de Elena: «tendrá que haber preguntas para cada patología preguntando resultados de analíticas o lo que sea para que pueda coger según la respuesta los límites para cada estadio o cada caso». ⚠️ **Y lo primero que hay que saber al abrirlo es que la mitad ya estaba hecha**: la cardiopatía tiene **cinco claves con cinco techos de sodio** (`cardiopatia_c` 625, `cardiopatia_d` 480) y la app **ya pregunta el estadio ACVIM**. Cuatro de las diez están `aplicada`. Aquí no hay ni un número escrito: se **derivan** de `patologias.json`, y donde el motor no tiene una clave por respuesta se dice en vez de inventarla. Cinco estados, y el que importa es **`no_cambia_ninguna_cifra`**: una pregunta cuyas respuestas aplican exactamente lo mismo no decide nada — se le pide un dato clínico a quien firma y da igual lo que conteste. Hoy le pasa a `shunt_sin_encefalopatia`. Lo vigila el BLOQUE 90, que además exige que **cada `requiere` de un tope condicional apunte a una patología que exista**: el de la diabetes decía `hipertrigliceridemia`, que no es ninguna de las 47, así que ese techo **no se aplicaba nunca** por esa puerta — el solver lo resuelve con `any(otra in lista ...)` y un nombre que nadie puede marcar no entra jamás, con el menú saliendo verde igual. ⚠️ **Y desde la noche del 11 comprueba las 19 respuestas, no solo las cinco de la cardiopatía**: cifra a cifra, techos con `min()` y suelos con `max()`, contra lo que devuelve `topes_de_patologias` — que es la función que llama el solver. Son 28 cifras, y de 14 de ellas nadie comprobaba que contestar una cosa u otra cambiara nada. Y las dos direcciones: un tope que el solver aplica y la respuesta no dice es una restricción que quien firma no ve, y que puede dejar al perro sin menú sin que se sepa por qué. ⚠️ **La lista la lee ahora la app de `GET /vocabulario`** y no de su propia `FAMILIAS_PATOLOGIA`, que queda de respaldo — y `segura` se deriva del `_no_formulable` que dice el motor, que era el riesgo escrito en `App.jsx` desde agosto. Lo vigila `tests/puerta-veterinario.spec.js` sembrando un estadio **inventado** |
@@ -2873,17 +2873,53 @@ credencial como secreto de GitHub, esa mitad también.
 
 ## Cómo se prueba
 
+**Hay tres escalones, y no son intercambiables.** Lo pidió Elena el 18 de
+septiembre de 2026: «tenemos que hacer algo para poder bajar el tiempo de las
+baterías..... Es una locura y tardamos días en aplicar cosas diminutas», y
+después: «¿la gente que hace apps lo hace así, lanzando PRs y tirando baterías
+infinitas cada vez que hacen un cambio por mínimo que sea?». No: la forma normal
+es una **pirámide**.
+
 ```bash
-python3 pruebas_completas.py     # ~40 min, tiene que salir TODO EN VERDE
+python3 probar_bloques.py --rapida    # ~1 min · los 69 bloques que no resuelven menús
+python3 probar_bloques.py 13 44 74    # los que tú digas, con sus dependencias
+python3 pruebas_completas.py          # ~73 min, TODO EN VERDE antes de entregar
 ```
 
-Los **112 bloques** tardan unos **45 minutos** (2.387 s en la última medida; el
-«~25 min» que ponía aquí se quedó corto igual que antes se quedó corto el
-«~10 min», y antes el «~2 min»: cada vez que un bloque nuevo resuelve menús de
-verdad, esta cifra sube. Si vuelve a bajar sin motivo, es que algo no se está
-ejecutando). No necesita red ni claves de verdad: se fabrica
-su propio Stripe y su propio Supabase de mentira, así que corre igual en
-cualquier máquina y sin conexión.
+| escalón | cuándo corre | cuánto |
+|---|---|---|
+| `rapida.yml` | en **cada empujón** que no sea a `main` | **1 min 06 s** |
+| `bateria-repartida.yml` — la entera en **4 trozos a la vez** | en cada **pull request** | **~18 min** |
+| `bateria.yml` — la entera de una pieza | PR y `main` | **~73 min** (4.376 s en la última medida; 4.896 s en la CI, que va más lenta) |
+
+Los **124 bloques** de la entera tardan unos **73 minutos**. Esa cifra sube cada
+vez que un bloque nuevo resuelve menús de verdad (antes ponía aquí «~45 min»,
+antes «~25», antes «~10» y antes «~2»). **Si vuelve a bajar sin motivo, es que
+algo no se está ejecutando.** No necesita red ni claves de verdad: se fabrica su
+propio Stripe y su propio Supabase de mentira, así que corre igual en cualquier
+máquina y sin conexión.
+
+⚠️ **Y LA RÁPIDA TARDÓ DIEZ MINUTOS DURANTE UN DÍA SIN QUE NADIE LO VIERA** (19
+de septiembre de 2026). El día que se escribió, aquí y en `rapida.yml` se puso
+«~1,1 min», y ese número era la **SUMA** de lo que cuesta cada bloque por su
+cuenta — o sea una estimación contada como medida, que es justo lo que este
+documento tiene escrito que no se hace. Medido con `time`, tardaba **~10 min**,
+porque el modo rápido **arrastraba 541 s en cinco bloques** que no había pedido:
+un bloque rápido que lee una variable definida dentro de otro se lleva ese otro
+entero, y el peor era `_CIFRAS_CON_FUENTE` → BLOQUE 13, 321 s. **Lo dice en voz
+alta cuando pasa, pero decirlo no es evitarlo.**
+
+La regla que queda: **lo que leen varios bloques se define en la CABECERA de
+`pruebas_completas.py`**, no dentro del primero que lo necesitó. Hoy arrastra
+cero.
+
+⚠️ **Y de paso salió que `probar_bloques.py` leía como marca de bloque las líneas
+de comentario que NOMBRAN otro bloque** («# BLOQUE 65 ancla 25 cifras de…»).
+Como se quedaba con la última aparición, **el BLOQUE 65 de verdad dejaba de
+existir** en una tirada parcial y en su sitio entraban tres líneas de prosa —en
+silencio—, y el 66, que lee una variable suya, moría con un `NameError` que no
+tenía nada que ver. La marca pide ahora su separador (`—` o `:`), y **dos bloques
+con el mismo número paran la tirada** en vez de pisarse.
 
 ⚠️ **Y el 13 de septiembre había DOS bloques con el número 98**: el de las fichas
 de hueso contra Köber y el de las patologías que enumera el motor. Un número de

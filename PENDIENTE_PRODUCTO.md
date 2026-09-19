@@ -464,6 +464,42 @@ menús comparados no tienen sentido sin él.
       con botón de deshacer por cambio y restaurar el menú original.
 
 
+## El selector del VETERINARIO no filtra por modo, y no lo toco (19 de septiembre de 2026)
+
+Encontrado repasando el filtro de crudo/cocinado, y **es una pregunta, no un
+arreglo**.
+
+Desde el 18 de septiembre hay tres sitios donde se elige comida a mano y cada
+uno hace una cosa distinta, las tres a propósito:
+
+| dónde | filtra por modo | por qué |
+|---|---|---|
+| El selector de «cambiar a» de un menú ya hecho | **sí**, por el modo **del MENÚ** | un menú cocinado editado en crudo mete hueso crudo en un plato que se va a cocer |
+| **Personalizar** (elegir antes de generar) | **sí**, por el modo **elegido** | ofrecer «Acelga» y «Acelga cocida» juntas es el mismo alimento dos veces con dos composiciones distintas |
+| El **analizador** de la dieta actual | **no** | mira lo que el perro come HOY, y eso puede ser de cualquiera de los dos |
+
+**Y falta el cuarto: el formulador del veterinario.** Su selector se pinta de su
+propia llamada a `/alimentos` (`por_categoria`), no del árbol de `App.jsx`, así
+que el filtro nuevo no le llega — a un veterinario que formula una ración
+cocinada se le sigue ofreciendo el hueso carnoso crudo.
+
+⚠️ **No lo cambio yo, y el motivo es el de siempre**: el formulador existe
+precisamente para que quien firma decida, y la regla 5 dice que lo que se elige
+a mano se respeta. Puede haber un caso en el que un profesional quiera una ficha
+cruda dentro de una ración que por lo demás va cocinada — o puede no haberlo, y
+entonces lo que hoy tiene es una lista con el doble de ruido. **Eso lo decide
+Elena, no yo.**
+
+Las dos salidas, para cuando se decida:
+
+1. **Filtrar igual que Personalizar**, por el modo que el propio formulador ya
+   manda en `modo_de_preparacion`. Es una línea, y el dato ya viaja: `/alimentos`
+   sirve `modos` dentro de cada ficha desde el 18 de septiembre.
+2. **Dejarlo abierto y decirlo**: marcar en la lista qué ficha es del otro modo,
+   en vez de quitarla. Más trabajo de pantalla, y no le quita nada a nadie.
+
+---
+
 ## ⚠️ EL TOY DE 1,5 KG SANO SE QUEDA SIN MENÚ EN PRODUCCIÓN, 3 DE CADA 4 VECES (18 de septiembre de 2026, noche)
 
 **Medido contra `canislab-api.onrender.com`, no leído del repo.** Perro sano,
