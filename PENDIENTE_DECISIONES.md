@@ -176,13 +176,18 @@ las tiene que tomar una persona, no yo.
       `any(otra in lista ...)`, así que un nombre que nadie puede marcar no
       entra jamás y el menú sale verde igual. Lo vigila ahora el BLOQUE 90.
 
-- [ ] **La lista de las nueve `formulable: false`.** La necesita la fase 4:
-      es la que define qué diagnósticos exigen firma de un veterinario,
-      porque son los que piden bajar de los mínimos de FEDIAF. **No está en
-      ninguno de los dos repositorios** — comprobado el 28 de agosto, cero
-      apariciones de `formulable` en `Canislab-api` y en `canislab-web`.
-      Viene de otro sitio y hay que traerla aquí antes de construir nada de
-      la fase 4.
+- [x] ~~**La lista de las nueve `formulable: false`.**~~ **CERRADO — ya
+      estaba, y este punto llevaba semanas afirmando lo contrario** (auditado
+      el 18 de septiembre de 2026). Decía «no está en ninguno de los dos
+      repositorios — comprobado el 28 de agosto, cero apariciones de
+      `formulable`», y hoy vive en `patologias.json`, campo `formulable` por
+      patología. **Son OCHO, no nueve**: `hepatopatia`, `urato`, `cistina`,
+      `otra`, `shunt_sin_encefalopatia`, `encefalopatia_hepatica`,
+      `renal_avanzada` y `urolitos_silice`. La vigilan el BLOQUE 61 (las 39
+      formulables tienen que dar menú verde de verdad) y el BLOQUE 105 (las
+      ocho que no formulan enseñan su aviso de por qué). Y la fase 4 ya no
+      la necesita para empezar: `motor/prescripcion.py` existe desde el 17 de
+      septiembre y es lo que deja bajar de un mínimo de FEDIAF con firma.
 
 - [x] **El peso ideal desde el BCS estaba calculado de dos formas.**
       RESUELTO el 29 de agosto: `verificar.peso_objetivo_desde_bcs` estaba
