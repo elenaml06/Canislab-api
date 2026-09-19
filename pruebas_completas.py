@@ -23779,6 +23779,97 @@ print(f"  vista previa: {len(_menus131)} menús, {len(_pasados131)} por encima d
 print(f"  el tope muerde: con él {_p_con131 * 100:.1f} % · sin él {_p_sin131 * 100:.1f} %")
 
 
+# ============================================================
+# BLOQUE 133 — NINGÚN ATAJO PUEDE SERVIR UN MENÚ DE OTRO MODO
+# ============================================================
+#
+# ⚠️ CASO REAL, EN PRODUCCIÓN (19 de septiembre de 2026), encontrado midiendo
+# cuánto tarda cada celda. Pidiendo un menú **COCINADO**, `/menu/v2` devolvía
+# en 0,1 s un menú de fichas **CRUDAS** -- con `Carcasa de pollo` dentro, que
+# es hueso carnoso -- y la respuesta decía `modo_de_preparacion: "cocinado"`.
+#
+# El hueso COCIDO astilla. En cocinado no es «una proporción que cede»: es una
+# exclusión DURA, como una alergia, y así lo dice el propio `/vocabulario`.
+#
+# LA CAUSA es la familia de fallo que este repo ya tiene escrita tres veces:
+# el catálogo de menús fijos se generó el **5 de agosto**, el modo cocinado
+# entró el **18 de septiembre**, y los tres atajos que lo usan no se volvieron
+# a mirar. Y el semáforo no puede cazarlo por construcción: comprueba los 43
+# requisitos, no de qué modo son las fichas.
+#
+# LO QUE VIGILA ESTE BLOQUE no es el guardia, es el INVARIANTE: ningún menú
+# que la API entregue puede llevar un alimento que no valga en el modo pedido.
+# Así sigue sirviendo el día que los atajos se escriban de otra forma -- o el
+# día que el catálogo se regenere también para cocinado, que es justo lo que
+# hay que hacer para que estos perros no esperen.
+# ------------------------------------------------------------
+print("\n=== BLOQUE 133: ningun atajo sirve un menu de otro modo ===")
+
+import accesibles as _acc133
+
+# Los mismos perros que tienen variante en el catálogo, que son los que
+# disparan los atajos. Sin uno de esos, el bloque no probaría ningún atajo.
+_PERROS133 = (
+    ("Mediano", "Adulto",              20.0,  950.0, None),
+    ("Grande",  "Adulto",              35.0, 1600.0, None),
+    ("Gigante", "Adulto",              62.0, 2350.0, None),
+    ("Toy",     "CachorroCrecimiento",  2.3,  288.0, 4.0),
+    ("Grande",  "CachorroJoven",        4.0,  800.0, 31.0),
+)
+_atajos133 = 0
+for _tam133, _et133, _peso133, _der133, _pa133 in _PERROS133:
+    for _modo133 in ("crudo", "cocinado"):
+        _cu133 = {"nombres_alimentos": [], "forzar_presencia": [], "modo": "automatico",
+                  "der_objetivo": _der133, "etapa_requisitos": _et133,
+                  "peso_perro_kg": _peso133, "tamano": _tam133, "actividad": "normal",
+                  "patologias": [], "especies_excluidas": [], "nombres_excluidos": [],
+                  "categorias_excluidas": [], "modo_de_preparacion": _modo133,
+                  "presupuesto_segundos": 120.0}
+        if _pa133:
+            _cu133["peso_adulto_esperado_kg"] = _pa133
+        _r133 = _c.post("/menu/v2", json=_cu133).json()
+        if _r133.get("via_catalogo"):
+            _atajos133 += 1
+        _g133 = _r133.get("menu") or {}
+        if not _g133:
+            continue
+        _malos133 = [n for n in _g133 if not _acc133.vale_en(_al21.get(n, {}), _modo133)]
+        if _malos133:
+            fallos.append(
+                f"BLOQUE133: menu {_modo133} de {_tam133}/{_et133} con alimentos que NO valen en "
+                f"ese modo: {_malos133}. Si hay hueso carnoso en un plato que se va a cocer, "
+                f"astilla -- es una exclusion DURA, no una proporcion que cede. "
+                f"(via_catalogo={_r133.get('via_catalogo')})")
+
+# ⚠️ Y QUE LOS ATAJOS SE ESTEN PISANDO DE VERDAD. Si ninguno saltara, este
+#    bloque saldria verde sin haber probado lo unico que vino a probar: el
+#    camino normal siempre respeta el modo, porque `resolver()` filtra.
+if _atajos133 == 0:
+    fallos.append(
+        "BLOQUE133: ninguna de las peticiones ha ido por el catalogo (`via_catalogo`), asi que "
+        "este bloque no ha probado ningun atajo -- que es lo unico que puede servir un menu de "
+        "otro modo. O el catalogo ha cambiado de claves, o los atajos se han apagado")
+
+# ⚠️ Y EL GUARDIA, PREGUNTADO DE FRENTE: un menu del catalogo CRUDO no puede
+#    valer para cocinado. Es lo que hace que el invariante de arriba no dependa
+#    de que el catalogo siga teniendo variantes.
+from catalogo_menus import CATALOGO as _CAT133, vale_en_este_modo as _vale133
+_g_crudo133 = (_CAT133.get("Mediano_Adulto") or {}).get("gramos")
+if not _g_crudo133:
+    fallos.append("BLOQUE133: no encuentro `Mediano_Adulto` en el catalogo, asi que el guardia "
+                  "del modo no se puede comprobar de frente")
+else:
+    if not _vale133(_g_crudo133, "crudo", _al21):
+        fallos.append("BLOQUE133: el menu CRUDO del catalogo se declara invalido en crudo. El "
+                      "guardia esta rechazando lo que si vale, y eso apaga los atajos enteros")
+    if _vale133(_g_crudo133, "cocinado", _al21):
+        fallos.append("BLOQUE133: el menu CRUDO del catalogo se da por bueno en COCINADO. Lleva "
+                      "hueso carnoso y fichas crudas: es el fallo del 19 de septiembre otra vez")
+
+print(f"  {len(_PERROS133)} perros x 2 modos · {_atajos133} peticiones por el catalogo · "
+      f"0 alimentos fuera de su modo")
+
+
 _cerrar_el_ultimo_bloque()
 
 # ⚠️ Y ESTE GUARDIA TIENE QUE SER LO ÚLTIMO DEL FICHERO, Y EL 16 DE SEPTIEMBRE

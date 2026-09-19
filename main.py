@@ -4139,7 +4139,7 @@ def _resolver_menu_v2_crudo(datos: PeticionMenu):
 
         (cat_pedida, especie_pedida), = datos.restringir_especie.items()
         if cat_pedida in ("Carne muscular", "Pescados y mariscos"):
-            from catalogo_menus import CATALOGO_VARIANTES
+            from catalogo_menus import CATALOGO_VARIANTES, vale_en_este_modo
             clave_v = f"{datos.tamano}_{datos.etapa_requisitos}"
             variantes = CATALOGO_VARIANTES.get(clave_v, [])
             # ⚠️ Y SOLO LAS QUE TIENEN MENU (15 de septiembre de 2026). Dos
@@ -4153,6 +4153,19 @@ def _resolver_menu_v2_crudo(datos: PeticionMenu):
             coincide = next((v for v in variantes
                              if v["proteina"].strip().lower() == especie_pedida.strip().lower()
                              and v.get("gramos")), None)
+            # ⚠️ Y QUE EL MENÚ ENLATADO VALGA EN EL MODO QUE SE PIDE (19 de
+            # septiembre de 2026). CASO REAL, EN PRODUCCIÓN: pidiendo COCINADO,
+            # esto devolvía en 0,1 s un menú de fichas CRUDAS con `Carcasa de
+            # pollo` dentro -- hueso carnoso, que cocido ASTILLA y que en ese
+            # modo es exclusión dura, como una alergia -- y la respuesta decía
+            # `modo_de_preparacion: "cocinado"`.
+            #
+            # El catálogo se generó el 5 de agosto y el modo cocinado entró el
+            # 18 de septiembre. El semáforo no puede cazarlo: comprueba
+            # nutrientes, no de qué modo son las fichas.
+            if coincide and not vale_en_este_modo(
+                    coincide["gramos"], getattr(datos, "modo_de_preparacion", None), al):
+                coincide = None
             if coincide:
                 SUP_COMERCIALES = CAT_SUPLEMENTO   # la del motor, no una copia
                 der_base = sum(al[n]["energia"] * g / 100 for n, g in coincide["gramos"].items())
@@ -4253,7 +4266,8 @@ def _resolver_menu_v2_crudo(datos: PeticionMenu):
         # no solo el primero. Solo se reescala por las kcal reales del
         # perro (los suplementos comerciales se topan aparte por su
         # dosis real, igual que ya hace /catalogo).
-        from catalogo_menus import CATALOGO_VARIANTES
+        from catalogo_menus import CATALOGO_VARIANTES, vale_en_este_modo
+        elegida = None
         clave_variantes = f"{datos.tamano}_{datos.etapa_requisitos}" if datos.tamano else None
         variantes = CATALOGO_VARIANTES.get(clave_variantes) if clave_variantes else None
         # ⚠️ `any(gramos)` Y NO SOLO `variantes`: si TODAS las de ese perro
@@ -4266,10 +4280,29 @@ def _resolver_menu_v2_crudo(datos: PeticionMenu):
             # Igual que arriba: una variante declarada `no_hay_menu` no tiene
             # gramos que reescalar, asi que no se elige nunca.
             _con_menu = [v for v in variantes if v.get("gramos")]
+            # ⚠️ Y QUE EL MENÚ ENLATADO VALGA EN EL MODO QUE SE PIDE (19 de
+            # septiembre de 2026). CASO REAL, EN PRODUCCIÓN: pidiendo COCINADO,
+            # esto devolvía en 0,1 s un menú de fichas CRUDAS con `Carcasa de
+            # pollo` dentro -- hueso carnoso, que cocido ASTILLA y que en ese
+            # modo es exclusión dura, como una alergia -- y la respuesta decía
+            # `modo_de_preparacion: "cocinado"`.
+            #
+            # El catálogo se generó el 5 de agosto y el modo cocinado entró el
+            # 18 de septiembre. El semáforo no puede cazarlo: comprueba
+            # nutrientes, no de qué modo son las fichas.
+            _modo_pedido = getattr(datos, "modo_de_preparacion", None)
+            _con_menu = [v for v in _con_menu
+                         if vale_en_este_modo(v["gramos"], _modo_pedido, al)]
             elegida = next((v for v in _con_menu
                             if v["proteina"].strip().lower() not in evitar_lower), None)
             if elegida is None and _con_menu:
                 elegida = _con_menu[0]  # si ya se evitaron todas, se repite alguna antes que fallar
+        # ⚠️ `elegida` PUEDE SER None desde el 19 de septiembre: si ninguna
+        # variante vale en el modo que se pide, no hay atajo y se resuelve de
+        # verdad más abajo. Antes esto era imposible y la línea de los gramos
+        # iba pegada al `if` de arriba; ahora hace falta preguntarlo, o un
+        # cocinado sin variantes reventaría con un TypeError.
+        if elegida is not None:
             SUP_COMERCIALES = CAT_SUPLEMENTO   # la del motor, no una copia
             der_base = sum(al[n]["energia"] * g / 100 for n, g in elegida["gramos"].items())
             factor = datos.der_objetivo / der_base if der_base else 1.0
@@ -4361,6 +4394,16 @@ def _resolver_menu_v2_crudo(datos: PeticionMenu):
         # libre de abajo, que sí respeta evitar_especies de verdad.
         clave = f"{datos.tamano}_{datos.etapa_requisitos}" if (datos.tamano and not datos.evitar_especies) else None
         entrada = CATALOGO.get(clave) if clave else None
+        # ⚠️ Y AQUÍ TAMBIÉN EL MODO (19 de septiembre de 2026). Esta vía no
+        # SIRVE el menú del catálogo: lo fuerza como BASE del solver. Pero
+        # forzar fichas crudas en un menú cocinado es pedirle al MILP justo lo
+        # que el modo prohíbe -- el hueso carnoso cocido astilla --, así que o
+        # sale infactible o sale un plato que no se puede dar. Ver
+        # `vale_en_este_modo`, y el caso real que lo destapó.
+        from catalogo_menus import vale_en_este_modo as _vale_modo_base
+        if entrada and not _vale_modo_base(entrada.get("gramos"),
+                                           getattr(datos, "modo_de_preparacion", None), al):
+            entrada = None
         if entrada:
             base = [n for n in entrada["gramos"]
                    if al.get(n, {}).get("categoria") not in SUP_COMERCIALES]
