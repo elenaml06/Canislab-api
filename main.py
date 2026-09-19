@@ -2818,6 +2818,7 @@ def _hay_comida_de_verdad(al, excluidos=None, categorias_excluidas=None):
 # serían un motor construyendo menús que el filtro final tira, que es
 # exactamente el fallo del 8 de septiembre con los suelos de patología.
 from motor_completo import la_patologia_topa_la_grasa as _la_patologia_topa_la_grasa
+from motor_completo import la_patologia_pide_hidratos as _la_patologia_pide_hidratos
 
 
 def _escalera_de_relajacion(hay_comida_de_verdad=True, patologias=None, etapa="Adulto",
@@ -3112,10 +3113,23 @@ def _escalera_de_relajacion(hay_comida_de_verdad=True, patologias=None, etapa="A
                       for c, (mn, mx) in m.items()}, supl, cl)
                     for m, supl, cl in peldanos]
 
+    # ⚠️ DOS COSAS DISTINTAS, Y SE SEPARAN A PROPÓSITO (19 de septiembre de
+    # 2026). Hasta hoy las decidía la misma pregunta -«¿topa la grasa?»- y eso
+    # es correcto para las siete que la topan: el hueso carnoso es lo más graso
+    # del plato, así que se le suelta el SUELO, y los hidratos suben de techo
+    # porque hay que sacar las kcal de algún sitio.
+    #
+    # Pero la RENAL necesita lo segundo y no lo primero. Topa fósforo, proteína
+    # y sodio, no grasa. Soltarle el suelo de hueso sería moverle una proporción
+    # de BARF por un motivo que no es el suyo, y eso está medido y decidido para
+    # las siete, no para ella.
     if _la_patologia_topa_la_grasa(patologias, etapa):
-        peldanos = [({c: ((0.0 if c == "Hueso carnoso" else mn),
-                          (TECHO_HIDRATOS_SI_LA_GRASA_ESTA_TOPADA
-                           if c == "Cereales y tubérculos" else mx))
+        peldanos = [({c: ((0.0 if c == "Hueso carnoso" else mn), mx)
+                      for c, (mn, mx) in m.items()}, supl, cl)
+                    for m, supl, cl in peldanos]
+    if _la_patologia_pide_hidratos(patologias, etapa):
+        peldanos = [({c: (mn, (TECHO_HIDRATOS_SI_LA_GRASA_ESTA_TOPADA
+                               if c == "Cereales y tubérculos" else mx))
                       for c, (mn, mx) in m.items()}, supl, cl)
                     for m, supl, cl in peldanos]
     return peldanos

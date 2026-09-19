@@ -11440,48 +11440,75 @@ _FORMULABLES_61 = sorted(k for k, v in _TABLA_61.items() if v.get("formulable"))
 # del catalogo de menus y el que usan los bloques 8 y 50.
 _PESO_61, _DER_61, _ETAPA_61 = 20.0, 950.0, "Adulto"
 
-# Ninguna. Y mientras siga vacia, esta lista es la prueba de que no hay ninguna
-# patologia que digamos formulable y no lo sea.
+# ⚠️ Y SE RECORREN LOS DOS MODOS DESDE EL 19 DE SEPTIEMBRE DE 2026, porque
+# hasta hoy este bloque NUNCA ponia `modo_de_preparacion` -- o sea que probaba
+# las 39 en CRUDO y solo en crudo. El modo cocinado entro el 18 de septiembre,
+# asi que hubo un dia entero ofreciendo 39 patologias en cocinado sin que nadie
+# hubiera comprobado que alguna diera menu.
+#
+# Y NO es lo mismo: en cocinado el hueso carnoso no es candidato --cocido
+# astilla-- asi que el calcio tiene que salir de la cascara de huevo o del bote.
+# Una patologia que ademas tope el fosforo se puede quedar sin sitio.
+_MODOS_61 = ("crudo", "cocinado")
+
+# ⚠️ LAS EXCEPCIONES, CON SU MEDIDA. Una lista vacia seria la prueba de que no
+# hay ninguna patologia que digamos formulable y no lo sea; hoy hay UNA, y esta
+# aqui para que no se olvide, no para apagar la alarma.
 _EXCEPCIONES_61 = {}
+# ⚠️ VACIA, Y ESO ES LA PRUEBA. Aqui hubo una --`("renal", "cocinado")`-- entre
+# que se encontro el agujero y se arreglo, el mismo 19 de septiembre de 2026.
+# La renal no daba menu en cocinado (infactible DEMOSTRADO en los cinco
+# peldanos) porque le faltaban los HIDRATOS: se decidia quien los pide
+# derivandolo de TOPAR LA GRASA, y la renal topa fosforo, proteina y sodio.
+# Ahora lo declara en su propia ficha (`hidratos.los_pide` de patologias.json)
+# y `la_patologia_pide_hidratos` mira las dos puertas. Se deja escrito porque
+# la lista volvera a tener algo algun dia y hay que saber para que sirve.
 
 _sin_menu_61 = []
 for _pat61 in _FORMULABLES_61:
+  for _modo61 in _MODOS_61:
     _r61 = _c.post("/menu/v2", json={
         "nombres_alimentos": [], "der_objetivo": _DER_61,
         "etapa_requisitos": _ETAPA_61, "peso_perro_kg": _PESO_61,
-        "modo": "automatico", "patologias": [_pat61]}).json()
+        "modo": "automatico", "patologias": [_pat61],
+        "modo_de_preparacion": _modo61}).json()
     if not _r61.get("factible") or not _r61.get("menu"):
-        _sin_menu_61.append((_pat61, str(_r61.get("motivo") or _r61.get("mensaje"))[:110]))
+        _sin_menu_61.append(((_pat61, _modo61),
+                             str(_r61.get("motivo") or _r61.get("mensaje"))[:110]))
         continue
     _g61 = _r61["menu"]
     _v61 = verificar(_g61, al, req, _DER_61, _ETAPA_61)
     if _v61["semaforo"] != "verde":
-        fallos.append(f"BLOQUE61: «{_pat61}» da menu pero sale {_v61['semaforo']}, no verde. "
-                      f"Faltan: {[x['nutriente'] for x in _v61.get('faltan', [])][:4]}. "
+        fallos.append(f"BLOQUE61: «{_pat61}» ({_modo61}) da menu pero sale {_v61['semaforo']}, "
+                      f"no verde. Faltan: {[x['nutriente'] for x in _v61.get('faltan', [])][:4]}. "
                       f"Regla 1: ningun menu sale sin estar verde")
     _rotos61 = _api._tope_patologia_roto(_g61, al, [_pat61], _ETAPA_61)
     if _rotos61:
-        fallos.append(f"BLOQUE61: «{_pat61}» da menu que rompe su propio tope: {_rotos61}")
+        fallos.append(f"BLOQUE61: «{_pat61}» ({_modo61}) da menu que rompe su propio tope: "
+                      f"{_rotos61}")
 
-for _pat61, _motivo61 in _sin_menu_61:
-    if _pat61 in _EXCEPCIONES_61:
+for (_pat61, _modo61), _motivo61 in _sin_menu_61:
+    if (_pat61, _modo61) in _EXCEPCIONES_61:
         continue
-    fallos.append(f"BLOQUE61: «{_pat61}» esta marcada `formulable: true` y NO da menu para el "
-                  f"perro de referencia (20 kg, DER 950, adulto). Motivo que devuelve la API: "
-                  f"«{_motivo61}». O el limite que no cabe se mueve a "
-                  f"`limites_escritos_que_el_solver_no_aplica` con su medida, o la patologia "
-                  f"no es formulable y hay que decirlo. Lo que no vale es ofrecerla y no darla")
+    fallos.append(f"BLOQUE61: «{_pat61}» esta marcada `formulable: true` y NO da menu en "
+                  f"{_modo61.upper()} para el perro de referencia (20 kg, DER 950, adulto). "
+                  f"Motivo que devuelve la API: «{_motivo61}». O el limite que no cabe se mueve "
+                  f"a `limites_escritos_que_el_solver_no_aplica` con su medida, o la patologia "
+                  f"no es formulable EN ESE MODO y hay que decirlo. Lo que no vale es ofrecerla "
+                  f"y no darla")
 
 # Y al reves: una excepcion que ya resuelve tiene que salir de la lista, porque
 # si no la lista deja de significar nada. Es la misma idea que
 # `MAXIMOS_NO_APLICADOS` en verificar.py.
-for _pat61 in _EXCEPCIONES_61:
-    if _pat61 not in dict(_sin_menu_61):
-        fallos.append(f"BLOQUE61: «{_pat61}» esta en la lista de excepciones pero YA resuelve. "
-                      f"Quitala de _EXCEPCIONES_61: una lista de excepciones caducada es una "
-                      f"alarma apagada")
+_sin_menu_clave_61 = dict(_sin_menu_61)
+for _clave61 in _EXCEPCIONES_61:
+    if _clave61 not in _sin_menu_clave_61:
+        fallos.append(f"BLOQUE61: «{_clave61[0]}» en {_clave61[1]} esta en la lista de "
+                      f"excepciones pero YA resuelve. Quitala de _EXCEPCIONES_61: una lista de "
+                      f"excepciones caducada es una alarma apagada")
 
-print(f"  {len(_FORMULABLES_61)} patologias formulables, {len(_sin_menu_61)} sin menu")
+print(f"  {len(_FORMULABLES_61)} patologias formulables x {len(_MODOS_61)} modos, "
+      f"{len(_sin_menu_61)} sin menu ({len(_EXCEPCIONES_61)} declarada)")
 print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
