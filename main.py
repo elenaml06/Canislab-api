@@ -2452,6 +2452,7 @@ def endpoint_menu_v2(datos: PeticionMenu):
             peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
             peso_objetivo_kg=_peso_de_referencia(datos)[0],
             kcal_de_premios=_kcal_de_premios(datos))
+        _resp_v2 = _decir_si_los_hidratos_no_cupieron(_resp_v2, cargar_v2()[0], datos)
         # ⚠️ SE DICE SOBRE QUÉ PESO SE HA MEDIDO, y de dónde salió. Los
         # mínimos escalan con la DER efectiva, y la DER efectiva se calcula
         # sobre un peso: si ese peso no es el mismo con el que se hicieron
@@ -3393,6 +3394,29 @@ def _aviso_de_lo_que_falta(gramos, al, categorias_excluidas=None):
 # tiempo real no se movía entre 8, 12 y 16 s de presupuesto.
 PRESUPUESTO_SEGUNDOS_MENU_UNICO = 90.0
 
+# ⚠️ CUÁNTO DEL PRESUPUESTO SE LLEVA EL ARRANQUE, Y POR QUÉ HAY UN TOPE.
+#
+# El arranque por patología (ver `motor/menus_base.py`) prueba hasta ocho listas
+# de alimentos por los nueve peldaños de la escalera. Cuando acierta es
+# instantáneo; cuando no, cada intento se lo quita a la búsqueda libre, que es
+# la que siempre acaba encontrando. Medido por la API, sin tope:
+#
+#     adulto con artrosis ......  7,8 s -> 0,5 s   (acierta)
+#     adulto renal COCINADO .... 21,4 s -> 28,3 s  (no acierta, y cuesta)
+#     toy 1,5 kg con artrosis .. 12,6 s -> 21,7 s  (no acierta, y cuesta)
+#
+# Un atajo que no ha salido en una cuarta parte del presupuesto no iba a salir
+# barato de ninguna forma, y para eso está el camino de siempre.
+FRACCION_DEL_PRESUPUESTO_PARA_EL_ARRANQUE = 0.15
+
+# ⚠️ Y CADA INTENTO DEL ARRANQUE ES CORTO A PROPÓSITO. Un MILP con la lista ya
+# fijada es otro problema: casi todo lo que había que decidir --QUÉ alimentos--
+# ya está decidido, y lo que queda son los gramos. Medido, cuando sale, sale en
+# décimas de segundo; darle los segundos de un intento normal solo sirve para
+# que un arranque que no vale se lleve el reloj de la búsqueda libre, que es la
+# que siempre acaba encontrando.
+SEGUNDOS_DE_UN_INTENTO_DEL_ARRANQUE = 2.0
+
 # ⚠️ Y LA SEMANA NO LO HEREDA, A PROPÓSITO (17 de septiembre). El reparto de
 # `/menu/semana` le da al PRIMER menú «lo que se le daría a un menú suelto»,
 # porque si el primero falla se cae la semana entera. Mientras los dos números
@@ -4261,8 +4285,23 @@ def _resolver_menu_v2_crudo(datos: PeticionMenu):
         forzar = list(datos.forzar_presencia or datos.nombres_alimentos or [])
     elif datos.modo == "aprovechar":
         preferir = list(datos.nombres_alimentos or [])
+    # ⚠️ NI CUANDO EL DUEÑO HA PEDIDO HIDRATOS (19 de septiembre de 2026), Y ESTE
+    # ERA UN FALLO EN PRODUCCIÓN.
+    #
+    # Medido contra el motor desplegado, adulto sano de 24,5 kg en ración CRUDA
+    # con `con_hidratos: true`: contestaba en **1,9 s** con `via_catalogo: true`
+    # y **sin un solo gramo de hidrato**. Los 216 menús del catálogo se
+    # generaron en agosto, la categoría de hidratos entró el 17 de septiembre, y
+    # los atajos no se volvieron a mirar: es EXACTAMENTE la misma familia que el
+    # menú crudo servido en modo cocinado, del día anterior.
+    #
+    # Y aquí el olvido tampoco se ve en ninguna cifra: el menú sale verde,
+    # rápido, y quien contestó «sí» no ve arroz y no tiene forma de saber por
+    # qué. Lo contó Elena: «cuando el usuario marca que quiere meter hidratos
+    # [...] en ese caso entran bien en el menú?».
     elif (datos.modo == "automatico" and not excluidos and not datos.patologias
           and not datos.categorias_excluidas and not datos.preferir_alimentos
+          and getattr(datos, "con_hidratos", None) is not True
           # ⚠️ NI CON PREMIOS: ver el comentario largo de la vía rápida de
           # arriba. Un menú enlatado reescalado no puede llevar el día entero de
           # nutrientes en menos calorías; eso lo decide el MILP, no un factor.
@@ -4472,6 +4511,270 @@ def _resolver_menu_v2_crudo(datos: PeticionMenu):
                     }
                 # si no salió verde, se prueba otra vez -- si se agota el
                 # presupuesto de tiempo, se descarta y se sigue con la búsqueda libre
+
+    # ─── EL ARRANQUE POR PATOLOGÍA ───────────────────────────────────────────
+    #
+    # ⚠️ POR QUÉ EXISTE (19 de septiembre de 2026). Lo pidió Elena después de
+    # ver que un menú con patología podía tardar más de un minuto en la
+    # pantalla: «no te puedes tirar más de 20 o 30 segundos esperando a ver un
+    # menú». Las dos vías rápidas de arriba están apagadas en cuanto hay una
+    # patología marcada -- y con razón: un menú enlatado reescalado por un
+    # factor no puede cumplir un tope de fósforo que se mide sobre las kcal
+    # reales. O sea que justo los perros que más cuestan de resolver eran los
+    # únicos que no tenían ningún atajo.
+    #
+    # ⚠️ ESTO NO SIRVE NINGÚN MENÚ. `menus_base_patologias.json` guarda una
+    # LISTA DE ALIMENTOS sin gramos; entra como `forzar` y **el solver vuelve a
+    # decidir todos los gramos** para este perro, con sus kcal, sus premios, su
+    # peso y sus topes. Lo que se ahorra es elegir QUÉ alimentos entre 105, que
+    # es la parte cara del MILP. Por eso aquí sí caben las patologías y los
+    # premios, y en las vías de arriba no.
+    #
+    # LA MEDIDA: x20 a x885 sobre la búsqueda libre, exigiendo verde en los dos
+    # lados y por la escalera entera. Y una fila que no sale (toy de 1,5 kg con
+    # premios), que es la que obliga a que esto sea un atajo y no una respuesta.
+    # Ver `motor/menus_base.py`.
+    #
+    # ⚠️ Y VARIOS POR PATOLOGÍA, NO UNO. Elena: «que sean varios menús, o sea,
+    # no solo uno, porque entonces todos los perros con esa patología van a
+    # comer exactamente lo mismo». Son ocho por patología y modo -- uno libre y
+    # siete con la proteína forzada -- y se recorren respetando
+    # `evitar_especies`, que es lo que da variedad dentro de una misma semana.
+    #
+    # ⚠️ Y NO SOLO CON PATOLOGÍA: TAMBIÉN CON PREMIOS, Y ESE ES EL CASO DE CAIRO.
+    #
+    # CASO REAL, CONTADO POR ELENA: su cachorro de casi 22 kg no sacaba menú en
+    # cuanto se declaraban premios -- medido contra el motor desplegado, 90,8 ·
+    # 104,4 · 143,0 s y «el cálculo está tardando más de lo normal», tres de
+    # tres. Y la vía del catálogo que fuerza una base YA sabía de premios (le
+    # pasa `kcal_de_premios` desde el 11 de septiembre): lo que la apagaba era
+    # que comparte el `elif` con la OTRA vía, la que reescala un menú enlatado
+    # por un factor -- y esa sí que no puede llevar premios, porque el día
+    # entero de nutrientes en menos kilocalorías no sale de multiplicar.
+    #
+    # O sea: un gate escrito para la vía de al lado estaba apagando la única que
+    # podía resolver ese perro. Aquí se separan las dos cosas.
+    # ⚠️ Y NO SI EL PROFESIONAL HA ELEGIDO PELDAÑO, que es lo que cazó el BLOQUE
+    # 45 en la primera batería de esta rama, con SEIS rojos.
+    #
+    # `GET /relajacion` deja elegir el peldaño, y elegirlo significa «este y no
+    # otro»: «con un peldaño elegido no se baja solo», escrito el 8 de
+    # septiembre. El arranque recorre la escalera por su cuenta, así que para un
+    # caso que NO tiene menú en el estricto le devolvía uno de más abajo -- o
+    # sea, le cambiaba en silencio la decisión a quien la había tomado, que es
+    # exactamente lo contrario de por qué se puede elegir.
+    #
+    # Y hacía una segunda cosa, peor: el bloque BUSCA su «caso duro» pidiendo
+    # menú con el estricto y quedándose con el que no sale. Con el atajo
+    # contestando siempre, no encontraba ninguno y **media prueba se quedaba sin
+    # comprobar nada**.
+    #
+    # Se salta entero en vez de resolverlo en el peldaño elegido, y es a
+    # propósito: quien elige peldaño es el formulador del veterinario, que no es
+    # el caso lento que este atajo existe para arreglar.
+    if (datos.modo == "automatico"
+            and (datos.patologias or _hay_algun_premio(datos))
+            and not datos.categorias_excluidas and not datos.preferir_alimentos
+            and not getattr(datos, "peldano", None)
+            and time.time() - t_inicio_total < PRESUPUESTO_SEGUNDOS):
+        from menus_base import arranques_de, arranques_del_catalogo
+        from exclusiones import esta_excluido, expandir_exclusiones
+        from accesibles import vale_en
+        _modo_arranque = getattr(datos, "modo_de_preparacion", None)
+        _terminos = expandir_exclusiones(excluidos)[0] if excluidos else []
+        _evitar = {e.strip().lower() for e in (datos.evitar_especies or [])}
+        # Con patología, las listas que se generaron PARA esa patología; sin
+        # ella, las del catálogo fijo de ese tamaño y etapa, que también traen
+        # cinco proteínas.
+        _arranques = (arranques_de(datos.patologias, _modo_arranque) if datos.patologias
+                      else arranques_del_catalogo(datos.tamano, datos.etapa_requisitos,
+                                                  _modo_arranque, al))
+        # ⚠️ EL ATAJO TIENE SU PROPIO TECHO DE TIEMPO, Y SIN ÉL SALE CARO.
+        #
+        # Medido por la API, con la escalera entera y sin tope: el atajo ayuda
+        # cuando acierta (artrosis 7,8 s -> 0,5 s) y CUESTA cuando no (la renal
+        # cocinada pasó de 21,4 s a 28,3 s, el toy con artrosis de 12,6 a 21,7).
+        # Ocho arranques por nueve peldaños es mucho intento para algo que puede
+        # no valer, y lo que se gasta aquí se lo quita a la búsqueda libre, que
+        # es la que siempre acaba encontrando.
+        #
+        # Así que se le da una FRACCIÓN del presupuesto y ni un segundo más. Un
+        # atajo que no ha salido en ese rato no iba a salir barato de ninguna
+        # forma, y para eso está el camino de siempre.
+        _tope_arranque = t_inicio_total + PRESUPUESTO_SEGUNDOS * FRACCION_DEL_PRESUPUESTO_PARA_EL_ARRANQUE
+        for _proteina, _lista, _peldano in _arranques:
+            if time.time() >= _tope_arranque:
+                break
+            # ⚠️ LA ROTACIÓN DE ESPECIE SE RESPETA AQUÍ, o los siete menús de la
+            # semana saldrían todos del mismo arranque -- que es el «todos van a
+            # comer exactamente lo mismo» de Elena dentro de un solo perro.
+            if _proteina.strip().lower() in _evitar:
+                continue
+            # ⚠️ LO QUE ESTÁ EXCLUIDO SE CAE DE LA LISTA (regla 4: las alergias
+            # no se tocan jamás). El catálogo restringido se construye A PARTIR
+            # de esta lista, así que un alérgeno que se quedara aquí sería un
+            # alérgeno que el solver PUEDE elegir -- y encima con la ventaja de
+            # tener pocos candidatos. Lo que queda es un arranque más corto, y
+            # si se queda vacío no hay atajo.
+            #
+            # ⚠️ Y ES LA SEGUNDA CERRADURA, NO LA ÚNICA: al solver se le sigue
+            # pasando `excluidos` unas líneas más abajo. Medido quitando una y
+            # otra por separado, el perro alérgico NO recibe pollo con ninguna
+            # de las dos sola; hacen falta las dos para que se cuele. Se deja
+            # así a propósito -- una alergia puede ser médica -- y el BLOQUE 135
+            # comprueba el HECHO (que no llega pollo), no que esta línea exista.
+            _base_pat = [n for n in _lista
+                         if n in al
+                         and not (_terminos and esta_excluido(n, _terminos))
+                         and vale_en(al[n], _modo_arranque or "crudo")]
+            if not _base_pat:
+                continue
+            # ⚠️ SE RESTRINGE EL CATÁLOGO, NO SE FUERZA LA LISTA, Y ESTO SE
+            # DECIDIÓ MIDIENDO -- LAS DOS COSAS NO SON LO MISMO.
+            #
+            # La otra vía rápida (la del catálogo fijo, 5 de agosto) usa
+            # `forzar`: TODOS esos alimentos tienen que salir con gramos > 0.
+            # Aquí eso no vale: la lista es de OTRO perro, y obligar a que sus
+            # diez alimentos entren en la ración de éste es una restricción
+            # durísima. Medido, con `forzar` el arranque de la renal cocinada no
+            # llegaba a verde en NINGÚN peldaño y solo costaba tiempo: 22,9 s
+            # por la búsqueda libre contra 29,5 s pasando antes por el atajo.
+            #
+            # Lo que la medida del 19 de septiembre dice que funciona es
+            # RESTRINGIR: el solver solo VE estos alimentos y decide libremente
+            # cuáles usa y cuántos gramos. Así la parte cara del MILP --elegir
+            # entre 105-- desaparece, y ninguno queda obligado.
+            _al_arranque = {n: a for n, a in al.items() if n in set(_base_pat)}
+            # ⚠️ POR LA ESCALERA, Y SIN BAJAR MÁS DE LO QUE EL ARRANQUE PROMETIÓ.
+            #
+            # Forzar una lista es una restricción, así que muchos arranques no
+            # caben en el peldaño estricto: medido, los de la artrosis salieron
+            # entre `proporcion_minima_y_un_suplemento_mas` y
+            # `tope_de_visceras_higado_y_verdura_al_quintuple`. Si esto probara
+            # solo el estricto, el atajo no entraría casi nunca y parecería que
+            # funciona.
+            #
+            # ⚠️ SE RECORRE LA ESCALERA ENTERA, Y ESO SE DECIDIÓ MIDIENDO. La
+            # primera versión paraba en el peldaño en el que se generó el
+            # arranque, con el argumento de que «un atajo no puede entregar una
+            # forma peor que la que se midió». Suena bien y NO funciona: el
+            # peldaño guardado es el que necesitó el perro de REFERENCIA (20 kg,
+            # DER 950), y otro perro necesita otro. Medido, el arranque de la
+            # renal cocinada está guardado en `al_doble` y ese mismo perro por
+            # la búsqueda libre acaba en `al_triple`: con el tope puesto, el
+            # atajo se rendía UN peldaño antes de su respuesta y no entraba
+            # nunca -- 24,7 s contra 24,2 s, o sea nada.
+            #
+            # Lo que protege de verdad no es el tope: es que el peldaño que sale
+            # SE DICE, y que el BLOQUE 135 compara el peldaño con arranque
+            # contra el de la búsqueda libre, perro a perro.
+            # ⚠️ Y NO SE BAJA MÁS DE LO QUE EL ARRANQUE PROMETIÓ. El peldaño
+            # con el que se guardó es el que necesitó el perro de referencia, y
+            # restringiendo el catálogo se alcanza de sobra -- medido, la renal
+            # cocinada sale en el suyo (`al_doble`) cuando la búsqueda libre
+            # acaba UNO más abajo (`al_triple`), o sea que el atajo da mejor
+            # forma, no peor.
+            #
+            # El tope está porque sin él SÍ puede dar peor: medido, la obesidad
+            # salía por el atajo en `al_triple` teniendo `al_doble` guardado, y
+            # la búsqueda libre la daba en `al_doble`. Un atajo que entrega una
+            # ración peor formada que el camino normal no es un atajo.
+            #
+            # ⚠️ El peldaño estricto se escribe de DOS formas y hay que
+            # normalizar: la escalera lo llama `None` y los ficheros
+            # «estricto».
+            # ⚠️ Y CON PREMIOS EL TOPE NO VALE, porque el peldaño guardado es
+            # el de un perro que NO los lleva: los premios suben todos los
+            # mínimos por 1000 kcal (regla 3-bis) y esa ración necesita más
+            # sitio por derecho propio. Medido: a Cairo con premios al 10 % el
+            # atajo no entraba nunca con el tope puesto -- su menú del catálogo
+            # está guardado en el peldaño estricto -- y con la escalera entera
+            # entra y sale en el mismo peldaño que la búsqueda libre.
+            _hasta_aqui = (None if _hay_algun_premio(datos)
+                           else (_peldano or PELDANO_ESTRICTO))
+            for _marg_p, _supl_p, _clave_p in _escalera_de_relajacion(
+                    patologias=datos.patologias, etapa=datos.etapa_requisitos):
+                if time.time() >= _tope_arranque:
+                    break
+                _ok_pat, _g_pat = resolver_v2(
+                    datos.der_objetivo, datos.etapa_requisitos, _al_arranque, req,
+                    datos.peso_perro_kg, dosis_maxima_fabricante,
+                    margenes_categoria=_marg_p, max_suplementos=_supl_p,
+                    time_limit=min(tiempo_de_un_intento(),
+                                   SEGUNDOS_DE_UN_INTENTO_DEL_ARRANQUE),
+                    # ⚠️ LAS PATOLOGÍAS, QUE ES DE LO QUE VA ESTO. Un camino
+                    # nuevo que llame al motor sin pasarlas tira el tope entero
+                    # y el menú sale verde igual -- ya pasó en la edición.
+                    patologias=datos.patologias,
+                    # ⚠️ Y `con_hidratos`, QUE SE ME OLVIDÓ Y LO CAZÓ EL BLOQUE
+                    # 127: «el dueño dijo que NO quiere hidratos y el menú de la
+                    # pancreatitis lleva 215 g de arroz».
+                    #
+                    # La lista de arranque de una pancreatitis los LLEVA -- se
+                    # generó sin la pregunta, y esa patología los pide -- así
+                    # que al restringir con ella el arroz seguía siendo
+                    # candidato, y sin este argumento el solver volvía a
+                    # deducirlo de la patología en vez de obedecer al dueño. Lo
+                    # que el dueño excluye a mano no se toca JAMÁS (regla 4).
+                    #
+                    # Es, otra vez, la familia que este repo tiene escrita desde
+                    # agosto: «si un camino nuevo llama al motor, tiene que
+                    # pasarle `patologias`». Aquí el campo era otro y el olvido
+                    # el mismo.
+                    con_hidratos=getattr(datos, "con_hidratos", None),
+                    restringir_especie=datos.restringir_especie,
+                    modo_de_preparacion=_modo_arranque,
+                    excluidos=excluidos or None,
+                    evitar_especies=datos.evitar_especies or None,
+                    presupuesto_semanal_restante=datos.presupuesto_semanal_restante,
+                    peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
+                    peso_objetivo_kg=_peso_de_referencia(datos)[0],
+                    kcal_de_premios=_kcal_de_premios(datos),
+                    gramos_fijos=_premios_en_el_plato(datos, al) or None,
+                )
+                _sirve = bool(_ok_pat and _g_pat)
+                _ficha_pat = None
+                if _sirve:
+                    _ficha_pat = verificar_v2(_g_pat, al, req, datos.der_objetivo,
+                                              datos.etapa_requisitos,
+                                              peso_referencia_kg=_peso_de_referencia(datos)[0])
+                    # ⚠️ Y LOS TOPES DE LA PATOLOGÍA, QUE EL SEMÁFORO NO VE. Son
+                    # los requisitos de un perro SANO: un renal con 3084 mg de
+                    # fósforo sale VERDE. Sin esto el atajo devolvería un menú
+                    # que `_garantizar_verificado` tira, y el endpoint devolvería
+                    # ESE RECHAZO -- que es el fallo del 13 de septiembre con la
+                    # otra vía rápida, el cachorro de raza grande sin menú.
+                    _sirve = (_es_verde(_ficha_pat["semaforo"])
+                              and not _la_via_rapida_rompe_un_limite(
+                                  _g_pat, al, req, datos, _peso_de_referencia(datos)[0]))
+                if not _sirve:
+                    if (_clave_p or PELDANO_ESTRICTO) == _hasta_aqui:
+                        break       # ya se llegó a donde el arranque prometía
+                    continue
+                _problemas_pat = _seguridad_completa(_g_pat, al, datos.der_objetivo,
+                                                     datos.etapa_requisitos, datos.patologias,
+                                                     peso_perro_kg=datos.peso_perro_kg)
+                _resp_pat = {
+                    "factible": True, "menu": _g_pat, "ficha": _ficha_pat,
+                    "problemas_seguridad": _problemas_pat,
+                    "kcal_total": sum(al[n]["energia"] * g / 100 for n, g in _g_pat.items()),
+                    "gramos_total": sum(_g_pat.values()),
+                    "via_arranque_patologia": True,
+                    # ⚠️ EN QUÉ PELDAÑO SALIÓ, SIEMPRE. Las dos vías rápidas de
+                    # arriba no lo dicen porque no bajan de peldaño -- sirven un
+                    # menú ya hecho --, y ésta sí baja. Bajar está permitido
+                    # (regla 3); lo único que no lo está es bajar en silencio.
+                    "peldano": _clave_p or PELDANO_ESTRICTO,
+                    "peldano_lo_eligio_el_profesional": False,
+                }
+                if _clave_p:
+                    _resp_pat["se_relajo"] = [_clave_p]
+                    _falta_pat = _aviso_de_lo_que_falta(_g_pat, al, datos.categorias_excluidas)
+                    if _falta_pat:
+                        _resp_pat["aviso_composicion"] = _falta_pat
+                return _resp_pat
+            # Si ningún arranque llega a verde, se sigue abajo con la búsqueda
+            # libre de siempre. Medido: al toy de 1,5 kg con premios le pasa.
 
     # Vale en cualquier modo: en "aprovechar" se suma a lo que ya venía por
     # `nombres_alimentos`, y en "personalizar" convive con lo forzado -- lo
@@ -5916,6 +6219,38 @@ def _por_que_no_cabe(nombre, al, der, peso_perro_kg=None):
             return (f"{nombre} lleva mucha vitamina D, y en un perro de este tamaño el "
                     f"tope diario se alcanza con unos {cabe:.0f} g.")
     return None
+
+
+def _decir_si_los_hidratos_no_cupieron(resultado, al, datos):
+    """Si el dueño los pidió y el plato no lleva ni uno, se dice.
+
+    ⚠️ SE MIRA EL PLATO, NO LA MAQUINARIA (19 de septiembre de 2026). Podría
+    leerse el interruptor interno del solver (`_suelo_de_hidratos_fuera`), y
+    sería una comprobación sobre CÓMO se resolvió -- que se cae el día que haya
+    un camino más, y ya hay cuatro (el catálogo, la variante, el arranque y la
+    búsqueda libre). Lo que se afirma aquí es un HECHO sobre el menú entregado:
+    «has pedido hidratos y no llevan ninguno».
+
+    Y hace falta de verdad: medido, el toy de 1,8 kg pidiendo hidratos sale CON
+    MENÚ y SIN hidratos —el suelo es un número nuestro y `resolver` lo suelta
+    antes que dejarlo sin comer (regla 3)—, así que sin esto la respuesta a su
+    dueño sería exactamente igual que si no hubiera contestado nada.
+    """
+    if not isinstance(resultado, dict) or not resultado.get("menu"):
+        return resultado
+    if getattr(datos, "con_hidratos", None) is not True:
+        return resultado
+    from motor_completo import CAT_HIDRATOS as _CH
+    if any(al.get(n, {}).get("categoria") == _CH for n in resultado["menu"]):
+        return resultado
+    _texto = ("Has pedido que el menú lleve arroz, patata, avena o quinoa y este no lleva "
+              "ninguno: con este perro no salían las cuentas metiéndolos. El menú cumple "
+              "igual todo lo que tiene que cumplir.")
+    resultado["hidratos_pedidos_que_no_caben"] = True
+    resultado.setdefault("problemas_seguridad", [])
+    if isinstance(resultado["problemas_seguridad"], list):
+        resultado["problemas_seguridad"].append(_texto)
+    return resultado
 
 
 def _con_aviso_composicion(resultado, al, datos):
@@ -7589,7 +7924,7 @@ SELLOS_DE_LOS_DATOS = {
         # 11 sep: FUSION. El catalogo que sale de aqui no es el de ninguna de las dos ramas -- lleva las `restricciones_patologia` de la rama de patologias Y el `fuentes_id` y los huecos declarados de la rama del catalogo direccionable --, asi que el sello se ha RECALCULADO con el metodo de /verificar (json.dumps con sort_keys y ensure_ascii, no el SHA del fichero crudo). Las dos notas de abajo se conservan enteras a proposito: son el registro de los dos trabajos que aqui se juntan.
         # 8 sep (4): "Atun" y "Caballa" ganan `restricciones_patologia` para la patologia nueva `reaccion_adversa_alimento` -- SACN5 5a ed., cap.31, Tabla 31-3: «Vasoactive amines -- Avoid foods that contain certain fish ingredients (e.g., tuna, mackerel, skipjack, bonito)». Ningun valor nutricional cambia: es el mismo mecanismo por el que el Platano no entra en un menu de diabetes. El "bonito" y el "listado" (skipjack) no estan en el catalogo. Sello recalculado a proposito.
         # 8 sep (3): SIN CAMBIOS, y hubo que REVERTIR un cambio equivocado del mismo dia. Se puso aqui "20a15984bafa669f" creyendo que el sello estaba roto en main -- NO lo estaba: estos sellos NO son el SHA del fichero crudo sino el del CONTENIDO CANONICO (json.dumps con sort_keys y ensure_ascii), a proposito, para que reordenar claves o cambiar la indentacion no dispare una falsa alarma. Se comparo contra el crudo, que da otro hash, y de ahi salio una "correccion" que rompio el sello de verdad. El BLOQUE 12 la cazo. La leccion no es el numero: es que el metodo de comprobacion hay que leerlo antes de usarlo.
-        "alimentos_v3_final.json":      "02381cf8a0aa428e",   # 18 sep (madrugada): TODA FICHA DICE SI ES ALIMENTO O SUPLEMENTO. No cambia ni una cifra nutricional -- se anade el campo `tipo` a las 76 que no lo tenian, 60 de ellas las cocidas y 6 crudas de siempre. NO se escribe a mano: se DERIVA de la categoria contra `constructor.CAT_SUPLEMENTO`, y la derivacion se valida sola (de las 145 que ya lo tenian, ninguna la contradice). ⚠️ POR QUE IMPORTA: `catalogo-app-y-motor.spec.js` comprueba que la app conozca todos los alimentos del motor --si no, salen como «Extras» con la instruccion de los aceites y las semillas-- y para saber cuales mirar FILTRA POR ESE CAMPO. Con 76 fichas sin el, de las 72 cocidas solo vigilaba 4: pasaba por no mirarlas, no porque la app las conociera. Al ponerlo salieron 64 que la app no tenia en su respaldo. Lo vigila el BLOQUE 19 en las dos direcciones, comprobado con el fallo puesto.   # 18 sep (noche): «COCIDO» NO ES UN METODO, SON CINCO, Y MEZCLARLOS DA OTRO ALIMENTO. El guardia de preparaciones del BLOQUE 104 daba 37 rojos y ninguno era un dato malo: con las 72 fichas de comida cocinada entran las filas que las fuentes publican de verdad --USDA solo tiene las visceras «cooked, braised» y el pescado «dry heat», BEDCA «al horno» y «a la plancha», CIQUAL «cuit a la vapeur»-- y la tabla de equivalencias solo sabia de hervir. Abrir la mano habria sido lo peor: la trucha al vapor de CIQUAL va a 19 g de proteina y 99 kcal y la de USDA a fuego seco a 23,8 y 168. Ahora cada ficha cocida acepta EL METODO DE SU PROPIA FILA BASE, DERIVADO de la fila que ya declara. ⚠️ LO QUE ENCONTRO: (1) TRES fichas mandaban al dueno una coccion distinta de la de sus cifras --bacalao y lenguado decian «al vapor» saliendo de la fila AL HORNO de BEDCA, y el salmon lo mismo saliendo de LA PLANCHA--, o sea un plato mas aguado del que el menu calcula; ninguna cifra se toca, lo que estaba mal era el texto. (2) «Vaca para guisar cocida» tenia DOS filas dentro: su agua y su energia de ciqual:6230 «Boeuf, a bourguignon ou pot-au-feu, cuit» y once celdas de ciqual:6151 «Boeuf, jarret, bouilli», que ni estaba en sus identificadores; rehechas las once contra la fila que declara, y con ellas las quince fracciones, porque al cambiar la proteina (31,0->34,0) y la grasa (4,1->4,05) el aminograma llevaba el factor viejo. (3) Tres fichas citaban una fila de USDA que no declaraban. || Y LAS 29 CELDAS QUE VIENEN DE UNA FILA DE OTRA COCCION SE REBASAN POR MATERIA SECA, que es la salida 1 de la P-51 --la que ese documento llama «correcta en espiritu» y daba por imposible porque nuestra instantanea no guarda el agua de la fila donante: las fuentes SI la publican. Es la misma regla del aminograma leida para la coccion: un mineral vive en la materia seca. Trucha x0,7992 · bacalao x0,8910 · lenguado x0,7965 · salmon x0,8548 · calabaza x0,3763. El fosforo de la trucha pasa de 270 a 215,8 mg y su vitamina D de 19 a 15,2. Declaradas en `celdas_de_otra_coccion` con las dos aguas, y el BLOQUE 104 REHACE la cuenta. Lo que sigue abierto es el LAVADO, que ninguna fuente cuantifica: DATOS_QUE_FALTAN.md. || Y 23 fichas tenian la ENERGIA MUDA, sin decir de donde sale -- que no es solo una celda sin auditar: el BLOQUE 71 elige con que factores de Atwater compararla segun su fuente, porque USDA publica sus kcal con los ESPECIFICOS (4,27 y 9,02) y no con los 4 y 9 de FEDIAF. Medido: USDA 1,045 contra 4/9 y 1,001 contra los suyos; CIQUAL 1,000 y BEDCA 1,012 contra 4/9. Si la energia va muda se compara con los equivocados y nadie lo ve. Si el catalogo debe GUARDAR la kcal de FEDIAF en vez de la publicada es la P-53.   # 18 sep (tarde): LOS AMINOGRAMAS DE LAS FICHAS COCIDAS, que nacieron sin ellos porque la fila de su fuente no los publica. Lo cazo el BLOQUE 27: el 20 % de la proteina de un menu venia de alimentos SIN aminograma y el motor cuenta un hueco como CERO, asi que el menu se aleja de lo que dice el semaforo Y EN VERDE. 14 fichas lo reciben de su hermana cruda y 3 (cerdo, ternera y solomillo de vaca, que no tienen hermana) de la fila composite de USDA -- las tres comprobadas antes en materia seca. NO SE COPIAN: se transfieren POR GRAMO DE PROTEINA, que es la regla de UNIDADES.md, y se escriben ENTEROS o no se escriben (la leccion de la zanahoria del 13 de septiembre). ⚠️ Y SIETE SE REHICIERON PORQUE SU COCIENTE NO CUADRABA CON EL DE SU CRUDA: el corazon, el higado y la molleja de pavo cocidos daban los TRES exactamente 2,525 de Leu/Ile, y tres organos distintos con el mismo aminograma es la huella de una fila prestada. Cocer no cambia de que esta hecha la proteina, asi que el cociente entre dos aminoacidos es el mismo crudo que cocido y la que estaba mal era la cocida. ⚠️ Y CUATRO HUECOS DECLARADOS que salieron SOSPECHOSOS al rellenar los acidos grasos de 46 de las 50 carnes: el linoleico y el linolenico del Pavo (bedca:2285 es su unica fuente y su fila NO trae esas columnas) y del Corazon de conejo (que no declara ninguna fuente: es un proxy). El cero no cambio -- cambio que ahora se nota.   # 18 sep: EL AGUA DEL CRUDO DECLARADA EN DIEZ FICHAS COCIDAS (humedad_crudo_g_100g + humedad_crudo_fuente, y humedad_crudo_aproximada en tres). Ninguna cifra nutricional cambia: es lo que permite calcular CUANTO CRUDO HAY QUE COMPRAR para los gramos cocidos del menu. Las otras 58 no lo necesitan porque su hermana cruda esta en el catalogo y su agua se lee de ahi. Medido: el factor va de x0,20 (copos de avena) a x1,99 (pulpo). Las tres aproximadas van marcadas con su motivo: su fila cocida es una MEDIA DE CORTES o de otro animal, y la fuente no publica una cruda equivalente.   # 18 sep: EL CATALOGO COCINADO, de 8 fichas a 71. Elena: «hay que mirar TODOS los alimentos... tienes que tener un catalogo de alimentos igual de rico que el que tenemos ahora, pero para alimentos cocinados», y despues «tienes que meter mas pescado» y «no hay nada de cerdo ni de ternera en carne muscular». Ninguna cifra escrita a mano: `construir_cocidos.py` siembra el esqueleto con sus `fuentes_id` y los numeros los pone `auditar_composicion.py --cerrar` bajando la cadena de mandato, con la procedencia celda a celda. ⚠️ CADA FICHA SE ANCLA CONTRA LA FILA **CRUDA DE SU MISMA FUENTE** y se mide en MATERIA SECA, que es lo unico que delata un emparejamiento malo: el atun claro (usda:172006) da 94,0 % de proteina y 1,9 % de grasa sobre materia seca y su fila cruda hermana (usda:175159) da lo mismo, clavado; el pulpo (usda:174249) 75,5/5,3 igual que usda:174218; la dorada (ciqual:27031) 75,6/18,9 contra 76,0/18,5 de ciqual:26088. ⚠️ EL CERDO EXISTE COCIDO Y NO EXISTE CRUDO, y es el unico alimento del catalogo que va solo en un modo por una razon que no es de dato: la enfermedad de Aujeszky es «poco frecuente pero mortal» y «la mayoria de los casos en perros son el resultado de la ingestion de carne de cerdo CRUDA infectada» (Ettinger), asi que cocinarla quita exactamente ese motivo. El HIGADO de cerdo NO entra ni cocido: su cobre tiene disponibilidad «essentially zero» (SACN5 cap.6). ⚠️ RECHAZADAS CON SU MEDIDA, y estan escritas en `cocidos_propuesta.json`: la SARDINA (la fila «grillee» de CIQUAL NO PUBLICA EPA NI DHA, que es justo para lo que se quiere un pescado azul, y su fila cruda declara 2,2 g de cenizas contra 1,24 de la asada -- una es el pez entero con espina y la otra un filete; la «asada» de BEDCA suma 68,0 % de proteina MAS 86,5 % de grasa sobre su propia materia seca, o sea 154 %, imposible), el BOQUERON (solo hay fila FRITA, y freir no es un metodo de coccion mas: es anadir aceite), la LUBINA (21,1 % de grasa en seco contra 15,6 de la de cria y 8,4 de la salvaje, o sea que se pasa de las dos filas crudas que publica la fuente) y el PULPO DE BEDCA (102,2 % de proteina sobre su propia materia seca). ⚠️ Y UNA FICHA QUE SE PERDIO Y SE HA DEVUELTO: «Riñon de vaca cocido» existia desde el 17 de septiembre y desaparecio al construir las 54 nuevas, sin que nadie lo dijera -- `accesibles.py` la seguia nombrando y el motor la filtraba en SILENCIO. La cazo el BLOQUE 12, que es justo para lo que esta. Vuelve con sus mismas cifras. // 17 sep (noche): LOS CINCO PRIMEROS HIDRATOS, en una categoria nueva `Cereales y tuberculos`: Arroz blanco cocido, Arroz integral cocido, Patata cocida, Copos de avena cocidos y Quinoa cocida. Las cinco se dan COCIDAS y se PESAN COCIDAS --al reves que el Boniato, la Berenjena y el Esparrago verde, que se dan cocidos y se pesan CRUDOS porque su composicion sale de la fila cruda--, y lo declaran en `se_pesa`. Ninguna cifra se escribe a mano: se siembra el esqueleto con sus `fuentes_id` y las rellena `auditar_composicion.py --cerrar` bajando la cadena de mandato, con la procedencia celda a celda y la transferencia por gramo de proteina y de grasa. ⚠️ LO QUE ENCONTRO COMPROBARLAS, que es por lo que nace `auditar_cocinados.py`: (1) `bedca:2661` se llama «Arroz, hervido» y declara 4,12 % de agua, MENOS que su propia fila de arroz crudo (5,9 %) -- describe arroz SECO con el nombre del hervido, y sus cifras lo confirman (proteina 7,54 contra 3,06 y 2,69; fosforo 100,8 contra 35 y 43), asi que se descarta ENTERA y se baja al mandato 3; la misma base ACIERTA con el integral (`bedca:1009`, 71,8 % de agua), o sea que es un defecto de UNA fila. (2) `bedca:1009` declara 9,8 ug de selenio y su propia fila cruda da 2 -- quince veces mas despues de hervir, y hervir no crea selenio --, asi que el selenio se baja a `usda:169704` (5,8), que si es coherente con su cruda; importa la direccion, porque el selenio tiene MINIMO en FEDIAF y sobredeclararlo haria creer al motor que esta cubierto. (3) USDA publica 0,015 g de DHA y 0,003 de araquidonico en la quinoa y una planta no sintetiza ninguno de los dos; CIQUAL, que los mide, da «< 0,01», asi que van a cero DECLARADO -- y que es un artefacto de esa fila lo dice la propia USDA en la zanahoria, la manzana y la calabaza, donde publica 0,0. Las cinco dudas que quedan se QUEDAN con la cifra de la fuente que manda y van escritas en `nota_datos`, porque en las cinco quedarse corto es el lado seguro. Y lo que NO es un fallo: las filas cocidas de CIQUAL son de alimento hervido en agua abundante y ESCURRIDO y las de USDA por absorcion -- se lee en sus cenizas (0,13 g contra 0,41 g en el arroz blanco). Toxicos comprobados: ninguno de los cinco esta en la lista de FEDIAF §7.7 ni en la de la WSAVA ni en la Tabla 40-3 de SACN5, y la tabla de lo permitido pone «Potatoes, white» y «Rice» entre lo bajo en oxalato; la solanina, el oxalato de la quinoa y el arsenico del arroz quedan en PREGUNTAS_ABIERTAS.md P-50, escritos y sin aplicar. # 17 sep: EL BONIATO SE DA COCIDO Y SE PESA CRUDO, Y NADIE LO DECIA. Tres fichas --Boniato, Berenjena y Esparrago verde-- llevan desde siempre `preparacion: cocido` con la nota «DAR SIEMPRE COCIDO, no crudo», y su composicion sale de la fila CRUDA de la fuente que manda: `bedca:731` se llama literalmente «Boniato, CRUDO» (422,5 kJ = 101 kcal, los 101 de la ficha clavados). O sea que el menu dice 616 g de un alimento que hay que cocinar y NO dice si esos gramos son antes o despues. Medido contra USDA: 100 g de boniato HERVIDO son 76 kcal y 100 g de boniato CRUDO son 101, asi que en el peor menu del catalogo la diferencia son 154 kcal -- y el boniato aparece en 27 de los 216 precalculados (mediana 43 g, maximo 616) y es el grueso del plato de la pancreatitis (389 g). No se toca ninguna cifra: se DECLARA la base (`se_pesa`, con su porque) y se dice donde lo lee quien compra y quien pesa, por el campo `aviso_al_comprar`, que ya sale por las dos puertas desde el 13 de septiembre. Lo vigila el BLOQUE 123. # 15 sep (noche): LAS ETIQUETAS DE LOS SUPLEMENTOS, UNA A UNA. 62 celdas en 12 fichas, y el patron es SIEMPRE el mismo: la etiqueta declara la SAL o el ESTER de la vitamina y el catalogo anoto el numero como si fuera la vitamina. Es la trampa que el repo ya tenia escrita para los minerales (el oxido de zinc de `sacn5_fuentes_de_minerales.json`) y para la que ya existia la tabla auditada contra el PDF: la VII-14 de FEDIAF. Cloruro de colina x0,75 (siete fichas), D-pantotenato calcico x0,92 (siete), clorhidrato de piridoxina x0,82 (tres), mononitrato de tiamina x0,81 (dos) y la vitamina E convertida por ACTIVIDAD a mg de d-alfa-tocoferol, que es la unidad en la que esta escrito el minimo que aplica el motor. TRES fallos de unidad de mil veces en el FOLATO (napfcheck 2->2000 ug y las cinco V-INTEGRA), que es la cifra en miligramos dentro de una celda que va en microgramos. SEIS fichas que declaraban TAURINA o L-CARNITINA en su etiqueta y la tenian como hueco (hasta 4.000 mg/100 g). Y la ENERGIA A CERO en ocho suplementos que publican su proteina y su grasa brutas: el peor es el polvo de sangre, 92 g de proteina y 0 kcal, o sea proteina que no contaba en el DIVISOR de todos los requisitos. Ademas: el yodo del alga, cuyo propio fabricante publica 600 mg/kg en aleman y 790 en ingles (y los distribuidores 339 y 760) -- se toma la mas alta porque el yodo es tope cronico y sobreestimar el contenido hace que el solver meta menos gramos, que es el lado seguro; y sus cuatro minerales pasan a hueco porque salian de una hoja cuya ceniza bruta contradice a la del fabricante. NO se ha tocado el Pets Purest, que lo paso la usuaria con foto de la etiqueta. # 15 sep: LOS AMINOGRAMAS QUE FALTABAN EN LAS VERDURAS, desde USDA -- que es la unica fuente que publica los 12 aminoacidos y por eso es el mandato para ellos. ONCE fichas los reciben (judia verde, pimiento rojo, boniato, champiñon, col lombarda, coliflor, esparrago verde, lechuga, repollo, tomate en pure y datil), y CUATRO se quedan en hueco VERIFICADO (alcachofa, rucula, frambuesa y cardo: USDA tiene su fila pero no trae los doce, y un aminograma se escribe ENTERO o no se escribe -- la leccion de la zanahoria del 13 de septiembre). NO SE COPIAN: se transfieren POR GRAMO DE PROTEINA, con la fila literal escrita en `composicion_fuente` para que se pueda rehacer. POR QUE hacia falta: la proteina de un menu que el motor NO PUEDE ver en aminoacidos llegaba al 11,16 % en una variante del catalogo (512 g de boniato sin aminograma), y el BLOQUE 27 exige que no pase del 5 % -- pero lo medía sobre CUATRO menus generados, no sobre los 216 del catalogo, asi que no lo veia. Tras esto: media 0,66 % y peor 6,04 %. Comprobado ademas que en NINGUNA ficha los doce aminoacidos suman mas que su propia proteina. # ⚠️ 14 sep: LA HUMEDAD DE CADA FICHA. Ningun valor nutricional cambia: se anaden `humedad_g_100g` + `humedad_fuente` a 79 fichas (las otras 65 ya la tenian) y `humedad_hueco` a 18, que son suplementos en polvo sin fila en ninguna base y cuya etiqueta no la declara. POR QUE hacia falta: el catalogo va en gramos de alimento tal cual se da y casi toda fuente que no sea FEDIAF publica en % de MATERIA SECA, y sin humedad no hay materia seca -- asi que el supuesto que sostiene 135 limites del motor («These conversions assume an energy density of 16.7 kJ (4.0 kcal) ME/g DM», FEDIAF §3.2.1) NO SE PODIA NI COMPROBAR. Ahora se puede, y sale que no: una racion de este motor va a 5,20 kcal/g de materia seca (4,05-6,18 en los 216 menus), o sea que esas 135 cifras van un ~23 % flojas -- entre ellas los 13 maximos de FEDIAF que solo se publican en base materia seca, SIETE de ellos legales de la UE. NO SE APLICA NADA TODAVIA: esta medido lo que costaria (8 de 8 perros de referencia siguen con menu) y la decision es la P-38 de PREGUNTAS_ABIERTAS.md. De donde sale cada humedad: 63 de la cadena de mandato con el `fuentes_id` que la ficha ya declaraba (y se rehacen sin red contra `fuentes_instantanea.json`), 10 de la columna «DM [%]» de la Tabla 1 de Köber -- la MISMA fila de la que ya sale su calcio, lo que amplia el mandato 2 y la ampliacion va escrita en `fuentes_de_composicion.json` --, 5 aceites por cota de composicion (99,5 g de grasa por 100 g dejan medio gramo para todo lo demas, agua incluida) y 1 por el proxy ya declarado del corazon de conejo. Lo vigila el BLOQUE 111 con el fallo puesto de seis formas. || 13 sep (noche, 4): LOS DOS CASOS DE ESPECIE, ARREGLADOS CON LAS FUENTES, y los dos resultaron ser problemas DISTINTOS de lo que parecian. (1) «Riñon de ternera» RENOMBRADA a «Riñon de vaca» sin tocar una cifra: cuadra con ciqual:40402 «Rognon, boeuf, cru» en TRECE CELDAS EXACTAS (prot 17,1 · grasa 2,65 · hierro 7,04 · potasio 236 · sodio 169 · zinc 1,52 · selenio 118 · vitD 1,05 · B12 21,1 · magnesio 16 · calcio 11,2 · fosforo 243 · energia 95,9/92,3), mientras usda:174356 da 99/15,76/3,12 y bedca:1069 da 106,5/16,8/4,32. Renombrar y NO rellenar es la regla: traer los numeros de la otra especie mezclaria dos mediciones en una columna. Es el cuarto caso de esta familia (bazo, pancreas y pulmon «de ternera» se renombraron en agosto y septiembre). El catalogo se queda SIN riñon de ternera, y eso es sembrar una ficha nueva, no un renombre. (2) «Pulmon de vaca» NO habia que renombrarla: SI es de vaca (cuadra con usda:168628 en prot, grasa, hierro 7,95, potasio 340 y vitA 14). Lo que estaba mal era UNA CELDA: su vitamina D 11, que USDA no publica para el pulmon y que es EXACTAMENTE la que bedca:2300 da al pulmon de TERNERA. No era una ficha con nombre equivocado sino una CIFRA en la ficha equivocada, asi que se ha movido: la de vaca pasa esa celda a hueco declarado y «Pulmon de ternera» la recibe de bedca:2300 con `value_type` AR. Esto CIERRA la pregunta que esa ficha llevaba escrita desde el 8 de septiembre. // 13 sep (noche, 3): EL AVISO QUE LEE QUIEN COMPRA. Campo nuevo `aviso_al_comprar`, y nace de una frase de Elena que describe el fallo entero: «a lo mejor la persona que vaya a comprar al supermercado pide cerebro de ternera y dice: no tengo, pero tengo de vaca. Y problema». Sacar la ficha del catalogo NO tapa eso -- LO EMPEORA: antes estaban las dos en la lista y la diferencia se veia, y ahora solo aparece «de ternera» y quien la lea no tiene forma de saber que la otra no vale. La sustitucion pasa en el mostrador, donde el motor no esta, asi que lo unico que puede hacer es DECIRLO donde se lee. Sale por las DOS puertas, que es la forma del BLOQUE 64 con los avisos de patologia: `problemas_seguridad` -- el canal que la app ya pinta en los ocho caminos, asi que no hay que tocar la app -- y `GET /alimentos`, que es la que lee quien elige el alimento A MANO antes de que haya menu. Con solo la primera, ese camino no avisa hasta el final; con solo la segunda, quien deja elegir al motor no lo lee nunca. Lo vigila el BLOQUE 51 con el fallo puesto de cuatro formas, y exige ademas que una ficha con una condicion LEGAL en su `nota_datos` tenga aviso: una condicion que solo vive en una nota tecnica no la lee quien va a la carniceria. // 13 sep (noche, 2): FUERA «CEREBRO DE VACA», Y NO ES NUTRICION SINO LEY. El encefalo bovino de mas de 12 meses es material especificado de riesgo -- Reg. (CE) 999/2001 anexo V en su version CONSOLIDADA (comprobada en EUR-Lex, no en el texto de 2001, que decia SEIS meses): «the skull excluding the mandible and including the brain and eyes, and the spinal cord of animals aged over 12 months» --, o sea material de CATEGORIA 1 (Reg. (CE) 1069/2009 art. 8: «Category 1 material shall comprise […] (i) specified risk material»), y la comida para mascotas sale de categoria 3 (art. 35, que ademas trae su propio apartado para el petfood CRUDO, que es lo que calcula este motor). Una vaca pasa de 12 meses por definicion, asi que su ficha sale; la de TERNERA se queda porque la ternera espanola se sacrifica por debajo del año, con la condicion escrita en su propia ficha. Medido antes: aparecia en 0 de los 216 menus. Estar fuera del automatico (que ya lo estaban las dos desde el 7 y el 8 de septiembre, por el DHA) NO bastaba: lo ilegal tampoco se puede elegir a mano. Los otros tres candidatos se miraron y ninguno esta afectado, cada uno por su motivo: el cuello de ternera porque el umbral de la COLUMNA son 30 meses y ademas la norma excluye las apofisis cervicales; el pecho con hueso porque costillar y esternon no son columna ni medula; y las costillas de cordero porque para ovino la norma cubre solo craneo, encefalo, ojos y medula, NO la columna. Lo vigila el BLOQUE 51 con el fallo puesto de tres formas. // 13 sep (noche): LAS VISCERAS CONTRA SUS FUENTES, que no se habian barrido. SIETE CEROS MUDOS pasan a hueco declarado y los siete AFLOJABAN un tope cronico: la vitamina D del RIÑON DE CORDERO (BEDCA `TR`, USDA sin cifra, CIQUAL `-`: tres fuentes y ninguna la mide; que bebio de BEDCA lo prueba su vitamina E, 0,43, clavada), el YODO del pulmon de vaca, del pulmon de cordero y del bazo de cordero (USDA no publica yodo de NADA, BEDCA no trae esa columna en los pulmones y no tiene bazo), la vitamina E de los dos pulmones, y la vitamina D del HIGADO DE CONEJO, que era una FUGA: 1,2 es exactamente lo que BEDCA da al higado de VACA. Una se cierra con cifra: el timo de ternera, 0,25 de ciqual:40304 «Ris, veau, cru» (ris de veau ES el timo de ternera; BEDCA no tiene timo y USDA 172542 no publica su vitamina D). Tres indices que faltaban, y son la causa de que esto fuera invisible porque el barrido lee `fuentes_id`: higado de vaca bedca:1053 (sus 10250 ug de vitamina A son de BEDCA y no se comparaban con nada que los publique -- USDA da 4968 en la fila que la ficha declaraba, 2,06x, y en un higado el conflicto de convenio NO lo explica porque no hay caroteno), pulmon de cordero bedca:2299 (sus 12 ug de vitamina D no salian de ninguna fila declarada), e higado de conejo ciqual:40110, que CIERRA la pregunta de la unica ficha del catalogo sin ninguna procedencia: sale de ahi, con proteina, grasa y vitamina A (4530) exactas. Campo nuevo `hueco_verificado`, el gemelo de `cero_verificado`: `sin_dato` era una lista pelada y «las tres fuentes miradas, ninguna lo mide» se veia igual que «nadie ha mirado». Lo vigila el BLOQUE 100 con las cinco formas de contradecirse. Y dos fichas con cifras de OTRA ESPECIE que NO se tocan porque renombrar es decision de producto: el riñon de ternera es un riñon de BUEY (identidad exacta de ciqual:40402, y su vitamina D 1,05 es la de esa fila) y el pulmon de vaca lleva la vitamina D del pulmon de TERNERA (bedca:2300 da 11 y 14, las nuestras exactas) -- esto ultimo CIERRA la pregunta que esa ficha llevaba escrita desde el 8 de septiembre. // 13 sep (tarde): LA VITAMINA D, Y EL CERO FALSO QUE SOSTENIA UN VERDE. Nueve celdas que la fuente que MANDA no mide se cierran bajando por la cadena de mandato (la regla de `fuentes_de_composicion.json`), con la fila literal escrita: siete pescados desde CIQUAL -- merluza 2,15 / bacalao 1,41 / lubina 5,59 (USDA da 5,6 por su cuenta) / lenguado 0,75 / pulpo 0,5 / calamar 0,36 / sepia 0 -- y DOS ACEITES desde USDA, que eran los peores: el hueco de vitamina D del aceite de girasol se imputaba a 5 ug (lo que declara el huevo de pato) y el de vitamina A del de cacahuete a 591 ug de retinol (lo que declara la yema), siendo los dos aceites de semilla refinados. BEDCA lo dice ella misma cruzado: `LZ` (cero logico) a la vitamina A del de girasol y `LZ` a la vitamina D del de cacahuete. Y lo que encontro de paso: la ficha `Pescadilla` declaraba 0 ug de vitamina D sin que ninguna fuente lo diga (BEDCA da la celda vacia en sus TRES filas de merluza), y era LO UNICO que sostenia el menu del adulto de 20 kg con ocho especies fuera del BLOQUE 9 -- medido: sale con 0,0 y no sale con 1,0 / 2,15 / 3 / 4 / 5 / 6 / 8. Es aritmetica y no eleccion de cifra: con esas ocho fuera quedan 108 alimentos, casi todos pescado, y 17 pasan ELLOS SOLOS el tope cronico de 20 ug/1000 kcal (la merluza, con 2,15 ug y 65 kcal/100 g, sale a 33). Tres marcas que NO son un numero: el `TR` vacio de BEDCA, el `-` de CIQUAL y el `< X` de CIQUAL, que es limite de deteccion. Tres fichas se quedan en hueco porque ninguna fuente publica su especie: Bacaladilla, Gamba roja y Pescadilla. // 13 sep: EL CATALOGO CONTRA SUS FUENTES DE COMPOSICION, celda a celda, por primera vez. 318 celdas reciben la CIFRA de la fuente que manda (sobre todo acidos grasos de carne, huevo y verdura, que estaban a 0: el muslo de pollo declaraba 0 g de linoleico y USDA da 3,05, y el linoleico es un requisito de FEDIAF con minimo), 418 ceros pasan de MUDOS a declarados en `cero_verificado` con su fila de origen (78 son la fibra de la carne y el pescado, que es un cero de verdad), y 65 ceros que la fuente declara SIN CIFRA (`TR` con la celda vacia en BEDCA) pasan a `sin_dato` -- un hueco no es un cero. Dos errores de dato corregidos: el manganeso de la pechuga de pavo (0,6 -> 0,006 mg, un factor 100 contra FDC 174515, que la propia ficha ya citaba) y el agua del timo de ternera (67,8 -> 79,16, que era la del timo de VACA: cerraba la pregunta que su `humedad_nota` dejaba abierta). Y dos emparejamientos malos: «Perca» apuntaba a BEDCA 831 «Perca, AL HORNO» en una ficha cruda, y «Pato» tenia id de USDA cuando sus cifras son exactas de BEDCA 976. Los aminoacidos y los acidos grasos NO se copian: se transfieren por gramo de proteina y de grasa (regla de UNIDADES.md). Cada celda lleva su procedencia en `composicion_fuente` y se rehace desde `fuentes_instantanea.json`. Lo vigila el BLOQUE 100. // 11 sep (noche): TRES FICHAS DE HUESO CON EL CALCIO Y EL FOSFORO DIEZ VECES POR DEBAJO, corregidas al rehacerlas contra la Tabla 1 de Köber 2017 (`auditar_kober.py`, BLOQUE 98). Cuello de ternera 731->7310 mg de calcio y 338->3380 de fosforo, Pecho de ternera con hueso 427->4270 y 199->1990, Laringe de vacuno 66->660 y 44->440. Sobrevivieron porque la Tabla 1 de Köber mezcla DOS sistemas de unidades y su cabecera declara uno solo, y porque lo que se habia comprobado era el RATIO Ca:P, que un error x10 en los dos numeros no rompe. Medido: "Pecho de ternera con hueso" entraba en 93 de los 216 menus precalculados y 55 de ellos habrian pasado el MAXIMO de calcio de FEDIAF (el peor, 9408 mg/1000 kcal contra un tope de 4500 en cachorro). Catalogo de menus regenerado con los valores buenos.
+        "alimentos_v3_final.json":      "81c9577fe82aa0ad",   # 19 sep: LOS AVISOS DE LOS CINCO HIDRATOS, SIN TILDES Y CON EL GENERO CRUZADO. Ninguna cifra cambia. Los textos decian «los gramos del menu son de patata YA COCIDO y escurrido -- pesalo DESPUES de cocinarlo», o sea escritos desde una plantilla y sin una sola tilde, y los lee el DUENO: salen por `problemas_seguridad`, que es el canal que la app pinta en los ocho caminos. Es el mismo fallo que el aviso de la estruvita del 15 de septiembre, esta vez en la pantalla de quien tiene la bascula delante.   # 18 sep (madrugada): TODA FICHA DICE SI ES ALIMENTO O SUPLEMENTO. No cambia ni una cifra nutricional -- se anade el campo `tipo` a las 76 que no lo tenian, 60 de ellas las cocidas y 6 crudas de siempre. NO se escribe a mano: se DERIVA de la categoria contra `constructor.CAT_SUPLEMENTO`, y la derivacion se valida sola (de las 145 que ya lo tenian, ninguna la contradice). ⚠️ POR QUE IMPORTA: `catalogo-app-y-motor.spec.js` comprueba que la app conozca todos los alimentos del motor --si no, salen como «Extras» con la instruccion de los aceites y las semillas-- y para saber cuales mirar FILTRA POR ESE CAMPO. Con 76 fichas sin el, de las 72 cocidas solo vigilaba 4: pasaba por no mirarlas, no porque la app las conociera. Al ponerlo salieron 64 que la app no tenia en su respaldo. Lo vigila el BLOQUE 19 en las dos direcciones, comprobado con el fallo puesto.   # 18 sep (noche): «COCIDO» NO ES UN METODO, SON CINCO, Y MEZCLARLOS DA OTRO ALIMENTO. El guardia de preparaciones del BLOQUE 104 daba 37 rojos y ninguno era un dato malo: con las 72 fichas de comida cocinada entran las filas que las fuentes publican de verdad --USDA solo tiene las visceras «cooked, braised» y el pescado «dry heat», BEDCA «al horno» y «a la plancha», CIQUAL «cuit a la vapeur»-- y la tabla de equivalencias solo sabia de hervir. Abrir la mano habria sido lo peor: la trucha al vapor de CIQUAL va a 19 g de proteina y 99 kcal y la de USDA a fuego seco a 23,8 y 168. Ahora cada ficha cocida acepta EL METODO DE SU PROPIA FILA BASE, DERIVADO de la fila que ya declara. ⚠️ LO QUE ENCONTRO: (1) TRES fichas mandaban al dueno una coccion distinta de la de sus cifras --bacalao y lenguado decian «al vapor» saliendo de la fila AL HORNO de BEDCA, y el salmon lo mismo saliendo de LA PLANCHA--, o sea un plato mas aguado del que el menu calcula; ninguna cifra se toca, lo que estaba mal era el texto. (2) «Vaca para guisar cocida» tenia DOS filas dentro: su agua y su energia de ciqual:6230 «Boeuf, a bourguignon ou pot-au-feu, cuit» y once celdas de ciqual:6151 «Boeuf, jarret, bouilli», que ni estaba en sus identificadores; rehechas las once contra la fila que declara, y con ellas las quince fracciones, porque al cambiar la proteina (31,0->34,0) y la grasa (4,1->4,05) el aminograma llevaba el factor viejo. (3) Tres fichas citaban una fila de USDA que no declaraban. || Y LAS 29 CELDAS QUE VIENEN DE UNA FILA DE OTRA COCCION SE REBASAN POR MATERIA SECA, que es la salida 1 de la P-51 --la que ese documento llama «correcta en espiritu» y daba por imposible porque nuestra instantanea no guarda el agua de la fila donante: las fuentes SI la publican. Es la misma regla del aminograma leida para la coccion: un mineral vive en la materia seca. Trucha x0,7992 · bacalao x0,8910 · lenguado x0,7965 · salmon x0,8548 · calabaza x0,3763. El fosforo de la trucha pasa de 270 a 215,8 mg y su vitamina D de 19 a 15,2. Declaradas en `celdas_de_otra_coccion` con las dos aguas, y el BLOQUE 104 REHACE la cuenta. Lo que sigue abierto es el LAVADO, que ninguna fuente cuantifica: DATOS_QUE_FALTAN.md. || Y 23 fichas tenian la ENERGIA MUDA, sin decir de donde sale -- que no es solo una celda sin auditar: el BLOQUE 71 elige con que factores de Atwater compararla segun su fuente, porque USDA publica sus kcal con los ESPECIFICOS (4,27 y 9,02) y no con los 4 y 9 de FEDIAF. Medido: USDA 1,045 contra 4/9 y 1,001 contra los suyos; CIQUAL 1,000 y BEDCA 1,012 contra 4/9. Si la energia va muda se compara con los equivocados y nadie lo ve. Si el catalogo debe GUARDAR la kcal de FEDIAF en vez de la publicada es la P-53.   # 18 sep (tarde): LOS AMINOGRAMAS DE LAS FICHAS COCIDAS, que nacieron sin ellos porque la fila de su fuente no los publica. Lo cazo el BLOQUE 27: el 20 % de la proteina de un menu venia de alimentos SIN aminograma y el motor cuenta un hueco como CERO, asi que el menu se aleja de lo que dice el semaforo Y EN VERDE. 14 fichas lo reciben de su hermana cruda y 3 (cerdo, ternera y solomillo de vaca, que no tienen hermana) de la fila composite de USDA -- las tres comprobadas antes en materia seca. NO SE COPIAN: se transfieren POR GRAMO DE PROTEINA, que es la regla de UNIDADES.md, y se escriben ENTEROS o no se escriben (la leccion de la zanahoria del 13 de septiembre). ⚠️ Y SIETE SE REHICIERON PORQUE SU COCIENTE NO CUADRABA CON EL DE SU CRUDA: el corazon, el higado y la molleja de pavo cocidos daban los TRES exactamente 2,525 de Leu/Ile, y tres organos distintos con el mismo aminograma es la huella de una fila prestada. Cocer no cambia de que esta hecha la proteina, asi que el cociente entre dos aminoacidos es el mismo crudo que cocido y la que estaba mal era la cocida. ⚠️ Y CUATRO HUECOS DECLARADOS que salieron SOSPECHOSOS al rellenar los acidos grasos de 46 de las 50 carnes: el linoleico y el linolenico del Pavo (bedca:2285 es su unica fuente y su fila NO trae esas columnas) y del Corazon de conejo (que no declara ninguna fuente: es un proxy). El cero no cambio -- cambio que ahora se nota.   # 18 sep: EL AGUA DEL CRUDO DECLARADA EN DIEZ FICHAS COCIDAS (humedad_crudo_g_100g + humedad_crudo_fuente, y humedad_crudo_aproximada en tres). Ninguna cifra nutricional cambia: es lo que permite calcular CUANTO CRUDO HAY QUE COMPRAR para los gramos cocidos del menu. Las otras 58 no lo necesitan porque su hermana cruda esta en el catalogo y su agua se lee de ahi. Medido: el factor va de x0,20 (copos de avena) a x1,99 (pulpo). Las tres aproximadas van marcadas con su motivo: su fila cocida es una MEDIA DE CORTES o de otro animal, y la fuente no publica una cruda equivalente.   # 18 sep: EL CATALOGO COCINADO, de 8 fichas a 71. Elena: «hay que mirar TODOS los alimentos... tienes que tener un catalogo de alimentos igual de rico que el que tenemos ahora, pero para alimentos cocinados», y despues «tienes que meter mas pescado» y «no hay nada de cerdo ni de ternera en carne muscular». Ninguna cifra escrita a mano: `construir_cocidos.py` siembra el esqueleto con sus `fuentes_id` y los numeros los pone `auditar_composicion.py --cerrar` bajando la cadena de mandato, con la procedencia celda a celda. ⚠️ CADA FICHA SE ANCLA CONTRA LA FILA **CRUDA DE SU MISMA FUENTE** y se mide en MATERIA SECA, que es lo unico que delata un emparejamiento malo: el atun claro (usda:172006) da 94,0 % de proteina y 1,9 % de grasa sobre materia seca y su fila cruda hermana (usda:175159) da lo mismo, clavado; el pulpo (usda:174249) 75,5/5,3 igual que usda:174218; la dorada (ciqual:27031) 75,6/18,9 contra 76,0/18,5 de ciqual:26088. ⚠️ EL CERDO EXISTE COCIDO Y NO EXISTE CRUDO, y es el unico alimento del catalogo que va solo en un modo por una razon que no es de dato: la enfermedad de Aujeszky es «poco frecuente pero mortal» y «la mayoria de los casos en perros son el resultado de la ingestion de carne de cerdo CRUDA infectada» (Ettinger), asi que cocinarla quita exactamente ese motivo. El HIGADO de cerdo NO entra ni cocido: su cobre tiene disponibilidad «essentially zero» (SACN5 cap.6). ⚠️ RECHAZADAS CON SU MEDIDA, y estan escritas en `cocidos_propuesta.json`: la SARDINA (la fila «grillee» de CIQUAL NO PUBLICA EPA NI DHA, que es justo para lo que se quiere un pescado azul, y su fila cruda declara 2,2 g de cenizas contra 1,24 de la asada -- una es el pez entero con espina y la otra un filete; la «asada» de BEDCA suma 68,0 % de proteina MAS 86,5 % de grasa sobre su propia materia seca, o sea 154 %, imposible), el BOQUERON (solo hay fila FRITA, y freir no es un metodo de coccion mas: es anadir aceite), la LUBINA (21,1 % de grasa en seco contra 15,6 de la de cria y 8,4 de la salvaje, o sea que se pasa de las dos filas crudas que publica la fuente) y el PULPO DE BEDCA (102,2 % de proteina sobre su propia materia seca). ⚠️ Y UNA FICHA QUE SE PERDIO Y SE HA DEVUELTO: «Riñon de vaca cocido» existia desde el 17 de septiembre y desaparecio al construir las 54 nuevas, sin que nadie lo dijera -- `accesibles.py` la seguia nombrando y el motor la filtraba en SILENCIO. La cazo el BLOQUE 12, que es justo para lo que esta. Vuelve con sus mismas cifras. // 17 sep (noche): LOS CINCO PRIMEROS HIDRATOS, en una categoria nueva `Cereales y tuberculos`: Arroz blanco cocido, Arroz integral cocido, Patata cocida, Copos de avena cocidos y Quinoa cocida. Las cinco se dan COCIDAS y se PESAN COCIDAS --al reves que el Boniato, la Berenjena y el Esparrago verde, que se dan cocidos y se pesan CRUDOS porque su composicion sale de la fila cruda--, y lo declaran en `se_pesa`. Ninguna cifra se escribe a mano: se siembra el esqueleto con sus `fuentes_id` y las rellena `auditar_composicion.py --cerrar` bajando la cadena de mandato, con la procedencia celda a celda y la transferencia por gramo de proteina y de grasa. ⚠️ LO QUE ENCONTRO COMPROBARLAS, que es por lo que nace `auditar_cocinados.py`: (1) `bedca:2661` se llama «Arroz, hervido» y declara 4,12 % de agua, MENOS que su propia fila de arroz crudo (5,9 %) -- describe arroz SECO con el nombre del hervido, y sus cifras lo confirman (proteina 7,54 contra 3,06 y 2,69; fosforo 100,8 contra 35 y 43), asi que se descarta ENTERA y se baja al mandato 3; la misma base ACIERTA con el integral (`bedca:1009`, 71,8 % de agua), o sea que es un defecto de UNA fila. (2) `bedca:1009` declara 9,8 ug de selenio y su propia fila cruda da 2 -- quince veces mas despues de hervir, y hervir no crea selenio --, asi que el selenio se baja a `usda:169704` (5,8), que si es coherente con su cruda; importa la direccion, porque el selenio tiene MINIMO en FEDIAF y sobredeclararlo haria creer al motor que esta cubierto. (3) USDA publica 0,015 g de DHA y 0,003 de araquidonico en la quinoa y una planta no sintetiza ninguno de los dos; CIQUAL, que los mide, da «< 0,01», asi que van a cero DECLARADO -- y que es un artefacto de esa fila lo dice la propia USDA en la zanahoria, la manzana y la calabaza, donde publica 0,0. Las cinco dudas que quedan se QUEDAN con la cifra de la fuente que manda y van escritas en `nota_datos`, porque en las cinco quedarse corto es el lado seguro. Y lo que NO es un fallo: las filas cocidas de CIQUAL son de alimento hervido en agua abundante y ESCURRIDO y las de USDA por absorcion -- se lee en sus cenizas (0,13 g contra 0,41 g en el arroz blanco). Toxicos comprobados: ninguno de los cinco esta en la lista de FEDIAF §7.7 ni en la de la WSAVA ni en la Tabla 40-3 de SACN5, y la tabla de lo permitido pone «Potatoes, white» y «Rice» entre lo bajo en oxalato; la solanina, el oxalato de la quinoa y el arsenico del arroz quedan en PREGUNTAS_ABIERTAS.md P-50, escritos y sin aplicar. # 17 sep: EL BONIATO SE DA COCIDO Y SE PESA CRUDO, Y NADIE LO DECIA. Tres fichas --Boniato, Berenjena y Esparrago verde-- llevan desde siempre `preparacion: cocido` con la nota «DAR SIEMPRE COCIDO, no crudo», y su composicion sale de la fila CRUDA de la fuente que manda: `bedca:731` se llama literalmente «Boniato, CRUDO» (422,5 kJ = 101 kcal, los 101 de la ficha clavados). O sea que el menu dice 616 g de un alimento que hay que cocinar y NO dice si esos gramos son antes o despues. Medido contra USDA: 100 g de boniato HERVIDO son 76 kcal y 100 g de boniato CRUDO son 101, asi que en el peor menu del catalogo la diferencia son 154 kcal -- y el boniato aparece en 27 de los 216 precalculados (mediana 43 g, maximo 616) y es el grueso del plato de la pancreatitis (389 g). No se toca ninguna cifra: se DECLARA la base (`se_pesa`, con su porque) y se dice donde lo lee quien compra y quien pesa, por el campo `aviso_al_comprar`, que ya sale por las dos puertas desde el 13 de septiembre. Lo vigila el BLOQUE 123. # 15 sep (noche): LAS ETIQUETAS DE LOS SUPLEMENTOS, UNA A UNA. 62 celdas en 12 fichas, y el patron es SIEMPRE el mismo: la etiqueta declara la SAL o el ESTER de la vitamina y el catalogo anoto el numero como si fuera la vitamina. Es la trampa que el repo ya tenia escrita para los minerales (el oxido de zinc de `sacn5_fuentes_de_minerales.json`) y para la que ya existia la tabla auditada contra el PDF: la VII-14 de FEDIAF. Cloruro de colina x0,75 (siete fichas), D-pantotenato calcico x0,92 (siete), clorhidrato de piridoxina x0,82 (tres), mononitrato de tiamina x0,81 (dos) y la vitamina E convertida por ACTIVIDAD a mg de d-alfa-tocoferol, que es la unidad en la que esta escrito el minimo que aplica el motor. TRES fallos de unidad de mil veces en el FOLATO (napfcheck 2->2000 ug y las cinco V-INTEGRA), que es la cifra en miligramos dentro de una celda que va en microgramos. SEIS fichas que declaraban TAURINA o L-CARNITINA en su etiqueta y la tenian como hueco (hasta 4.000 mg/100 g). Y la ENERGIA A CERO en ocho suplementos que publican su proteina y su grasa brutas: el peor es el polvo de sangre, 92 g de proteina y 0 kcal, o sea proteina que no contaba en el DIVISOR de todos los requisitos. Ademas: el yodo del alga, cuyo propio fabricante publica 600 mg/kg en aleman y 790 en ingles (y los distribuidores 339 y 760) -- se toma la mas alta porque el yodo es tope cronico y sobreestimar el contenido hace que el solver meta menos gramos, que es el lado seguro; y sus cuatro minerales pasan a hueco porque salian de una hoja cuya ceniza bruta contradice a la del fabricante. NO se ha tocado el Pets Purest, que lo paso la usuaria con foto de la etiqueta. # 15 sep: LOS AMINOGRAMAS QUE FALTABAN EN LAS VERDURAS, desde USDA -- que es la unica fuente que publica los 12 aminoacidos y por eso es el mandato para ellos. ONCE fichas los reciben (judia verde, pimiento rojo, boniato, champiñon, col lombarda, coliflor, esparrago verde, lechuga, repollo, tomate en pure y datil), y CUATRO se quedan en hueco VERIFICADO (alcachofa, rucula, frambuesa y cardo: USDA tiene su fila pero no trae los doce, y un aminograma se escribe ENTERO o no se escribe -- la leccion de la zanahoria del 13 de septiembre). NO SE COPIAN: se transfieren POR GRAMO DE PROTEINA, con la fila literal escrita en `composicion_fuente` para que se pueda rehacer. POR QUE hacia falta: la proteina de un menu que el motor NO PUEDE ver en aminoacidos llegaba al 11,16 % en una variante del catalogo (512 g de boniato sin aminograma), y el BLOQUE 27 exige que no pase del 5 % -- pero lo medía sobre CUATRO menus generados, no sobre los 216 del catalogo, asi que no lo veia. Tras esto: media 0,66 % y peor 6,04 %. Comprobado ademas que en NINGUNA ficha los doce aminoacidos suman mas que su propia proteina. # ⚠️ 14 sep: LA HUMEDAD DE CADA FICHA. Ningun valor nutricional cambia: se anaden `humedad_g_100g` + `humedad_fuente` a 79 fichas (las otras 65 ya la tenian) y `humedad_hueco` a 18, que son suplementos en polvo sin fila en ninguna base y cuya etiqueta no la declara. POR QUE hacia falta: el catalogo va en gramos de alimento tal cual se da y casi toda fuente que no sea FEDIAF publica en % de MATERIA SECA, y sin humedad no hay materia seca -- asi que el supuesto que sostiene 135 limites del motor («These conversions assume an energy density of 16.7 kJ (4.0 kcal) ME/g DM», FEDIAF §3.2.1) NO SE PODIA NI COMPROBAR. Ahora se puede, y sale que no: una racion de este motor va a 5,20 kcal/g de materia seca (4,05-6,18 en los 216 menus), o sea que esas 135 cifras van un ~23 % flojas -- entre ellas los 13 maximos de FEDIAF que solo se publican en base materia seca, SIETE de ellos legales de la UE. NO SE APLICA NADA TODAVIA: esta medido lo que costaria (8 de 8 perros de referencia siguen con menu) y la decision es la P-38 de PREGUNTAS_ABIERTAS.md. De donde sale cada humedad: 63 de la cadena de mandato con el `fuentes_id` que la ficha ya declaraba (y se rehacen sin red contra `fuentes_instantanea.json`), 10 de la columna «DM [%]» de la Tabla 1 de Köber -- la MISMA fila de la que ya sale su calcio, lo que amplia el mandato 2 y la ampliacion va escrita en `fuentes_de_composicion.json` --, 5 aceites por cota de composicion (99,5 g de grasa por 100 g dejan medio gramo para todo lo demas, agua incluida) y 1 por el proxy ya declarado del corazon de conejo. Lo vigila el BLOQUE 111 con el fallo puesto de seis formas. || 13 sep (noche, 4): LOS DOS CASOS DE ESPECIE, ARREGLADOS CON LAS FUENTES, y los dos resultaron ser problemas DISTINTOS de lo que parecian. (1) «Riñon de ternera» RENOMBRADA a «Riñon de vaca» sin tocar una cifra: cuadra con ciqual:40402 «Rognon, boeuf, cru» en TRECE CELDAS EXACTAS (prot 17,1 · grasa 2,65 · hierro 7,04 · potasio 236 · sodio 169 · zinc 1,52 · selenio 118 · vitD 1,05 · B12 21,1 · magnesio 16 · calcio 11,2 · fosforo 243 · energia 95,9/92,3), mientras usda:174356 da 99/15,76/3,12 y bedca:1069 da 106,5/16,8/4,32. Renombrar y NO rellenar es la regla: traer los numeros de la otra especie mezclaria dos mediciones en una columna. Es el cuarto caso de esta familia (bazo, pancreas y pulmon «de ternera» se renombraron en agosto y septiembre). El catalogo se queda SIN riñon de ternera, y eso es sembrar una ficha nueva, no un renombre. (2) «Pulmon de vaca» NO habia que renombrarla: SI es de vaca (cuadra con usda:168628 en prot, grasa, hierro 7,95, potasio 340 y vitA 14). Lo que estaba mal era UNA CELDA: su vitamina D 11, que USDA no publica para el pulmon y que es EXACTAMENTE la que bedca:2300 da al pulmon de TERNERA. No era una ficha con nombre equivocado sino una CIFRA en la ficha equivocada, asi que se ha movido: la de vaca pasa esa celda a hueco declarado y «Pulmon de ternera» la recibe de bedca:2300 con `value_type` AR. Esto CIERRA la pregunta que esa ficha llevaba escrita desde el 8 de septiembre. // 13 sep (noche, 3): EL AVISO QUE LEE QUIEN COMPRA. Campo nuevo `aviso_al_comprar`, y nace de una frase de Elena que describe el fallo entero: «a lo mejor la persona que vaya a comprar al supermercado pide cerebro de ternera y dice: no tengo, pero tengo de vaca. Y problema». Sacar la ficha del catalogo NO tapa eso -- LO EMPEORA: antes estaban las dos en la lista y la diferencia se veia, y ahora solo aparece «de ternera» y quien la lea no tiene forma de saber que la otra no vale. La sustitucion pasa en el mostrador, donde el motor no esta, asi que lo unico que puede hacer es DECIRLO donde se lee. Sale por las DOS puertas, que es la forma del BLOQUE 64 con los avisos de patologia: `problemas_seguridad` -- el canal que la app ya pinta en los ocho caminos, asi que no hay que tocar la app -- y `GET /alimentos`, que es la que lee quien elige el alimento A MANO antes de que haya menu. Con solo la primera, ese camino no avisa hasta el final; con solo la segunda, quien deja elegir al motor no lo lee nunca. Lo vigila el BLOQUE 51 con el fallo puesto de cuatro formas, y exige ademas que una ficha con una condicion LEGAL en su `nota_datos` tenga aviso: una condicion que solo vive en una nota tecnica no la lee quien va a la carniceria. // 13 sep (noche, 2): FUERA «CEREBRO DE VACA», Y NO ES NUTRICION SINO LEY. El encefalo bovino de mas de 12 meses es material especificado de riesgo -- Reg. (CE) 999/2001 anexo V en su version CONSOLIDADA (comprobada en EUR-Lex, no en el texto de 2001, que decia SEIS meses): «the skull excluding the mandible and including the brain and eyes, and the spinal cord of animals aged over 12 months» --, o sea material de CATEGORIA 1 (Reg. (CE) 1069/2009 art. 8: «Category 1 material shall comprise […] (i) specified risk material»), y la comida para mascotas sale de categoria 3 (art. 35, que ademas trae su propio apartado para el petfood CRUDO, que es lo que calcula este motor). Una vaca pasa de 12 meses por definicion, asi que su ficha sale; la de TERNERA se queda porque la ternera espanola se sacrifica por debajo del año, con la condicion escrita en su propia ficha. Medido antes: aparecia en 0 de los 216 menus. Estar fuera del automatico (que ya lo estaban las dos desde el 7 y el 8 de septiembre, por el DHA) NO bastaba: lo ilegal tampoco se puede elegir a mano. Los otros tres candidatos se miraron y ninguno esta afectado, cada uno por su motivo: el cuello de ternera porque el umbral de la COLUMNA son 30 meses y ademas la norma excluye las apofisis cervicales; el pecho con hueso porque costillar y esternon no son columna ni medula; y las costillas de cordero porque para ovino la norma cubre solo craneo, encefalo, ojos y medula, NO la columna. Lo vigila el BLOQUE 51 con el fallo puesto de tres formas. // 13 sep (noche): LAS VISCERAS CONTRA SUS FUENTES, que no se habian barrido. SIETE CEROS MUDOS pasan a hueco declarado y los siete AFLOJABAN un tope cronico: la vitamina D del RIÑON DE CORDERO (BEDCA `TR`, USDA sin cifra, CIQUAL `-`: tres fuentes y ninguna la mide; que bebio de BEDCA lo prueba su vitamina E, 0,43, clavada), el YODO del pulmon de vaca, del pulmon de cordero y del bazo de cordero (USDA no publica yodo de NADA, BEDCA no trae esa columna en los pulmones y no tiene bazo), la vitamina E de los dos pulmones, y la vitamina D del HIGADO DE CONEJO, que era una FUGA: 1,2 es exactamente lo que BEDCA da al higado de VACA. Una se cierra con cifra: el timo de ternera, 0,25 de ciqual:40304 «Ris, veau, cru» (ris de veau ES el timo de ternera; BEDCA no tiene timo y USDA 172542 no publica su vitamina D). Tres indices que faltaban, y son la causa de que esto fuera invisible porque el barrido lee `fuentes_id`: higado de vaca bedca:1053 (sus 10250 ug de vitamina A son de BEDCA y no se comparaban con nada que los publique -- USDA da 4968 en la fila que la ficha declaraba, 2,06x, y en un higado el conflicto de convenio NO lo explica porque no hay caroteno), pulmon de cordero bedca:2299 (sus 12 ug de vitamina D no salian de ninguna fila declarada), e higado de conejo ciqual:40110, que CIERRA la pregunta de la unica ficha del catalogo sin ninguna procedencia: sale de ahi, con proteina, grasa y vitamina A (4530) exactas. Campo nuevo `hueco_verificado`, el gemelo de `cero_verificado`: `sin_dato` era una lista pelada y «las tres fuentes miradas, ninguna lo mide» se veia igual que «nadie ha mirado». Lo vigila el BLOQUE 100 con las cinco formas de contradecirse. Y dos fichas con cifras de OTRA ESPECIE que NO se tocan porque renombrar es decision de producto: el riñon de ternera es un riñon de BUEY (identidad exacta de ciqual:40402, y su vitamina D 1,05 es la de esa fila) y el pulmon de vaca lleva la vitamina D del pulmon de TERNERA (bedca:2300 da 11 y 14, las nuestras exactas) -- esto ultimo CIERRA la pregunta que esa ficha llevaba escrita desde el 8 de septiembre. // 13 sep (tarde): LA VITAMINA D, Y EL CERO FALSO QUE SOSTENIA UN VERDE. Nueve celdas que la fuente que MANDA no mide se cierran bajando por la cadena de mandato (la regla de `fuentes_de_composicion.json`), con la fila literal escrita: siete pescados desde CIQUAL -- merluza 2,15 / bacalao 1,41 / lubina 5,59 (USDA da 5,6 por su cuenta) / lenguado 0,75 / pulpo 0,5 / calamar 0,36 / sepia 0 -- y DOS ACEITES desde USDA, que eran los peores: el hueco de vitamina D del aceite de girasol se imputaba a 5 ug (lo que declara el huevo de pato) y el de vitamina A del de cacahuete a 591 ug de retinol (lo que declara la yema), siendo los dos aceites de semilla refinados. BEDCA lo dice ella misma cruzado: `LZ` (cero logico) a la vitamina A del de girasol y `LZ` a la vitamina D del de cacahuete. Y lo que encontro de paso: la ficha `Pescadilla` declaraba 0 ug de vitamina D sin que ninguna fuente lo diga (BEDCA da la celda vacia en sus TRES filas de merluza), y era LO UNICO que sostenia el menu del adulto de 20 kg con ocho especies fuera del BLOQUE 9 -- medido: sale con 0,0 y no sale con 1,0 / 2,15 / 3 / 4 / 5 / 6 / 8. Es aritmetica y no eleccion de cifra: con esas ocho fuera quedan 108 alimentos, casi todos pescado, y 17 pasan ELLOS SOLOS el tope cronico de 20 ug/1000 kcal (la merluza, con 2,15 ug y 65 kcal/100 g, sale a 33). Tres marcas que NO son un numero: el `TR` vacio de BEDCA, el `-` de CIQUAL y el `< X` de CIQUAL, que es limite de deteccion. Tres fichas se quedan en hueco porque ninguna fuente publica su especie: Bacaladilla, Gamba roja y Pescadilla. // 13 sep: EL CATALOGO CONTRA SUS FUENTES DE COMPOSICION, celda a celda, por primera vez. 318 celdas reciben la CIFRA de la fuente que manda (sobre todo acidos grasos de carne, huevo y verdura, que estaban a 0: el muslo de pollo declaraba 0 g de linoleico y USDA da 3,05, y el linoleico es un requisito de FEDIAF con minimo), 418 ceros pasan de MUDOS a declarados en `cero_verificado` con su fila de origen (78 son la fibra de la carne y el pescado, que es un cero de verdad), y 65 ceros que la fuente declara SIN CIFRA (`TR` con la celda vacia en BEDCA) pasan a `sin_dato` -- un hueco no es un cero. Dos errores de dato corregidos: el manganeso de la pechuga de pavo (0,6 -> 0,006 mg, un factor 100 contra FDC 174515, que la propia ficha ya citaba) y el agua del timo de ternera (67,8 -> 79,16, que era la del timo de VACA: cerraba la pregunta que su `humedad_nota` dejaba abierta). Y dos emparejamientos malos: «Perca» apuntaba a BEDCA 831 «Perca, AL HORNO» en una ficha cruda, y «Pato» tenia id de USDA cuando sus cifras son exactas de BEDCA 976. Los aminoacidos y los acidos grasos NO se copian: se transfieren por gramo de proteina y de grasa (regla de UNIDADES.md). Cada celda lleva su procedencia en `composicion_fuente` y se rehace desde `fuentes_instantanea.json`. Lo vigila el BLOQUE 100. // 11 sep (noche): TRES FICHAS DE HUESO CON EL CALCIO Y EL FOSFORO DIEZ VECES POR DEBAJO, corregidas al rehacerlas contra la Tabla 1 de Köber 2017 (`auditar_kober.py`, BLOQUE 98). Cuello de ternera 731->7310 mg de calcio y 338->3380 de fosforo, Pecho de ternera con hueso 427->4270 y 199->1990, Laringe de vacuno 66->660 y 44->440. Sobrevivieron porque la Tabla 1 de Köber mezcla DOS sistemas de unidades y su cabecera declara uno solo, y porque lo que se habia comprobado era el RATIO Ca:P, que un error x10 en los dos numeros no rompe. Medido: "Pecho de ternera con hueso" entraba en 93 de los 216 menus precalculados y 55 de ellos habrian pasado el MAXIMO de calcio de FEDIAF (el peor, 9408 mg/1000 kcal contra un tope de 4500 en cachorro). Catalogo de menus regenerado con los valores buenos.
         # 6 sep: nota_datos de los 4 alimentos excluidos por tejido tiroideo (Cuello de pavo/pato/ternera, Laringe de vacuno) documenta el bloqueo -- ver seguridad.TIROIDES_EXCLUIR.
         # 28 ago (2): EL HIGADO Y EL CORAZON DE PAVO, resembrados desde el pollo del USDA -- su aminograma venia del pavo del USDA, que tiene la isoleucina y la valina un 40% bajas (Leu/Ile 2,52 contra 1,47-1,98 del resto). Reescalados a NUESTRA proteina. Las otras cinco fichas de pavo NO se cargan: traian histidina = isoleucina = valina exactos, y eso es una copia, no una medida. Ver el BLOQUE 27. // 28 ago: PURINAS DE CUATRO VISCERAS con cifra publicada (timo 525, bazo de cordero 322, bazo de vaca 185, pulmon de ternera 117). NO se uso la banda generica 84-243 que se habia propuesto: para el timo habria declarado ~160 cuando la cifra son 525, un factor de 3 a 4 POR ABAJO, y es el alimento solido con mas purinas de las tablas. Pancreas, testiculos y pulmon de cordero se quedan como hueco: no hay dato. Ver el BLOQUE 33
         # 7 sep (2): nueva fila "Fibra", con los seis campos (minAdulto..maxCachorroCrecimiento) a "-" -- FEDIAF no da minimo ni maximo de fibra en la Tabla III-3b, asi que esta fila NO es un requisito nuevo: no exige ni limita nada a un perro sano. Existe para que verificar.MAPA pueda leer la clave "fibra" y topes_de_patologias() pueda ponerle un suelo por patologia con fuente real (primer uso: hiperlipidemia, SACN5 cap.28). auditar_fediaf.py la lista en NO_SON_NUTRIENTES_DE_LA_TABLA y ademas comprueba que nunca lleve un numero, para que no repita el fallo del 25 de agosto (fila "Fibra" con minimo/maximo inventados que el analizador exigia). Ver PENDIENTE_NUTRICION.md.
@@ -9899,6 +10234,11 @@ def endpoint_vocabulario():
     from patologias import cargar_crudo
     from catalogo_menus import CATALOGO
 
+    # ⚠️ LA MISMA FUNCIÓN QUE USA EL SOLVER, no una copia: es la que decide de
+    # verdad si esa patología mete hidratos, y la app va a esconder la pregunta
+    # basándose en esto.
+    from motor_completo import la_patologia_pide_hidratos as _la_patologia_pide_hidratos_voc
+
     al_v, _req_v = cargar_v2()
     _pat_v = (cargar_crudo() or {}).get("patologias") or {}
     # Se calcula UNA vez: el recuento y la lista tienen que salir de lo mismo.
@@ -10262,6 +10602,31 @@ def endpoint_vocabulario():
                                     "una exclusión de catálogo y esto es una pregunta que se le "
                                     "hace a todo el mundo."),
             "categoria_del_motor": "Cereales y tubérculos",
+            # ⚠️ A QUIÉN NO SE LE PREGUNTA, Y LO DECIDE EL MOTOR (19 de
+            # septiembre de 2026). Lo pidió Elena: «y lo mismo para patologías,
+            # si tiene que llevar hidratos pues que no se pregunte».
+            #
+            # Y tiene razón en la forma: a quien su enfermedad le OBLIGA a
+            # llevarlos no se le ofrece elegir, se le CUENTA. Una pregunta cuya
+            # respuesta no cambia nada le hace creer que decide algo.
+            #
+            # ⚠️ LA LISTA NO SE ESCRIBE: SE DERIVA de `patologias.json` con la
+            # MISMA función que usa el solver (`la_patologia_pide_hidratos`). Una
+            # lista a mano aquí se quedaría parada el día que una patología
+            # cambie, y la app seguiría preguntando donde el motor ya ha
+            # decidido -- que es la regla 6 en su forma de siempre.
+            "patologias_que_los_piden": sorted(
+                k for k in _pat_v
+                if _la_patologia_pide_hidratos_voc([k], "Adulto")),
+            "texto_si_los_pide_la_patologia": {
+                "dueno": ("Este menú lleva arroz, patata, avena o quinoa —siempre cocidos— porque "
+                          "lo que tiene tu perro lo necesita: hay que darle la energía que ya no "
+                          "puede venir de la grasa. No es opcional aquí, así que no te lo "
+                          "preguntamos."),
+                "veterinario": ("La patología marcada topa la grasa, así que la energía restante "
+                                "solo puede venir de hidratos. `con_hidratos` queda fijado a "
+                                "`true` y la pregunta no se ofrece."),
+            },
             # El titular, ya en el registro del dueño, para que la app no lo escriba.
             "pregunta_dueno": "¿Quieres que su menú pueda llevar arroz, patata o avena?",
             "pregunta_veterinario": "Hidratos de carbono en la ración",

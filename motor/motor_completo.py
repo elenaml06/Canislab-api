@@ -597,6 +597,30 @@ def avisos_de_patologias(patologias, etapa="Adulto", es_profesional=False):
 # Se escala con el perro donde hace falta (ver `tope_porcion_del_perro`): en
 # un perro de 1,5 kg, que come 73 g al día, 40 g de pescado serían el 55 % de
 # la ración de golpe.
+# ⚠️ CUÁNTO HIDRATO ENTRA CUANDO EL DUEÑO LOS PIDE A PROPÓSITO
+# (19 de septiembre de 2026). Elena, al ver la medida de que contestar «sí» en
+# una ración CRUDA no metía ni un gramo:
+#
+#     «que entren de verdad con un mínimo y que también puedan elegirlo en barf,
+#      pero que se diga que van cocinados»
+#
+# El motivo de la medida: hasta hoy contestar «sí» solo los hacía CANDIDATOS, y
+# el MILP optimiza nutrición por gramo -- en crudo le salen más baratos otros
+# alimentos, así que no los elegía nunca. Medido contra el motor desplegado, en
+# un adulto sano de 24,5 kg: cocinada, entra quinoa (100 g); cruda, NADA. Quien
+# contestaba «sí» en BARF no veía ninguna diferencia y no tenía forma de saber
+# por qué.
+#
+# ⚠️ ESTE NÚMERO ES NUESTRO, como el 20 % de hueso: ninguna fuente dice cuánto
+# hidrato lleva una ración casera porque ninguna dice que lleve. Es una
+# proporción de FORMA (regla 3), así que cede antes que la nutrición -- y por
+# eso `resolver` reintenta sin él si con él no hay menú, y se dice.
+SUELO_DE_HIDRATOS_SI_LOS_PIDE = 0.05
+
+# El nombre de la categoría, para que no se escriba dos veces: `main` lo
+# necesita para poder decir «los has pedido y no caben».
+CAT_HIDRATOS = "Cereales y tubérculos"
+
 MINIMO_POR_CATEGORIA_PORCION = {
     "Carne muscular": 40.0,
     "Pescados y mariscos": 40.0,
@@ -782,6 +806,9 @@ def resolver(*args, **kwargs):
     comprobado que no cabe en ninguna forma de ración.
     """
     _soltar = kwargs.pop("soltar_el_techo_si_no_cabe", True)
+    # Va por referencia, como `_techos_subidos_fuera`: el que llama pone el
+    # dict y lee si hubo que soltar. No lo entiende `_resolver_una_vez`.
+    _fuera_h = kwargs.pop("_suelo_de_hidratos_fuera", None)
     _subidos = {}
     kwargs_1 = dict(kwargs)
     kwargs_1["_techos_subidos_fuera"] = _subidos
@@ -804,6 +831,24 @@ def resolver(*args, **kwargs):
         kwargs_3["_sin_tope_de_un_alimento"] = True
         kwargs_3["apretar_el_techo_del_libro"] = False
         ok, gramos = _resolver_una_vez(*args, **kwargs_3)
+    # ⚠️ Y EL CUARTO, EL SUELO DE HIDRATOS, por el mismo argumento que los dos
+    # de arriba: `SUELO_DE_HIDRATOS_SI_LOS_PIDE` es un número NUESTRO y un
+    # número nuestro no puede dejar a un perro sin comer. Si con él no hay menú,
+    # se suelta y se vuelve a intentar -- que es el comportamiento probado de
+    # antes de que existiera.
+    #
+    # ⚠️ Y SE DICE, en `_suelo_de_hidratos_fuera`: quien contestó «sí» y recibe
+    # un plato sin arroz tiene derecho a saber que se le pidió y no cupo. Sin
+    # eso sería cambiarle la respuesta en silencio, que es lo único que la regla
+    # 3 prohíbe.
+    if (not ok and kwargs.get("con_hidratos") is True
+            and kwargs.get("_pedir_suelo_de_hidratos", True)
+            and not (isinstance(gramos, dict) and gramos.get("_imposible"))):
+        kwargs_4 = dict(kwargs)
+        kwargs_4["_pedir_suelo_de_hidratos"] = False
+        ok, gramos = _resolver_una_vez(*args, **kwargs_4)
+        if ok and isinstance(_fuera_h, dict):
+            _fuera_h["se_ha_soltado"] = True
     return _con_el_margen_del_kelp(ok, gramos, args, kwargs)
 
 
@@ -897,7 +942,11 @@ def _resolver_una_vez(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn
             # hace falta que lo sea: la penalización vive en el OBJETIVO, no en
             # las restricciones, así que no puede volver infactible nada -- es
             # exactamente por eso que se eligió penalizar en vez de excluir.
-            sin_penalizar_lo_de_encargo=False):
+            sin_penalizar_lo_de_encargo=False,
+            # ⚠️ El plan B del suelo de hidratos. Lo apaga `resolver` en su
+            # segundo intento: es un número NUESTRO y no puede dejar a un perro
+            # sin comer. Ver `SUELO_DE_HIDRATOS_SI_LOS_PIDE`.
+            _pedir_suelo_de_hidratos=True):
     """
     UNA sola llamada. Decide QUÉ alimentos usar Y cuántos gramos de cada
     uno, de entre TODOS los accesibles, a la vez.
@@ -1083,13 +1132,28 @@ def _resolver_una_vez(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn
     # excluir comida es suyo y no se toca (regla 4), y lo que cuesta se dice en
     # vez de cambiárselo en silencio. Un `True` los mete aunque no haya nada
     # marcado, que es lo que hará falta el día que el modo cocinado exista.
-    _CAT_HIDRATOS = "Cereales y tubérculos"
+    _CAT_HIDRATOS = CAT_HIDRATOS
     if con_hidratos is False:
         _hidratos_los_pide_la_patologia = False
     elif con_hidratos is True:
         _hidratos_los_pide_la_patologia = True
     else:
         _hidratos_los_pide_la_patologia = la_patologia_pide_hidratos(patologias, etapa)
+
+    # ⚠️ Y SI LOS PIDE EL DUEÑO, ENTRAN DE VERDAD: SUELO, NO SOLO PERMISO.
+    # Ver `SUELO_DE_HIDRATOS_SI_LOS_PIDE`. Solo cuando lo pide ÉL (`True`): si
+    # quien los pide es la patología, el solver ya los usa porque le convienen
+    # —con la grasa topada son la única forma de diluir— y ponerle un suelo
+    # encima sería apretar algo que no hace falta apretar.
+    #
+    # Nunca por encima del techo de su propia categoría, que es lo que decide
+    # cuánto plato puede ser hidrato.
+    if (con_hidratos is True and _pedir_suelo_de_hidratos and margenes_categoria
+            and _CAT_HIDRATOS in margenes_categoria):
+        _mn_h, _mx_h = margenes_categoria[_CAT_HIDRATOS]
+        margenes_categoria = dict(margenes_categoria)
+        margenes_categoria[_CAT_HIDRATOS] = (
+            max(_mn_h, min(SUELO_DE_HIDRATOS_SI_LOS_PIDE, _mx_h)), _mx_h)
 
     # ⚠️ EL MODO FILTRA ANTES QUE NADA, Y ES UNA EXCLUSIÓN DURA (17 de septiembre
     # de 2026). No es una preferencia ni una penalización: en cocinado, una
@@ -3064,6 +3128,32 @@ def _resolver_una_vez(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn
             porcion = SUELO_MEDIBLE_G
         else:
             porcion = min(MINIMO_POR_CATEGORIA_PORCION.get(cat_n, 10.0), _tope_porcion)
+            # ⚠️ Y NUNCA MÁS DE LO QUE EL TECHO DE SU PROPIA CATEGORÍA PERMITE
+            # (19 de septiembre de 2026). Lo preguntó Elena mirando la cifra:
+            # «¿y esa proporción mínima está bien? ¿de dónde la sacas?».
+            #
+            # No estaba mal la cifra: estaban CHOCANDO DOS NÚMEROS NUESTROS. La
+            # porción ya se escala con el perro desde agosto —`_tope_porcion` es
+            # el 9 % del plato estimado— y el techo de los hidratos es el 10 %
+            # del plato REAL. Son casi el mismo número, así que en un perro
+            # pequeño quién gana lo decide el error de la estimación del plato,
+            # que es lo más parecido a nada.
+            #
+            # MEDIDO: al toy de 1,8 kg la porción le pedía 18 g de arroz contra
+            # un techo de 15,3 -- no cabía POR 2,7 GRAMOS, y contestar «sí, quiero
+            # hidratos» no metía ni uno. Al de 3 kg en cocinado le pedía 26,1
+            # contra un techo de 27,2 y entraba con 26 g clavados. O sea: el
+            # resultado lo decidía el redondeo.
+            #
+            # Un suelo de porción que pide más de lo que su propio techo permite
+            # no es un criterio: es una contradicción, y echa al alimento del
+            # catálogo sin que nadie lo pida. Aquí no se inventa ninguna cifra
+            # nueva -- se quita la contradicción, y el toy se lleva sus ~15 g de
+            # arroz, que para un perro que come 153 g al día SÍ son una porción.
+            if margenes_categoria and cat_n in margenes_categoria:
+                _mx_cat = margenes_categoria[cat_n][1]
+                if _mx_cat and _mx_cat > 0:
+                    porcion = min(porcion, _mx_cat * 0.6 * der_racion)
             porcion = max(porcion, SUELO_MEDIBLE_G)
         # Nunca por encima de su propio techo: si un alimento no puede
         # llegar a esa porción, el suelo lo dejaría fuera del catálogo entero.
