@@ -332,7 +332,7 @@ jubilado — que desde fuera se parecen mucho.
 | `especies.py`, `accesibles.py` | Qué especie es cada alimento |
 | `transicion.py` | Plan de cambio gradual de dieta |
 | `persistencia.py`, `observabilidad.py` | Supabase y Sentry |
-| `pruebas_completas.py` | **La batería.** Los 124 bloques, ~73 min. Es lo que se ejecuta entero antes de entregar cualquier cambio — y desde el 18 de septiembre tiene dos escalones por debajo, la rápida (1 min) y la repartida en cuatro (18 min): ver «Cómo se prueba» |
+| `pruebas_completas.py` | **La batería.** Los 125 bloques, ~73 min. Es lo que se ejecuta entero antes de entregar cualquier cambio — y desde el 18 de septiembre tiene dos escalones por debajo, la rápida (1 min) y la repartida en cuatro (18 min): ver «Cómo se prueba» |
 | `datos_de_la_ficha.json` | **Los 21 campos que la ficha pregunta, y CÓMO llega cada uno al motor** (11 de septiembre). Nació de una frase de Elena: «TODOS LOS DATOS QUE RECOJA LA APP TIENEN QUE LLEGAR DE ALGUNA MANERA AL MOTOR, SI NO SON DATOS INUTILES Y CUANDO SE PIDEN ES SIEMPRE POR ALGO». Y tiene un caso que lo justifica solo, del mismo día: la ficha pregunta la **actividad** desde siempre, la app la usaba para calcular las kcal y mandaba solo el número — el motor veía 1955 kcal y no sabía si era un galgo de sofá o un perro de trineo, que es justo lo que decide si se le aprietan los topes crónicos por peso metabólico. Hay tres formas de llegar: `campo` (viaja suelto), `dentro_de` (va cocinado dentro de un número que sí viaja, y entonces **hay que escribir qué se pierde por ir así**) y `no_hace_falta` (con su motivo, que tiene que ser un motivo y no una excusa). Lo vigila el BLOQUE 87. ⚠️ Eran 20 y faltaba `raza`: la lista se copió a mano de `tests/ficha-ida-y-vuelta.spec.js`… donde `raza` tampoco estaba, porque su perro de ejemplo era un mestizo y `null` vuelve como `null` aunque se pierda. Dos inventarios copiados a mano, el mismo hueco en los dos |
 | `niveles_de_actividad.json` | **La Tabla VII-7 de FEDIAF fila por fila**, con lo que hace el motor y lo que ofrece la app (11 de septiembre). Cinco filas emparejadas, una **partida por nosotros** (el rango «High activity 150-175» es UNA fila de la fuente y el motor la parte en dos niveles), una fuera a propósito (los perros de trineo, 860-1240) y un **HUECO** declarado: «Obese prone adults ≤ 90» no está ni en el motor ni en la app. Lo vigila el BLOQUE 88 |
 | `preguntas_por_patologia.json` | **Qué pregunta decide la cifra de cada patología, qué respuestas tiene, y a qué clave del motor lleva cada una** (11 de septiembre). Nació de una frase de Elena: «tendrá que haber preguntas para cada patología preguntando resultados de analíticas o lo que sea para que pueda coger según la respuesta los límites para cada estadio o cada caso». ⚠️ **Y lo primero que hay que saber al abrirlo es que la mitad ya estaba hecha**: la cardiopatía tiene **cinco claves con cinco techos de sodio** (`cardiopatia_c` 625, `cardiopatia_d` 480) y la app **ya pregunta el estadio ACVIM**. Cuatro de las diez están `aplicada`. Aquí no hay ni un número escrito: se **derivan** de `patologias.json`, y donde el motor no tiene una clave por respuesta se dice en vez de inventarla. Cinco estados, y el que importa es **`no_cambia_ninguna_cifra`**: una pregunta cuyas respuestas aplican exactamente lo mismo no decide nada — se le pide un dato clínico a quien firma y da igual lo que conteste. Hoy le pasa a `shunt_sin_encefalopatia`. Lo vigila el BLOQUE 90, que además exige que **cada `requiere` de un tope condicional apunte a una patología que exista**: el de la diabetes decía `hipertrigliceridemia`, que no es ninguna de las 47, así que ese techo **no se aplicaba nunca** por esa puerta — el solver lo resuelve con `any(otra in lista ...)` y un nombre que nadie puede marcar no entra jamás, con el menú saliendo verde igual. ⚠️ **Y desde la noche del 11 comprueba las 19 respuestas, no solo las cinco de la cardiopatía**: cifra a cifra, techos con `min()` y suelos con `max()`, contra lo que devuelve `topes_de_patologias` — que es la función que llama el solver. Son 28 cifras, y de 14 de ellas nadie comprobaba que contestar una cosa u otra cambiara nada. Y las dos direcciones: un tope que el solver aplica y la respuesta no dice es una restricción que quien firma no ve, y que puede dejar al perro sin menú sin que se sepa por qué. ⚠️ **La lista la lee ahora la app de `GET /vocabulario`** y no de su propia `FAMILIAS_PATOLOGIA`, que queda de respaldo — y `segura` se deriva del `_no_formulable` que dice el motor, que era el riesgo escrito en `App.jsx` desde agosto. Lo vigila `tests/puerta-veterinario.spec.js` sembrando un estadio **inventado** |
@@ -1854,6 +1854,62 @@ una fuente y es un tope crónico, un menú que se pase **no se entrega** (regla 
 Si el número es nuestro y es una proporción de BARF, el menú **sí** se entrega y
 lo que no puede hacer el texto es llamarlo límite.
 
+### El reloj de la app era más corto que el del motor, y el camino normal era el afectado
+
+*(19 de septiembre de 2026.)* La app cortaba toda petición de menú a los **45 s**
+(`TIEMPO_MAXIMO_PETICION_MS`, `src/api.js`) y el motor se da **90** para un menú
+suelto (`PRESUPUESTO_SEGUNDOS_MENU_UNICO`). El tramo entre los dos es tiempo en
+el que el motor trabaja para nadie: encuentra el menú y no lo recibe ninguna
+pantalla.
+
+⚠️ **Y no era un rincón**: la ficha pide **un** menú por omisión, y con uno solo
+la app no va por `/menu/semana` sino por **`/menu/v2`** — que era justo la
+llamada sin tercer argumento. `fetchConTimeout` tiene los 45 s por omisión, así
+que olvidarse **no da ningún error**.
+
+**Medido contra el motor DESPLEGADO**, con la app colgando a los 45,3 s:
+
+| | |
+|---|---|
+| Cairo, el cachorro de raza grande | menú **verde** en **79,8 · 79,8 · 81,4 · 68,1 s** (cuatro tiradas, peldaño estricto) |
+| adulto toy 1,8 kg, cocinado | menú verde en **37,0 s** |
+| Cairo sin premios, cocinado | menú verde en **86,5 s** |
+
+Los tres existen, los tres salen verdes y ninguno llegaba a la pantalla.
+
+⚠️ **La semana ya lo tenía arreglado** desde el 16 de septiembre
+(`tiempoParaVariosMenus` escala 45 + 18 s por menú de más), y por eso se ve tan
+claro lo que faltaba: se arregló el camino de los siete menús y se quedó el de
+uno. Ahora llevan reloj las **cinco** llamadas: `/menu/v2`, `/menu/semana`,
+`/menu/varios-perros`, `/menu/revalidar` y las tres ediciones.
+
+⚠️ **El número no vive en la app** (regla 6): es el presupuesto DEL MOTOR, así
+que lo sirve `GET /vocabulario` en `presupuesto_de_tiempo` y la app lo anota,
+con `PRESUPUESTO_DE_TIEMPO_RESPALDO` para cuando Render duerme. Copiarlo a mano
+sería el fallo de las seis categorías de Personalizar otra vez: el día que se
+suba aquí, la app seguiría cortando donde cortaba.
+
+⚠️ **El margen de 60 s es una MEDIDA**, no un número redondo: el presupuesto
+acota el **bucle del solver**, no la respuesta entera. Medido contra Render, el
+perro que más tarda devolvió HTTP 200 **con menú** en **105,2 · 144,7 · 148,4 s**
+contra un presupuesto de 90.
+
+⚠️ **Y esas tres tiradas tiran una premisa que está escrita en cuatro sitios**:
+«Render documenta 100 s como máximo de una petición, y pasarse no es un mensaje
+que se pueda leer, es un corte de conexión» — en `main.py` (dos veces), aquí y
+**dentro del BLOQUE 124**, que rechaza cualquier presupuesto por encima de 95 s.
+**Render sirvió las tres, la más larga a 148,4 s.** Es la misma historia que los
+24 s del 15 de septiembre. Lo que eso abre —subir el techo de la semana y darle
+al primer menú lo que dice su propio nombre— está **medido y sin decidir** en
+`PENDIENTE_PRODUCTO.md`, porque la semana de Cairo entera cuesta 30,4 s aquí, o
+sea ~180 s en Render, y eso ya es una decisión de cuánto se le hace esperar a
+alguien.
+
+Lo vigilan el **BLOQUE 132** —que lo servido sea la constante que aplica el
+motor, y que esté declarado en `lo_que_la_app_pinta.json`— y
+`tests/reloj-del-motor.spec.js`, que siembra un presupuesto **inventado** y
+además exige que **ninguna** llamada de menú se quede sin su reloj.
+
 `GET /vocabulario` (11 de septiembre) sirve **todo lo que el motor enumera**,
 para que la app lo lea en vez de copiárselo: los cinco niveles de actividad con
 su cifra de FEDIAF, las 255 razas, los seis tamaños, las etapas, los nueve
@@ -2892,7 +2948,7 @@ python3 pruebas_completas.py          # ~73 min, TODO EN VERDE antes de entregar
 | `bateria-repartida.yml` — la entera en **4 trozos a la vez** | en cada **pull request** | **~18 min** |
 | `bateria.yml` — la entera de una pieza | PR y `main` | **~73 min** (4.376 s en la última medida; 4.896 s en la CI, que va más lenta) |
 
-Los **124 bloques** de la entera tardan unos **73 minutos**. Esa cifra sube cada
+Los **125 bloques** de la entera tardan unos **73 minutos**. Esa cifra sube cada
 vez que un bloque nuevo resuelve menús de verdad (antes ponía aquí «~45 min»,
 antes «~25», antes «~10» y antes «~2»). **Si vuelve a bajar sin motivo, es que
 algo no se está ejecutando.** No necesita red ni claves de verdad: se fabrica su
