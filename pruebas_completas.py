@@ -23779,6 +23779,75 @@ print(f"  vista previa: {len(_menus131)} menús, {len(_pasados131)} por encima d
 print(f"  el tope muerde: con él {_p_con131 * 100:.1f} % · sin él {_p_sin131 * 100:.1f} %")
 
 
+# ============================================================
+# BLOQUE 132 — EL RELOJ DE LA APP NO PUEDE SER MÁS CORTO QUE EL DEL MOTOR
+# ============================================================
+#
+# ⚠️ CASO REAL, EN PRODUCCIÓN (19 de septiembre de 2026). La app corta una
+# petición de menú a los 45 s (`TIEMPO_MAXIMO_PETICION_MS`, `src/api.js`) y el
+# motor se da **90** para el menú suelto. El tramo entre los dos es tiempo en el
+# que el motor trabaja para nadie.
+#
+# Y no es un rincón: la ficha por omisión pide UN menú, y con uno solo la app no
+# va por `/menu/semana` sino por `/menu/v2`. O sea que es el camino normal.
+#
+# Medido contra el motor DESPLEGADO: Cairo -- el cachorro de raza grande de
+# Elena -- sale con menú verde en Render en 79,8 · 79,8 · 81,4 · 68,1 s, cuatro
+# tiradas, siempre en el peldaño estricto. La app colgaba a los 45,3. El dueño
+# veía «está tardando más de lo normal» de un menú que ya estaba calculado.
+#
+# LO QUE VIGILA ESTE BLOQUE es que el número viaje (regla 6): que `GET
+# /vocabulario` sirva el presupuesto del motor y que lo servido sea EXACTAMENTE
+# la constante que aplica. Si la app tuviera que copiarlo, el día que se suba
+# aquí la app seguiría cortando donde cortaba -- que es el fallo de las seis
+# categorías de Personalizar y el de los cinco niveles de actividad otra vez.
+#
+# ⚠️ NO comprueba cuánto espera la app: eso vive en el otro repo y lo vigila
+# `tests/la-ley-del-motor.spec.js`. Aquí se comprueba la punta del motor, que es
+# la que puede mentir sin que se vea.
+# ------------------------------------------------------------
+print("\n=== BLOQUE 132: el presupuesto de tiempo del motor se sirve, y es el que se aplica ===")
+
+_pt132 = (_c.get("/vocabulario").json() or {}).get("presupuesto_de_tiempo")
+if not isinstance(_pt132, dict):
+    fallos.append(
+        "BLOQUE132: `GET /vocabulario` no sirve `presupuesto_de_tiempo`. Sin eso la app tiene "
+        "que llevar su propio reloj escrito dentro, y el dia que se suba el presupuesto del "
+        "motor la app seguira cortando donde cortaba -- tirando menus que el motor ya tiene")
+else:
+    # Cada clave servida contra la constante VIVA de `main.py`. No se copia
+    # ningun numero aqui: eso seria el fichero contra si mismo.
+    for _k132, _cte132 in (
+            ("menu_unico_segundos", "PRESUPUESTO_SEGUNDOS_MENU_UNICO"),
+            ("semana_total_segundos", "PRESUPUESTO_SEGUNDOS_SEMANA"),
+            ("semana_primer_menu_segundos", "SEGUNDOS_PRIMER_MENU_DE_LA_SEMANA"),
+            ("varios_perros_segundos", "PRESUPUESTO_SEGUNDOS_VARIOS_PERROS")):
+        _vivo132 = getattr(_api, _cte132, None)
+        _servido132 = _pt132.get(_k132)
+        if _vivo132 is None:
+            fallos.append(f"BLOQUE132: `main.{_cte132}` ya no existe, y `/vocabulario` sigue "
+                          f"sirviendo `{_k132}`. La app estaria leyendo un numero muerto")
+        elif _servido132 != _vivo132:
+            fallos.append(
+                f"BLOQUE132: `/vocabulario` sirve {_k132}={_servido132} y el motor aplica "
+                f"{_cte132}={_vivo132}. La app espera una cosa y el motor tarda otra: si lo "
+                f"servido es MENOR, la app corta antes y tira menus ya calculados")
+
+    # ⚠️ Y QUE ESTE DECLARADO EN LA LEY, o el BLOQUE 99 no lo mira y esto se
+    #    queda siendo una clave suelta que nadie vigila desde la otra punta.
+    _ley132 = _json_b99.load(open("lo_que_la_app_pinta.json", encoding="utf-8"))
+    if not any(l.get("camino") == "presupuesto_de_tiempo" for l in _ley132.get("listas", [])):
+        fallos.append(
+            "BLOQUE132: `presupuesto_de_tiempo` no esta en `lo_que_la_app_pinta.json`. La ley "
+            "se vigila por las DOS puntas: sin la declaracion, `la-ley-del-motor.spec.js` no "
+            "puede exigirle a la app que lo lea")
+
+    print(f"  servido: menu suelto {_pt132.get('menu_unico_segundos')} s · semana "
+          f"{_pt132.get('semana_total_segundos')} s (primero "
+          f"{_pt132.get('semana_primer_menu_segundos')} s) · varios perros "
+          f"{_pt132.get('varios_perros_segundos')} s")
+
+
 _cerrar_el_ultimo_bloque()
 
 # ⚠️ Y ESTE GUARDIA TIENE QUE SER LO ÚLTIMO DEL FICHERO, Y EL 16 DE SEPTIEMBRE

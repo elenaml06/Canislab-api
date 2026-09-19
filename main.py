@@ -10087,6 +10087,46 @@ def endpoint_vocabulario():
                         "ritmos distintos."),
             },
         },
+        # ── CUÁNTO PUEDE TARDAR EL MOTOR ────────────────────────────────
+        # ⚠️ ESTO SE SIRVE PORQUE EL RELOJ DE LA APP ERA MÁS CORTO QUE EL DEL
+        # MOTOR, Y NADIE PODÍA VERLO (19 de septiembre de 2026). La app corta
+        # una petición de menú a los 45 s (`TIEMPO_MAXIMO_PETICION_MS` de
+        # `src/api.js`) y el motor se da **90** para el menú suelto. O sea que
+        # entre los 45 y los 90 el motor trabaja para nadie: encuentra el menú y
+        # no lo recibe ninguna pantalla.
+        #
+        # ⚠️ CASO REAL, MEDIDO CONTRA EL MOTOR DESPLEGADO. La ficha por omisión
+        # pide UN menú, y con uno solo la app no va por `/menu/semana` sino por
+        # `/menu/v2` -- o sea que esto es el camino normal, no un rincón. Cairo,
+        # el cachorro de raza grande, sale con menú en Render en 79,8 · 79,8 ·
+        # 81,4 · 68,1 s (cuatro tiradas, siempre en el peldaño estricto) y la
+        # app cuelga a los 45,3. El dueño ve «está tardando más de lo normal»
+        # de un menú que existe y que el motor ya había calculado.
+        #
+        # Y no es un número de producto que se pueda elegir a ojo en la app: es
+        # el presupuesto DEL MOTOR, así que vive aquí y la app lo lee (regla 6).
+        # El día que se suba o se baja, la app se entera sola.
+        #
+        # ⚠️ LA SEMANA YA LO TENÍA, y por eso se ve tan claro lo que le faltaba
+        # al menú suelto: `tiempoParaVariosMenus` escala 45 + 18 s por menú de
+        # más desde el 16 de septiembre, cuando se vio que la semana entera
+        # tardaba 70,5 s y NUNCA cabía en los 45.
+        "presupuesto_de_tiempo": {
+            "que_es": ("Lo que el motor se permite como MUCHO para contestar. Es un techo, no un "
+                       "coste: devuelve en cuanto tiene menú, y el perro fácil contesta en dos "
+                       "segundos. La app tiene que esperar al menos esto, o tira menús que el "
+                       "motor ya ha encontrado."),
+            "menu_unico_segundos": PRESUPUESTO_SEGUNDOS_MENU_UNICO,
+            "semana_total_segundos": PRESUPUESTO_SEGUNDOS_SEMANA,
+            "semana_primer_menu_segundos": SEGUNDOS_PRIMER_MENU_DE_LA_SEMANA,
+            "varios_perros_segundos": PRESUPUESTO_SEGUNDOS_VARIOS_PERROS,
+            "veterinario": {
+                "detalle": ("El presupuesto se reparte entre los peldaños de la escalera: cada "
+                            "llamada al solver se lleva como mucho una fracción de lo que queda "
+                            "(`FRACCION_DE_UN_INTENTO`). Un perro cuyo menú está dos peldaños "
+                            "abajo necesita que quepan tres llamadas."),
+            },
+        },
         "modo_de_preparacion": {
             "de_donde": ("Criterio NUESTRO en lo que toca a la forma, y de fuente en lo único que "
                          "no se negocia: el hueso. SACN5 5ª ed., cap. 50 — 46 de 60 cuerpos "

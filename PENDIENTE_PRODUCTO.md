@@ -500,6 +500,143 @@ Las dos salidas, para cuando se decida:
 
 ---
 
+## 🔴 CAIRO Y EL TOY NO OBTIENEN NINGÚN MENÚ EN PRODUCCIÓN, POR EL CAMINO NORMAL DE LA APP (19 de septiembre de 2026)
+
+**Esto es lo más gordo que hay abierto, y está medido contra
+`canislab-api.onrender.com`, no leído del repo.** Lo de abajo (el toy de 1,5 kg,
+18 de septiembre) es el mismo fallo visto por una rendija: no son «3 de cada 4
+veces» ni es solo el toy.
+
+### Lo que ve el dueño
+
+La app tiene **dos caminos**, y cada uno tiene su reloj:
+
+| camino | cuándo | lo que espera la APP | lo que se da el MOTOR |
+|---|---|---|---|
+| `POST /menu/semana` | automático con **varios** menús — el camino normal | `45 + 18·(n−1)` ms → **153 s** con siete (`tiempoParaVariosMenus`, `src/api.js`) | `PRESUPUESTO_SEGUNDOS_SEMANA` = **85 s**, y el PRIMER menú `SEGUNDOS_PRIMER_MENU_DE_LA_SEMANA` = **40 s** |
+| `POST /menu/v2` | **Personalizar**, o automático con UN menú | **45 s pelados** (`fetchConTimeout` sin tercer argumento) | `PRESUPUESTO_SEGUNDOS_MENU_UNICO` = **90 s** |
+
+**La semana, siete menús, contra el motor desplegado:**
+
+| perro | crudo | cocinado |
+|---|---|---|
+| adulto mediano 24,5 kg | 7 menús · 10,7 s | 7 menús · 57,4 s |
+| adulto toy 1,8 kg | **0 menús** · 41,0 s | 1 de 7 · 42,0 s |
+| **Cairo sin premios** | **0 menús** · 40,8 s | **0 menús** · 41,4 s |
+| Cairo premios al máximo | **0 menús** · 55,6 s | **0 menús** · 43,2 s |
+| toy con premios | **0 menús** · 41,3 s | **0 menús** · 42,4 s |
+
+Y con **`/menu/v2`**, que es lo que usa **Personalizar**:
+
+| perro | modo | con los 45 s de la app | con reloj de sobra |
+|---|---|---|---|
+| adulto mediano | crudo | menú · 1,9 s | menú · 1,4 s |
+| adulto toy | crudo | **corte** · 45,2 s | sin menú · 91,0 s |
+| Cairo sin premios | crudo | **corte** · 45,3 s | sin menú · 91,2 s |
+| Cairo premios al máximo | crudo | **corte** · 45,3 s | sin menú · 124,2 s |
+| toy con premios | crudo | **corte** · 45,3 s | sin menú · 91,4 s |
+| adulto toy | cocinado | **corte** · 45,2 s | **MENÚ · 37,0 s** |
+| Cairo sin premios | cocinado | **corte** · 45,3 s | **MENÚ · 86,5 s** |
+| Cairo premios al máximo | cocinado | **corte** · 45,2 s | sin menú · 108,1 s |
+| toy con premios | cocinado | **corte** · 45,2 s | sin menú · 91,2 s |
+
+Las dos filas en negrita de la última columna son menús **que el motor encuentra
+y que la app tira a la basura**.
+
+### ⚠️ No es nutrición, y no es el modo cocinado
+
+Los dos hay que descartarlos antes de tocar un reloj:
+
+- **El menú existe.** En este equipo, Cairo sale con menú **verde** en el peldaño
+  **estricto** en 6,4-9,2 s (tres tiradas), y por la app contra el motor local en
+  9,7-20,8 s. Las 32 pruebas de `playwright.real.config.js` —los trece perros por
+  los dos modos— salen **todas verdes**.
+- **No lo trajo el catálogo cocinado.** Medido A/B en la misma máquina, `a010feb`
+  (antes de fusionarlo) contra `e552b25`: Cairo pasa de 5,4-7,1 s a 7,5-8,5 s y
+  el toy con premios no se mueve (8,6-10,8 → 8,8-11,1). Y el filtro de modo está
+  puesto: en crudo el motor ve **169** candidatos, exactamente los mismos que
+  había antes; en cocinado, 147.
+
+### La causa, que es aritmética y no hace falta resolver nada para verla
+
+Render va **5,4-7,0 veces más lento** que este equipo. Medido esta noche con una
+regla —el adulto con premios, que sale en el peldaño 0 y cuyo tiempo es casi todo
+MILP—: **5,4 s aquí contra 29,4 · 33,8 · 34,0 · 37,8 s allí**, cuatro vueltas.
+
+Con ese factor, **Cairo necesita ~70-80 s en Render**, y ahí está medido de
+verdad: cuatro tiradas seguidas a `/menu/v2` le dan menú en **79,8 · 79,8 · 81,4
+· 68,1 s**, siempre en el peldaño estricto.
+
+Y el primer menú de la semana recibe **40 s**. Como **si el primero falla se cae
+la semana entera**, el resultado es 0 menús — y por eso la respuesta llega
+siempre a los ~41 s, **igual pidiendo 7 que 3 que 1**: comprobado, las tres
+devuelven lo mismo en 41,7 · 41,6 · 40,9 s.
+
+### ⚠️ Y LA PREMISA QUE SOSTIENE LOS DOS TECHOS ESTÁ SIN MEDIR
+
+«Render documenta 100 s como máximo de una petición, y pasarse no es un mensaje
+que se pueda leer: es un corte de conexión» está escrito en `main.py` (dos
+veces), en `CLAUDE.md` y **dentro del BLOQUE 124**, que rechaza cualquier
+presupuesto por encima de 95 s.
+
+**MEDIDO A PROPÓSITO, tres tiradas seguidas contra el motor desplegado** (Cairo
+con premios al máximo, crudo, `/menu/v2`, que es el perro que más tarda):
+
+| | tiempo | respuesta |
+|---|---|---|
+| #0 | **105,2 s** | HTTP 200 · 12.835 bytes · con menú |
+| #1 | **144,7 s** | HTTP 200 · 13.096 bytes · con menú |
+| #2 | **148,4 s** | HTTP 200 · 12.790 bytes · con menú |
+
+**Render no corta a los 100 s: 3 de 3 por encima, y la más larga a 148,4 s.** Es
+la misma historia que los 24 s del 15 de septiembre —«Render (plan gratis) corta
+la conexión a los 30 s», que se midió y resultó ser 41,4 s sin corte—: un número
+puesto sobre un dato que nadie volvió a comprobar, y que está dejando perros sin
+comer. Con la premisa caída, los dos techos se pueden subir, y hay sitio: la app
+ya espera 153 s por la semana de siete.
+
+⚠️ Y de paso dice otra cosa: ese perro **sí tiene menú**, las tres veces. Lo que
+le falta no es comida, es reloj.
+
+### Las salidas, SIN DECIDIR, y por qué no he tocado nada
+
+⚠️ **Los tres números —`PRESUPUESTO_SEGUNDOS_SEMANA`,
+`SEGUNDOS_PRIMER_MENU_DE_LA_SEMANA` y `FRACCION_DE_UN_INTENTO`— se pusieron con
+medidas**, y el reparto se ha intentado cambiar **dos veces** (15 y 17 de
+septiembre) rompiendo al otro perro las dos: el toy y el cachorro de raza grande
+tiran en direcciones OPUESTAS. Y hay una cosa que no puedo hacer sola: **medir el
+arreglo contra producción antes de fusionarlo**, porque Render despliega de
+`main`. Así que cualquier cambio aquí es a ciegas hasta que esté dentro.
+
+1. **Que el primer menú de la semana reciba lo que dice su propio nombre**: hoy
+   `SEGUNDOS_PRIMER_MENU_DE_LA_SEMANA` son 40 y el comentario de al lado dice que
+   debe ser «lo que se le daría a un menú suelto», que son **90**. Se quedó en 40
+   el 17 de septiembre para no dejar a los otros seis con el mínimo dentro de un
+   total de 85.
+2. **Subir el total de la semana** de 85 a ~150, que es lo que la app ya espera
+   con siete menús. Depende de que la premisa de los 100 s sea falsa — y esta
+   noche lo parece.
+3. ~~**Que el reloj de la app y el del motor salgan del MISMO número**
+   (regla 6).~~ **HECHO la misma noche**, porque no era una decisión de producto
+   sino una llamada a la que se le olvidó el tercer argumento: `/menu/v2`
+   esperaba 45 s contra un motor que se da 90, y la semana ya tenía su reloj
+   propio desde el 16 de septiembre. El motor sirve ahora su presupuesto en
+   `GET /vocabulario` → `presupuesto_de_tiempo` y la app lo lee, con
+   `PRESUPUESTO_DE_TIEMPO_RESPALDO` para cuando Render duerme. Lo vigilan el
+   **BLOQUE 132** y `tests/reloj-del-motor.spec.js`. Con eso vuelven los dos
+   menús en negrita de la tabla, y Cairo en crudo — que sale en Render en
+   68-81 s, cuatro de cuatro.
+4. **Hacer el MILP más barato** para estos perros. Es lo único que arregla los
+   seis casos que se quedan sin menú **aunque se les dé reloj de sobra**, y no
+   tengo medida de por dónde.
+
+⚠️ **Y lo que NO es una salida**: bajar ningún suelo. La ventana del toy y la de
+un cachorro de raza grande con premios son estrechas por aritmética (§7.2.5 sube
+los mínimos cuando el perro come poco, y los premios los suben otra vez sin mover
+los máximos). Que el menú esté dos peldaños abajo es la regla 3 funcionando.
+
+---
+
 ## ⚠️ EL TOY DE 1,5 KG SANO SE QUEDA SIN MENÚ EN PRODUCCIÓN, 3 DE CADA 4 VECES (18 de septiembre de 2026, noche)
 
 **Medido contra `canislab-api.onrender.com`, no leído del repo.** Perro sano,
