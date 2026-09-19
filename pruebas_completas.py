@@ -11440,48 +11440,75 @@ _FORMULABLES_61 = sorted(k for k, v in _TABLA_61.items() if v.get("formulable"))
 # del catalogo de menus y el que usan los bloques 8 y 50.
 _PESO_61, _DER_61, _ETAPA_61 = 20.0, 950.0, "Adulto"
 
-# Ninguna. Y mientras siga vacia, esta lista es la prueba de que no hay ninguna
-# patologia que digamos formulable y no lo sea.
+# ⚠️ Y SE RECORREN LOS DOS MODOS DESDE EL 19 DE SEPTIEMBRE DE 2026, porque
+# hasta hoy este bloque NUNCA ponia `modo_de_preparacion` -- o sea que probaba
+# las 39 en CRUDO y solo en crudo. El modo cocinado entro el 18 de septiembre,
+# asi que hubo un dia entero ofreciendo 39 patologias en cocinado sin que nadie
+# hubiera comprobado que alguna diera menu.
+#
+# Y NO es lo mismo: en cocinado el hueso carnoso no es candidato --cocido
+# astilla-- asi que el calcio tiene que salir de la cascara de huevo o del bote.
+# Una patologia que ademas tope el fosforo se puede quedar sin sitio.
+_MODOS_61 = ("crudo", "cocinado")
+
+# ⚠️ LAS EXCEPCIONES, CON SU MEDIDA. Una lista vacia seria la prueba de que no
+# hay ninguna patologia que digamos formulable y no lo sea; hoy hay UNA, y esta
+# aqui para que no se olvide, no para apagar la alarma.
 _EXCEPCIONES_61 = {}
+# ⚠️ VACIA, Y ESO ES LA PRUEBA. Aqui hubo una --`("renal", "cocinado")`-- entre
+# que se encontro el agujero y se arreglo, el mismo 19 de septiembre de 2026.
+# La renal no daba menu en cocinado (infactible DEMOSTRADO en los cinco
+# peldanos) porque le faltaban los HIDRATOS: se decidia quien los pide
+# derivandolo de TOPAR LA GRASA, y la renal topa fosforo, proteina y sodio.
+# Ahora lo declara en su propia ficha (`hidratos.los_pide` de patologias.json)
+# y `la_patologia_pide_hidratos` mira las dos puertas. Se deja escrito porque
+# la lista volvera a tener algo algun dia y hay que saber para que sirve.
 
 _sin_menu_61 = []
 for _pat61 in _FORMULABLES_61:
+  for _modo61 in _MODOS_61:
     _r61 = _c.post("/menu/v2", json={
         "nombres_alimentos": [], "der_objetivo": _DER_61,
         "etapa_requisitos": _ETAPA_61, "peso_perro_kg": _PESO_61,
-        "modo": "automatico", "patologias": [_pat61]}).json()
+        "modo": "automatico", "patologias": [_pat61],
+        "modo_de_preparacion": _modo61}).json()
     if not _r61.get("factible") or not _r61.get("menu"):
-        _sin_menu_61.append((_pat61, str(_r61.get("motivo") or _r61.get("mensaje"))[:110]))
+        _sin_menu_61.append(((_pat61, _modo61),
+                             str(_r61.get("motivo") or _r61.get("mensaje"))[:110]))
         continue
     _g61 = _r61["menu"]
     _v61 = verificar(_g61, al, req, _DER_61, _ETAPA_61)
     if _v61["semaforo"] != "verde":
-        fallos.append(f"BLOQUE61: «{_pat61}» da menu pero sale {_v61['semaforo']}, no verde. "
-                      f"Faltan: {[x['nutriente'] for x in _v61.get('faltan', [])][:4]}. "
+        fallos.append(f"BLOQUE61: «{_pat61}» ({_modo61}) da menu pero sale {_v61['semaforo']}, "
+                      f"no verde. Faltan: {[x['nutriente'] for x in _v61.get('faltan', [])][:4]}. "
                       f"Regla 1: ningun menu sale sin estar verde")
     _rotos61 = _api._tope_patologia_roto(_g61, al, [_pat61], _ETAPA_61)
     if _rotos61:
-        fallos.append(f"BLOQUE61: «{_pat61}» da menu que rompe su propio tope: {_rotos61}")
+        fallos.append(f"BLOQUE61: «{_pat61}» ({_modo61}) da menu que rompe su propio tope: "
+                      f"{_rotos61}")
 
-for _pat61, _motivo61 in _sin_menu_61:
-    if _pat61 in _EXCEPCIONES_61:
+for (_pat61, _modo61), _motivo61 in _sin_menu_61:
+    if (_pat61, _modo61) in _EXCEPCIONES_61:
         continue
-    fallos.append(f"BLOQUE61: «{_pat61}» esta marcada `formulable: true` y NO da menu para el "
-                  f"perro de referencia (20 kg, DER 950, adulto). Motivo que devuelve la API: "
-                  f"«{_motivo61}». O el limite que no cabe se mueve a "
-                  f"`limites_escritos_que_el_solver_no_aplica` con su medida, o la patologia "
-                  f"no es formulable y hay que decirlo. Lo que no vale es ofrecerla y no darla")
+    fallos.append(f"BLOQUE61: «{_pat61}» esta marcada `formulable: true` y NO da menu en "
+                  f"{_modo61.upper()} para el perro de referencia (20 kg, DER 950, adulto). "
+                  f"Motivo que devuelve la API: «{_motivo61}». O el limite que no cabe se mueve "
+                  f"a `limites_escritos_que_el_solver_no_aplica` con su medida, o la patologia "
+                  f"no es formulable EN ESE MODO y hay que decirlo. Lo que no vale es ofrecerla "
+                  f"y no darla")
 
 # Y al reves: una excepcion que ya resuelve tiene que salir de la lista, porque
 # si no la lista deja de significar nada. Es la misma idea que
 # `MAXIMOS_NO_APLICADOS` en verificar.py.
-for _pat61 in _EXCEPCIONES_61:
-    if _pat61 not in dict(_sin_menu_61):
-        fallos.append(f"BLOQUE61: «{_pat61}» esta en la lista de excepciones pero YA resuelve. "
-                      f"Quitala de _EXCEPCIONES_61: una lista de excepciones caducada es una "
-                      f"alarma apagada")
+_sin_menu_clave_61 = dict(_sin_menu_61)
+for _clave61 in _EXCEPCIONES_61:
+    if _clave61 not in _sin_menu_clave_61:
+        fallos.append(f"BLOQUE61: «{_clave61[0]}» en {_clave61[1]} esta en la lista de "
+                      f"excepciones pero YA resuelve. Quitala de _EXCEPCIONES_61: una lista de "
+                      f"excepciones caducada es una alarma apagada")
 
-print(f"  {len(_FORMULABLES_61)} patologias formulables, {len(_sin_menu_61)} sin menu")
+print(f"  {len(_FORMULABLES_61)} patologias formulables x {len(_MODOS_61)} modos, "
+      f"{len(_sin_menu_61)} sin menu ({len(_EXCEPCIONES_61)} declarada)")
 print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 
@@ -23868,6 +23895,117 @@ else:
 
 print(f"  {len(_PERROS133)} perros x 2 modos · {_atajos133} peticiones por el catalogo · "
       f"0 alimentos fuera de su modo")
+
+
+# ============================================================
+# BLOQUE 134 — LA PREGUNTA DE QUÉ PREMIOS, Y DÓNDE SALE
+# ============================================================
+#
+# ⚠️ PEDIDO EXPRESO (Elena, 19 de septiembre de 2026): «ADEMÁS no me pregunta
+# qué tipo de premios le das. Que dijimos que tenía que preguntarlo».
+#
+# `premios_declarados` estaba en el modelo desde el 16 de septiembre y la app
+# no lo mandaba NUNCA: la regla 6 por la mitad que no se ve -- la capacidad
+# servida que no usa nadie. Y el texto de la pregunta no lo puede escribir la
+# app: es del motor, como los niveles.
+#
+# ⚠️ Y LO QUE MÁS IMPORTA AQUÍ ES DÓNDE SALE. Elena: «habíamos dicho que si son
+# más del 10 %, ¿no? Que si son menos del 10 %, los ignoramos». Eso es
+# exactamente lo que hace el solver: solo recorta la escalera y pide la
+# declaración cuando `kcal_premios / DER > FRACCION_MAXIMA_DE_PREMIOS` Y no se
+# ha declarado nada. Por debajo los cuenta como fracción y formula igual.
+#
+# O sea que el número que decide dónde sale la pregunta es
+# `techo_recomendado_pct`, y tiene que ser EL MISMO que aplica el solver: si se
+# separan, la app pregunta donde el motor no lo necesita (o al revés, calla
+# donde el motor va a negarse).
+# ------------------------------------------------------------
+print("\n=== BLOQUE 134: la pregunta de que premios, y donde sale ===")
+
+_voc134 = _c.get("/vocabulario").json() or {}
+_pr134 = _voc134.get("premios") or {}
+_dec134 = _pr134.get("declarar")
+
+if not isinstance(_dec134, dict):
+    fallos.append(
+        "BLOQUE134: `/vocabulario` no sirve `premios.declarar`. Sin eso la app tiene que "
+        "escribir la pregunta ella, y el dia que cambie el criterio la app se queda con su "
+        "copia vieja -- el fallo de las seis categorias de Personalizar otra vez")
+else:
+    for _reg134 in ("dueno", "veterinario"):
+        _r134 = _dec134.get(_reg134) or {}
+        for _campo134 in ("pregunta", "detalle", "boton", "unidad"):
+            if not str(_r134.get(_campo134) or "").strip():
+                fallos.append(f"BLOQUE134: falta `{_campo134}` del registro `{_reg134}` en "
+                              f"`premios.declarar`. La app no puede montar la pantalla sin el")
+    # ⚠️ Y LOS DOS REGISTROS TIENEN QUE SER DISTINTOS. Si el del dueno fuera el
+    #    tecnico, se le estaria hablando de «gramos fijos dentro de los 43
+    #    requisitos» a quien solo quiere dar de comer a su perro.
+    if (_dec134.get("dueno") or {}).get("detalle") == (_dec134.get("veterinario") or {}).get("detalle"):
+        fallos.append("BLOQUE134: los dos registros de `premios.declarar` dicen lo MISMO. O el "
+                      "dueno esta leyendo la jerga del veterinario, o el veterinario ha perdido "
+                      "la palabra de la fuente")
+
+# ⚠️ EL TECHO QUE SE SIRVE ES EL QUE APLICA EL SOLVER. Es lo que decide donde
+#    sale la pregunta: si se separan, la app pregunta donde no hace falta.
+_techo134 = _pr134.get("techo_recomendado_pct")
+_vivo134 = round(_api.FRACCION_MAXIMA_DE_PREMIOS * 100)
+if _techo134 != _vivo134:
+    fallos.append(
+        f"BLOQUE134: `/vocabulario` sirve techo_recomendado_pct={_techo134} y el solver aplica "
+        f"FRACCION_MAXIMA_DE_PREMIOS={_api.FRACCION_MAXIMA_DE_PREMIOS} ({_vivo134} %). La app "
+        f"decide con ese numero cuando preguntar QUE premios")
+
+# ⚠️ Y QUE SOLO UN NIVEL PASE DEL TECHO, que es de donde sale que la pregunta
+#    tenga sentido. Si ninguno lo pasara, la pregunta no saldria nunca; si lo
+#    pasaran todos, saldria siempre y volveriamos a alargar la ficha.
+_pasan134 = [n.get("clave") for n in (_pr134.get("niveles") or [])
+             if isinstance(n.get("pct_del_dia"), (int, float))
+             and n["pct_del_dia"] > (_techo134 or 0)]
+if len(_pasan134) != 1:
+    fallos.append(
+        f"BLOQUE134: {len(_pasan134)} niveles de premios pasan del techo ({_pasan134}). Con "
+        f"cero, la pregunta de QUE premios no sale nunca; con mas de uno, sale donde el motor "
+        f"formula igual sin ella")
+
+# ⚠️ Y QUE EL MOTOR LO USE DE VERDAD: declarar un premio tiene que cambiar el
+#    menu. Sin esto, todo lo de arriba seria texto servido sobre una capacidad
+#    que no hace nada -- que es justo lo que pasaba en la app.
+_BASE134 = {"nombres_alimentos": [], "forzar_presencia": [], "modo": "automatico",
+            "der_objetivo": 950.0, "etapa_requisitos": "Adulto", "peso_perro_kg": 20.0,
+            "tamano": "Mediano", "actividad": "normal", "patologias": [],
+            "especies_excluidas": [], "nombres_excluidos": [], "categorias_excluidas": [],
+            "modo_de_preparacion": "crudo", "presupuesto_segundos": 90.0,
+            "premios_nivel": "mas_del_maximo"}
+_DECL134 = {"Corazón de pollo": 80.0}
+_r134a = _c.post("/menu/v2", json={**_BASE134, "premios_declarados": _DECL134}).json()
+if not _r134a.get("factible"):
+    fallos.append(f"BLOQUE134: declarando un premio no sale menu: {str(_r134a.get('motivo'))[:150]}. "
+                  f"La salida que se le ofrece al dueno tiene que existir")
+else:
+    _g134 = (_r134a.get("menu") or {}).get("Corazón de pollo")
+    if _g134 != 80.0:
+        fallos.append(
+            f"BLOQUE134: el premio declarado son 80 g y en el menu hay {_g134}. Un premio "
+            f"declarado son gramos FIJOS: si el motor los mueve, lo que se le ensena al dueno "
+            f"no es lo que come")
+    if (_r134a.get("premios_dentro_del_menu") or {}).get("Corazón de pollo") != 80.0:
+        fallos.append(
+            "BLOQUE134: el premio esta dentro del menu y no se marca como tal, asi que el dueno "
+            "lee esos gramos en la lista de la compra y entiende que se los tiene que dar ADEMAS")
+
+# ⚠️ Y UN NOMBRE QUE NO EXISTE SE DICE, no se ignora. Un premio que el dueno
+#    cree declarado y que el motor no cuenta es peor que no preguntarlo.
+_r134b = _c.post("/menu/v2", json={**_BASE134,
+                                   "premios_declarados": {**_DECL134,
+                                                          "Galleta Zzyrax": 20.0}}).json()
+if "Galleta Zzyrax" not in (_r134b.get("premios_que_no_conocemos") or []):
+    fallos.append(
+        "BLOQUE134: se declara un premio que NO esta en el catalogo y el motor no lo dice en "
+        "`premios_que_no_conocemos`. El dueno cree que lo ha declarado y no se cuenta")
+
+print(f"  techo {_techo134} % · {len(_pasan134)} nivel lo pasa ({_pasan134}) · "
+      f"los dos registros, con sus cuatro campos")
 
 
 _cerrar_el_ultimo_bloque()

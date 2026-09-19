@@ -2818,6 +2818,7 @@ def _hay_comida_de_verdad(al, excluidos=None, categorias_excluidas=None):
 # serían un motor construyendo menús que el filtro final tira, que es
 # exactamente el fallo del 8 de septiembre con los suelos de patología.
 from motor_completo import la_patologia_topa_la_grasa as _la_patologia_topa_la_grasa
+from motor_completo import la_patologia_pide_hidratos as _la_patologia_pide_hidratos
 
 
 def _escalera_de_relajacion(hay_comida_de_verdad=True, patologias=None, etapa="Adulto",
@@ -3112,10 +3113,23 @@ def _escalera_de_relajacion(hay_comida_de_verdad=True, patologias=None, etapa="A
                       for c, (mn, mx) in m.items()}, supl, cl)
                     for m, supl, cl in peldanos]
 
+    # ⚠️ DOS COSAS DISTINTAS, Y SE SEPARAN A PROPÓSITO (19 de septiembre de
+    # 2026). Hasta hoy las decidía la misma pregunta -«¿topa la grasa?»- y eso
+    # es correcto para las siete que la topan: el hueso carnoso es lo más graso
+    # del plato, así que se le suelta el SUELO, y los hidratos suben de techo
+    # porque hay que sacar las kcal de algún sitio.
+    #
+    # Pero la RENAL necesita lo segundo y no lo primero. Topa fósforo, proteína
+    # y sodio, no grasa. Soltarle el suelo de hueso sería moverle una proporción
+    # de BARF por un motivo que no es el suyo, y eso está medido y decidido para
+    # las siete, no para ella.
     if _la_patologia_topa_la_grasa(patologias, etapa):
-        peldanos = [({c: ((0.0 if c == "Hueso carnoso" else mn),
-                          (TECHO_HIDRATOS_SI_LA_GRASA_ESTA_TOPADA
-                           if c == "Cereales y tubérculos" else mx))
+        peldanos = [({c: ((0.0 if c == "Hueso carnoso" else mn), mx)
+                      for c, (mn, mx) in m.items()}, supl, cl)
+                    for m, supl, cl in peldanos]
+    if _la_patologia_pide_hidratos(patologias, etapa):
+        peldanos = [({c: (mn, (TECHO_HIDRATOS_SI_LA_GRASA_ESTA_TOPADA
+                               if c == "Cereales y tubérculos" else mx))
                       for c, (mn, mx) in m.items()}, supl, cl)
                     for m, supl, cl in peldanos]
     return peldanos
@@ -10049,6 +10063,59 @@ def endpoint_vocabulario():
                          "ed. cap. 7 («not exceed 10 % of the animal's total daily calories»)"),
             "techo_recomendado_pct": round(FRACCION_MAXIMA_DE_PREMIOS * 100),
             "pregunta": PREGUNTA_DE_LOS_PREMIOS,
+            # ── Y CUALES SON, QUE ES OTRA PREGUNTA ──────────────────────────
+            # ⚠️ PEDIDO EXPRESO (Elena, 19 de septiembre de 2026): «ADEMÁS no me
+            # pregunta qué tipo de premios le das. Que dijimos que tenía que
+            # preguntarlo». Y el 16: «tiene que haber una parte en la que elija
+            # lo que le da y se meta en el plato».
+            #
+            # El motor acepta `premios_declarados` desde el 16 de septiembre y
+            # la app no se lo mandaba NUNCA: la regla 6 por la mitad que no se
+            # ve -- la capacidad servida que no usa nadie.
+            #
+            # ⚠️ SOLO SE PREGUNTA POR ENCIMA DEL TECHO, que es lo que se decidió
+            # y lo que hace el solver: por debajo del 10 % los premios se
+            # cuentan como fracción y la ración sale igual, así que preguntarle
+            # cuáles a quien da «alguna galleta» no cambiaría nada y alarga la
+            # ficha. Quién decide dónde sale la pregunta es
+            # `techo_recomendado_pct`, que ya va aquí arriba: la app lo LEE, no
+            # lo escribe.
+            "declarar": {
+                "cuando": ("Solo cuando el aporte extraración pasa del techo recomendado. Por "
+                           "debajo, el motor lo cuenta como fracción y formula igual."),
+                "de_donde": ("El formulador de Sean Delaney, coeditor de Fascetti & Delaney: "
+                             "«Some of these can be selected as \"Treats & Enticers\" when "
+                             "creating a recipe (...) no more than 10% of daily calories IF NOT "
+                             "CALLED FOR AND ACCOUNTED FOR SPECIFICALLY IN THE RECIPE». "
+                             "Declarado = está en la receta."),
+                "como_llega_al_motor": ("`premios_declarados`: {nombre del alimento: gramos al "
+                                        "día}. Solo alimentos del catálogo -- de una ficha "
+                                        "sabemos su composición y la rehace un auditor contra su "
+                                        "fuente. Un nombre que no está se devuelve en "
+                                        "`premios_que_no_conocemos`, no se ignora."),
+                "dueno": {
+                    "pregunta": "¿Nos dices cuáles le das?",
+                    "detalle": ("Lo que nos digas entra en el plato y deja de ser una "
+                                "estimación: contamos sus nutrientes de verdad. Lo que no nos "
+                                "digas sigue contando como calorías de más, que es el lado "
+                                "seguro."),
+                    "boton": "Añadir un premio",
+                    "unidad": "g al día",
+                },
+                "veterinario": {
+                    "pregunta": "Aporte extraración DECLARADO",
+                    # ⚠️ SIN ESCRIBIR CUÁNTOS REQUISITOS SON. Lo cazó el BLOQUE 107
+                    # nada más escribir esto: un número copiado a mano en un
+                    # texto se separa del código y no da ningún error -- ya pasó
+                    # con «los 30 requisitos» cuando el motor verificaba 43.
+                    "detalle": ("Entra en la ración como gramos FIJOS: sus nutrientes cuentan "
+                                "dentro de los requisitos del día y no se escala ningún "
+                                "mínimo, porque no queda ninguna parte del día a ciegas. Lo no "
+                                "declarado sigue tratándose como dilución."),
+                    "boton": "Añadir alimento",
+                    "unidad": "g/día",
+                },
+            },
             "como_llega_al_motor": ("`premios_nivel` con una de estas claves, o `kcal_de_premios` "
                                     "con el número exacto si se sabe. Si llegan los dos, manda el "
                                     "número. El motor formula la ración con las kcal QUE QUEDAN y "

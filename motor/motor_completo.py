@@ -108,6 +108,52 @@ def la_patologia_topa_la_grasa(patologias, etapa="Adulto"):
     return bool(topes.get("grasa") is not None or pct_grasa)
 
 
+def la_patologia_pide_hidratos(patologias, etapa="Adulto"):
+    """¿Alguna de las patologías marcadas necesita hidratos en la ración?
+
+    ⚠️ ESTO NO ES LO MISMO QUE TOPAR LA GRASA, y creerlo dejó a la renal sin
+    menú en cocinado (19 de septiembre de 2026). Elena: «si renal tiene que
+    llevar hidratos, que de hecho por eso se metieron, pues que se metan. En
+    una dieta BARF no tiene que haber hidratos de por sí, pero si una patología
+    los necesita, pues que se metan».
+
+    La regla ya estaba escrita --la pregunta de los hidratos tiene TRES estados
+    y el primero es «sin contestar: no entran SALVO QUE UNA PATOLOGÍA LOS
+    PIDA»-- y lo que fallaba era cómo se decidía quién los pide: se derivaba de
+    topar la grasa, que es un buen proxy para siete patologías y deja fuera a la
+    renal, que topa fósforo, proteína y sodio.
+
+    MEDIDO: sin hidratos, la renal en COCINADO es infactible DEMOSTRADO en los
+    cinco peldaños (51-62 s cada uno, terminando solos con 120 s disponibles: no
+    es el reloj). Con hidratos sale menú VERDE en 7,5 s. En crudo sin ellos sí
+    sale, pero solo en el peldaño 4 -el de tres suplementos-, o sea que ya iba
+    justa.
+
+    Son DOS PUERTAS y las dos se derivan, ninguna es una lista escrita aquí:
+
+      · topar la grasa -> `la_patologia_topa_la_grasa`, derivado de
+        `patologias.json` a través de `topes_de_patologias`. Hoy siete.
+      · declararlo -> el bloque `hidratos.los_pide` de la propia patología, con
+        su fuente y su cita al lado, como cualquier otra cifra suya.
+
+    La segunda hace falta porque la primera no puede adivinarlo: que una dieta
+    renal lleve hidratos sale de su clínica, no de si topa la grasa.
+    """
+    if not patologias:
+        return False
+    if la_patologia_topa_la_grasa(patologias, etapa):
+        return True
+    try:
+        from patologias import CRUDO as _CRUDO_PAT
+        tabla = _CRUDO_PAT.get("patologias") or {}
+    except Exception:
+        return False
+    for p in patologias:
+        if ((tabla.get(p) or {}).get("hidratos") or {}).get("los_pide"):
+            return True
+    return False
+
+
 def topes_de_patologias(patologias, etapa="Adulto", para_el_dueno=False):
     """Devuelve (topes_por_1000kcal, pct_kcal_grasa, avisos_extra,
     suelos_por_1000kcal) ya resueltos para esta etapa y esta combinación de
@@ -1043,7 +1089,7 @@ def _resolver_una_vez(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn
     elif con_hidratos is True:
         _hidratos_los_pide_la_patologia = True
     else:
-        _hidratos_los_pide_la_patologia = la_patologia_topa_la_grasa(patologias, etapa)
+        _hidratos_los_pide_la_patologia = la_patologia_pide_hidratos(patologias, etapa)
 
     # ⚠️ EL MODO FILTRA ANTES QUE NADA, Y ES UNA EXCLUSIÓN DURA (17 de septiembre
     # de 2026). No es una preferencia ni una penalización: en cocinado, una

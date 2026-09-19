@@ -187,6 +187,12 @@
           },
           "aplicado_por_el_solver": false
         }
+      },
+      "hidratos": {
+        "los_pide": true,
+        "fuente": "SACN5 5ª ed., cap.37 «Chronic Kidney Disease»",
+        "cita": "Catabolism of a patient's protein stores can occur if insufficient energy (carbohydrates and fats) and/or protein are consumed.",
+        "por_que": "⚠️ DECISION DE ELENA, 19 de septiembre de 2026: «si renal tiene que llevar hidratos, que de hecho por eso se metieron, pues que se metan. En una dieta BARF no tiene que haber hidratos de por si, pero si una patologia los necesita, pues que se metan». || LA REGLA YA ESTABA ESCRITA -- la pregunta de los hidratos tiene tres estados y el primero es «sin contestar: no entran SALVO QUE UNA PATOLOGIA LOS PIDA» -- y lo que fallaba es como se decidia quien los pide: se derivaba de TOPAR LA GRASA (`la_patologia_topa_la_grasa`, siete patologias), y la renal no topa la grasa: topa fosforo, proteina y sodio. El proxy la dejaba fuera. || Y LA MEDIDA DICE QUE LOS NECESITA: sin hidratos, la renal en COCINADO es infactible DEMOSTRADO en los cinco peldanos (51-62 s cada uno, terminando solos con 120 s disponibles: no es el reloj); con `con_hidratos: true` sale menu VERDE en 7,5 s. En crudo sin hidratos si sale, pero solo en el peldano 4 --el de tres suplementos--, o sea que ya iba justa. La causa es aritmetica: en cocinado el hueso carnoso no es candidato (cocido astilla), asi que el calcio sale de la cascara de huevo o del bote, y con la proteina y el fosforo topados no queda de donde sacar las kcal. || Y ES LO QUE DICE LA FUENTE: con la proteina restringida, la energia tiene que venir de hidratos y grasa o el perro cataboliza su propia proteina."
       }
     },
     "pancreatitis": {
